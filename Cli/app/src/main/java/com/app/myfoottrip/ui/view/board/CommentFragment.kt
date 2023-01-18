@@ -9,12 +9,19 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Comment
+import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.databinding.FragmentCommentBinding
 import com.app.myfoottrip.ui.adapter.CommentAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
+import com.app.myfoottrip.util.NetworkResult
+import com.forms.sti.progresslitieigb.finishLoadingIGB
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -41,6 +48,12 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
 
         binding.apply {
             ivBack.setOnClickListener {findNavController().popBackStack()} //뒤로가기
+            createBtn.setOnClickListener {
+                val board = Board(9999,1,"테스트계정","",Date(System.currentTimeMillis()),"혼자놀기","임시제목입니다"
+                ,"임시 내용입니다.", arrayListOf(), null,2,2)
+                createBoard(board)
+                createBoardObserver()
+            }
         }
     }
 
@@ -60,11 +73,11 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         commentList = ArrayList()
 
         val comment = arrayOf(
-            Comment(1,1,"","3","테스트","테스트 내용",Date(System.currentTimeMillis())),
-            Comment(2,1,"","3","테스트2","테스트 내용2",Date(System.currentTimeMillis())),
-            Comment(3,1,"","3","테스트3","테스트 내용3",Date(System.currentTimeMillis())),
-            Comment(4,1,"","3","테스트4","테스트 내용4",Date(System.currentTimeMillis())),
-            Comment(5,1,"","3","테스트5","테스트 내용5",Date(System.currentTimeMillis()))
+            Comment(1,1,"",1,"테스트","테스트 내용",Date(System.currentTimeMillis())),
+            Comment(2,1,"",1,"테스트2","테스트 내용2",Date(System.currentTimeMillis())),
+            Comment(3,1,"",1,"테스트3","테스트 내용3",Date(System.currentTimeMillis())),
+            Comment(4,1,"",1,"테스트4","테스트 내용4",Date(System.currentTimeMillis())),
+            Comment(5,1,"",1,"테스트5","테스트 내용5",Date(System.currentTimeMillis()))
         )
         
         commentList.addAll(comment)
@@ -82,4 +95,28 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
             adapter = commentAdapter
         }
     }
+
+    // ----------------Retrofit------------------
+    //게시물 전체 받아오기
+    private fun createBoard(board : Board){
+        CoroutineScope(Dispatchers.IO).launch {
+            boardViewModel.createBoard(board)
+        }
+    }
+
+    private fun createBoardObserver() {
+        boardViewModel.isCreated.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    Log.d(TAG, "createBoardObserver: ${it.data}")
+                }
+                is NetworkResult.Error -> {
+                    Log.d(TAG, "게시물 조회 Error: ${it.data}")
+                }
+                is NetworkResult.Loading -> {
+
+                }
+            }
+        }
+    } // 게시물 전체 받아오기
 }

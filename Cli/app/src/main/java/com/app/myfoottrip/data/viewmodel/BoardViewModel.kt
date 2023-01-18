@@ -30,13 +30,24 @@ class BoardViewModel : ViewModel() {
         ), 0, 0
     )
 
+    val isCreated : LiveData<NetworkResult<Board>>
+        get() = boardRepository.createResponseLiveData
 
-    // 이메일 중복 체크
+
+    // 게시물 전체 조회
     fun getBoardList() {
         viewModelScope.launch {
             boardRepository.getBoardList()
         }
-    } // End of emailUsedCheck
+    }
+
+    // 게시물 생성
+    fun createBoard(board: Board){
+        viewModelScope.launch {
+            boardRepository.createBoard(board)
+        }
+    }
+
 
 
 } // End of BoardViewModel

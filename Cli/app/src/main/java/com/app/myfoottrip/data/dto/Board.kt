@@ -13,7 +13,7 @@ data class Board @JvmOverloads constructor(
     val title : String,
     val content: String,
     val imageList : ArrayList<String>,
-    val travel : Travel, //여정 정보 객체
+    val travel : Travel?, //여정 정보 객체
     var likeCount : Int = 0, //좋아요 수
     var commentCount : Int = 0, //댓글 수
 )

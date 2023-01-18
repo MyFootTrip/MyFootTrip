@@ -14,5 +14,7 @@ interface BoardService {
     suspend fun getBoardList(): Response<ArrayList<Board>>
 
     //게시물 삽입
+    @POST("community/board/create/")
+    suspend fun writeBoard(@Body board: Board) : Response<Board>
 
 }
