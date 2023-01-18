@@ -1,33 +1,25 @@
 package com.app.myfoottrip.data.model.viewmodel
 
 
-import android.util.Log
+import android.graphics.Paint
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.airbnb.lottie.L
 import com.app.myfoottrip.data.dto.Email
-import com.app.myfoottrip.data.dto.Join
+import com.app.myfoottrip.data.dto.Image
 import com.app.myfoottrip.data.dto.JoinTest
 import com.app.myfoottrip.data.dto.User
 import com.app.myfoottrip.data.repository.UserRepository
 import com.app.myfoottrip.util.NetworkResult
-import com.navercorp.nid.log.NidLog.init
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import okhttp3.MultipartBody
 
 private const val TAG = "싸피"
 
 class JoinViewModel : ViewModel() {
     private val userRepository = UserRepository()
-
-    // 이메일 사용 여부 체크 값 livedata
-    private val _isUsedEmail = MutableLiveData<Boolean>()
-    val isUsedEmail: LiveData<Boolean>
-        get() = _isUsedEmail
 
     // 휴대폰 인증 상태 체크 LiveData
     private val _phoneNumberValidation = MutableLiveData<Boolean>()
@@ -51,17 +43,19 @@ class JoinViewModel : ViewModel() {
         get() = _emailCheckSuccess
 
     // 회원가입 하면서 생성되는 유저 정보를 viewModel에 저장
-    private val _joinUserData = Join("", "")
-    val joinUserData: Join
+    private val _joinUserData =
+        MutableLiveData<JoinTest>()
+    val joinUserData: LiveData<JoinTest>
         get() = _joinUserData
 
     private val _joinResponseStatus = MutableLiveData(false)
     val joinResponseStatus: LiveData<Boolean>
         get() = _joinResponseStatus
 
-    private val _joinSuccessUserData = MutableLiveData<JoinTest>()
-    val joinSuccessUserData: LiveData<JoinTest>
+    private val _joinSuccessUserData = MutableLiveData<User>()
+    val joinSuccessUserData: LiveData<User>
         get() = _joinSuccessUserData
+
 
     // 이메일 중복 체크 변경 테스트 LiveData
     val userResponseLiveData: LiveData<NetworkResult<Boolean>>
@@ -81,6 +75,9 @@ class JoinViewModel : ViewModel() {
     val confirmPassword: LiveData<String>
         get() = _confirmPassword
 
+    // 회원가입 responseLiveData
+    private val _joinResponseLiveData: LiveData<NetworkResult<User>>
+        get() = userRepository.userJoinResponseLiveData
 
     // 이메일 중복 체크
     fun emailUsedCheck(emailId: Email) {
@@ -110,28 +107,17 @@ class JoinViewModel : ViewModel() {
         _ageState.value = tempList
     } // End of changeAgeState
 
+
+    private val _userImageData = MutableLiveData<MultipartBody.Part>()
+    val userImageData: LiveData<MultipartBody.Part>
+        get() = _userImageData
+
+
     // 사용자 회원가입 시작 (retrofit 통신)
     fun userJoin() {
-        var joinResultUserData: JoinTest
-
         viewModelScope.launch {
-            joinResultUserData = UserRepository().joinUser(joinUserData)
-
-            Log.d(TAG, "userJoin1: $joinResultUserData")
-            withContext(Dispatchers.Main) {
-                Log.d(TAG, "usaerJoin2: $joinResultUserData")
-                if (joinResultUserData.user == null) {
-                    _joinResponseStatus.value = false
-                }
-
-                if (joinResultUserData.user != null) {
-                    _joinSuccessUserData.value = joinResultUserData
-                    _joinResponseStatus.value = true
-                }
-            }
+            //userRepository.joinUser()
         }
-
-        Log.d(TAG, "userJoin3 : 비동기 처리 테스트")
     } // End of userJoin
 
     fun setPwLiveData(pwOrigin: String, pwConfirm: String) {

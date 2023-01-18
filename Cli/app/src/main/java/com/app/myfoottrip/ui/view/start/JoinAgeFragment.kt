@@ -79,7 +79,7 @@ class JoinAgeFragment : Fragment() {
 
             for (i in 0 until size) {
                 if (temp[i]) {
-                    joinViewModel.joinUserData.age = (i + 1) * 10
+                    joinViewModel.joinUserData.value!!.age = (i + 1) * 10
                     break
                 }
             }
@@ -173,8 +173,8 @@ class JoinAgeFragment : Fragment() {
                 // savedInstance 저장하기
                 Application.sharedPreferencesUtil.addUserToken(
                     Token(
-                        joinViewModel.joinSuccessUserData.value!!.access_token.toString(),
-                        joinViewModel.joinSuccessUserData.value!!.refresh_token.toString()
+                        joinViewModel.joinSuccessUserData.value!!.token.accessToken.toString(),
+                        joinViewModel.joinSuccessUserData.value!!.token.refreshToken.toString()
                     )
                 )
 

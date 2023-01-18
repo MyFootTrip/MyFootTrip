@@ -91,11 +91,11 @@ class JoinEmailFragment : Fragment() {
         // 다음 버튼 눌렀을 때, 전화번호 입력 프레그먼트로 이동
         nextButton.setOnClickListener {
             // 회원가입 처음 시작.
-            joinViewModel.joinUserData.email =
-                customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).text.toString()
-
-            joinViewModel.joinUserData.password =
-                customViewLayout.findViewById<EditText>(R.id.secondJoinEd).text.toString()
+//            joinViewModel.joinUserData.value!!.email =
+//                customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).text.toString()
+//
+//            joinViewModel.joinUserData.value!!.password =
+//                customViewLayout.findViewById<EditText>(R.id.secondJoinEd).text.toString()
 
             Navigation.findNavController(customViewLayout.findViewById<AppCompatButton>(R.id.join_next_button))
                 .navigate(R.id.action_emailJoinFragment_to_joinPhoneNumberFragment)
@@ -143,7 +143,7 @@ class JoinEmailFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).isClickable = false
+        // customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).isClickable = false
         binding.joinEmailProgressbar.visibility = View.GONE
 
     } // End of onResume
@@ -190,8 +190,8 @@ class JoinEmailFragment : Fragment() {
 
     private fun emailValidateCheckObserver() {
         joinViewModel.emailValidateResponse.observe(viewLifecycleOwner) {
-            nextButton.isClickable = false
-            nextButton.isEnabled = false
+//            nextButton.isClickable = false
+//            nextButton.isEnabled = false
 
             when (it) {
                 is NetworkResult.Success -> {
