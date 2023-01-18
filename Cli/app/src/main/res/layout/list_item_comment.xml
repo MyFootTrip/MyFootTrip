@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_profileLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        app:cardBackgroundColor="@color/main"
+        app:cardCornerRadius="40dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_profile"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_my"
+            app:tint="@color/white" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/tv_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:fontFamily="@font/inter_medium"
+        android:text="회원 닉네임"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/cv_profileLayout"
+        app:layout_constraintLeft_toRightOf="@id/cv_profileLayout"
+        app:layout_constraintTop_toTopOf="@id/cv_profileLayout" />
+
+    <ImageView
+        android:id="@+id/iv_edit_comment"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/cv_profileLayout"
+        app:layout_constraintBottom_toBottomOf="@id/cv_profileLayout"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/ic_menu"/>
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
+        android:fontFamily="@font/inter_semibold"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/cv_profileLayout"
+        android:text="댓글 내용입니다"/>
+
+    <TextView
+        android:id="@+id/tv_write_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
+        android:text="작성날짜"
+        app:layout_constraintTop_toBottomOf="@id/tv_content"
+        android:textSize="12sp"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/black"/>
+
+    <View
+        android:id="@+id/base_line2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="20dp"
+        android:background="@color/gray_60"
+        app:layout_constraintTop_toBottomOf="@id/tv_write_date"/>
+
+
+
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -76,39 +76,25 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
     private fun dumiSet(){
         boardList.add(
-            Travel(
-                "0", "서울, 부산", Date(1234564),Date(12645648),"가족", arrayListOf()
-            ),
+            Travel("0", "서울, 부산", Date(1234564),Date(12645648), arrayListOf()),
         )
         boardList.add(
-            Travel(
-                "1", "대구, 부산", Date(16548946),Date(23551651),"커플", arrayListOf()
-            ),
+            Travel("1", "대구, 부산", Date(16548946),Date(23551651),arrayListOf()),
         )
         boardList.add(
-            Travel(
-                "1", "대구, 부산", Date(16548946),Date(23551651),"커플", arrayListOf()
-            ),
+            Travel("1", "대구, 부산", Date(16548946),Date(23551651), arrayListOf()),
         )
         boardList.add(
-            Travel(
-                "1", "대구, 부산", Date(16548946),Date(23551651),"커플", arrayListOf()
-            ),
+            Travel("1", "대구, 부산", Date(16548946),Date(23551651),arrayListOf()),
         )
         boardList.add(
-            Travel(
-                "1", "대구, 부산", Date(16548946),Date(23551651),"커플", arrayListOf()
-            ),
+            Travel("1", "대구, 부산", Date(16548946),Date(23551651), arrayListOf()),
         )
         boardList.add(
-            Travel(
-                "1", "대구, 부산", Date(16548946),Date(23551651),"커플", arrayListOf()
-            ),
+            Travel("1", "대구, 부산", Date(16548946),Date(23551651),arrayListOf()),
         )
         boardList.add(
-            Travel(
-                "1", "대구, 부산", Date(16548946),Date(23551651),"커플", arrayListOf()
-            ),
+            Travel("1", "대구, 부산", Date(16548946),Date(23551651), arrayListOf()),
         )
     }
 

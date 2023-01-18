@@ -1,4 +1,4 @@
-package com.app.myfoottrip.data.dto.viewmodel
+package com.app.myfoottrip.data.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

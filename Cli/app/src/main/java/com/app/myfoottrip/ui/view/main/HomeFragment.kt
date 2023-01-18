@@ -10,12 +10,13 @@ import android.view.View
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Travel
-import com.app.myfoottrip.data.dto.viewmodel.BoardViewModel
+import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.databinding.FragmentHomeBinding
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
 import com.app.myfoottrip.ui.adapter.HomeAdapter
@@ -43,7 +44,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private lateinit var selectedDetailList : ArrayList<String>
 
     private lateinit var homeAdatper: HomeAdapter
-    private lateinit var boardList : ArrayList<Board>
 
     private var sortBy = "최신순" //정렬 기준
 
@@ -95,6 +95,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         homeAdatper.setItemClickListener(object : HomeAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, boardId: Int) {
+
+                boardViewModel.board = boardList[position]
                 findNavController().navigate(R.id.action_mainFragment_to_boardFragment)
             }
         })

@@ -50,7 +50,7 @@ object TimeUtils {
     }
 
     fun getDateString(date : Date) : String{
-        val dateFormatter = SimpleDateFormat("YYYY.mm.dd", Locale.getDefault())
+        val dateFormatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
         return dateFormatter.format(date)
     }
 
