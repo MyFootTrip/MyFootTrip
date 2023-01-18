@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/mainFragment">
+
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.app.myfoottrip.ui.view.main.MainFragment"
+        android:label="MainFragment">
+        <action
+            android:id="@+id/action_mainFragment_to_boardFragment"
+            app:destination="@id/boardFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_travelSelectFragment"
+            app:destination="@id/travelSelectFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/boardFragment"
+        android:name="com.app.myfoottrip.ui.view.board.BoardFragment"
+        android:label="fragment_board"
+        tools:layout="@layout/fragment_board" />
+    <fragment
+        android:id="@+id/travelSelectFragment"
+        android:name="com.app.myfoottrip.ui.view.travel.TravelSelectFragment"
+        android:label="fragment_travel_select"
+        tools:layout="@layout/fragment_travel_select" >
+        <action
+            android:id="@+id/action_travelSelectFragment_to_travelLocationSelectFragment"
+            app:destination="@id/travelLocationSelectFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/travelLocationSelectFragment"
+        android:name="com.app.myfoottrip.ui.view.travel.TravelLocationSelectFragment"
+        android:label="TravelLocationSelectFragment" >
+        <action
+            android:id="@+id/action_travelLocationSelectFragment_to_travelLocationWriteFragment"
+            app:destination="@id/travelLocationWriteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/travelLocationWriteFragment"
+        android:name="com.app.myfoottrip.ui.view.travel.TravelLocationWriteFragment"
+        android:label="fragment_travel_location_write"
+        tools:layout="@layout/fragment_travel_location_write" />
+
+</navigation>

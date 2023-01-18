@@ -1,0 +1,175 @@
+package com.app.myfoottrip.ui.view.travel
+
+import android.content.res.ColorStateList
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import androidx.navigation.fragment.findNavController
+import com.app.myfoottrip.R
+import com.app.myfoottrip.databinding.FragmentTravelLocationSelectBinding
+import com.app.myfoottrip.ui.adapter.CategoryAdatper
+import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.ui.view.board.TouchFrameLayout
+import com.app.myfoottrip.ui.view.main.HomeFragment
+import com.app.myfoottrip.util.LocationConstants
+import com.google.android.material.chip.Chip
+import com.naver.maps.map.LocationTrackingMode
+import com.naver.maps.map.MapFragment
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.util.FusedLocationSource
+
+class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBinding>(
+    FragmentTravelLocationSelectBinding::bind, R.layout.fragment_travel_location_select
+), OnMapReadyCallback {
+    private lateinit var categoryAdapter: CategoryAdatper
+    private var locationList : ArrayList<String> = arrayListOf() //지역 리스트
+    private var selectedList : ArrayList<String> = arrayListOf() //선택된 리스트
+
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1000
+    private var mapFragment: MapFragment = MapFragment()
+    private lateinit var naverMap: NaverMap //map에 들어가는 navermap
+    private lateinit var locationSource : FusedLocationSource
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        //서비스 연결
+        LocationConstants.serviceBind(requireContext())
+
+        binding.fabStart.apply {
+            backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.gray_500)
+            isEnabled = false
+        }
+
+        LocationConstants.getLocationPermission {
+            initMap()
+        }
+        initAdapter()
+        initListener()
+
+    }
+
+    private fun initMap(){
+        // TouchFrameLayout 에 mapFragment 올려놓기
+        val fragmentTransaction = childFragmentManager.beginTransaction()
+        if(mapFragment.isAdded){
+            fragmentTransaction.remove( mapFragment )
+            mapFragment = MapFragment()
+        }
+        fragmentTransaction.add(R.id.map_fragment, mapFragment)
+        fragmentTransaction.commit()
+        mapFragment.getMapAsync {  }
+    }
+
+    private fun initAdapter(){
+        locationList.addAll(HomeFragment.locationList)
+        categoryAdapter = CategoryAdatper(locationList)
+
+        categoryAdapter.setItemClickListener(object : CategoryAdatper.ItemClickListener {
+            override fun onClick(view: View, position: Int) {
+                if (!selectedList.contains(locationList[position])) {
+                    setChipListener(position)
+                }
+                if(selectedList.isNotEmpty()){
+                    binding.tvLocationHint.visibility = View.GONE
+                    binding.fabStart.apply {
+                        backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.main)
+                        isEnabled = true
+                    }
+                }
+            }
+        })
+
+        binding.rvCategory.apply {
+            adapter = categoryAdapter
+        }
+
+    }
+
+    private fun initListener(){
+        binding.apply {
+            fabStart.setOnClickListener {
+                //위치 기록 시작
+//                LocationConstants.getLocationRequest(requireContext())
+//                showToast("위치 기록을 시작합니다.", ToastType.SUCCESS)
+                findNavController().navigate(R.id.action_travelLocationSelectFragment_to_travelLocationWriteFragment)
+            }
+            ivLocationDrop.setOnClickListener {
+                setRotaionAnimation()
+            }
+            tvLocationHint.setOnClickListener {
+                setRotaionAnimation()
+            }
+            ivBack.setOnClickListener {
+                findNavController().popBackStack()
+            }
+            mapFragment.setTouchListener(object : TouchFrameLayout.OnTouchListener {
+                override fun onTouch() {
+                    if(rvCategory.visibility == View.VISIBLE){
+                        rvCategory.visibility = View.GONE
+                    }
+                }
+            })
+//            btnEnd.setOnClickListener{
+//                LocationConstants.stopLocation()
+//            }
+        }
+    }
+
+    private fun setChipListener(position : Int){
+        selectedList.add(locationList[position])
+
+        binding.cgDetail.addView(Chip(requireContext()).apply {
+            chipCornerRadius = 10.0f
+            text = locationList[position]
+            textSize = 12.0f
+            isCloseIconVisible = true
+            closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
+            closeIconTint = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
+            chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
+            setTextColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white)))
+
+            setOnCloseIconClickListener {
+                binding.cgDetail.removeView(this)
+                selectedList.remove(locationList[position])
+                if(selectedList.isEmpty()){
+                    binding.tvLocationHint.visibility = View.VISIBLE
+                    binding.fabStart.apply {
+                        backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.gray_500)
+                        isEnabled = false
+                    }
+                }
+            }
+        })
+    }
+
+    override fun onMapReady(p0: NaverMap) {
+        naverMap = p0
+        naverMap.locationTrackingMode = LocationTrackingMode.Follow
+
+        locationSource = FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
+        naverMap.locationSource = locationSource
+
+    }
+
+    private fun setRotaionAnimation(){
+        binding.apply {
+            if (rvCategory.visibility == View.VISIBLE) {
+                rvCategory.visibility = View.GONE
+                ivLocationDrop.animate().setDuration(200).rotation(0f)
+            } else {
+                rvCategory.visibility = View.VISIBLE
+                ivLocationDrop.animate().setDuration(200).rotation(180f)
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy: ")
+        LocationConstants.serviceUnBind(requireContext())
+    }
+
+}

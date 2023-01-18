@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">MyFootTrip</string>
+
+    <!-- 회원 가입 파트 string 상수값 Start -->
+    <string name="email_join_title">이메일을 입력해주세요</string>
+    <string name="email_join_confirm_title">인증번호를 입력해주세요</string>
+    <string name="password_join_hint_text">비밀번호</string>
+    <string name="password_join_title">비밀번호를 설정해주세요</string>
+    <string name="next_button_title">다음</string>
+    <string name="service_clause_join_title">서비스 이용 약관에 \n동의해주세요</string>
+    <string name="first_clause_text">네, 모두 동의합니다.</string>
+    <string name="second_clause_text">(필수) 만 14세 이상입니다.</string>
+    <string name="third_clause_text">(필수) 서비스 이용약관에 동의</string>
+    <string name="fourth_clause_text">(필수) 개인정보 수집이용에 동의</string>
+    <string name="service_clause_detail_button_text">보기</string>
+    <string name="join_age_fragment_title">연령을 선택해주세요</string>
+    <string name="join_age_fragment_subtitle">편리한 여행을 도와드릴게요😎</string>
+    <string name="join_service_clause_dialog_dismiss_button_text"><utl>취소</utl></string>
+    <string name="join_complete_text">시작하기</string>
+    <string name="join_email_isused_check_error_text">이미 사용중인 이메일입니다</string>
+    <string name="join_email_confirm_check_error_text">잘못된 인증번호 입니다</string>
+
+    <string name="isused_email_text">이미 사용중인 이메일 입니다</string>
+    <string name="can_use_email_text">인증 번호를 입력해주세요</string>
+    <string name="invalid_confirm_email_text">잘못된 인증번호 입니다.</string>
+
+
+    <!-- 이용 약관 멘트 -->
+    <string name="service_clause_dialog_title1">마이풋트립 이용약관</string>
+    <string name="service_clause_dialog_title2">개인정보 수집 및 이용 동의</string>
+    <string name="service_clause_detail_text">
+        본 이용약관은 주식회사 마이풋트립 (이하 “회사”라 합니다)이 운영하는 Website 또는 Application 등 온라인 여행 플랫폼 소비스와 관련하여, 회사와 서비스를 이용하는 자(이하 “이용자”라 합니다) 사이의 권리, 의무, 기타 필요한 사항을 정함으로써 상호 이익을 도모하는 것을 그 목적으로 합니다.
+    </string>
+
+
+    <!-- 회원 가입 파트 string 상수값 End -->
+    <string name="app_info">나의 여정을 기록하고\n공유해 보세요!</string>
+    <string name="app_name_korean">마이풋트립</string>
+    <string name="start_comment">아직 회원이 아니신가요?</string>
+
+    <!--네이버-->
+    <string name="naver_client_id">ZMLtjlX3AyLUnzEZW1Lf</string>
+    <string name="naver_client_secret">OvfAjFlbfD</string>
+
+    <!--네이버 지도 클라이언트ID-->
+    <string name="MAP_CLIENT_ID">set91c34qg</string>
+
+    <!--로그인-->
+    <string name="email_login">이메일로 로그인하기</string>
+    <string name="password_forget">비밀번호를 잊어버리셨나요?</string>
+
+    <string name="password_helper_text">"영문, 대소문자, 숫자, 특수문자 포함 8자기 이상 입력해주세요"</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--필터 정렬-->
+    <string-array name="filter_sort">
+        <item>최신순</item>
+        <item>좋아요순</item>
+    </string-array>
+
+</resources>
