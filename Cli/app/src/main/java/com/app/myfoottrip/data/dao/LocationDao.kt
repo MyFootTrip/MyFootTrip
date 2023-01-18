@@ -10,6 +10,9 @@ interface LocationDao {
     @Query("SELECT * FROM location")
     fun getAll(): List<Location>
 
+    @Query("SELECT * FROM location order by time DESC limit 1 ")
+    fun getLastOne() : Location?
+
     @Insert
     fun insertLocation(location: Location)
 

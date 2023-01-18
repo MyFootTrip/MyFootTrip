@@ -8,12 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.repository.AppDatabase
 import com.app.myfoottrip.databinding.FragmentTravelLocationWriteBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.LocationConstants
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
+import kotlin.math.ln
 
 class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBinding>(
     FragmentTravelLocationWriteBinding::bind, R.layout.fragment_travel_location_write
@@ -21,6 +23,8 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
     private var mapFragment: MapFragment = MapFragment()
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
+    private lateinit var locationSource : FusedLocationSource
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -58,6 +62,9 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 showToast("위치 기록을 시작합니다.", ToastType.SUCCESS)
                 changeMode(true)
             }
+            btnAddPoint.setOnClickListener{
+                LocationConstants.getNowLocation(requireContext())
+            }
         }
     }
 
@@ -76,6 +83,14 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     override fun onMapReady(p0: NaverMap) {
         Log.d(TAG, "onMapReady: ")
         this.naverMap = p0
+
+        val uiSetting = naverMap.uiSettings
+        uiSetting.isLocationButtonEnabled = true
+
+        naverMap.locationTrackingMode = LocationTrackingMode.Follow
+
+        locationSource = FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
+        naverMap.locationSource = locationSource
     }
 
 
@@ -86,6 +101,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 tvStartTime.setTextColor(requireContext().getColor(R.color.white))
                 tvStartTimeLabel.setTextColor(requireContext().getColor(R.color.white))
                 fabPause.visibility = View.VISIBLE
+                btnAddPoint.visibility = View.VISIBLE
                 fabRestart.visibility = View.GONE
                 fabStop.visibility = View.GONE
 
@@ -94,6 +110,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 tvStartTime.setTextColor(requireContext().getColor(R.color.black))
                 tvStartTimeLabel.setTextColor(requireContext().getColor(R.color.black))
                 fabPause.visibility = View.GONE
+                btnAddPoint.visibility = View.GONE
                 fabRestart.visibility = View.VISIBLE
                 fabStop.visibility = View.VISIBLE
             }
