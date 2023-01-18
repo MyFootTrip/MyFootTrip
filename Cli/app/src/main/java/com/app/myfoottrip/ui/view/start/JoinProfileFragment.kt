@@ -112,7 +112,6 @@ class JoinProfileFragment : Fragment() {
             )
             imageResult.launch(intent)
         }
-
     }
 
     private val imageResult = registerForActivityResult(
