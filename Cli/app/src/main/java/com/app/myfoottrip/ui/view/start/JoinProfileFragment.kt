@@ -1,7 +1,7 @@
 package com.app.myfoottrip.ui.view.start
 
 import android.app.Activity
-import android.app.Activity.*
+import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -19,22 +19,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.Navigation
-import com.app.myfoottrip.R
 import com.app.myfoottrip.data.model.viewmodel.JoinViewModel
 import com.app.myfoottrip.data.repository.UserRepository
 import com.app.myfoottrip.databinding.FragmentJoinProfileBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.parse
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import java.io.FileOutputStream
 
 private const val TAG = "JoinProfileFragment_싸피"
 
@@ -73,11 +67,6 @@ class JoinProfileFragment : Fragment() {
 
         // 다음 버튼 클릭 이벤트
         binding.joinNextButton.setOnClickListener {
-//            val file = File(absolutelyPath(imageUri, mContext))
-//            val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
-//            val body = MultipartBody.Part.createFormData(
-//                "profileImg", file.name, requestFile
-//            )
             selectGallery()
         }
 
@@ -130,7 +119,6 @@ class JoinProfileFragment : Fragment() {
             CoroutineScope(Dispatchers.Main).launch {
                 UserRepository().joinUser(body)
             }
-
         }
     }
 
@@ -151,21 +139,6 @@ class JoinProfileFragment : Fragment() {
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(intent, IMAGE_CODE)
     }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        if (resultCode != RESULT_OK) {
-//            return
-//        }
-//
-//        when (requestCode) {
-//            IMAGE_CODE -> {
-//                data ?: return
-//                imageUri = data.data as Uri
-//            }
-//        }
-//    }
 
     companion object {
         const val IMAGE_CODE = 101
