@@ -32,7 +32,7 @@ class JoinPhoneNumberFragment : Fragment() {
 
     private lateinit var secondJoinEd: TextInputEditText
     private lateinit var nextButton: AppCompatButton
-    private lateinit var confirmNumberEditText: TextInputEditText
+    private lateinit var passwordConfirm: TextInputEditText
     private lateinit var secondEditTextMessageTv: TextView
     private lateinit var pwOrigin: TextInputEditText
 
@@ -47,8 +47,7 @@ class JoinPhoneNumberFragment : Fragment() {
     } // End of onCreate
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentJoinPasswordBinding.inflate(inflater, container, false)
         return binding.root
@@ -58,30 +57,17 @@ class JoinPhoneNumberFragment : Fragment() {
         customViewLayout = binding.joinCustomViewLayout
         customViewDataInit()
 
-        val phoneBtn = customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton)
-
         // 커스텀 뷰 2번으로 설정해서 비밀번호 화면이 보이도록 설정
         customViewLayout.setView(2)
 
-        // 휴대폰 번호 입력창의 값이 변할 떄 마다 입력 형식 부합하는지 체크
-        customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).addTextChangedListener {
-            if (phoneNumberTypeCheck()) {
-                phoneBtn.setTextColor(R.color.black)
-                phoneBtn.isClickable = true
-            } else {
-                phoneBtn.setTextColor(R.color.join_confirm_button_basic_text_color)
-                phoneBtn.isClickable = false
-            }
-        }
-
-        // 전화번호 인증 버튼을 눌렀을 때 
         customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).setOnClickListener {
             // 인증 버튼을 눌러서 인증번호 보내는 요청이 successful이 되면 밑에 인증번호를 적는 화면이 보이게 됨
             // joinViewModel.phoneNumberUseValidation()
         }
 
-        customViewLayout.findViewById<AppCompatButton>(R.id.join_next_button)
-            .setOnClickListener {
+        customViewLayout.findViewById<AppCompatButton>(R.id.join_next_button).setOnClickListener {
+                joinViewModel.wholeJoinUserData.password = pwOrigin.text.toString()
+
                 Navigation.findNavController(customViewLayout.findViewById<AppCompatButton>(R.id.join_next_button))
                     .navigate(R.id.action_joinPasswordFragment_to_joinProfileFragment)
             }
@@ -99,7 +85,6 @@ class JoinPhoneNumberFragment : Fragment() {
         phoneNumberValidObserver()
 
         passwordEqualCheckObserver()
-
     } // End of onViewCreated
 
     private fun customViewDataInit() {
@@ -109,26 +94,12 @@ class JoinPhoneNumberFragment : Fragment() {
         pwOrigin = customViewLayout.findViewById(R.id.editTextJoinEmail)
     } // End of customViewDataInit
 
-    private fun emailConfirmCheck(pw1: String, pw2: String): Boolean {
-        if (pw1 == pw2) {
-            return true
-        }
-        return false
-    } // End of emailConfirmCheck
-
     override fun onResume() {
         super.onResume()
         customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).isClickable = false
         nextButton.isClickable = false
         nextButton.isEnabled = false
     }
-
-    private fun phoneNumberTypeCheck(): Boolean {
-        if (customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).text.isEmpty()) return false
-
-        val text = customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).text
-        return !TextUtils.isEmpty(text.toString())
-    } // End of phoneNumberTypeCheck
 
     private fun phoneNumberValidObserver() {
         joinViewModel.phoneNumberValidation.observe(viewLifecycleOwner) {
@@ -158,5 +129,4 @@ class JoinPhoneNumberFragment : Fragment() {
             }
         }
     } // End of passwordEqualCheckObserver
-
 } // End of JoinPhoneNumberFragment class

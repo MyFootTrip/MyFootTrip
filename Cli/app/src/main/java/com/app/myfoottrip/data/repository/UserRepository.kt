@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
-import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.*
+import com.app.myfoottrip.data.dto.Email
+import com.app.myfoottrip.data.dto.Token
+import com.app.myfoottrip.data.dto.User
 import com.app.myfoottrip.network.api.UserApi
 import com.app.myfoottrip.util.NetworkResult
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 
 private const val TAG = "싸피"
@@ -24,9 +26,10 @@ class UserRepository {
     val emailValidateResponseLiveData: LiveData<NetworkResult<Boolean>>
         get() = _emailValidateResponseLiveData
 
-    private val _userJoinResponseLiveData = MutableLiveData<NetworkResult<User>>()
-    val userJoinResponseLiveData: LiveData<NetworkResult<User>>
+    private val _userJoinResponseLiveData = MutableLiveData<NetworkResult<Token>>()
+    val userJoinResponseLiveData: LiveData<NetworkResult<Token>>
         get() = _userJoinResponseLiveData
+
 
     // 이메일 중복 체크
     suspend fun checkUsedEmailId(emailId: Email) {
@@ -50,7 +53,6 @@ class UserRepository {
         _emailValidateResponseLiveData.postValue(NetworkResult.Loading())
 
         if (response.isSuccessful && response.body() != null) {
-            Log.d(TAG, "checkEmailValidateText: 여기로 들어가나요?")
             _emailValidateResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
         } else if (response.errorBody() != null) {
             _emailValidateResponseLiveData.postValue(
@@ -67,29 +69,31 @@ class UserRepository {
         }
     } // End of checkEmailValidateText
 
-    suspend fun joinUser(file : MultipartBody.Part) {
+    suspend fun userJoin(
+        userProfileImgFile: MultipartBody.Part,
+        userJoinData: HashMap<String, RequestBody>
+    ) {
+        val response = userApi.userJoin(
+            userProfileImgFile,
+            userJoinData
+        )
 
+        _userJoinResponseLiveData.postValue(NetworkResult.Loading())
 
-        val response = userApi.imageTest(file)
-        Log.d(TAG, "joinUser: $response")
-
-//        val response = userApi.userJoin(joinUserData)
-//        _userJoinResponseLiveData.postValue(NetworkResult.Loading())
-//
-//        if (response.isSuccessful && response.body() != null) {
-//            _userJoinResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-//        } else if (response.errorBody() != null) {
-//            _userJoinResponseLiveData.postValue(
-//                NetworkResult.Error(
-//                    response.errorBody()!!.string()
-//                )
-//            )
-//        } else {
-//            _userJoinResponseLiveData.postValue(
-//                NetworkResult.Error(
-//                    response.headers().toString()
-//                )
-//            )
-//        }
+        if (response.isSuccessful && response.body() != null) {
+            _userJoinResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _userJoinResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _userJoinResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
     } // End of joinUser
 } // End of UserRepository

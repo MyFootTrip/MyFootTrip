@@ -19,8 +19,8 @@ class SharedPreferencesUtil(context: Context) {
     // 사용자의 토큰을 저장
     fun addUserToken(userToken: Token) {
         val editor = preferences.edit()
-        editor.putString(ACCESS_TOKEN, userToken.accessToken)
-        editor.putString(REFRESH_TOKEN, userToken.refreshToken)
+        editor.putString(ACCESS_TOKEN, userToken.access_token)
+        editor.putString(REFRESH_TOKEN, userToken.refresh_token)
         editor.apply()
     } // End of addUserToken
 

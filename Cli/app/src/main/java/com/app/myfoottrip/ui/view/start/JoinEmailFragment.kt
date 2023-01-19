@@ -18,10 +18,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Email
+import com.app.myfoottrip.data.dto.Join
 import com.app.myfoottrip.data.model.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinEmailBinding
 import com.app.myfoottrip.util.NetworkResult
-import com.app.myfoottrip.util.showToastMessage
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +34,6 @@ class JoinEmailFragment : Fragment() {
     private lateinit var binding: FragmentJoinEmailBinding
     private lateinit var customViewLayout: JoinCustomView
     private val joinViewModel by activityViewModels<JoinViewModel>()
-
 
     private lateinit var emailWarningTextView: TextView
     private lateinit var secondTextFieldLayout: ConstraintLayout
@@ -74,9 +73,11 @@ class JoinEmailFragment : Fragment() {
             if (emailTypeCheck()) {
                 emailBtn.setTextColor(R.color.black)
                 emailBtn.isClickable = true
+                emailBtn.isEnabled = true
             } else {
                 emailBtn.setTextColor(R.color.join_confirm_button_basic_text_color)
                 emailBtn.isClickable = false
+                emailBtn.isEnabled = false
             }
         }
 
@@ -88,23 +89,20 @@ class JoinEmailFragment : Fragment() {
             }
         }
 
-        // 다음 버튼 눌렀을 때, 전화번호 입력 프레그먼트로 이동
+        // 다음 버튼 이벤트
         nextButton.setOnClickListener {
-            // 회원가입 처음 시작.
-//            joinViewModel.joinUserData.value!!.email =
-//                customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).text.toString()
-//
-//            joinViewModel.joinUserData.value!!.password =
-//                customViewLayout.findViewById<EditText>(R.id.secondJoinEd).text.toString()
+            joinViewModel.wholeJoinUserData.email =
+                customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).text.toString()
+
+            joinViewModel.wholeJoinUserData.password =
+                customViewLayout.findViewById<EditText>(R.id.secondJoinEd).text.toString()
 
             Navigation.findNavController(customViewLayout.findViewById<AppCompatButton>(R.id.join_next_button))
                 .navigate(R.id.action_emailJoinFragment_to_joinPhoneNumberFragment)
         }
 
-
         // 이메일 인증번호 입력창의 텍스트가 변할때마다 값을 비교해서 맞는지 아닌지 체크해줌
         confirmNumberEditText.addTextChangedListener {
-            Log.d(TAG, "인증번호 입력 값 : ${confirmNumberEditText.text.toString()}")
             CoroutineScope(Dispatchers.IO).launch {
                 joinViewModel.emailValidateCheck(
                     Email(
@@ -137,15 +135,14 @@ class JoinEmailFragment : Fragment() {
         firstEditTextMessageTv = customViewLayout.findViewById(R.id.firstEditTextMessageTv)
 
         inputEmailText = customViewLayout.findViewById(R.id.editTextJoinEmail)
-
-
     } // End of customViewDataInit
 
     override fun onResume() {
         super.onResume()
-        // customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).isClickable = false
+        customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).isClickable = false
+        nextButton.isClickable = false
+        nextButton.isEnabled = false
         binding.joinEmailProgressbar.visibility = View.GONE
-
     } // End of onResume
 
     private fun emailTypeCheck(): Boolean { // 이메일 형식 확인
@@ -190,8 +187,8 @@ class JoinEmailFragment : Fragment() {
 
     private fun emailValidateCheckObserver() {
         joinViewModel.emailValidateResponse.observe(viewLifecycleOwner) {
-//            nextButton.isClickable = false
-//            nextButton.isEnabled = false
+            nextButton.isClickable = false
+            nextButton.isEnabled = false
 
             when (it) {
                 is NetworkResult.Success -> {

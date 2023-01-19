@@ -2,28 +2,29 @@ package com.app.myfoottrip.ui.view.start
 
 import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.JoinTest
 import com.app.myfoottrip.data.dto.Token
 import com.app.myfoottrip.data.model.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinAgeBinding
-import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
-import com.app.myfoottrip.util.SharedPreferencesUtil
+import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showToastMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 private const val TAG = "JoinAgeFragment_싸피"
 
@@ -34,24 +35,17 @@ class JoinAgeFragment : Fragment() {
     private lateinit var imageViewArray: Array<ImageView>
     private lateinit var selectedImageViewArray: Array<Int>
     private lateinit var nonSelectedImageViewArray: Array<Int>
-    private lateinit var joinSeccessUserData: JoinTest
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
     } // End of onAttach
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    } // End of onCreate
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        binding = com.app.myfoottrip.databinding.FragmentJoinAgeBinding.inflate(
-            inflater,
-            container,
-            false
+        binding = FragmentJoinAgeBinding.inflate(
+            inflater, container, false
         )
         return binding.root
     } // End of onCreateView
@@ -62,12 +56,14 @@ class JoinAgeFragment : Fragment() {
         // 처음 데이터 호출
         initData()
 
+        // 연령선택 이벤트
         ageButtonClick()
 
+        // 연령선택 상태값
         ageStateObserver()
 
         // 회원가입 성공 여부를 저장하는 viewModel 값을 관찰하는 옵저버 등록
-        joinStatusObserver()
+        joinResponseLiveDataObserver()
 
         // 회원가입 완료 버튼 클릭 이벤트
         binding.joinNextButton.setOnClickListener {
@@ -76,19 +72,17 @@ class JoinAgeFragment : Fragment() {
             val temp = joinViewModel.ageState.value
             val size = temp!!.size
 
-
             for (i in 0 until size) {
                 if (temp[i]) {
-                    joinViewModel.joinUserData.value!!.age = (i + 1) * 10
+                    joinViewModel.wholeJoinUserData.age = ((i + 1) * 10).toString()
                     break
                 }
             }
 
+            // 전체 viewModel에 저장된 값을 multipart/form-data로 변경해서 통신해야함
             CoroutineScope(Dispatchers.IO).launch {
                 joinViewModel.userJoin()
             }
-
-            // 완전한 회원가입 성공일 경우, 옵저버에 의해서 다음 페이지로 넘어감
         }
 
     } // End of onViewCreated
@@ -161,32 +155,38 @@ class JoinAgeFragment : Fragment() {
         }
     } // End of ageButtonClick
 
-    private fun joinStatusObserver() {
-        joinViewModel.joinResponseStatus.observe(viewLifecycleOwner) {
-            // response successful 일 경우
-            // token값을 sharedPreference에 저장하고,
-            // MainActivity로 자동전환
-            if (it) {
-                mContext.showToastMessage("회원가입 성공")
 
-                // refreshToken & accessToken
-                // savedInstance 저장하기
-                Application.sharedPreferencesUtil.addUserToken(
-                    Token(
-                        joinViewModel.joinSuccessUserData.value!!.token.accessToken.toString(),
-                        joinViewModel.joinSuccessUserData.value!!.token.refreshToken.toString()
+    // _joinResponseLiveData
+    private fun joinResponseLiveDataObserver() {
+        joinViewModel.joinResponseLiveData.observe(viewLifecycleOwner) {
+            binding.joinProgressbar.isVisible = false
+            binding.joinProgressbar.visibility = View.GONE
+
+            when (it) {
+                is NetworkResult.Success -> {
+                    mContext.showToastMessage("회원가입 성공")
+
+                    // refreshToken & accessToken
+                    // savedInstance 저장하기
+                    Application.sharedPreferencesUtil.addUserToken(
+                        Token(
+                            it.data!!.access_token, it.data.refresh_token
+                        )
                     )
-                )
 
-                val intent = Intent(activity, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                startActivity(intent)
-            }
-
-            // 실패일 경우, 오류 메시지를 띄움
-            if (!it) {
-                mContext.showToastMessage("회원가입 실패")
+                    val intent = Intent(activity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                    startActivity(intent)
+                }
+                is NetworkResult.Error -> {
+                    Log.d(TAG, "회원가입 실패: ${it.data}")
+                    mContext.showToastMessage("회원가입 실패")
+                }
+                is NetworkResult.Loading -> {
+                    binding.joinProgressbar.isVisible = true
+                    binding.joinProgressbar.visibility = View.VISIBLE
+                }
             }
         }
-    } // End of joinStatusObserver
+    } // End of joinResponseLiveDataObserver {
 } // End of JoinAgeFragment class
