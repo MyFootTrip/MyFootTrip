@@ -29,7 +29,7 @@ class CommentAdapter(var commentList:List<Comment>) : RecyclerView.Adapter<Comme
 
             nickname.text = comment.nickname
             content.text = comment.content
-            writeDate.text = TimeUtils.getDateString(comment.writeDate)
+            writeDate.text = TimeUtils.getFormattedString(comment.writeDate)
 
             editBtn.setOnClickListener {
                 itemClickListner.onClick(it, layoutPosition,comment.commentId)

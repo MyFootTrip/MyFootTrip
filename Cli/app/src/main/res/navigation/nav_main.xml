@@ -16,6 +16,10 @@
         <action
             android:id="@+id/action_mainFragment_to_travelSelectFragment"
             app:destination="@id/travelSelectFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_createBoardFragment"
+            app:destination="@id/createBoardFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/boardFragment"
@@ -53,5 +57,10 @@
         android:name="com.app.myfoottrip.ui.view.board.CommentFragment"
         android:label="fragment_comment"
         tools:layout="@layout/fragment_comment" />
+    <fragment
+        android:id="@+id/createBoardFragment"
+        android:name="com.app.myfoottrip.ui.view.board.CreateBoardFragment"
+        android:label="fragment_create_board"
+        tools:layout="@layout/fragment_create_board" />
 
 </navigation>

@@ -25,10 +25,8 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
         val commentCount = itemView.findViewById<TextView>(R.id.tv_comment_count)
 
         fun bindInfo(board : Board){
-
-
             Glide.with(itemView)
-                .load("${Application.IMG_URL}"+board.imageList[0]).centerCrop()
+                .load(board.imageList[0]).centerCrop()
                 .into(image)
 
             title.text = board.title

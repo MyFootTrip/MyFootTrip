@@ -1,27 +1,26 @@
 package com.app.myfoottrip.ui.view.board
 
+import android.app.Activity.RESULT_OK
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.LinearLayout.VERTICAL
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Comment
-import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.databinding.FragmentCommentBinding
 import com.app.myfoottrip.ui.adapter.CommentAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.ui.view.dialogs.CommentInputDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
+import com.app.myfoottrip.util.GalleryUtils
 import com.app.myfoottrip.util.NetworkResult
-import com.forms.sti.progresslitieigb.finishLoadingIGB
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -36,6 +35,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
     private lateinit var commentList: ArrayList<Comment>
     private lateinit var commentAdapter: CommentAdapter
 
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
@@ -48,12 +48,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
 
         binding.apply {
             ivBack.setOnClickListener {findNavController().popBackStack()} //뒤로가기
-            createBtn.setOnClickListener {
-                val board = Board(9999,1,"테스트계정","",Date(System.currentTimeMillis()),"혼자놀기","임시제목입니다"
-                ,"임시 내용입니다.", arrayListOf(), null,2,2)
-                createBoard(board)
-                createBoardObserver()
-            }
+            clComment.setOnClickListener { initCommentInput() }
         }
     }
 
@@ -96,27 +91,17 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         }
     }
 
-    // ----------------Retrofit------------------
-    //게시물 전체 받아오기
-    private fun createBoard(board : Board){
-        CoroutineScope(Dispatchers.IO).launch {
-            boardViewModel.createBoard(board)
-        }
+    //댓글 입력창 생성
+    private fun initCommentInput(){
+        val inputDialog = CommentInputDialog("입력하기", object : CommentInputDialog.OnClickListener {
+            override fun onClick(dialog: CommentInputDialog) {
+                showToast("${dialog.comment.text}", ToastType.SUCCESS, false)
+                dialog.dismiss()
+            }
+        })
+
+        inputDialog.show(parentFragmentManager, inputDialog.mTag)
     }
 
-    private fun createBoardObserver() {
-        boardViewModel.isCreated.observe(viewLifecycleOwner) {
-            when (it) {
-                is NetworkResult.Success -> {
-                    Log.d(TAG, "createBoardObserver: ${it.data}")
-                }
-                is NetworkResult.Error -> {
-                    Log.d(TAG, "게시물 조회 Error: ${it.data}")
-                }
-                is NetworkResult.Loading -> {
 
-                }
-            }
-        }
-    } // 게시물 전체 받아오기
 }

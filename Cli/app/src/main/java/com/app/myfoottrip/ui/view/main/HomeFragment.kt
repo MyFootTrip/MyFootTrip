@@ -60,9 +60,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         super.onViewCreated(view, savedInstanceState)
         init()
 
-        binding.ivWrite.setOnClickListener {
+        //게시물 작성 페이지로 이동
+        binding.ivWrite.setOnClickListener { findNavController().navigate(R.id.action_mainFragment_to_createBoardFragment) }
 
-        }
     }
 
     private fun init() {
@@ -95,7 +95,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         homeAdatper.setItemClickListener(object : HomeAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, boardId: Int) {
-
                 boardViewModel.board = boardList[position]
                 findNavController().navigate(R.id.action_mainFragment_to_boardFragment)
             }

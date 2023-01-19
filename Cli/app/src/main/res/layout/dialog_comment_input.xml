@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_profileLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="14dp"
+        android:layout_marginLeft="20dp"
+        app:cardBackgroundColor="@color/main"
+        app:cardCornerRadius="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_profile"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_my"
+            app:tint="@color/white" />
+    </androidx.cardview.widget.CardView>
+
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/et_comment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        app:met_hideUnderline="true"
+        android:hint="댓글을 입력해주세요.."
+        app:layout_constraintBottom_toBottomOf="@id/cv_profileLayout"
+        app:layout_constraintLeft_toRightOf="@id/cv_profileLayout"
+        app:layout_constraintRight_toLeftOf="@id/iv_send"
+        app:layout_constraintTop_toTopOf="@id/cv_profileLayout">
+
+        <requestFocus />
+    </com.rengwuxian.materialedittext.MaterialEditText>
+
+    <ImageView
+        android:id="@+id/iv_send"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/ic_send"
+        app:layout_constraintBottom_toBottomOf="@id/cv_profileLayout"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/cv_profileLayout"
+        app:tint="@color/main" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

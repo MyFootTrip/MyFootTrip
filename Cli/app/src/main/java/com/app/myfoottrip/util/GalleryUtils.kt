@@ -10,16 +10,21 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.storage.FirebaseStorage
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 
+private const val TAG = "GalleryUtils_마이풋트립"
 object GalleryUtils {
-    
+
+    private val fbStore = FirebaseStorage.getInstance().reference
+
     fun getGallery(context : Context, imageLauncher : ActivityResultLauncher<Intent>) { //사진 가져오기
         getPermission(object : PermissionListener {
             override fun onPermissionGranted() {
@@ -70,5 +75,29 @@ object GalleryUtils {
         val path = MediaStore.Images.Media.insertImage(context.contentResolver,
             bitmap, "IMAGE_${System.currentTimeMillis()}", null)
         return Uri.parse(path)
+    }
+
+    suspend fun insertImage(url : ArrayList<String>, imgUri : ArrayList<Uri>,type : Int) : ArrayList<String>{ //TODO : 실패했을 경우 처리
+        return withContext(Dispatchers.IO){
+            val list = arrayListOf<String>()
+            for(i in 0 until url.size){
+                //보드타입인지 프로필타입인지 지정
+                CoroutineScope(Dispatchers.IO).launch {
+                    Log.d(TAG, "이미지 저장 성공~~~~~~~~~~$i\n image : ${url[i]}")
+                    var direction = ""
+                    when(type){
+                        0 ->{
+                            direction = "board"
+                        }
+                        1 ->{
+                            direction = "profile"
+                        }
+                    }
+                    val imageRef = fbStore.child("image/$direction/${url[i]}")
+                    list.add(imageRef.putFile(imgUri[i]).await().storage.downloadUrl.await().toString())
+                }.join()
+            }
+            list
+        }
     }
 }
