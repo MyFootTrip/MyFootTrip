@@ -1,5 +1,6 @@
 package com.app.myfoottrip.ui.view.travel
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -7,6 +8,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -14,7 +16,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import com.app.myfoottrip.data.model.dto.Location
+import com.app.myfoottrip.data.dto.Location
 import com.app.myfoottrip.data.repository.AppDatabase
 import com.google.android.gms.location.*
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +25,7 @@ import kotlinx.coroutines.launch
 import com.app.myfoottrip.R
 import com.app.myfoottrip.util.LocationConstants
 import com.app.myfoottrip.util.TimeUtils
+import java.lang.Math.abs
 
 const val TAG = "areum_Service"
 class LocationService : Service() {
@@ -44,7 +47,16 @@ class LocationService : Service() {
 
                 CoroutineScope(Dispatchers.IO).launch {
                     AppDatabase.getInstance(applicationContext).locationDao().apply {
-                        insertLocation( Location(null, latitude, longitude, time) )
+                        val location : Location? = getLastOne()
+                        if(location != null){
+                            var diff = abs(latitude - location.lat)
+                            diff += abs(longitude - location.lng)
+                            if(diff < 0.0005){
+                                Log.d(TAG, "onLocationResult: 동일한 거리")
+                                return@apply
+                            }
+                        }
+                        insertLocation( Location(null, null, latitude, longitude, time,"주소") ) //TODO :
                         val count = getCount()
                         Log.d(TAG, "DB에 들어감 COUNT : $count")
                     }
@@ -52,6 +64,8 @@ class LocationService : Service() {
             }
         }
     }
+
+
 
     fun startLocationService(){ //위치 저장 시작
         var channelId = "location_notification_channel"

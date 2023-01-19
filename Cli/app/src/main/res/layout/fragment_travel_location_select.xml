@@ -100,16 +100,13 @@
         app:layout_constraintTop_toBottomOf="@id/iv_location_drop"
         />
 
-    <com.app.myfoottrip.ui.view.board.TouchFrameLayout
+    <com.naver.maps.map.MapView
         android:id="@+id/map_fragment"
-        android:name="com.naver.maps.map.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_location_drop"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@id/iv_location_drop"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_start"

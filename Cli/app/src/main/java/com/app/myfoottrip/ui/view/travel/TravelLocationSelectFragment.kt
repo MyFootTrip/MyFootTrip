@@ -1,9 +1,12 @@
 package com.app.myfoottrip.ui.view.travel
 
 import android.content.res.ColorStateList
+import android.graphics.PointF
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
@@ -11,10 +14,11 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.databinding.FragmentTravelLocationSelectBinding
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
 import com.app.myfoottrip.ui.base.BaseFragment
-import com.app.myfoottrip.ui.view.board.TouchFrameLayout
 import com.app.myfoottrip.ui.view.main.HomeFragment
 import com.app.myfoottrip.util.LocationConstants
 import com.google.android.material.chip.Chip
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
@@ -48,22 +52,23 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         }
         initAdapter()
         initListener()
-
     }
 
     private fun initMap(){
+        Log.d(TAG, "initMap: ")
         // TouchFrameLayout 에 mapFragment 올려놓기
         val fragmentTransaction = childFragmentManager.beginTransaction()
         if(mapFragment.isAdded){
             fragmentTransaction.remove( mapFragment )
             mapFragment = MapFragment()
         }
-        fragmentTransaction.add(R.id.map_fragment, mapFragment)
-        fragmentTransaction.commit()
-        mapFragment.getMapAsync {  }
+        fragmentTransaction.add(R.id.map_fragment, mapFragment).commit()
+        mapFragment.getMapAsync(this)
     }
 
     private fun initAdapter(){
+        locationList.clear()
+        selectedList.clear()
         locationList.addAll(HomeFragment.locationList)
         categoryAdapter = CategoryAdatper(locationList)
 
@@ -92,8 +97,8 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         binding.apply {
             fabStart.setOnClickListener {
                 //위치 기록 시작
-//                LocationConstants.getLocationRequest(requireContext())
-//                showToast("위치 기록을 시작합니다.", ToastType.SUCCESS)
+                LocationConstants.startBackgroundService(requireContext())
+                showToast("위치 기록을 시작합니다.", ToastType.SUCCESS)
                 findNavController().navigate(R.id.action_travelLocationSelectFragment_to_travelLocationWriteFragment)
             }
             ivLocationDrop.setOnClickListener {
@@ -105,13 +110,6 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
             ivBack.setOnClickListener {
                 findNavController().popBackStack()
             }
-            mapFragment.setTouchListener(object : TouchFrameLayout.OnTouchListener {
-                override fun onTouch() {
-                    if(rvCategory.visibility == View.VISIBLE){
-                        rvCategory.visibility = View.GONE
-                    }
-                }
-            })
 //            btnEnd.setOnClickListener{
 //                LocationConstants.stopLocation()
 //            }
@@ -146,12 +144,31 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
     }
 
     override fun onMapReady(p0: NaverMap) {
-        naverMap = p0
+        Log.d(TAG, "onMapReady: ")
+        this.naverMap = p0
+        val uiSetting = naverMap.uiSettings
+        uiSetting.isLocationButtonEnabled = true
+
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
 
         locationSource = FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
 
+        if(locationSource.lastLocation != null){
+            val cameraUpdate = CameraUpdate.scrollTo(
+                LatLng(locationSource.lastLocation!!.latitude, locationSource.lastLocation!!.longitude)
+            )
+            naverMap.moveCamera(cameraUpdate)
+        }
+
+        naverMap.onMapClickListener = object : NaverMap.OnMapClickListener{
+            override fun onMapClick(p0: PointF, p1: LatLng) {
+                Log.d(TAG, "onTouch: ")
+                if(binding.rvCategory.visibility == View.VISIBLE){
+                    binding.rvCategory.visibility = View.GONE
+                }
+            }
+        }
     }
 
     private fun setRotaionAnimation(){
@@ -166,10 +183,35 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        binding.mapFragment.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.mapFragment.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.mapFragment.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.mapFragment.onStop()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: ")
         LocationConstants.serviceUnBind(requireContext())
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        binding.mapFragment.onLowMemory()
     }
 
 }

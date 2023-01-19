@@ -17,13 +17,12 @@ class PlaceAdapter(var placeList:List<Place>) : RecyclerView.Adapter<PlaceAdapte
         val saveDate = itemView.findViewById<TextView>(R.id.tv_place_save_date)
 
         fun bindInfo(place : Place){
-
             placeId.text = place.placeId.toString()
             placeName.text = place.placeName
             saveDate.text = place.saveDate.toString()
 
             itemView.setOnClickListener{
-                itemClickListner.onClick(it, layoutPosition,place.placeId)
+                itemClickListner.onClick(it, layoutPosition,place.placeId!!)
             }
         }
     }

@@ -50,7 +50,7 @@ object TimeUtils {
     }
 
     fun getDateString(date : Date) : String{
-        val dateFormatter = SimpleDateFormat("YYYY.mm.dd", Locale.getDefault())
+        val dateFormatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
         return dateFormatter.format(date)
     }
 
@@ -58,6 +58,12 @@ object TimeUtils {
         val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
         val date = sdf.format(time)
         return date
+    }
+
+    fun getFormattedString(date:Date): String {
+        val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분")
+        dateFormat.timeZone = TimeZone.getTimeZone("Seoul/Asia")
+        return dateFormat.format(date)
     }
 
 }

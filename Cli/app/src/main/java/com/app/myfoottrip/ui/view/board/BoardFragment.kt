@@ -9,16 +9,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Place
-import com.app.myfoottrip.data.dto.viewmodel.BoardViewModel
+import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.databinding.FragmentBoardBinding
 import com.app.myfoottrip.ui.adapter.PlaceAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
+import com.app.myfoottrip.util.TimeUtils
 import com.naver.maps.map.MapFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem
+import java.sql.Time
 import java.util.Date
 
 
@@ -33,6 +35,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     private lateinit var placeAdapter: PlaceAdapter
     private lateinit var placeList: ArrayList<Place>
 
+    private val boardViewModel by activityViewModels<BoardViewModel>()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
@@ -43,15 +47,28 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
         init()
 
-        binding.ivBack.setOnClickListener {
-            findNavController().popBackStack()
+        binding.apply {
+            ivBack.setOnClickListener { findNavController().popBackStack()} //뒤로가기
+            ivComment.setOnClickListener {findNavController().navigate(R.id.action_boardFragment_to_commentFragment)} //댓글 페이지로 이동
         }
+
     }
 
     private fun init(){
+        initData()
         initViewPager()
         initPlaceAdapter()
         initMapScroll()
+    }
+
+    // Board 객체에 담겨있는 데이터값 화면에 갱신
+    private fun initData(){
+        binding.apply {
+            Log.d(TAG, "initData: ${boardViewModel.board}")
+
+//            tvTravelDate.text = TimeUtils.getDateString(boardViewModel.board.travel.startDate) + TimeUtils.getDateString(boardViewModel.board.travel.endDate)
+            tvWriteDate.text = TimeUtils.getDateString(boardViewModel.board.writeDate)
+        }
     }
 
     //게시물 사진 슬라이더
@@ -107,9 +124,12 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     private fun initMapScroll(){
         //TouchFrameLayout 에 mapFragment 올려놓기
         val fragmentTransaction = childFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.map_fragment, mapFragment)
-        fragmentTransaction.commit()
-        mapFragment.getMapAsync {}
+        if(mapFragment.isAdded){
+            fragmentTransaction.remove( mapFragment )
+            mapFragment = MapFragment()
+        }
+        fragmentTransaction.add(R.id.map_fragment, mapFragment).commit()
+        mapFragment.getMapAsync{ }
 
         binding.mapFragment.setTouchListener(object : TouchFrameLayout.OnTouchListener {
             override fun onTouch() {

@@ -10,16 +10,18 @@ import android.view.View
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Travel
-import com.app.myfoottrip.data.dto.viewmodel.BoardViewModel
+import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.databinding.FragmentHomeBinding
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
 import com.app.myfoottrip.ui.adapter.HomeAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.util.NetworkResult
 import com.forms.sti.progresslitieigb.ProgressLoadingIGB
 import com.forms.sti.progresslitieigb.finishLoadingIGB
 import com.google.android.material.chip.Chip
@@ -39,9 +41,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private lateinit var categoryAdapter: CategoryAdatper
     private lateinit var detailList: ArrayList<String>
-    
+    private lateinit var selectedDetailList : ArrayList<String>
+
     private lateinit var homeAdatper: HomeAdapter
-    private lateinit var boardList : ArrayList<Board>
+
+    private var sortBy = "최신순" //정렬 기준
 
     private val boardViewModel by activityViewModels<BoardViewModel>()
 
@@ -56,19 +60,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         super.onViewCreated(view, savedInstanceState)
         init()
 
-        binding.ivWrite.setOnClickListener {
+        //게시물 작성 페이지로 이동
+        binding.ivWrite.setOnClickListener { findNavController().navigate(R.id.action_mainFragment_to_createBoardFragment) }
 
-        }
     }
 
     private fun init() {
-//        startLoading()
+        getBoardListObserver()
+        initSpinnerSort()
         initChips()
         detectScroll()
         touchLayout()
         setUpSwipeRefresh()
         getData()
-        getBoardListObserver()
     }
 
     private fun startLoading(){
@@ -81,25 +85,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
     }
 
-    private fun initHomeAdapter(){
-        boardList = ArrayList()
+    private fun initHomeAdapter(boardList : ArrayList<Board>){
 
+        //정렬 기준
+        if(sortBy == "최신순") boardList.sortByDescending { it.writeDate }
+        else boardList.sortByDescending { it.likeCount }
 
-        val board = Board(1,1,"test1","test",Date(0),"내가 제일 재밌었던 여행","메모"
-        ,arrayListOf("https://www.innp.co.kr/images/main/07.jpg"),
-            Travel("2","대구,경산",Date(0),Date(0),"혼자여행,커플여행", arrayListOf()),10,4)
-
-        val board2 = Board(1,1,"test1","test",Date(0),"내가 제일 재밌었던 여행","메모"
-            ,arrayListOf("https://www.innp.co.kr/images/main/07.jpg"),
-            Travel("1","대구,경산",Date(0),Date(0),"혼자여행,커플여행", arrayListOf()),10,4)
-
-        boardList.add(board)
-        boardList.add(board2)
-
-        homeAdatper = HomeAdapter(boardViewModel.boardList.value!!)
+        homeAdatper = HomeAdapter(boardList)
 
         homeAdatper.setItemClickListener(object : HomeAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, boardId: Int) {
+                boardViewModel.board = boardList[position]
                 findNavController().navigate(R.id.action_mainFragment_to_boardFragment)
             }
         })
@@ -134,7 +130,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         categoryAdapter = CategoryAdatper(detailList)
 
-        val selectedDetailList = ArrayList<String>()
+        selectedDetailList = ArrayList()
 
         categoryAdapter.setItemClickListener(object : CategoryAdatper.ItemClickListener {
             override fun onClick(view: View, position: Int) {
@@ -148,26 +144,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         textSize = 12.0f
                         isCloseIconVisible = true
                         closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
-                        closeIconTint = ColorStateList.valueOf(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.white
-                            )
-                        )
-                        chipBackgroundColor = ColorStateList.valueOf(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.main
-                            )
-                        )
-                        setTextColor(
-                            ColorStateList.valueOf(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.white
-                                )
-                            )
-                        )
+                        closeIconTint = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                        chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
+                        setTextColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
                         setOnCloseIconClickListener {
                             binding.cgDetail.removeView(this)
                             selectedDetailList.remove(detailList[position])
@@ -220,6 +199,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 }
             }
 
+        }
+    }
+
+    //최신순 좋아요순 스피너 생성
+    private fun initSpinnerSort(){
+        binding.apply {
+            spinnerSort.setOnSpinnerItemSelectedListener<String> { oldIndex, oldItem, newIndex, newItem ->
+                sortBy = newItem //현재 정렬기준 갱신
+                getData()
+                getBoardListObserver()
+            }
         }
     }
 
@@ -283,6 +273,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private fun setUpSwipeRefresh() {
         //새로고침 리사이클러뷰의 어댑터를 통해 불러온 List와 원래 refreshItemList이 다른 주소를 가지고 있었음.
         binding.swipeLayout.setOnRefreshListener {
+            //필터 부분
+            binding.cgCategory.clearCheck()
+            binding.cgDetail.removeAllViews()
+
+
+            //정렬 부분
+            binding.spinnerSort.selectItemByIndex(0)
+            sortBy = "최신순"
+
+            //데이터 요청
+            getData()
+            getBoardListObserver()
             binding.swipeLayout.isRefreshing = false
         }
     }
@@ -298,11 +300,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private fun getBoardListObserver() {
         // viewModel에서 전체 게시글 데이터 LiveData 옵저버 적용
         boardViewModel.boardList.observe(viewLifecycleOwner) {
-            initHomeAdapter()
             mainActivity.finishLoadingIGB()
+            when (it) {
+                is NetworkResult.Success -> {
+                    initHomeAdapter(it.data as ArrayList<Board>)
+                }
+                is NetworkResult.Error -> {
+                    Log.d(TAG, "게시물 조회 Error: ${it.data}")
+                }
+                is NetworkResult.Loading -> {
+                    startLoading()
+                }
+            }
         }
     } // 게시물 전체 받아오기
-
 
     companion object {
         val themeList = arrayOf("혼자 왔니","커플 여행","효도 하자","우정 여행","직장 동료와 함께","가족과 같이")

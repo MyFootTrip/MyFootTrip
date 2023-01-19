@@ -1,7 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
     id 'org.jetbrains.kotlin.kapt'
+    id 'com.google.gms.google-services'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -54,6 +57,10 @@ dependencies {
 
     //viewmodel dependency 추가
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+    //liveData dependency 추가
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
+    //framework ktx dependency 추가
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
 
     // Jetpack Navigation Kotlin
     def nav_version = "2.4.2"
@@ -123,4 +130,11 @@ dependencies {
 
     //Lottie 관련 라이브러리
     implementation 'com.github.LordSaac:ProgressLottieIGB:v1.0.2'
+
+    //Firebase
+    implementation platform('com.google.firebase:firebase-bom:31.1.1')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    //FireStorage
+    implementation 'com.google.firebase:firebase-storage:20.1.0'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
 }
