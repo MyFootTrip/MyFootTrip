@@ -13,7 +13,8 @@
         android:layout_margin="20dp"
         android:src="@drawable/ic_back"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/gray_700"/>
 
     <TextView
         android:id="@+id/tv_comment_header"

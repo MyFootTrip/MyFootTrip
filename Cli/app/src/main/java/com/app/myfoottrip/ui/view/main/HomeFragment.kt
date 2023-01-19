@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
@@ -61,7 +62,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         init()
 
         //게시물 작성 페이지로 이동
-        binding.ivWrite.setOnClickListener { findNavController().navigate(R.id.action_mainFragment_to_createBoardFragment) }
+        binding.ivWrite.setOnClickListener {
+            val bundle = bundleOf("type" to 2)
+            findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment,bundle)
+        }
 
     }
 
