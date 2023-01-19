@@ -35,7 +35,7 @@
         <service
                 android:name=".ui.view.travel.LocationService"
                 android:enabled="true"
-                android:exported="true"></service>
+                android:exported="true" />
 
         <activity
                 android:name=".ui.view.main.MainActivity"

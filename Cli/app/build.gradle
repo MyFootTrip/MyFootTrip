@@ -61,6 +61,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
     //framework ktx dependency 추가
     implementation "androidx.fragment:fragment-ktx:1.4.1"
+    implementation 'androidx.activity:activity-ktx:1.2.2'
 
     // Jetpack Navigation Kotlin
     def nav_version = "2.4.2"
