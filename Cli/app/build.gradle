@@ -1,7 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
     id 'org.jetbrains.kotlin.kapt'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -54,6 +56,10 @@ dependencies {
 
     //viewmodel dependency 추가
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
+    //liveData dependency 추가
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
+    //framework ktx dependency 추가
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
 
     // Jetpack Navigation Kotlin
     def nav_version = "2.4.2"

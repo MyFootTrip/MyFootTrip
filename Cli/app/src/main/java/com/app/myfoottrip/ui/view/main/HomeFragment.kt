@@ -87,11 +87,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         val board = Board(1,1,"test1","test",Date(0),"내가 제일 재밌었던 여행","메모"
         ,arrayListOf("https://www.innp.co.kr/images/main/07.jpg"),
-            Travel("2","대구,경산",Date(0),Date(0),"혼자여행,커플여행", arrayListOf()),10,4)
+            Travel(1,2, arrayListOf("대구","경산"),Date(0),Date(0),arrayListOf()),10,4)
 
         val board2 = Board(1,1,"test1","test",Date(0),"내가 제일 재밌었던 여행","메모"
             ,arrayListOf("https://www.innp.co.kr/images/main/07.jpg"),
-            Travel("1","대구,경산",Date(0),Date(0),"혼자여행,커플여행", arrayListOf()),10,4)
+            Travel(1,1,arrayListOf("대구","경산"),Date(0),Date(0),arrayListOf()),10,4)
 
         boardList.add(board)
         boardList.add(board2)
@@ -302,7 +302,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             mainActivity.finishLoadingIGB()
         }
     } // 게시물 전체 받아오기
-
 
     companion object {
         val themeList = arrayOf("혼자 왔니","커플 여행","효도 하자","우정 여행","직장 동료와 함께","가족과 같이")

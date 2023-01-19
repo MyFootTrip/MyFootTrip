@@ -10,7 +10,6 @@ import com.app.myfoottrip.databinding.ListItemTravelBinding
 import com.app.myfoottrip.util.TimeUtils
 import com.bumptech.glide.Glide
 
-private const val TAG= "areum"
 // 0 : 여정 선택, 1: 여정 보기
 class TravelAdapter(private var travelList : ArrayList<Travel> = arrayListOf(),
                     private val type : Int = 1) : RecyclerView.Adapter<TravelAdapter.TravelHolder>() {
@@ -29,7 +28,6 @@ class TravelAdapter(private var travelList : ArrayList<Travel> = arrayListOf(),
                     chipTravelSelect.text = "삭제"
                 }
 
-                Log.d(TAG, "bindInfo:[${position}] - selected ${selected}")
                 chipTravelSelect.isChecked = (selected == position) //선택은 하나만 하도록
 
                 Glide.with(itemView)
@@ -37,7 +35,7 @@ class TravelAdapter(private var travelList : ArrayList<Travel> = arrayListOf(),
                     .centerCrop()
                     .into(ivTravel)
 
-                tvTravelName.text = travelDto.location
+                tvTravelName.text = travelDto.location.joinToString(", ")
                 tvTravelDate.text = "${TimeUtils.getDateString(travelDto.startDate)} - ${TimeUtils.getDateString(travelDto.endDate)}"
 
                 clTravelItem.setOnClickListener {

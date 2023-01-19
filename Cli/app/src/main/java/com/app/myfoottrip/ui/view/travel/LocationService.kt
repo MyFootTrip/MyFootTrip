@@ -56,7 +56,7 @@ class LocationService : Service() {
                                 return@apply
                             }
                         }
-                        insertLocation( Location(null, latitude, longitude, time) )
+                        insertLocation( Location(null, null, latitude, longitude, time,"주소") ) //TODO :
                         val count = getCount()
                         Log.d(TAG, "DB에 들어감 COUNT : $count")
                     }

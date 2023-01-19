@@ -23,7 +23,7 @@ class PlaceAdapter(var placeList:List<Place>) : RecyclerView.Adapter<PlaceAdapte
             saveDate.text = place.saveDate.toString()
 
             itemView.setOnClickListener{
-                itemClickListner.onClick(it, layoutPosition,place.placeId)
+                itemClickListner.onClick(it, layoutPosition,place.placeId!!)
             }
         }
     }

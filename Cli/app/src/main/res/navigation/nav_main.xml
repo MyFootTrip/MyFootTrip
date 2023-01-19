@@ -9,7 +9,7 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.app.myfoottrip.ui.view.main.MainFragment"
-        android:label="MainFragment">
+        android:label="MainFragmentDirection">
         <action
             android:id="@+id/action_mainFragment_to_boardFragment"
             app:destination="@id/boardFragment" />
