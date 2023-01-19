@@ -1,4 +1,4 @@
-package com.app.myfoottrip.data.model.dto
+package com.app.myfoottrip.data.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

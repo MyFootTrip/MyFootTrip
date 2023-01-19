@@ -3,7 +3,7 @@ package com.app.myfoottrip.data.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.app.myfoottrip.data.model.dto.Location
+import com.app.myfoottrip.data.dto.Location
 
 @Dao
 interface LocationDao {

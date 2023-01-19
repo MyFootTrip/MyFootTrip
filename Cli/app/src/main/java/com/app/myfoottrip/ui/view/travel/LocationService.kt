@@ -14,7 +14,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import com.app.myfoottrip.data.model.dto.Location
+import com.app.myfoottrip.data.dto.Location
 import com.app.myfoottrip.data.repository.AppDatabase
 import com.google.android.gms.location.*
 import kotlinx.coroutines.CoroutineScope

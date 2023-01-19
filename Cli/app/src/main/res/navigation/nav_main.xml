@@ -38,6 +38,9 @@
         <action
             android:id="@+id/action_travelSelectFragment_to_travelLocationSelectFragment"
             app:destination="@id/travelLocationSelectFragment" />
+        <action
+            android:id="@+id/action_travelSelectFragment_to_createBoardFragment"
+            app:destination="@id/createBoardFragment" />
     </fragment>
     <fragment
         android:id="@+id/travelLocationSelectFragment"

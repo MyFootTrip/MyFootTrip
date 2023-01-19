@@ -93,7 +93,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
 
     //댓글 입력창 생성
     private fun initCommentInput(){
-        val inputDialog = CommentInputDialog("입력하기", object : CommentInputDialog.OnClickListener {
+        val inputDialog = CommentInputDialog(object : CommentInputDialog.OnClickListener {
             override fun onClick(dialog: CommentInputDialog) {
                 showToast("${dialog.comment.text}", ToastType.SUCCESS, false)
                 dialog.dismiss()

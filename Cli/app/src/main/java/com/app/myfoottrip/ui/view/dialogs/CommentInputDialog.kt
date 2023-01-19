@@ -1,6 +1,5 @@
 package com.app.myfoottrip.ui.view.dialogs
 
-import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
@@ -8,7 +7,7 @@ import com.app.myfoottrip.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rengwuxian.materialedittext.MaterialEditText
 
-class CommentInputDialog(private val doneText: String, private val listener: OnClickListener) :
+class CommentInputDialog(private val listener: OnClickListener) :
     BottomSheetDialogFragment(),
     View.OnClickListener {
 
