@@ -33,17 +33,26 @@ class UserRepository {
 
     // 이메일 중복 체크
     suspend fun checkUsedEmailId(emailId: Email) {
-        val response = userApi.isUsedEmailId(emailId)
 
-        // 처음은 Loading 상태로 지정
-        _userResponseLiveData.postValue(NetworkResult.Loading())
+        try {
+            val response = userApi.isUsedEmailId(emailId)
 
-        if (response.isSuccessful && response.body() != null) {
-            _userResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-        } else if (response.errorBody() != null) {
-            _userResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
-        } else {
-            _userResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+            // 처음은 Loading 상태로 지정
+            _userResponseLiveData.postValue(NetworkResult.Loading())
+
+            if (response.isSuccessful && response.body() != null) {
+                _userResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+            } else if (response.errorBody() != null) {
+                _userResponseLiveData.postValue(
+                    NetworkResult.Error(
+                        response.errorBody()!!.string()
+                    )
+                )
+            } else {
+                _userResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+            }
+        } catch (e: java.lang.Exception) {
+
         }
 
     } // End of checkEmailId

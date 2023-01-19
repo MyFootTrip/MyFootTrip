@@ -10,7 +10,7 @@ interface TokenApi {
     // refreshToken을 제출해서 accessToken을 발급받는 API
     @POST("token/refresh/")
     suspend fun refreshTokenAvailableCheck(
-        @Body refresh_token: Token
-    ): Response<Token>
+        @Body refresh: String
+    ): Response<String>
 
 }
