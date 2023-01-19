@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.databinding.FragmentMainBinding
@@ -47,8 +48,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
             bottomNavigationView.setOnItemSelectedListener  {
                 navigationSelected(it)
             }
-            addButton.setOnClickListener{
-                findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment)
+            addButton.setOnClickListener{ //여정 기록 -> 여정 선택 화면
+                val bundle = bundleOf("type" to 0)
+                findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment,bundle)
             }
         }
     }

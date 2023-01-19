@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.app.myfoottrip.data.dao.LocationDao
 import com.app.myfoottrip.data.dto.Location
 
-@Database(entities = [Location::class], version = 1)
+@Database(entities = [Location::class], version = 2)
 abstract class AppDatabase : RoomDatabase(){
     abstract fun locationDao(): LocationDao
 
@@ -28,6 +28,7 @@ abstract class AppDatabase : RoomDatabase(){
                 context.applicationContext,
                 AppDatabase::class.java,
                 "LocationDB"
-            ).build()
+            ).fallbackToDestructiveMigration()
+            .build()
     }
 }

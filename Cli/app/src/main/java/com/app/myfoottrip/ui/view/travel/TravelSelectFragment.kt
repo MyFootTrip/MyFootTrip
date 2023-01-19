@@ -3,22 +3,19 @@ package com.app.myfoottrip.ui.view.travel
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.databinding.FragmentTravelSelectBinding
 import com.app.myfoottrip.ui.adapter.TravelAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
-import java.text.FieldPosition
 import java.util.*
 import kotlin.collections.ArrayList
 
 class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     FragmentTravelSelectBinding::bind, R.layout.fragment_travel_select
 ) {
-    private var type = 0 // 0 : 여정 선택, 1: 여정 보기
+    private var type = 0 // 0 : 여정 기록, 1 : 마이페이지, 2 : 게시글 작성
 
     private var boardList : ArrayList<Travel> = arrayListOf()
     private lateinit var travelAdapter: TravelAdapter
@@ -26,6 +23,9 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialize()
+        //type 받는 코드
+        type = requireArguments().getInt("type")
+        Log.d(TAG, "onViewCreated: type : $type")
     }
 
     private fun initialize(){
@@ -33,9 +33,11 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             binding.tvTravelTitle.text = "여정을 선택해주세요"
             binding.btnSave.visibility = View.VISIBLE
             binding.btnSave.text = "+ 여정 새로 만들기"
-        }else{ //여정 관리 부분
+        }else if(type == 1){ //여정 관리 부분
             binding.tvTravelTitle.text = "나의 여정"
             binding.btnSave.visibility = View.GONE
+        }else{ //게시글
+
         }
         dumiSet()
         initAdapter()
@@ -76,25 +78,39 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
     private fun dumiSet(){
         boardList.add(
-            Travel("0", "서울, 부산", Date(1234564),Date(12645648), arrayListOf()),
+            Travel(
+                1,0, arrayListOf("서울", "부산"), Date(1234564),Date(12645648), arrayListOf()
+            ),
         )
         boardList.add(
-            Travel("1", "대구, 부산", Date(16548946),Date(23551651),arrayListOf()),
+            Travel(
+                1,1, arrayListOf("서울", "부산"), Date(16548946),Date(23551651),arrayListOf()
+            ),
         )
         boardList.add(
-            Travel("1", "대구, 부산", Date(16548946),Date(23551651), arrayListOf()),
+            Travel(
+                1,1, arrayListOf("서울", "부산"), Date(16548946),Date(23551651),arrayListOf()
+            ),
         )
         boardList.add(
-            Travel("1", "대구, 부산", Date(16548946),Date(23551651),arrayListOf()),
+            Travel(
+                1,1, arrayListOf("서울", "부산"), Date(16548946),Date(23551651), arrayListOf()
+            ),
         )
         boardList.add(
-            Travel("1", "대구, 부산", Date(16548946),Date(23551651), arrayListOf()),
+            Travel(
+                1,1, arrayListOf("서울", "부산"), Date(16548946),Date(23551651),arrayListOf()
+            ),
         )
         boardList.add(
-            Travel("1", "대구, 부산", Date(16548946),Date(23551651),arrayListOf()),
+            Travel(
+                1,1, arrayListOf("서울", "부산"), Date(16548946),Date(23551651), arrayListOf()
+            ),
         )
         boardList.add(
-            Travel("1", "대구, 부산", Date(16548946),Date(23551651), arrayListOf()),
+            Travel(
+                1,1, arrayListOf("서울", "부산"), Date(16548946),Date(23551651), arrayListOf()
+            ),
         )
     }
 

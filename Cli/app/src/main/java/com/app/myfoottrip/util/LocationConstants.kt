@@ -6,17 +6,22 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import com.app.myfoottrip.ui.view.travel.LocationService
 import com.app.myfoottrip.ui.view.travel.TAG
+import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
+import com.naver.maps.geometry.LatLng
 
 object LocationConstants {
     val LOCATION_SERVICE_ID = 175
 
     private var isConService = false
     private var locationService : LocationService? = null
+    private var mFusedLocationClient : FusedLocationProviderClient? = null
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -43,9 +48,36 @@ object LocationConstants {
         }
     }
 
-    fun getNowLocation(){
-        getLocationPermission {
+    fun getNowLocation(context: Context){
+        var locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            smallestDisplacement = 10.0f
+        }
+        val builder = LocationSettingsRequest.Builder()
+        builder.addLocationRequest(locationRequest)
 
+        mFusedLocationClient = getFusedLocationProviderClient(context)
+        getLocationPermission {
+            mFusedLocationClient?.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.myLooper()!!
+            )
+        }
+    }
+
+    var locationCallback:LocationCallback = object :LocationCallback(){
+        override fun onLocationResult(p0: LocationResult) {
+            super.onLocationResult(p0)
+            val locationList = p0.locations
+            if(locationList.size > 0){
+                val location = locationList[locationList.size - 1]
+                //TODO : 저장
+                Log.d(TAG, "onLocationResult: ${location.latitude}, ${location.longitude}")
+                if(mFusedLocationClient != null){
+                    mFusedLocationClient!!.removeLocationUpdates(this)
+                }
+            }
         }
     }
 

@@ -26,7 +26,7 @@ class BoardViewModel : ViewModel() {
 
     var board = Board(
         -1, -1, "", "", Date(0), "","", "", arrayListOf(), Travel(
-            "", "", Date(0), Date(0), arrayListOf(),
+            1, 1, arrayListOf(), Date(0), Date(0), arrayListOf(),
         ), 0, 0
     )
 
