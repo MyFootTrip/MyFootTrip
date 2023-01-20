@@ -35,6 +35,16 @@ class SharedPreferencesUtil(context: Context) {
         }
     } // End of getUserToken
 
+    fun addUserRefreshToken(refresh_token: String) {
+        val editor = preferences.edit()
+        editor.putString(REFRESH_TOKEN, refresh_token)
+        editor.apply()
+    } // End of addUserRefreshToken
+
+    fun getUserRefreshToken(): String {
+        return preferences.getString(REFRESH_TOKEN, "").toString()
+    } // End of getUserRefreshToken
+
     fun deleteUser() {
         val editor = preferences.edit()
         editor.clear()

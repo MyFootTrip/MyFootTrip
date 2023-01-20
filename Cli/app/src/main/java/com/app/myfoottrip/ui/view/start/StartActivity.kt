@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.dto.Refresh
 import com.app.myfoottrip.data.viewmodel.StartViewModel
 import com.app.myfoottrip.ui.view.dialogs.ServiceClauseCustomDialog
 import com.app.myfoottrip.util.NetworkResult
@@ -26,15 +27,13 @@ class StartActivity : AppCompatActivity() {
 
         // SharedPreference에 토큰이 있는지 없는지를 확인해야됨.
         sharedPreferencesUtil = SharedPreferencesUtil(this)
-        val userToken = sharedPreferencesUtil.getUserToken()
+        val refreshToken = sharedPreferencesUtil.getUserRefreshToken()
 
         // 토큰이 있을 경우 해당 refreshToken을 기준으로 유효성 체크를 실시해서
         // 토큰의 기한이 맞을 경우 accessToken을 발급 받을 수 있는지를 확인함
-        if (userToken.refresh_token != "") {
-            startViewModel.refreshTokenValidCheck(userToken.refresh_token.toString())
+        if (refreshToken != "") {
+            startViewModel.refreshTokenValidCheck(Refresh(refreshToken))
         }
-
-        Log.d(TAG, "StartActivity : 실행됨 ")
 
         refreshTokenValidCheckObserver()
     } // End of onCreate

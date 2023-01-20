@@ -3,6 +3,7 @@ package com.app.myfoottrip.data.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
+import com.app.myfoottrip.data.dto.Refresh
 import com.app.myfoottrip.data.dto.Token
 import com.app.myfoottrip.network.api.TokenApi
 import com.app.myfoottrip.util.NetworkResult
@@ -16,7 +17,7 @@ class StartRepository {
         get() = _refreshTokenResponseLiveData
 
     // refreshToken 유효성 체크 통신
-    suspend fun checkRefreshToken(refresh_token: String) {
+    suspend fun checkRefreshToken(refresh_token: Refresh) {
         val response = tokenApi.refreshTokenAvailableCheck(refresh_token)
 
         _refreshTokenResponseLiveData.postValue(NetworkResult.Loading())

@@ -3,6 +3,7 @@ package com.app.myfoottrip.data.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.myfoottrip.data.dto.Refresh
 import com.app.myfoottrip.data.repository.StartRepository
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.launch
@@ -15,7 +16,7 @@ class StartViewModel : ViewModel() {
     val refreshTokenValidCheckResponseLiveData: LiveData<NetworkResult<String>>
         get() = startRepository.refreshTokenResponseLiveData
 
-    fun refreshTokenValidCheck(refreshToken: String) {
+    fun refreshTokenValidCheck(refreshToken: Refresh) {
         viewModelScope.launch {
             startRepository.checkRefreshToken(refreshToken)
         }

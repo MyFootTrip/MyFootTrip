@@ -168,10 +168,8 @@ class JoinAgeFragment : Fragment() {
 
                     // refreshToken & accessToken
                     // savedInstance 저장하기
-                    Application.sharedPreferencesUtil.addUserToken(
-                        Token(
-                            it.data!!.access_token, it.data.refresh_token
-                        )
+                    Application.sharedPreferencesUtil.addUserRefreshToken(
+                        "${it.data!!.refresh_token}"
                     )
 
                     val intent = Intent(activity, MainActivity::class.java)
