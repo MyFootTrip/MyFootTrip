@@ -9,10 +9,12 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Location
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.dto.Travel
-import com.app.myfoottrip.data.dto.viewmodel.TravelViewModel
+import com.app.myfoottrip.data.viewmodel.TravelViewModel
+import com.app.myfoottrip.data.repository.AppDatabase
 import com.app.myfoottrip.databinding.FragmentTravelLocationWriteBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.LocationConstants
+import com.app.myfoottrip.util.TimeUtils
 import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.coroutines.CoroutineScope
@@ -20,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
+private const val TAG = "TravelLocationWriteFrag_myfoottrip"
 class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBinding>(
     FragmentTravelLocationWriteBinding::bind, R.layout.fragment_travel_location_write
 ), OnMapReadyCallback {
@@ -44,10 +47,12 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         initData()
     }
 
-    private fun initData(){
-        binding.tvStartTime.text = "04:20"
+    private fun initData() {
+        binding.tvStartTime.text = TimeUtils.getDateTimeString(System.currentTimeMillis())
+        if (travelViewModel.selectedtravel == null) {
+            //TODO : 기존 여정 세팅
 
-
+        }
     }
 
     private fun initListener(){
@@ -58,7 +63,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             }
             fabStop.setOnClickListener{ //정지 및 저장
                 //위치 기록 정지 및 저장
-                LocationConstants.stopLocation()
+                saveData()
                 showToast("성공적으로 저장했습니다.",ToastType.SUCCESS)
 
                 findNavController().popBackStack()
@@ -71,6 +76,19 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             btnAddPoint.setOnClickListener{
                 LocationConstants.getNowLocation(requireContext())
             }
+        }
+    }
+
+    private fun saveData(){
+        LocationConstants.stopLocation()
+        CoroutineScope(Dispatchers.IO).launch {
+            val list = AppDatabase.getInstance(requireContext()).locationDao().getAll()
+            var placeList = arrayListOf<Place>()
+            travelViewModel.makeTravel(
+                Travel(
+                    1, null, arrayListOf("서울"), Date(),Date(), placeList
+                )
+            )
         }
     }
 

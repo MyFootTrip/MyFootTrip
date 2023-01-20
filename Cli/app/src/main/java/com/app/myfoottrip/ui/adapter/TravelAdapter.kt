@@ -22,10 +22,10 @@ class TravelAdapter(private var travelList : ArrayList<Travel> = arrayListOf(),
     inner class TravelHolder(private val binding : ListItemTravelBinding) : RecyclerView.ViewHolder(binding.root){
         fun bindInfo(position : Int, travelDto : Travel){
             binding.apply {
-                if(type == 0){ //여정 선택
-                    chipTravelSelect.text = "선택"
-                }else{ //여정 삭제
+                if(type == 1){ //여정 선택
                     chipTravelSelect.text = "삭제"
+                }else{ //여정 삭제
+                    chipTravelSelect.text = "선택"
                 }
 
                 chipTravelSelect.isChecked = (selected == position) //선택은 하나만 하도록

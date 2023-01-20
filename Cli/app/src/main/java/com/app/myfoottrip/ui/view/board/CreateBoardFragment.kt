@@ -1,5 +1,6 @@
 package com.app.myfoottrip.ui.view.board
 
+
 import android.app.Activity
 import android.content.Context
 import android.net.Uri

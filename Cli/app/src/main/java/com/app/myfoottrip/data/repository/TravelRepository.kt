@@ -1,35 +1,66 @@
-package com.app.myfoottrip.data.repository
-
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.data.dto.Travel
-import com.app.myfoottrip.network.api.TravelApi
+import com.app.myfoottrip.network.service.TravelService
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-private const val TAG = "TravelRepository_areum"
-class TravelRepository {
-    private val travelApi = Application.retrofit.create(TravelApi::class.java)
+private const val TAG = "TravelRepository_싸피"
 
+class TravelRepository {
+    private val travelService = Application.retrofit.create(TravelService::class.java)
+
+    //여정 생성 값
     private val _travelResponseLiveData = MutableLiveData<NetworkResult<Boolean>>()
     val travelResponseLiveData: LiveData<NetworkResult<Boolean>>
         get() = _travelResponseLiveData
 
+    //유저 여정 값
+    private val _travelListResponseLiveData = MutableLiveData<NetworkResult<MutableList<Travel>>>()
+    val travelListResponseLiveData: LiveData<NetworkResult<MutableList<Travel>>>
+        get() = _travelListResponseLiveData
+
+    // 각 유저별 여행 기록 정보를 가져옴
+    suspend fun getUserTravel(userId: Int) {
+        val response = travelService.getUserTravel(userId)
+        Log.d(TAG, "getUserTravel Response: ${response}")
+
+        // 처음은 Loading 상태로 지정
+        _travelListResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _travelListResponseLiveData.value = (NetworkResult.Success(response.body()!!))
+            Log.d(TAG, "getUserTravel: ${_travelListResponseLiveData.value!!.data} ")
+        } else if (response.errorBody() != null) {
+            _travelListResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _travelListResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
+    }
+
     //여정 조회
-    suspend fun getTravel(travelId : Int) : Travel?{
+    suspend fun getTravel(travelId: Int): Travel? {
         var result: Travel? = null
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             try {
-                val response = travelApi.getTravel(travelId)
-                if(response.isSuccessful){
+                val response = travelService.getTravel(travelId)
+                if (response.isSuccessful) {
                     result = response.body() as Travel
                 } else {
                     Log.d(TAG, "getTravel: response 실패 ${response.errorBody().toString()}")
                 }
-            }catch (e : Exception){
+            } catch (e: Exception) {
                 Log.d(TAG, "getTravel: $e")
             }
         }
@@ -38,8 +69,8 @@ class TravelRepository {
     }
 
     //여정 생성
-    suspend fun sendTravel(travel: Travel){
-        val response = travelApi.makeTravel(travel)
+    suspend fun sendTravel(travel: Travel) {
+        val response = travelService.makeTravel(travel)
 
         _travelResponseLiveData.postValue(NetworkResult.Loading())
 
@@ -62,7 +93,7 @@ class TravelRepository {
     }
 
     //여정 수정
-    suspend fun updateTravel(travel: Travel){
-
-    }
+//    suspend fun updateTravel(travel: Travel) {
+//
+//    }
 }

@@ -9,13 +9,12 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import com.app.myfoottrip.ui.view.travel.LocationService
-import com.app.myfoottrip.ui.view.travel.TAG
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
-import com.naver.maps.geometry.LatLng
 
+private const val TAG = "LocationConstants_myfoottrip"
 object LocationConstants {
     val LOCATION_SERVICE_ID = 175
 

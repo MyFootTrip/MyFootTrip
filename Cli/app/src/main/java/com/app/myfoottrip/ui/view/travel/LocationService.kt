@@ -27,7 +27,7 @@ import com.app.myfoottrip.util.LocationConstants
 import com.app.myfoottrip.util.TimeUtils
 import java.lang.Math.abs
 
-const val TAG = "areum_Service"
+private const val TAG : String = "Service_myfoottrip"
 class LocationService : Service() {
     val binder = MyServiceBinder()
 
