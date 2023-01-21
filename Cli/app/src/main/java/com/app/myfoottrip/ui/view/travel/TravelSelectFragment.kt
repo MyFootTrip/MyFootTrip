@@ -119,7 +119,8 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data != null) {
-                        val boardList = it.data as ArrayList<Travel>
+                        val boardList = ArrayList<Travel>()
+                        boardList.add(it.data!!)
                         travelAdapter.setList(boardList)
                         travelAdapter.notifyDataSetChanged()
                     }

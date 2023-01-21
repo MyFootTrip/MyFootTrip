@@ -3,10 +3,9 @@ package com.app.myfoottrip.data.dto
 import java.util.Date
 
 data class Travel @JvmOverloads constructor(
-    val userId : Int,
-    val travelId : Int?,
-    val location : ArrayList<String>,
-    val startDate : Date,
-    val endDate : Date,
-    val placeList : ArrayList<Place>
+    var travelId: Int? = 0,
+    var location: ArrayList<String>? = null,
+    var startDate: Date? = null,
+    var endDate: Date? = null,
+    var placeList: ArrayList<Place>? = null
 )

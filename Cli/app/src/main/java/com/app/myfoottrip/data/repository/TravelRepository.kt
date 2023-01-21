@@ -19,21 +19,21 @@ class TravelRepository {
         get() = _travelResponseLiveData
 
     //유저 여정 값
-    private val _travelListResponseLiveData = MutableLiveData<NetworkResult<MutableList<Travel>>>()
-    val travelListResponseLiveData: LiveData<NetworkResult<MutableList<Travel>>>
+    private val _travelListResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
+    val travelListResponseLiveData: LiveData<NetworkResult<Travel>>
         get() = _travelListResponseLiveData
 
     // 각 유저별 여행 기록 정보를 가져옴
     suspend fun getUserTravel(userId: Int) {
         val response = travelService.getUserTravel(userId)
-        Log.d(TAG, "getUserTravel Response: ${response}")
 
+        Log.d(TAG, "getUserTravel: ${response.body()!!}")
+        
         // 처음은 Loading 상태로 지정
         _travelListResponseLiveData.postValue(NetworkResult.Loading())
 
         if (response.isSuccessful && response.body() != null) {
-            _travelListResponseLiveData.value = (NetworkResult.Success(response.body()!!))
-            Log.d(TAG, "getUserTravel: ${_travelListResponseLiveData.value!!.data} ")
+            _travelListResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
         } else if (response.errorBody() != null) {
             _travelListResponseLiveData.postValue(
                 NetworkResult.Error(

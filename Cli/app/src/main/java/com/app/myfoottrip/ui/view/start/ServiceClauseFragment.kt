@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.model.viewmodel.JoinViewModel
+import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentServiceClauseBinding
 
 

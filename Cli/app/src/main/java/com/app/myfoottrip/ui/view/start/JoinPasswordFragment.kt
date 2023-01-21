@@ -2,11 +2,9 @@ package com.app.myfoottrip.ui.view.start
 
 import android.content.Context
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -15,9 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.model.viewmodel.JoinViewModel
+import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinPasswordBinding
-import com.app.myfoottrip.util.showToastMessage
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 

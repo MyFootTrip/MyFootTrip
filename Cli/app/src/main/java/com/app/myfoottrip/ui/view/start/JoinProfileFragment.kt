@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.model.viewmodel.JoinViewModel
+import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinProfileBinding
 import com.app.myfoottrip.util.ChangeMultipartUtil
 import okhttp3.MediaType.Companion.toMediaTypeOrNull

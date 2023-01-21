@@ -35,8 +35,8 @@ class TravelAdapter(private var travelList : ArrayList<Travel> = arrayListOf(),
                     .centerCrop()
                     .into(ivTravel)
 
-                tvTravelName.text = travelDto.location.joinToString(", ")
-                tvTravelDate.text = "${TimeUtils.getDateString(travelDto.startDate)} - ${TimeUtils.getDateString(travelDto.endDate)}"
+                tvTravelName.text = travelDto.location!!.joinToString(", ")
+                tvTravelDate.text = "${TimeUtils.getDateString(travelDto.startDate!!)} - ${TimeUtils.getDateString(travelDto.endDate!!)}"
 
                 clTravelItem.setOnClickListener {
                     itemClickListner.onAllClick(position, travelDto)

@@ -6,8 +6,8 @@ import retrofit2.http.*
 
 interface TravelService {
     //유저별 여정 조회
-    @GET("/community/travel/user/{userId}")
-    suspend fun getUserTravel(@Path("userId") userId : Int) : Response<ArrayList<Travel>>
+    @GET("/community/traveldetail/{userId}/")
+    suspend fun getUserTravel(@Path("userId") userId : Int) : Response<Travel>
 
     // 여정 조회
     @GET("/community/traveldetail/{travelId}")

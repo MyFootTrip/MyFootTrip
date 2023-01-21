@@ -1,4 +1,4 @@
-package com.app.myfoottrip.data.model.viewmodel
+package com.app.myfoottrip.data.viewmodel
 
 
 import android.net.Uri

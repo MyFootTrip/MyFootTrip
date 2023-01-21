@@ -27,7 +27,7 @@ class TravelViewModel : ViewModel() {
         get() = _travelData
 
     //유저별 여정 조회 값
-    val travelUserData: LiveData<NetworkResult<MutableList<Travel>>>
+    val travelUserData: LiveData<NetworkResult<Travel>>
         get() = travelRepository.travelListResponseLiveData
 
     //여정 기록 state
@@ -42,9 +42,9 @@ class TravelViewModel : ViewModel() {
     //유저별 여정 확인
     fun getUserTravel(userId: Int) {
         viewModelScope.launch {
-            Log.d(TAG, "들어가기 전: ${travelUserData.value}")
+            Log.d(TAG, " getUserTravel 들어가기 전: ${travelUserData.value}")
             TravelRepository().getUserTravel(userId)
-            Log.d(TAG, "나옴 : ${travelUserData.value}")
+            Log.d(TAG, "getUserTravel 나옴 : ${travelUserData.value}")
         }
     }
 

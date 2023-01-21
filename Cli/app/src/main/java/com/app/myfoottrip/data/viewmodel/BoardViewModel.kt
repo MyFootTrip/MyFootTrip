@@ -25,12 +25,12 @@ class BoardViewModel : ViewModel() {
         get() = boardRepository.boardListResponseLiveData
 
     var board = Board(
-        -1, -1, "", "", Date(0), "","", "", arrayListOf(), Travel(
-            1, 1, arrayListOf(), Date(0), Date(0), arrayListOf(),
+        -1, -1, "", "", Date(0), "", "", "", arrayListOf(), Travel(
+            1, arrayListOf(), Date(0), Date(0), arrayListOf(),
         ), 0, 0
     )
 
-    val isCreated : LiveData<NetworkResult<Board>>
+    val isCreated: LiveData<NetworkResult<Board>>
         get() = boardRepository.createResponseLiveData
 
 
@@ -42,12 +42,11 @@ class BoardViewModel : ViewModel() {
     }
 
     // 게시물 생성
-    fun createBoard(board: Board){
+    fun createBoard(board: Board) {
         viewModelScope.launch {
             boardRepository.createBoard(board)
         }
     }
-
 
 
 } // End of BoardViewModel

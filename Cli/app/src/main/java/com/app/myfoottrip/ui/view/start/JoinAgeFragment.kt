@@ -13,8 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Token
-import com.app.myfoottrip.data.model.viewmodel.JoinViewModel
+import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinAgeBinding
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
@@ -22,9 +21,6 @@ import com.app.myfoottrip.util.showToastMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 
 private const val TAG = "JoinAgeFragment_싸피"
 

@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 private const val TAG = "TravelLocationWriteFrag_myfoottrip"
+
 class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBinding>(
     FragmentTravelLocationWriteBinding::bind, R.layout.fragment_travel_location_write
 ), OnMapReadyCallback {
@@ -30,7 +31,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     private val travelViewModel by activityViewModels<TravelViewModel>()
     private var mapFragment: MapFragment = MapFragment()
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
-    private lateinit var locationSource : FusedLocationSource
+    private lateinit var locationSource: FusedLocationSource
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,7 +39,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         initialize()
     }
 
-    private fun initialize(){
+    private fun initialize() {
         changeMode(true)
         LocationConstants.getLocationPermission {
             initMap()
@@ -55,16 +56,16 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         }
     }
 
-    private fun initListener(){
+    private fun initListener() {
         binding.apply {
             fabPause.setOnClickListener { //일시정지
                 LocationConstants.stopLocation()
                 changeMode(false)
             }
-            fabStop.setOnClickListener{ //정지 및 저장
+            fabStop.setOnClickListener { //정지 및 저장
                 //위치 기록 정지 및 저장
                 saveData()
-                showToast("성공적으로 저장했습니다.",ToastType.SUCCESS)
+                showToast("성공적으로 저장했습니다.", ToastType.SUCCESS)
 
                 findNavController().popBackStack()
             }
@@ -73,31 +74,31 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 showToast("위치 기록을 시작합니다.", ToastType.SUCCESS)
                 changeMode(true)
             }
-            btnAddPoint.setOnClickListener{
+            btnAddPoint.setOnClickListener {
                 LocationConstants.getNowLocation(requireContext())
             }
         }
     }
 
-    private fun saveData(){
+    private fun saveData() {
         LocationConstants.stopLocation()
         CoroutineScope(Dispatchers.IO).launch {
             val list = AppDatabase.getInstance(requireContext()).locationDao().getAll()
             var placeList = arrayListOf<Place>()
             travelViewModel.makeTravel(
                 Travel(
-                    1, null, arrayListOf("서울"), Date(),Date(), placeList
+                    null, arrayListOf("서울"), Date(), Date(), placeList
                 )
             )
         }
     }
 
-    private fun initMap(){
+    private fun initMap() {
         Log.d(TAG, "initMap: ")
         // TouchFrameLayout 에 mapFragment 올려놓기
         val fragmentTransaction = childFragmentManager.beginTransaction()
-        if(mapFragment.isAdded){
-            fragmentTransaction.remove( mapFragment )
+        if (mapFragment.isAdded) {
+            fragmentTransaction.remove(mapFragment)
             mapFragment = MapFragment()
         }
         fragmentTransaction.add(R.id.map_view, mapFragment).commit()
@@ -113,15 +114,15 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
 
-        locationSource = FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
+        locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
     }
 
 
     //기록 중인지 일시정지 중인지 화면 전환하는 코드
-    private fun changeMode(type : Boolean){ // true : 진행중 false : 일시정지
+    private fun changeMode(type: Boolean) { // true : 진행중 false : 일시정지
         binding.apply {
-            if(type){
+            if (type) {
                 clBackground.background = requireContext().getDrawable(R.color.main)
                 tvStartTime.setTextColor(requireContext().getColor(R.color.white))
                 tvStartTimeLabel.setTextColor(requireContext().getColor(R.color.white))
@@ -130,7 +131,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 fabRestart.visibility = View.GONE
                 fabStop.visibility = View.GONE
 
-            }else{
+            } else {
                 clBackground.background = requireContext().getDrawable(R.color.white)
                 tvStartTime.setTextColor(requireContext().getColor(R.color.black))
                 tvStartTimeLabel.setTextColor(requireContext().getColor(R.color.black))
@@ -142,18 +143,18 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         }
     }
 
-    private fun makeTravelData(){ //TODO : DB에서 값 가져와서 넣기
+    private fun makeTravelData() { //TODO : DB에서 값 가져와서 넣기
         CoroutineScope(Dispatchers.IO).launch {
             var placeList = arrayListOf<Place>()
             travelViewModel.makeTravel(
                 Travel(
-                    1, null, arrayListOf("서울"), Date(),Date(), placeList
+                    null, arrayListOf("서울"), Date(), Date(), placeList
                 )
             )
         }
     }
 
-    private fun locationToPlace(location : Location) : Place{
+    private fun locationToPlace(location: Location): Place {
         return Place(
             location.placeId,
             null,
