@@ -1,7 +1,10 @@
+package com.app.myfoottrip.data.repository
+
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
+import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.network.service.TravelService
 import com.app.myfoottrip.util.NetworkResult
@@ -19,16 +22,14 @@ class TravelRepository {
         get() = _travelResponseLiveData
 
     //유저 여정 값
-    private val _travelListResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
-    val travelListResponseLiveData: LiveData<NetworkResult<Travel>>
+    private val _travelListResponseLiveData = MutableLiveData<NetworkResult<ArrayList<Travel>>>()
+    val travelListResponseLiveData: LiveData<NetworkResult<ArrayList<Travel>>>
         get() = _travelListResponseLiveData
 
     // 각 유저별 여행 기록 정보를 가져옴
     suspend fun getUserTravel(userId: Int) {
         val response = travelService.getUserTravel(userId)
 
-        Log.d(TAG, "getUserTravel: ${response.body()!!}")
-        
         // 처음은 Loading 상태로 지정
         _travelListResponseLiveData.postValue(NetworkResult.Loading())
 

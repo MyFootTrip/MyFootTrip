@@ -6,18 +6,18 @@ import retrofit2.http.*
 
 interface TravelService {
     //유저별 여정 조회
-    @GET("/community/traveldetail/{userId}/")
-    suspend fun getUserTravel(@Path("userId") userId : Int) : Response<Travel>
+    @GET("/community/travel/user/{userId}")
+    suspend fun getUserTravel(@Path("userId") userId: Int): Response<ArrayList<Travel>>
 
     // 여정 조회
     @GET("/community/traveldetail/{travelId}")
-    suspend fun getTravel(@Path("travelId") travelId : Int) : Response<Travel>
+    suspend fun getTravel(@Path("travelId") travelId: Int): Response<Travel>
 
     // 여정 생성
     @POST("/community/travel/create/")
-    suspend fun makeTravel(@Body travel: Travel) : Response<Unit>
+    suspend fun makeTravel(@Body travel: Travel): Response<Unit>
 
     // 여정 수정
     @PUT("/community/traveldetail/{travelId}")
-    suspend fun updateTravel(@Path("travelId") travelId : Int, @Body travel: Travel) : Response<Unit>
+    suspend fun updateTravel(@Path("travelId") travelId: Int, @Body travel: Travel): Response<Unit>
 }

@@ -17,6 +17,7 @@ import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 private const val TAG = "TravelSelectFragment_싸피"
@@ -35,6 +36,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         type = requireArguments().getInt("type")
         Log.d(TAG, "onViewCreated: type : $type")
         initialize()
+
     } // End of onViewCreated
 
     private fun initialize() {
@@ -120,7 +122,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                 is NetworkResult.Success -> {
                     if (it.data != null) {
                         val boardList = ArrayList<Travel>()
-                        boardList.add(it.data!!)
+                        boardList.addAll(it.data!!)
                         travelAdapter.setList(boardList)
                         travelAdapter.notifyDataSetChanged()
                     }
@@ -137,7 +139,9 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
 
     private fun setData() { //TODO : DB에서 값 가져와서 넣기
-        travelViewModel.getUserTravel(1)
+        CoroutineScope(Dispatchers.IO).launch {
+            travelViewModel.getUserTravel(1)
+        }
     } // End of setData
 
     private fun changeSelected(position: Int) {
