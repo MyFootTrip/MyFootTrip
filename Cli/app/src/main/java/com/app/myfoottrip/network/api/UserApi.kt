@@ -20,7 +20,7 @@ interface UserApi {
     @Multipart
     @POST("registration/")
     suspend fun userJoin(
-        @Part profile_image: MultipartBody.Part,
+        @Part profile_image: MultipartBody.Part?,
         @PartMap join: HashMap<String, RequestBody>,
     ): Response<Token>
 

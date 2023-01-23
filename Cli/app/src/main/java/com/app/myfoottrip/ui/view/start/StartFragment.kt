@@ -142,7 +142,8 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
                             "\n회원번호: ${user.id}" +
                             "\n이메일: ${user.kakaoAccount?.email}" +
                             "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
-                            "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}"
+                            "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}" +
+                            "\n이름 : ${user.kakaoAccount?.name}"
                 )
             }
         }

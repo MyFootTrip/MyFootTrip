@@ -2,6 +2,7 @@ package com.app.myfoottrip.data.viewmodel
 
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,11 +25,6 @@ private const val TAG = "싸피"
 class JoinViewModel : ViewModel() {
     private val userRepository = UserRepository()
 
-    // 휴대폰 인증 상태 체크 LiveData
-    private val _phoneNumberValidation = MutableLiveData<Boolean>()
-    val phoneNumberValidation: LiveData<Boolean>
-        get() = _phoneNumberValidation
-
     // 나이 상태 체크
     private val _ageState =
         MutableLiveData<List<Boolean>>(mutableListOf(false, false, false, false, false, false))
@@ -40,23 +36,10 @@ class JoinViewModel : ViewModel() {
     val isAllCheckedCount: LiveData<Int>
         get() = _isAllCheckedCount
 
-    // 이메일 체크 상태
-    private val _emailCheckSuccess = MutableLiveData(false)
-    val emailCheckSuccess: LiveData<Boolean>
-        get() = _emailCheckSuccess
-
     // 회원가입 하면서 생성되는 전체 유저 정보 LiveData
     private val _wholeJoinUserData = Join("", "")
     val wholeJoinUserData: Join
         get() = _wholeJoinUserData
-
-    private val _joinResponseStatus = MutableLiveData(false)
-    val joinResponseStatus: LiveData<Boolean>
-        get() = _joinResponseStatus
-
-    private val _joinSuccessUserData = MutableLiveData<User>()
-    val joinSuccessUserData: LiveData<User>
-        get() = _joinSuccessUserData
 
 
     // 이메일 중복 체크 변경 테스트 LiveData
@@ -115,10 +98,11 @@ class JoinViewModel : ViewModel() {
 
         viewModelScope.launch {
             userRepository.userJoin(
-                _userProfileImageMultipartBody.value!!,
-                requestHashMap
+                _userProfileImageMultipartBody.value, requestHashMap
             )
         }
+
+
     } // End of userJoin
 
     // 이메일 인증 문자 체크
@@ -140,7 +124,6 @@ class JoinViewModel : ViewModel() {
         tempList[index] = true
         _ageState.value = tempList
     } // End of changeAgeState
-
 
     fun setUserImageUri(imageUri: Uri) {
         _userProfileImage.value = imageUri

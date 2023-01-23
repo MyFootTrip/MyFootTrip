@@ -77,10 +77,6 @@ class JoinPhoneNumberFragment : Fragment() {
             joinViewModel.setPwLiveData(pwOrigin.text.toString(), secondJoinEd.text.toString())
         }
 
-
-        // 전화번호 인증 성공여부 옵저버
-        phoneNumberValidObserver()
-
         passwordEqualCheckObserver()
     } // End of onViewCreated
 
@@ -97,14 +93,6 @@ class JoinPhoneNumberFragment : Fragment() {
         nextButton.isClickable = false
         nextButton.isEnabled = false
     }
-
-    private fun phoneNumberValidObserver() {
-        joinViewModel.phoneNumberValidation.observe(viewLifecycleOwner) {
-            if (joinViewModel.phoneNumberValidation.value == true) {
-                certifyViewSet()
-            }
-        }
-    } // End of phoneNumberValidObserver
 
     private fun certifyViewSet() {
         customViewLayout.findViewById<ConstraintLayout>(R.id.secondTextFieldLayout).visibility =

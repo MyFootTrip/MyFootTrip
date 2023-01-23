@@ -61,7 +61,7 @@ class JoinAgeFragment : Fragment() {
         // 회원가입 성공 여부를 저장하는 viewModel 값을 관찰하는 옵저버 등록
         joinResponseLiveDataObserver()
 
-        // 회원가입 완료 버튼 클릭 이벤트
+        // 회원가입 버튼 클릭 이벤트
         binding.joinNextButton.setOnClickListener {
             binding.joinProgressbar.visibility = View.VISIBLE
             binding.ageGirdlayout.visibility = View.INVISIBLE

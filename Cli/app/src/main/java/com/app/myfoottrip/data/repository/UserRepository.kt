@@ -77,7 +77,7 @@ class UserRepository {
     } // End of checkEmailValidateText
 
     suspend fun userJoin(
-        userProfileImgFile: MultipartBody.Part,
+        userProfileImgFile: MultipartBody.Part?,
         userJoinData: HashMap<String, RequestBody>
     ) {
         val response = userApi.userJoin(

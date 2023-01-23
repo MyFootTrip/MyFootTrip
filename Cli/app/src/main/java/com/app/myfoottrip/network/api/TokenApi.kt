@@ -1,7 +1,7 @@
 package com.app.myfoottrip.network.api
 
-import com.app.myfoottrip.data.dto.Refresh
-import com.app.myfoottrip.data.dto.Token
+import com.app.myfoottrip.data.dto.AccessToken
+import com.app.myfoottrip.data.dto.RefreshToken
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -11,7 +11,7 @@ interface TokenApi {
     // refreshToken을 제출해서 accessToken을 발급받는 API
     @POST("token/refresh/")
     suspend fun refreshTokenAvailableCheck(
-        @Body refresh: Refresh
-    ): Response<String>
+        @Body refreshToken: RefreshToken
+    ): Response<AccessToken>
 
 }

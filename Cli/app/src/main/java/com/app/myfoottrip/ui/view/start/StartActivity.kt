@@ -1,12 +1,11 @@
 package com.app.myfoottrip.ui.view.start
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Refresh
+import com.app.myfoottrip.data.dto.RefreshToken
 import com.app.myfoottrip.data.viewmodel.StartViewModel
 import com.app.myfoottrip.ui.view.dialogs.ServiceClauseCustomDialog
 import com.app.myfoottrip.util.NetworkResult
@@ -18,7 +17,6 @@ private const val TAG = "StartActivity_싸피"
 
 class StartActivity : AppCompatActivity() {
     private lateinit var dialog: ServiceClauseCustomDialog
-    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesUtil: SharedPreferencesUtil
     private val startViewModel: StartViewModel by viewModels()
 
@@ -30,17 +28,15 @@ class StartActivity : AppCompatActivity() {
         sharedPreferencesUtil = SharedPreferencesUtil(this)
         val refreshToken = sharedPreferencesUtil.getUserRefreshToken()
 
+        Log.d(TAG, "refreshToken : $refreshToken")
+
         // 토큰이 있을 경우 해당 refreshToken을 기준으로 유효성 체크를 실시해서
         // 토큰의 기한이 맞을 경우 accessToken을 발급 받을 수 있는지를 확인함
         if (refreshToken != "") {
-            startViewModel.refreshTokenValidCheck(Refresh(refreshToken))
+            startViewModel.refreshTokenValidCheck(RefreshToken(refreshToken))
         }
 
-//        val keyHash = Utility.getKeyHash(this)
-//        Log.d(TAG, "keyHash: ${keyHash}")
-
         refreshTokenValidCheckObserver()
-
     } // End of onCreate
 
     fun showServiceDialog() {
@@ -55,12 +51,12 @@ class StartActivity : AppCompatActivity() {
 
             when (it) {
                 is NetworkResult.Success -> {
-                    if (it.data == "") {
+                    if (it.data!!.access.toString() == "") {
                         this.showToastMessage("빈 값이 넘어옴")
                     }
 
-                    if (it.data != "") {
-                        this.showToastMessage("발급된 토큰 : ${it.data}")
+                    if (it.data!!.access.toString() != "") {
+                        this.showToastMessage("발급된 토큰 : ${it.data!!.access.toString()}")
                     }
                 }
                 is NetworkResult.Error -> {

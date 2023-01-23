@@ -56,6 +56,7 @@
         tools:layout="@layout/fragment_join_profile">
         <action
             android:id="@+id/action_joinProfileFragment_to_joinAgeFragment"
+            app:destination="@id/joinAgeFragment"
             app:enterAnim="@anim/enter_anim"
             app:exitAnim="@anim/exit_anim"
             app:popEnterAnim="@anim/enter_anim"

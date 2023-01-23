@@ -6,11 +6,10 @@ import android.net.Uri
 import android.provider.MediaStore
 
 class ChangeMultipartUtil {
-
     fun changeAbsolutelyPath(path: Uri?, context: Context): String {
-        var proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
-        var c: Cursor? = context.contentResolver.query(path!!, proj, null, null, null)
-        var index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
+        val c: Cursor? = context.contentResolver.query(path!!, proj, null, null, null)
+        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
         c?.moveToFirst()
 
         var result = c?.getString(index!!)

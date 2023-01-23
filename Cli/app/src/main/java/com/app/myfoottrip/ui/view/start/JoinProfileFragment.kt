@@ -5,6 +5,7 @@ import android.app.Activity.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
@@ -23,6 +25,7 @@ import com.app.myfoottrip.util.ChangeMultipartUtil
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
 private const val TAG = "JoinProfileFragment_싸피"
@@ -46,10 +49,6 @@ class JoinProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        binding.joinProfileImagePlusButton.setOnClickListener {
-//            getImage()
-//        }
 
         // 프로필 이미지 추가 버튼 클릭
         binding.joinProfileImagePlusButton.setOnClickListener {
@@ -104,8 +103,6 @@ class JoinProfileFragment : Fragment() {
         if (result.resultCode == RESULT_OK) {
             val imageUri = result.data?.data ?: return@registerForActivityResult
             joinViewModel.setUserImageUri(imageUri)
-
-
         }
     } // End of registerForActivityResult
 
