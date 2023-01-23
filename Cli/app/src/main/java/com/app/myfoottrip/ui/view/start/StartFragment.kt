@@ -5,9 +5,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.viewmodel.KakaoAuthViewModel
 import com.app.myfoottrip.databinding.FragmentStartBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.kakao.sdk.auth.model.OAuthToken
@@ -31,12 +35,11 @@ private const val TAG = "StartFragment_싸피"
 class StartFragment : BaseFragment<FragmentStartBinding>(
     FragmentStartBinding::bind, R.layout.fragment_start
 ) {
+    private val kakaoAuthViewModel: KakaoAuthViewModel by viewModels()
     private var email: String = ""
     private var phone: String = ""
     private var name: String = ""
     private lateinit var mContext: Context
-
-    private lateinit var kakaoCallback: (OAuthToken?, Throwable?) -> Unit
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -71,18 +74,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
 
         // 카카오 로그인 버튼 클릭 이벤트
         binding.btnKakao.setOnClickListener {
-            CoroutineScope(Dispatchers.Main).launch {
-                try {
-                    val oAuthToken = UserApiClient.loginWithKakao(mContext)
-                    Log.d(TAG, "kakao token : $oAuthToken ")
-                } catch (e: java.lang.Exception) {
-                    if (e is ClientError && e.reason == ClientErrorCause.Cancelled) {
-                        Log.d(TAG, "onViewCreated : 사용자가 명시적으로 취소 ")
-                    } else {
-                        Log.e(TAG, "onViewCreated: 인증 에러 발생", e)
-                    }
-                }
-            }
+            kakaoLogin()
         }
 
         // 구글 로그인 버튼 클릭 이벤트
@@ -90,15 +82,78 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
 
         }
 
-    } // End of onViewCreated
+    } // End of onViewCreatedkakaoLogin
+
+    private fun kakaoLogin() {
+
+        // 카카오톡으로 로그인
+        UserApiClient.instance.loginWithKakaoTalk(mContext) { token, error ->
+            if (error != null) {
+                Log.e(TAG, "로그인 실패", error)
+            } else if (token != null) {
+                Log.i(TAG, "로그인 성공 ${token.accessToken}")
+                Log.d(TAG, "kakaoLogin: ${token.idToken}")
+                kakaoLoginGetUserData()
+            }
+        }
+
+        // 카카오계정으로 로그인 공통 callback 구성
+        // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
+        val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+            if (error != null) {
+                Log.e(TAG, "카카오계정으로 로그인 실패", error)
+            } else if (token != null) {
+                Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
+            }
+        }
+
+        // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(mContext)) {
+            UserApiClient.instance.loginWithKakaoTalk(mContext) { token, error ->
+                if (error != null) {
+                    Log.e(TAG, "카카오톡으로 로그인 실패", error)
+
+                    // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
+                    // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
+                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        return@loginWithKakaoTalk
+                    }
+
+                    // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인 시도
+                    UserApiClient.instance.loginWithKakaoAccount(mContext, callback = callback)
+                } else if (token != null) {
+                    Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+                }
+            }
+        } else {
+            UserApiClient.instance.loginWithKakaoAccount(mContext, callback = callback)
+        }
+
+    } // End of kakao Login
+
+    private fun kakaoLoginGetUserData() {
+        // 사용자 정보 요청 (기본)
+        UserApiClient.instance.me { user, error ->
+            if (error != null) {
+                Log.e(TAG, "사용자 정보 요청 실패", error)
+            } else if (user != null) {
+                Log.i(
+                    TAG, "사용자 정보 요청 성공" +
+                            "\n회원번호: ${user.id}" +
+                            "\n이메일: ${user.kakaoAccount?.email}" +
+                            "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
+                            "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}"
+                )
+            }
+        }
+    } // End of kakaoLoginGetUserData
 
 
     private fun naverLogin() {
         val oAuthLoginCallback = object : OAuthLoginCallback {
             override fun onSuccess() {
                 // 네이버 로그인 API 호출 성공 시 유저 정보를 가져온다
-                NidOAuthLogin().callProfileApi(object :
-                    NidProfileCallback<NidProfileResponse> {
+                NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
                     override fun onSuccess(result: NidProfileResponse) {
                         name = result.profile?.name.toString()
                         email = result.profile?.email.toString()
@@ -154,53 +209,6 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
                 onFailure(errorCode, message)
             }
         })
-    }
-
-    private suspend fun UserApiClient.Companion.loginWithKakao(context: Context): OAuthToken {
-        return if (instance.isKakaoTalkLoginAvailable(context)) {
-            try {
-                UserApiClient.loginWithKakaoTalk(context)
-            } catch (error: Throwable) {
-                // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
-                // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
-                // 그냥 에러를 올린다.
-                if (error is ClientError && error.reason == ClientErrorCause.Cancelled) throw error
-
-                // 그렇지 않다면, 카카오 계정 로그인을 시도한다.
-                UserApiClient.loginWithKakaoAccount(context)
-            }
-        } else {
-            UserApiClient.loginWithKakaoAccount(context)
-        }
-
-    } // End of kakaoLogin
-
-    private suspend fun UserApiClient.Companion.loginWithKakaoTalk(context: Context): OAuthToken {
-        return suspendCoroutine<OAuthToken> { continuation ->
-            instance.loginWithKakaoTalk(mContext) { token, error ->
-                if (error != null) {
-                    continuation.resumeWithException(error)
-                } else if (token != null) {
-                    continuation.resume(token)
-                } else {
-                    continuation.resumeWithException(RuntimeException("kakao access token을 받아오는데 실패함"))
-                }
-            }
-        }
-    }
-
-    private suspend fun UserApiClient.Companion.loginWithKakaoAccount(context: Context): OAuthToken {
-        return suspendCoroutine<OAuthToken> { continuation ->
-            instance.loginWithKakaoAccount(context) { token, error ->
-                if (error != null) {
-                    continuation.resumeWithException(error)
-                } else if (token != null) {
-                    continuation.resume(token)
-                } else {
-                    continuation.resumeWithException(RuntimeException("kakao access token을 받아오는데 실패함, 이유는 명확하지 않음."))
-                }
-            }
-        }
     }
 
     private fun showLoginFragment() {

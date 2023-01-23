@@ -11,7 +11,6 @@
     <!-- 갤러리 권한 추가 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -39,17 +38,17 @@
 
         <activity
             android:name=".ui.view.main.MainActivity"
-            android:exported="false">
+            android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
         <activity
             android:name=".ui.view.start.StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -66,8 +65,8 @@
         <!-- 카카오 로그인 -->
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
-            android:exported="true"
-            android:launchMode="singleTask">
+            android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -76,7 +75,7 @@
 
                 <data
                     android:host="oauth"
-                    android:scheme="${KAKAO_REDIRECT_URI}" />
+                    android:scheme="${KAKAO_APP_KEY}" />
             </intent-filter>
         </activity>
 

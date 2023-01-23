@@ -1,6 +1,5 @@
 package com.app.myfoottrip.ui.view.travel
 
-import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,7 +7,6 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -16,15 +14,18 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Location
 import com.app.myfoottrip.data.repository.AppDatabase
-import com.google.android.gms.location.*
+import com.app.myfoottrip.util.LocationConstants
+import com.app.myfoottrip.util.TimeUtils
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.app.myfoottrip.R
-import com.app.myfoottrip.util.LocationConstants
-import com.app.myfoottrip.util.TimeUtils
 import java.lang.Math.abs
 
 private const val TAG : String = "Service_myfoottrip"
