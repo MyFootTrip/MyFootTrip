@@ -12,6 +12,9 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url "https://jitpack.io" } //crop-image
         maven {url 'https://naver.jfrog.io/artifactory/maven/'} //네이버 지도
+
+        // 카카오 로그인
+        maven {url 'https://devrepo.kakao.com/nexus/content/groups/public/'}
     }
 }
 rootProject.name = "MyFootTrip"

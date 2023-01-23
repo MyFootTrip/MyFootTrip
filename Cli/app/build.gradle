@@ -19,7 +19,18 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // 카카오 로그인 키
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        buildConfigField "String", "KAKAO_APP_KEY", "\"${properties.getProperty("KAKAO_APP_KEY")}\""
+        buildConfigField "String", "KAKAO_REDIRECT_URI", "\"${properties.getProperty("KAKAO_REDIRECT_URI")}\""
+
+        defaultConfig {
+            manifestPlaceholders = ["KAKAO_REDIRECT_URI" : "\"${properties.getProperty("KAKAO_REDIRECT_URI")}\""]
+        }
     }
+
 
     buildTypes {
         release {
@@ -78,8 +89,6 @@ dependencies {
     //Material EditText
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
 
-    //네이버 로그인
-    implementation 'com.navercorp.nid:oauth:5.1.0'
 
     // 레트로핏
     // https://github.com/square/retrofit
@@ -88,7 +97,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
-    
+
 
     // okhttp3
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
@@ -139,4 +148,14 @@ dependencies {
     //FireStorage
     implementation 'com.google.firebase:firebase-storage:20.1.0'
     implementation 'com.google.firebase:firebase-messaging-ktx'
+
+
+    /* SNS 로그인 */
+    //네이버 로그인
+    implementation 'com.navercorp.nid:oauth:5.1.0'
+
+    // 카카오 로그인
+    implementation 'com.kakao.sdk:v2-user:2.10.0'
+
+
 }

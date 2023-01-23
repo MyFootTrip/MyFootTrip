@@ -1,22 +1,32 @@
 package com.app.myfoottrip.ui.view.start
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.databinding.FragmentStartBinding
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
-private const val TAG = "StartFragment_마이풋트립"
+private const val TAG = "StartFragment_싸피"
 
 class StartFragment : BaseFragment<FragmentStartBinding>(
     FragmentStartBinding::bind, R.layout.fragment_start
@@ -24,6 +34,14 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
     private var email: String = ""
     private var phone: String = ""
     private var name: String = ""
+    private lateinit var mContext: Context
+
+    private lateinit var kakaoCallback: (OAuthToken?, Throwable?) -> Unit
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+    } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,62 +58,81 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
                 //현재 토큰을 가지고 있다면 삭제함
                 deleteNaverToken()
 
-                val oAuthLoginCallback = object : OAuthLoginCallback {
-                    override fun onSuccess() {
-                        // 네이버 로그인 API 호출 성공 시 유저 정보를 가져온다
-                        NidOAuthLogin().callProfileApi(object :
-                            NidProfileCallback<NidProfileResponse> {
-                            override fun onSuccess(result: NidProfileResponse) {
-                                name = result.profile?.name.toString()
-                                email = result.profile?.email.toString()
-                                phone = result.profile?.mobile.toString()
-                                Log.e(TAG, "네이버 로그인한 유저 정보 - 이름 : $name")
-                                Log.e(TAG, "네이버 로그인한 유저 정보 - 이메일 : $email")
-                                Log.e(TAG, "네이버 로그인한 유저 정보 - 전화번호 : $phone")
-                            }
-
-                            override fun onError(errorCode: Int, message: String) {
-                                //
-                            }
-
-                            override fun onFailure(httpStatus: Int, message: String) {
-                                //
-                            }
-                        })
-                    }
-
-                    override fun onError(errorCode: Int, message: String) {
-                        val naverAccessToken = NaverIdLoginSDK.getAccessToken()
-                        Log.e(TAG, "naverAccessToken : $naverAccessToken")
-                    }
-
-                    override fun onFailure(httpStatus: Int, message: String) {
-                        //
-                    }
-                }
-
-                NaverIdLoginSDK.initialize(
-                    requireContext(),
-                    getString(R.string.naver_client_id),
-                    getString(R.string.naver_client_secret),
-                    "앱 이름"
-                )
-                NaverIdLoginSDK.authenticate(requireContext(), oAuthLoginCallback)
+                naverLogin()
             }
         }
 
-        
         // 회원가입 텍스트 클릭시 회원가입 페이지로 이동
         binding.tvJoin.setOnClickListener {
             Navigation.findNavController(binding.tvJoin)
                 .navigate(R.id.action_startFragment_to_emailJoinFragment)
         }
-    }
 
 
-    private fun showLoginFragment() {
-        findNavController().navigate(R.id.action_userFragment_to_loginFragment)
-    }
+        // 카카오 로그인 버튼 클릭 이벤트
+        binding.btnKakao.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    val oAuthToken = UserApiClient.loginWithKakao(mContext)
+                    Log.d(TAG, "kakao token : $oAuthToken ")
+                } catch (e: java.lang.Exception) {
+                    if (e is ClientError && e.reason == ClientErrorCause.Cancelled) {
+                        Log.d(TAG, "onViewCreated : 사용자가 명시적으로 취소 ")
+                    } else {
+                        Log.e(TAG, "onViewCreated: 인증 에러 발생", e)
+                    }
+                }
+            }
+        }
+
+        // 구글 로그인 버튼 클릭 이벤트
+        binding.btnGoogle.setOnClickListener {
+
+        }
+
+    } // End of onViewCreated
+
+
+    private fun naverLogin() {
+        val oAuthLoginCallback = object : OAuthLoginCallback {
+            override fun onSuccess() {
+                // 네이버 로그인 API 호출 성공 시 유저 정보를 가져온다
+                NidOAuthLogin().callProfileApi(object :
+                    NidProfileCallback<NidProfileResponse> {
+                    override fun onSuccess(result: NidProfileResponse) {
+                        name = result.profile?.name.toString()
+                        email = result.profile?.email.toString()
+                        phone = result.profile?.mobile.toString()
+                    }
+
+                    override fun onError(errorCode: Int, message: String) {
+                        //
+                    }
+
+                    override fun onFailure(httpStatus: Int, message: String) {
+                        //
+                    }
+                })
+            }
+
+            override fun onError(errorCode: Int, message: String) {
+                val naverAccessToken = NaverIdLoginSDK.getAccessToken()
+                Log.e(TAG, "naverAccessToken : $naverAccessToken")
+            }
+
+            override fun onFailure(httpStatus: Int, message: String) {
+                //
+            }
+        }
+
+        NaverIdLoginSDK.initialize(
+            requireContext(),
+            getString(R.string.naver_client_id),
+            getString(R.string.naver_client_secret),
+            "앱 이름"
+        )
+        NaverIdLoginSDK.authenticate(requireContext(), oAuthLoginCallback)
+    } // End of naverLogin
 
     private fun deleteNaverToken() {
         NidOAuthLogin().callDeleteTokenApi(requireContext(), object : OAuthLoginCallback {
@@ -118,4 +155,56 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
             }
         })
     }
-}
+
+    private suspend fun UserApiClient.Companion.loginWithKakao(context: Context): OAuthToken {
+        return if (instance.isKakaoTalkLoginAvailable(context)) {
+            try {
+                UserApiClient.loginWithKakaoTalk(context)
+            } catch (error: Throwable) {
+                // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
+                // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
+                // 그냥 에러를 올린다.
+                if (error is ClientError && error.reason == ClientErrorCause.Cancelled) throw error
+
+                // 그렇지 않다면, 카카오 계정 로그인을 시도한다.
+                UserApiClient.loginWithKakaoAccount(context)
+            }
+        } else {
+            UserApiClient.loginWithKakaoAccount(context)
+        }
+
+    } // End of kakaoLogin
+
+    private suspend fun UserApiClient.Companion.loginWithKakaoTalk(context: Context): OAuthToken {
+        return suspendCoroutine<OAuthToken> { continuation ->
+            instance.loginWithKakaoTalk(mContext) { token, error ->
+                if (error != null) {
+                    continuation.resumeWithException(error)
+                } else if (token != null) {
+                    continuation.resume(token)
+                } else {
+                    continuation.resumeWithException(RuntimeException("kakao access token을 받아오는데 실패함"))
+                }
+            }
+        }
+    }
+
+    private suspend fun UserApiClient.Companion.loginWithKakaoAccount(context: Context): OAuthToken {
+        return suspendCoroutine<OAuthToken> { continuation ->
+            instance.loginWithKakaoAccount(context) { token, error ->
+                if (error != null) {
+                    continuation.resumeWithException(error)
+                } else if (token != null) {
+                    continuation.resume(token)
+                } else {
+                    continuation.resumeWithException(RuntimeException("kakao access token을 받아오는데 실패함, 이유는 명확하지 않음."))
+                }
+            }
+        }
+    }
+
+    private fun showLoginFragment() {
+        findNavController().navigate(R.id.action_userFragment_to_loginFragment)
+    } // End of showLoginFragment
+
+} // End of StartFragment class

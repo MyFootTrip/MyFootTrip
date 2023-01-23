@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import com.app.myfoottrip.util.SharedPreferencesUtil
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.kakao.sdk.common.KakaoSdk
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,7 +18,8 @@ class Application : Application() {
         super.onCreate()
         sharedPreferencesUtil = SharedPreferencesUtil(applicationContext)
         initRetrofit()
-    }
+        initKakao()
+    } // End of onCreate
 
     private fun initRetrofit() {
         val okHttpClient = OkHttpClient.Builder()
@@ -27,7 +29,7 @@ class Application : Application() {
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .connectTimeout(1, TimeUnit.MINUTES).build()
 
-        val gson : Gson = GsonBuilder() //날짜 데이터 포맷
+        val gson: Gson = GsonBuilder() //날짜 데이터 포맷
             .setDateFormat("yyyy-mm-dd HH:mm:ss")
             .create()
 
@@ -36,14 +38,16 @@ class Application : Application() {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .build()
-    }
+    } // End of initRetrofit
+
+    private fun initKakao() {
+        KakaoSdk.init(this, BuildConfig.KAKAO_APP_KEY)
+    } // End of initKakao
 
     companion object {
         lateinit var retrofit: Retrofit
         const val SERVER_URL = "http://54.248.64.154/"    // TODO : AWS Hosting + URL 변경
         const val IMG_URL = "http://54.248.64.154"
         lateinit var sharedPreferencesUtil: SharedPreferencesUtil
-
     }
-
 }

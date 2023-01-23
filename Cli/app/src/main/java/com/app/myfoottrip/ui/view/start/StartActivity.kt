@@ -1,17 +1,23 @@
 package com.app.myfoottrip.ui.view.start
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.app.myfoottrip.BuildConfig
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Refresh
 import com.app.myfoottrip.data.viewmodel.StartViewModel
 import com.app.myfoottrip.ui.view.dialogs.ServiceClauseCustomDialog
+import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.SharedPreferencesUtil
 import com.app.myfoottrip.util.showToastMessage
+import com.kakao.sdk.common.util.Utility
+import com.kakao.sdk.user.UserApiClient
+
 
 private const val TAG = "StartActivity_싸피"
 
@@ -35,7 +41,25 @@ class StartActivity : AppCompatActivity() {
             startViewModel.refreshTokenValidCheck(Refresh(refreshToken))
         }
 
+        val keyHash = Utility.getKeyHash(this)
+        Log.d(TAG, "keyHash: ${keyHash}")
+
         refreshTokenValidCheckObserver()
+
+
+        // 카카오 로그인 정보 확인
+//        UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
+//            if (error != null) {
+//                val intent = Intent(this, StartActivity::class.java)
+//                //startActivity(intent)
+//                //finish()
+//            } else if (tokenInfo != null) {
+//                val intent = Intent(this, MainActivity::class.java)
+//                // startActivity(intent)
+//                //finish()
+//            }
+//        }
+
     } // End of onCreate
 
     fun showServiceDialog() {
@@ -68,4 +92,10 @@ class StartActivity : AppCompatActivity() {
         }
 
     } // End of refreshTokenValidCheckObserver
+
+
+    companion object {
+        const val KAKAO_API_KEY = BuildConfig.KAKAO_APP_KEY
+    }
+
 } // End of StartActivity class
