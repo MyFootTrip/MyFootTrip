@@ -1,8 +1,10 @@
 package com.app.myfoottrip.network.api
 
 import com.app.myfoottrip.data.dto.Email
+import com.app.myfoottrip.data.dto.Join
 import com.app.myfoottrip.data.dto.Token
 import com.app.myfoottrip.data.dto.User
+import com.google.gson.JsonPrimitive
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -29,4 +31,9 @@ interface UserApi {
     suspend fun emailValidateCheck(
         @Body emailId: Email
     ): Response<Boolean>
+
+    // 로그인
+    @POST("login/")
+    suspend fun userLogin(@Body emailId: String, @Body password: String): Response<JsonPrimitive>
+
 } // End of UserApi class

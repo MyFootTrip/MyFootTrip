@@ -171,6 +171,7 @@ class JoinAgeFragment : Fragment() {
                     val intent = Intent(activity, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                     startActivity(intent)
+                    activity!!.finish()
                 }
                 is NetworkResult.Error -> {
                     Log.d(TAG, "회원가입 실패: ${it.data}")

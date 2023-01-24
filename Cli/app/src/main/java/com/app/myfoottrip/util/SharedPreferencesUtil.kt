@@ -16,25 +16,6 @@ class SharedPreferencesUtil(context: Context) {
         const val REFRESH_TOKEN = "refresh_token"
     }
 
-    // 사용자의 토큰을 저장
-    fun addUserToken(userToken: Token) {
-        val editor = preferences.edit()
-        editor.putString(ACCESS_TOKEN, userToken.access_token)
-        editor.putString(REFRESH_TOKEN, userToken.refresh_token)
-        editor.apply()
-    } // End of addUserToken
-
-    fun getUserToken(): Token {
-        val accessToken = preferences.getString(ACCESS_TOKEN, "")
-        val refreshToken = preferences.getString(REFRESH_TOKEN, "")
-
-        if (refreshToken != "") {
-            return Token(accessToken!!, refreshToken!!)
-        } else {
-            return Token("", "")
-        }
-    } // End of getUserToken
-
     fun addUserRefreshToken(refresh_token: String) {
         val editor = preferences.edit()
         editor.putString(REFRESH_TOKEN, refresh_token)
@@ -44,6 +25,17 @@ class SharedPreferencesUtil(context: Context) {
     fun getUserRefreshToken(): String {
         return preferences.getString(REFRESH_TOKEN, "").toString()
     } // End of getUserRefreshToken
+
+    fun addUserAccessToken(access_token: String) {
+        val editor = preferences.edit()
+        val temp = "Bearer $access_token"
+        editor.putString(ACCESS_TOKEN, temp)
+        editor.apply()
+    }
+
+    fun getUserAccessToken(): String {
+        return preferences.getString(ACCESS_TOKEN, "").toString()
+    } // End of getUserAccessToken
 
     fun deleteUser() {
         val editor = preferences.edit()

@@ -7,6 +7,7 @@ import com.app.myfoottrip.data.dto.Email
 import com.app.myfoottrip.data.dto.Token
 import com.app.myfoottrip.network.api.UserApi
 import com.app.myfoottrip.util.NetworkResult
+import com.google.gson.JsonPrimitive
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
@@ -27,6 +28,11 @@ class UserRepository {
     private val _userJoinResponseLiveData = MutableLiveData<NetworkResult<Token>>()
     val userJoinResponseLiveData: LiveData<NetworkResult<Token>>
         get() = _userJoinResponseLiveData
+
+
+    private val _userLoginReponseLiveData = MutableLiveData<NetworkResult<JsonPrimitive>>()
+    val userLoginReponseLiveData: LiveData<NetworkResult<JsonPrimitive>>
+        get() = _userLoginReponseLiveData
 
 
     // 이메일 중복 체크
@@ -55,6 +61,7 @@ class UserRepository {
 
     } // End of checkEmailId
 
+    // 이메일 인증번호 체크
     suspend fun checkEmailValidateText(emailValidateData: Email) {
         val response = userApi.emailValidateCheck(emailValidateData)
         _emailValidateResponseLiveData.postValue(NetworkResult.Loading())
@@ -76,6 +83,7 @@ class UserRepository {
         }
     } // End of checkEmailValidateText
 
+    // 사용자 회원가입 체크
     suspend fun userJoin(
         userProfileImgFile: MultipartBody.Part?,
         userJoinData: HashMap<String, RequestBody>
@@ -103,4 +111,27 @@ class UserRepository {
             )
         }
     } // End of joinUser
+
+    suspend fun userLogin(userEmail: String, userPassword: String) {
+        val response = userApi.userLogin(userEmail, userPassword)
+
+        _userLoginReponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _userLoginReponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _userLoginReponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _userLoginReponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
+    } // End of userLogin
+
 } // End of UserRepository

@@ -1,13 +1,16 @@
 package com.app.myfoottrip.ui.view.start
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.RefreshToken
 import com.app.myfoottrip.data.viewmodel.StartViewModel
 import com.app.myfoottrip.ui.view.dialogs.ServiceClauseCustomDialog
+import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.SharedPreferencesUtil
 import com.app.myfoottrip.util.showToastMessage
@@ -57,10 +60,21 @@ class StartActivity : AppCompatActivity() {
 
                     if (it.data!!.access.toString() != "") {
                         this.showToastMessage("발급된 토큰 : ${it.data!!.access.toString()}")
+                        // 만약 발급된 accessToken이 있다면
+                        // sharedPreference에 accesstoken을 저장
+
+                        Application.sharedPreferencesUtil.addUserAccessToken(it.data!!.access.toString())
+
+                        Intent(this, MainActivity::class.java).apply {
+                            startActivity(this)
+                            finish()
+                        }
                     }
                 }
                 is NetworkResult.Error -> {
-                    Log.d(TAG, "refreshToken Error : ${it.data},  ${it.message} ")
+                    if (it.data?.access == null) {
+                        showToastMessage("토큰이 만료되었습니다 로그인을 다시 해주세요")
+                    }
                 }
                 is NetworkResult.Loading -> {
                     Log.d(TAG, "refreshToken 로딩중 ")
