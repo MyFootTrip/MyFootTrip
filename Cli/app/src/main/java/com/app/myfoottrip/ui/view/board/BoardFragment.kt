@@ -19,6 +19,7 @@ import com.app.myfoottrip.util.TimeUtils
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -156,8 +157,9 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
         val marker = Marker()
         marker.position = LatLng(36.02539, 128.380378)
-        marker.icon = MarkerIcons.BLACK
+        marker.icon = OverlayImage.fromResource(R.drawable.ic_footstep)
         marker.iconTintColor = ContextCompat.getColor(requireContext(),R.color.main)
+
         marker.map = naverMap
     }
 }
