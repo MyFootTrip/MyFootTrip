@@ -11,7 +11,7 @@ data class Board @JvmOverloads constructor(
     var writeDate : Date, //작성 날짜
     val theme : String, //여행 테마(복수선택 가능)
     val title : String,
-    val content: String,
+    var content: String,
     var imageList : ArrayList<String>,
     val travel : Travel?, //여정 정보 객체
     var likeCount : Int = 0, //좋아요 수

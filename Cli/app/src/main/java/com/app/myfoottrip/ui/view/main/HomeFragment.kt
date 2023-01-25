@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Board
+import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.databinding.FragmentHomeBinding
@@ -42,13 +43,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private lateinit var categoryAdapter: CategoryAdatper
     private lateinit var detailList: ArrayList<String>
-    private lateinit var selectedDetailList : ArrayList<String>
+    private var selectedDetailList : ArrayList<String> = ArrayList()
 
     private lateinit var homeAdatper: HomeAdapter
 
     private var sortBy = "최신순" //정렬 기준
 
     private val boardViewModel by activityViewModels<BoardViewModel>()
+
+    private var filter : Filter = Filter(arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
 
     var detector: GestureDetector? = null
 
@@ -134,17 +137,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         categoryAdapter = CategoryAdatper(detailList)
 
-        selectedDetailList = ArrayList()
-
         categoryAdapter.setItemClickListener(object : CategoryAdatper.ItemClickListener {
-            override fun onClick(view: View, position: Int) {
-
-                if (!selectedDetailList.contains(detailList[position])) {
-                    selectedDetailList.add(detailList[position])
-
+            override fun onClick(view: View, position: Int, category: String) {
+                if (!selectedDetailList.contains(category)) {
+                    //필터에 어떤 유형으로 필터링할 것인지 삽입
+                    when(detailId){
+                        1 -> { //여행 테마
+                            filter.themeList.add(category)
+                        }
+                        2 -> { //여행 지역
+                            filter.regionList.add(category)
+                        }
+                        3 -> { //여행 기간
+                            filter.periodList.add(category)
+                        }
+                        else -> { //연령대
+                            filter.ageList.add(category)
+                        }
+                    }
+                    
+                    selectedDetailList.add(category)
                     binding.cgDetail.addView(Chip(requireContext()).apply {
                         chipCornerRadius = 10.0f
-                        text = detailList[position]
+                        text = category
                         textSize = 12.0f
                         isCloseIconVisible = true
                         closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
@@ -153,12 +168,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         setTextColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
                         setOnCloseIconClickListener {
                             binding.cgDetail.removeView(this)
-                            selectedDetailList.remove(detailList[position])
+                            selectedDetailList.remove(category)
+
+                            //필터에서 해당 필터유형 삭제
+                            if (filter.themeList.isNotEmpty() && filter.themeList.contains(category)) filter.ageList.remove(category)
+                            else if (filter.regionList.isNotEmpty() && filter.regionList.contains(category)) filter.regionList.remove(category)
+                            else if (filter.periodList.isNotEmpty() && filter.periodList.contains(category)) filter.periodList.remove(category)
+                            else if(filter.ageList.isNotEmpty() && filter.ageList.contains(category)) filter.ageList.remove(category)
+                            getFilterdData(filter)
+                            getFilteredBoardListObserver()
                         }
                     })
+                    getFilterdData(filter)
+                    getFilteredBoardListObserver()
                 }
             }
         })
+
 
         binding.rvCategory.apply {
             adapter = categoryAdapter
@@ -280,11 +306,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             //필터 부분
             binding.cgCategory.clearCheck()
             binding.cgDetail.removeAllViews()
-
+            filter = Filter(arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
 
             //정렬 부분
             binding.spinnerSort.selectItemByIndex(0)
             sortBy = "최신순"
+            selectedDetailList.clear()
 
             //데이터 요청
             getData()
@@ -304,7 +331,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private fun getBoardListObserver() {
         // viewModel에서 전체 게시글 데이터 LiveData 옵저버 적용
         boardViewModel.boardList.observe(viewLifecycleOwner) {
-            mainActivity.finishLoadingIGB()
+            when (it) {
+                is NetworkResult.Success -> {
+                    initHomeAdapter(it.data as ArrayList<Board>)
+                }
+                is NetworkResult.Error -> {
+                    Log.d(TAG, "게시물 조회 Error: ${it.data}")
+                }
+                is NetworkResult.Loading -> {
+                    startLoading()
+                }
+            }
+        }
+    } // 게시물 전체 받아오기
+
+    //필러팅된 게시물 받아오기
+    private fun getFilterdData(filter: Filter){
+        CoroutineScope(Dispatchers.IO).launch {
+            boardViewModel.getFilteredBoardList(filter)
+        }
+    }
+
+    private fun getFilteredBoardListObserver() {
+        boardViewModel.boardList.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
                     initHomeAdapter(it.data as ArrayList<Board>)
@@ -320,9 +369,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     } // 게시물 전체 받아오기
 
     companion object {
-        val themeList = arrayOf("혼자 왔니","커플 여행","효도 하자","우정 여행","직장 동료와 함께","가족과 같이")
+        val themeList = arrayOf("혼자","친구와","연인과","배우자와","아이와","부모님과","기타")
         val locationList = arrayOf("서울","경기","강원","부산","경북·대구","전남·광주","제주","충남·대전","경남","충북","경남","전북","인천")
-        val periodList = arrayOf("당일 치기","1박 2일","2박 3일","3박 4일","4박 5일 이상")
+        val periodList = arrayOf("당일 치기","1박 2일","2박 3일","3박 4일","4박 5일+")
         val ageList = arrayOf("10대", "20대", "30대", "40대", "50대", "60대 이상")
     }
 }

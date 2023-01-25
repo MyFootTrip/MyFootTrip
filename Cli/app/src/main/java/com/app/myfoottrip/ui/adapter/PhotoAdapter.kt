@@ -11,16 +11,17 @@ import com.app.myfoottrip.R
 import com.bumptech.glide.Glide
 
 private const val TAG = "PhotoAdapter_마이풋트립"
-class PhotoAdapter(var imageList:List<Uri?>) : RecyclerView.Adapter<PhotoAdapter.PhotoHolder>(){
+class PhotoAdapter(var imageList:List<Uri>) : RecyclerView.Adapter<PhotoAdapter.PhotoHolder>(){
 
     inner class PhotoHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
 
         val image = itemView.findViewById<ImageView>(R.id.iv_image)
         val deleteBtn = itemView.findViewById<ImageView>(R.id.iv_delete)
+        val checkUri = Uri.parse("https://images.velog.io/images/ccmmss98/post/4de24da3-70a1-4a57-8df8-7d8bd8ef2b70/saffy.png")
 
-        fun bindInfo(imageUrl : Uri?){
+        fun bindInfo(imageUrl : Uri){
 
-            if (imageUrl != null){
+            if (imageUrl != checkUri){
                 Glide.with(itemView)
                     .load(imageUrl)
                     .centerCrop()
@@ -31,7 +32,7 @@ class PhotoAdapter(var imageList:List<Uri?>) : RecyclerView.Adapter<PhotoAdapter
                 itemClickListner.onClick(it, layoutPosition)
             }
 
-            Log.d(TAG, "bindInfo: ${imageUrl}")
+            Log.d(TAG, "bindInfo: $imageUrl")
         }
     }
 

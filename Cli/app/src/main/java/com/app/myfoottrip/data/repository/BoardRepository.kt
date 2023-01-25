@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.data.dto.Board
+import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.network.api.UserApi
 import com.app.myfoottrip.network.service.BoardService
 import com.app.myfoottrip.util.NetworkResult
@@ -53,6 +54,20 @@ class BoardRepository {
         } else {
             _createResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
         }
+    }
+
+    //게시물 필터
+    suspend fun getFilteredBoardList(filter: Filter){
+        var response = boardService.getFilteredBoardList(filter)
+
+        if (response.isSuccessful && response.body() != null) {
+            _boardListResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _boardListResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
+        } else {
+            _boardListResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
+
     }
 
 } // End of BoardRepository
