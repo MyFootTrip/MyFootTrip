@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -20,13 +19,9 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
-import com.naver.maps.map.util.MarkerIcons
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem
-import java.sql.Time
-import java.util.Date
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 private const val TAG = "BoardFragment_마이풋트립"
@@ -155,11 +150,25 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
         MapFragment.newInstance(options)
 
-        val marker = Marker()
-        marker.position = LatLng(36.02539, 128.380378)
-        marker.icon = OverlayImage.fromResource(R.drawable.ic_footstep)
-        marker.iconTintColor = ContextCompat.getColor(requireContext(),R.color.main)
+        binding.tvMarkerNum.visibility = View.GONE
 
-        marker.map = naverMap
+        val markers = Array(5){Marker()}
+        val markersPosition = ArrayList<LatLng>()
+        markersPosition.add(LatLng(36.109596, 128.41582))
+        markersPosition.add(LatLng(36.109609, 128.424209))
+        markersPosition.add(LatLng(36.097047, 128.433959))
+        markersPosition.add(LatLng(36.086497, 128.444844))
+        markersPosition.add(LatLng(36.075696, 128.402923))
+
+        for (i in markersPosition.indices){
+
+            binding.tvMarkerNum.text = "${i+1}"
+            markers[i].position = markersPosition[i]
+            markers[i].icon = OverlayImage.fromView(binding.tvMarkerNum)
+            markers[i].width = 100
+            markers[i].height = 100
+            markers[i].map = naverMap
+        }
+
     }
 }

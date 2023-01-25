@@ -171,7 +171,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             selectedDetailList.remove(category)
 
                             //필터에서 해당 필터유형 삭제
-                            if (filter.themeList.isNotEmpty() && filter.themeList.contains(category)) filter.ageList.remove(category)
+                            if (filter.themeList.isNotEmpty() && filter.themeList.contains(category)) filter.themeList.remove(category)
                             else if (filter.regionList.isNotEmpty() && filter.regionList.contains(category)) filter.regionList.remove(category)
                             else if (filter.periodList.isNotEmpty() && filter.periodList.contains(category)) filter.periodList.remove(category)
                             else if(filter.ageList.isNotEmpty() && filter.ageList.contains(category)) filter.ageList.remove(category)
