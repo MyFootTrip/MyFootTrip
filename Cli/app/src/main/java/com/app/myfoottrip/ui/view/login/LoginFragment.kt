@@ -41,6 +41,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(
             if (checkLoginValid()) {
                 login()
             }
+
         }
 
         userLoginResponseObserve()

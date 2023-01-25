@@ -75,7 +75,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         categoryAdapter = CategoryAdatper(locationList)
 
         categoryAdapter.setItemClickListener(object : CategoryAdatper.ItemClickListener {
-            override fun onClick(view: View, position: Int) {
+            override fun onClick(view: View, position: Int, category: String) {
                 if (!selectedList.contains(locationList[position])) {
                     setChipListener(position)
                 }

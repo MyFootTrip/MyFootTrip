@@ -38,23 +38,7 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
             }
 
 //            saveBtn.setOnClickListener {
-//                val board = Board(9999,1,"테스트계정","string", Date(System.currentTimeMillis()),"혼자놀기","임시제목입니다"
-//                    ,"임시 내용입니다.", arrayListOf(), null,2,2)
-//
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    withContext(Dispatchers.IO){
-//                        val urlList : ArrayList<String> = imageList.mapIndexed{ i, it ->
-//                            "IMAGE_${board.boardId}_${i}.png"
-//                        } as ArrayList<String>
-//                        board.imageList = GalleryUtils.insertImage(urlList,imageList,0)
-//                        Log.d(TAG, "이미지 저장 성공")
-//                    }
-//                    createBoard(board)
-//
-//                    CoroutineScope(Dispatchers.Main).launch {
-//                        createBoardObserver()
-//                    }
-//                }
+
 //            }
         }
     }

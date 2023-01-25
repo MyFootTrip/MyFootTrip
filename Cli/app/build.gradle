@@ -141,6 +141,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:16.0.0")
 
     //Lottie 관련 라이브러리
+    implementation 'com.airbnb.android:lottie:5.2.0'
     implementation 'com.github.LordSaac:ProgressLottieIGB:v1.0.2'
 
     //Firebase
@@ -164,4 +165,8 @@ dependencies {
     implementation "com.kakao.sdk:v2-share:2.12.1" // 메시지(카카오톡 공유)
     implementation "com.kakao.sdk:v2-navi:2.12.1" // 카카오내비
     implementation "com.kakao.sdk:v2-friend:2.12.1" // 카카오톡 소셜 피커, 리소스 번들 파일 포함
+
+
+    //애니메이션 라이브러리
+    implementation 'com.daimajia.androidanimations:library:2.4@aar'
 }
