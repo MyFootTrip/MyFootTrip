@@ -75,8 +75,10 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
 
                         ivLogoText.visibility = View.VISIBLE
 
-                        delay(2000)
+                        delay(1000)
                         // SharedPreference에 토큰이 있는지 없는지를 확인해야됨.
+                        binding.lottieProgress.visibility = View.VISIBLE
+                        binding.lottieProgress.playAnimation()
                         sharedPreferencesUtil = SharedPreferencesUtil(startActivity)
                         val refreshToken = sharedPreferencesUtil.getUserRefreshToken()
 
@@ -84,6 +86,8 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
                         // 토큰의 기한이 맞을 경우 accessToken을 발급 받을 수 있는지를 확인함
                         if (refreshToken != "") {
                             startViewModel.refreshTokenValidCheck(Token("", refreshToken))
+                        } else {
+                            findNavController().navigate(R.id.action_splashFragment_to_startFragment)
                         }
                     }
 
@@ -104,11 +108,8 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
 
     private fun refreshTokenValidCheckObserver() {
         startViewModel.refreshTokenValidCheckResponseLiveData.observe(viewLifecycleOwner) {
-
             // refreshToken이 정상적으로 확인되면
             // accessToKen을 가지고 곧바로 MainActivity로 넘어감
-            binding.lottieProgress.visibility = View.INVISIBLE
-            binding.lottieProgress.playAnimation()
 
             when (it) {
                 is NetworkResult.Success -> {
@@ -131,7 +132,6 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
                 is NetworkResult.Error -> {
                     if (it.data?.access_token == null) {
                         startActivity.showToastMessage("토큰이 만료되었습니다 로그인을 다시 해주세요")
-
                         findNavController().navigate(R.id.action_splashFragment_to_startFragment)
                     }
                 }

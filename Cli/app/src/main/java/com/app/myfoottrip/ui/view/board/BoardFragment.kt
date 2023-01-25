@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +16,11 @@ import com.app.myfoottrip.ui.adapter.PlaceAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.TimeUtils
-import com.naver.maps.map.MapFragment
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.*
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
+import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +31,7 @@ import java.util.Date
 
 private const val TAG = "BoardFragment_마이풋트립"
 class BoardFragment : BaseFragment<FragmentBoardBinding>(
-    FragmentBoardBinding::bind, R.layout.fragment_board){
+    FragmentBoardBinding::bind, R.layout.fragment_board), OnMapReadyCallback {
 
     private lateinit var mainActivity: MainActivity
 
@@ -36,6 +41,9 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     private lateinit var placeList: ArrayList<Place>
 
     private val boardViewModel by activityViewModels<BoardViewModel>()
+
+    //지도 객체 변수
+    private lateinit var mapView: MapView
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -129,7 +137,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
             mapFragment = MapFragment()
         }
         fragmentTransaction.add(R.id.map_fragment, mapFragment).commit()
-        mapFragment.getMapAsync{ }
+        mapFragment.getMapAsync(this)
 
         binding.mapFragment.setTouchListener(object : TouchFrameLayout.OnTouchListener {
             override fun onTouch() {
@@ -137,5 +145,21 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
                 binding.svBoard.requestDisallowInterceptTouchEvent(true)
             }
         })
+    }
+
+    override fun onMapReady(naverMap: NaverMap) {
+        val options = NaverMapOptions()
+            .camera(CameraPosition(LatLng(36.02539, 128.380378),  10.0))  // 카메라 위치 (위도,경도,줌)
+            .mapType(NaverMap.MapType.Basic)    //지도 유형
+            .enabledLayerGroups(NaverMap.LAYER_GROUP_BUILDING)  //빌딩 표시
+
+        MapFragment.newInstance(options)
+
+        val marker = Marker()
+        marker.position = LatLng(36.02539, 128.380378)
+        marker.icon = OverlayImage.fromResource(R.drawable.ic_footstep)
+        marker.iconTintColor = ContextCompat.getColor(requireContext(),R.color.main)
+
+        marker.map = naverMap
     }
 }
