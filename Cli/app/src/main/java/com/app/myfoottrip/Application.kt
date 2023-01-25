@@ -1,11 +1,10 @@
 package com.app.myfoottrip
 
 import android.app.Application
-import androidx.core.view.DragAndDropPermissionsCompat.*
-import com.kakao.sdk.common.KakaoSdk;
 import com.app.myfoottrip.util.SharedPreferencesUtil
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.kakao.sdk.common.KakaoSdk
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response

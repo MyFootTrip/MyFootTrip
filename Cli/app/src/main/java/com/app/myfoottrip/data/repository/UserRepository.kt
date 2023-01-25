@@ -1,20 +1,17 @@
 package com.app.myfoottrip.data.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.data.dto.Email
 import com.app.myfoottrip.data.dto.Join
 import com.app.myfoottrip.data.dto.Token
-import com.app.myfoottrip.data.dto.User
 import com.app.myfoottrip.network.api.TokenApi
 import com.app.myfoottrip.network.api.UserApi
 import com.app.myfoottrip.util.NetworkResult
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import kotlin.math.log
 
 
 private const val TAG = "싸피"

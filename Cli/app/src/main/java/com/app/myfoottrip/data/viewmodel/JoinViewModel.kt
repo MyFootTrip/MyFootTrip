@@ -2,7 +2,6 @@ package com.app.myfoottrip.data.viewmodel
 
 
 import android.net.Uri
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,13 +9,11 @@ import androidx.lifecycle.viewModelScope
 import com.app.myfoottrip.data.dto.Email
 import com.app.myfoottrip.data.dto.Join
 import com.app.myfoottrip.data.dto.Token
-import com.app.myfoottrip.data.dto.User
 import com.app.myfoottrip.data.repository.UserRepository
 import com.app.myfoottrip.util.NetworkResult
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 

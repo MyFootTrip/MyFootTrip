@@ -1,11 +1,10 @@
 package com.app.myfoottrip.ui.view.start
 
 import android.app.Activity
-import android.app.Activity.*
+import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -14,7 +13,6 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
@@ -25,7 +23,6 @@ import com.app.myfoottrip.util.ChangeMultipartUtil
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
 private const val TAG = "JoinProfileFragment_싸피"

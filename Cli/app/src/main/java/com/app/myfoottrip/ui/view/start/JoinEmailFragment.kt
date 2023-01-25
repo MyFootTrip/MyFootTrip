@@ -44,6 +44,7 @@ class JoinEmailFragment : Fragment() {
     private lateinit var inputEmailText: TextInputEditText
     private lateinit var emailValidBtn: AppCompatButton
     private lateinit var progressbar: ProgressBar
+    private lateinit var emailConfirmButton: AppCompatButton
 
     private var emailCheckFlag = false
 
@@ -69,12 +70,6 @@ class JoinEmailFragment : Fragment() {
         customViewLayout = binding.joinCustomViewLayout
         customViewDataInit()
 
-        if (emailCheckFlag == true) {
-            emailValidBtn.setTextColor(R.color.join_confirm_button_basic_text_color)
-            emailValidBtn.isClickable = false
-            emailValidBtn.isEnabled = false
-        }
-
 
         // 이메일 입력창의 값이 변해서 이메일 형식에 부합할 경우, 인증하기 버튼 상태 변화
         customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).addTextChangedListener {
@@ -97,7 +92,9 @@ class JoinEmailFragment : Fragment() {
         customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).setOnClickListener {
             Log.d(TAG, "emailCheckFlag: $emailCheckFlag")
 
-            emailCheckFlag = true
+            confirmNumberEditText.text!!.clear()
+            emailValidBtn.isClickable = false
+            emailValidBtn.isEnabled = false
             // 이메일 인증 버튼을 눌렀을 때, 이메일 사용여부 체크하는 통신 적용
             CoroutineScope(Dispatchers.IO).launch {
                 joinViewModel.emailUsedCheck(Email(customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).text.toString()))
@@ -128,6 +125,10 @@ class JoinEmailFragment : Fragment() {
             }
         }
 
+        inputEmailText.addTextChangedListener {
+            emailConfirmButton.text = "인증하기"
+        }
+
         // 해당 이메일이 사용중인지 상태값을 가지고 있는 LiveData 옵저버
         isUsedEmailObserver()
 
@@ -139,6 +140,7 @@ class JoinEmailFragment : Fragment() {
     private fun customViewDataInit() {
         emailWarningTextView = customViewLayout.findViewById(R.id.firstEditTextMessageTv)
         secondTextFieldLayout = customViewLayout.findViewById(R.id.secondTextFieldLayout)
+        emailConfirmButton = customViewLayout.findViewById(R.id.emailConfirmButton)
 
         // 다음 버튼
         nextButton = customViewLayout.findViewById(R.id.join_next_button)
@@ -148,7 +150,6 @@ class JoinEmailFragment : Fragment() {
 
         // 인증번호 적는 EditText
         confirmNumberEditText = customViewLayout.findViewById(R.id.secondJoinEd)
-
 
         // 이메일 입력창 아래 줄
         emailTextFieldLayout = customViewLayout.findViewById(R.id.emailTextFieldLayout)
@@ -160,13 +161,16 @@ class JoinEmailFragment : Fragment() {
 
         // 프로그레스 바
         progressbar = customViewLayout.findViewById(R.id.join_progressbar)
-
     } // End of customViewDataInit
 
     override fun onResume() {
         super.onResume()
         showViewInit()
     } // End of onResume
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
 
 
     // 다시 비워져야 할 항목들
@@ -178,6 +182,7 @@ class JoinEmailFragment : Fragment() {
         secondTextFieldLayout.visibility = View.GONE
         confirmNumberEditText.text!!.clear()
         inputEmailText.text!!.clear()
+        emailConfirmButton.text = "인증하기"
         emailWarningTextView.text = ""
     } // End of showViewInit
 
@@ -246,6 +251,13 @@ class JoinEmailFragment : Fragment() {
 
                     if (it.data == false) {
                         emailWarningTextView.text = ("인증 실패")
+
+                        // 인증 실패할 경우, 재인증 버튼으로 바뀌면서 인증번호 EditText 전부 텍스트 없어짐
+                        if (confirmNumberEditText.text!!.length == 6) {
+                            confirmNumberEditText.text!!.clear()
+                        }
+
+                        emailConfirmButton.text = "재인증"
                     }
                 }
                 is NetworkResult.Error -> {
