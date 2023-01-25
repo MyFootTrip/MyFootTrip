@@ -69,7 +69,6 @@ class JoinProfileFragment : Fragment() {
 
         // 회원가입 프로필 이미지 옵저버
         userProfileImageObserver()
-
     } // End of onViewCreated
 
     private fun selectGallery() {

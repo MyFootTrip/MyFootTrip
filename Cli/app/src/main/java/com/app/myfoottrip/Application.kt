@@ -61,7 +61,6 @@ class Application : Application() {
 
     } // End of initRetrofit
 
-
     inner class AppInterceptor : Interceptor {
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): Response = with(chain) {
@@ -78,7 +77,6 @@ class Application : Application() {
 
     companion object {
         lateinit var retrofit: Retrofit
-
         lateinit var headerRetrofit: Retrofit
         const val SERVER_URL = "http://54.248.64.154/"    // TODO : AWS Hosting + URL 변경
         const val IMG_URL = "http://54.248.64.154"

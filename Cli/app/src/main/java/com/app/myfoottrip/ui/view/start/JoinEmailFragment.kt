@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -41,6 +42,10 @@ class JoinEmailFragment : Fragment() {
     private lateinit var firstEditTextMessageTv: TextView
     private lateinit var nextButton: AppCompatButton
     private lateinit var inputEmailText: TextInputEditText
+    private lateinit var emailValidBtn: AppCompatButton
+    private lateinit var progressbar: ProgressBar
+
+    private var emailCheckFlag = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -64,24 +69,35 @@ class JoinEmailFragment : Fragment() {
         customViewLayout = binding.joinCustomViewLayout
         customViewDataInit()
 
+        if (emailCheckFlag == true) {
+            emailValidBtn.setTextColor(R.color.join_confirm_button_basic_text_color)
+            emailValidBtn.isClickable = false
+            emailValidBtn.isEnabled = false
+        }
+
+
         // 이메일 입력창의 값이 변해서 이메일 형식에 부합할 경우, 인증하기 버튼 상태 변화
         customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).addTextChangedListener {
             // 값이 변할 때 마다 이메일의 형식에 부합하는지를 확인
-            val emailBtn = customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton)
 
-            if (emailTypeCheck()) {
-                emailBtn.setTextColor(R.color.black)
-                emailBtn.isClickable = true
-                emailBtn.isEnabled = true
-            } else {
-                emailBtn.setTextColor(R.color.join_confirm_button_basic_text_color)
-                emailBtn.isClickable = false
-                emailBtn.isEnabled = false
+            if (emailTypeCheck() == true) {
+                emailValidBtn.setTextColor(R.color.black)
+                emailValidBtn.isClickable = true
+                emailValidBtn.isEnabled = true
+            }
+
+            if (emailTypeCheck() == false) {
+                emailValidBtn.setTextColor(R.color.join_confirm_button_basic_text_color)
+                emailValidBtn.isClickable = false
+                emailValidBtn.isEnabled = false
             }
         }
 
         // 이메일 인증 버튼 눌렀을 때,
         customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).setOnClickListener {
+            Log.d(TAG, "emailCheckFlag: $emailCheckFlag")
+
+            emailCheckFlag = true
             // 이메일 인증 버튼을 눌렀을 때, 이메일 사용여부 체크하는 통신 적용
             CoroutineScope(Dispatchers.IO).launch {
                 joinViewModel.emailUsedCheck(Email(customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).text.toString()))
@@ -123,26 +139,47 @@ class JoinEmailFragment : Fragment() {
     private fun customViewDataInit() {
         emailWarningTextView = customViewLayout.findViewById(R.id.firstEditTextMessageTv)
         secondTextFieldLayout = customViewLayout.findViewById(R.id.secondTextFieldLayout)
+
+        // 다음 버튼
         nextButton = customViewLayout.findViewById(R.id.join_next_button)
+
+        // 이메일 인증 버튼
+        emailValidBtn = customViewLayout.findViewById(R.id.emailConfirmButton)
 
         // 인증번호 적는 EditText
         confirmNumberEditText = customViewLayout.findViewById(R.id.secondJoinEd)
+
 
         // 이메일 입력창 아래 줄
         emailTextFieldLayout = customViewLayout.findViewById(R.id.emailTextFieldLayout)
 
         firstEditTextMessageTv = customViewLayout.findViewById(R.id.firstEditTextMessageTv)
 
+        // 이메일 적는 EditText
         inputEmailText = customViewLayout.findViewById(R.id.editTextJoinEmail)
+
+        // 프로그레스 바
+        progressbar = customViewLayout.findViewById(R.id.join_progressbar)
+
     } // End of customViewDataInit
 
     override fun onResume() {
         super.onResume()
+        showViewInit()
+    } // End of onResume
+
+
+    // 다시 비워져야 할 항목들
+    private fun showViewInit() {
         customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).isClickable = false
         nextButton.isClickable = false
         nextButton.isEnabled = false
-        binding.joinEmailProgressbar.visibility = View.GONE
-    } // End of onResume
+        progressbar.visibility = View.GONE
+        secondTextFieldLayout.visibility = View.GONE
+        confirmNumberEditText.text!!.clear()
+        inputEmailText.text!!.clear()
+        emailWarningTextView.text = ""
+    } // End of showViewInit
 
     private fun emailTypeCheck(): Boolean { // 이메일 형식 확인
         if (customViewLayout.findViewById<EditText>(R.id.editTextJoinEmail).text.isEmpty()) return false
@@ -153,17 +190,21 @@ class JoinEmailFragment : Fragment() {
 
     private fun isUsedEmailObserver() {
         joinViewModel.userResponseLiveData.observe(viewLifecycleOwner) {
-            binding.joinEmailProgressbar.isVisible = false
-            binding.joinEmailProgressbar.visibility = View.GONE
+            progressbar.isVisible = false
+            progressbar.visibility = View.GONE
             firstEditTextMessageTv.setTextColor(R.color.black)
+
+            emailValidBtn.setTextColor(R.color.join_confirm_button_basic_text_color)
+            emailValidBtn.isClickable = false
+            emailValidBtn.isEnabled = false
 
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data == true) {
                         // 사용중인 이메일
-                        emailWarningTextView.setText(R.string.isused_email_text)
                         secondTextFieldLayout.visibility = View.GONE
                         firstEditTextMessageTv.setTextColor(R.color.error_color)
+                        emailWarningTextView.setText(R.string.isused_email_text)
                     }
 
                     if (it.data == false) {
@@ -176,8 +217,8 @@ class JoinEmailFragment : Fragment() {
                     Log.d(TAG, "이메일 체크 Error: ${it.data}")
                 }
                 is NetworkResult.Loading -> {
-                    binding.joinEmailProgressbar.isVisible = true
-                    binding.joinEmailProgressbar.visibility = View.VISIBLE
+                    progressbar.isVisible = true
+                    progressbar.visibility = View.VISIBLE
                 }
             }
         }
@@ -188,6 +229,12 @@ class JoinEmailFragment : Fragment() {
         joinViewModel.emailValidateResponse.observe(viewLifecycleOwner) {
             nextButton.isClickable = false
             nextButton.isEnabled = false
+            progressbar.isVisible = false
+            progressbar.visibility = View.GONE
+
+            emailValidBtn.setTextColor(R.color.join_confirm_button_basic_text_color)
+            emailValidBtn.isClickable = false
+            emailValidBtn.isEnabled = false
 
             when (it) {
                 is NetworkResult.Success -> {
@@ -206,10 +253,12 @@ class JoinEmailFragment : Fragment() {
                 }
                 is NetworkResult.Loading -> {
                     Log.d(TAG, "emailValidateCheckObserver: 로딩 중")
+                    progressbar.isVisible = true
+                    progressbar.visibility = View.VISIBLE
                 }
             }
         }
-    } // End of emailValidateCheckObserve
+    } // End of emailValidateCheckObserver
 
     private companion object {
         @JvmStatic

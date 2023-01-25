@@ -101,8 +101,6 @@ class JoinViewModel : ViewModel() {
                 _userProfileImageMultipartBody.value, requestHashMap
             )
         }
-
-
     } // End of userJoin
 
     // 이메일 인증 문자 체크
