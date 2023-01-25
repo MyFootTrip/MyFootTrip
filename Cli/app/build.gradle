@@ -27,8 +27,8 @@ android {
         buildConfigField "String", "KAKAO_REDIRECT_URI", "\"${properties.getProperty("KAKAO_REDIRECT_URI")}\""
 
         defaultConfig {
-            manifestPlaceholders = ["KAKAO_REDIRECT_URI" : "\"${properties.getProperty("KAKAO_REDIRECT_URI")}\""]
-            manifestPlaceholders = ["KAKAO_APP_KEY" : "\"${properties.getProperty("KAKAO_APP_KEY")}\""]
+            manifestPlaceholders = ["KAKAO_REDIRECT_URI": "\"${properties.getProperty("KAKAO_REDIRECT_URI")}\""]
+            manifestPlaceholders = ["KAKAO_APP_KEY": "\"${properties.getProperty("KAKAO_APP_KEY")}\""]
         }
     }
 
@@ -156,6 +156,7 @@ dependencies {
     //네이버 로그인
     implementation 'com.navercorp.nid:oauth:5.1.0'
 
+
     // 카카오 로그인
     implementation "com.kakao.sdk:v2-all:2.12.1" // 전체 모듈 설치, 2.11.0 버전부터 지원
     implementation "com.kakao.sdk:v2-user:2.12.1" // 카카오 로그인
@@ -165,8 +166,7 @@ dependencies {
     implementation "com.kakao.sdk:v2-navi:2.12.1" // 카카오내비
     implementation "com.kakao.sdk:v2-friend:2.12.1" // 카카오톡 소셜 피커, 리소스 번들 파일 포함
 
+
     //애니메이션 라이브러리
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
-
-
 }

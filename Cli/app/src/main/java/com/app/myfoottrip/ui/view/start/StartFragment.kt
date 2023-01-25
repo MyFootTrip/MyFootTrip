@@ -91,8 +91,8 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
             if (error != null) {
                 Log.e(TAG, "로그인 실패", error)
             } else if (token != null) {
-                Log.i(TAG, "로그인 성공 ${token.accessToken}")
-                Log.d(TAG, "kakaoLogin: ${token.idToken}")
+//                Log.i(TAG, "로그인 성공 ${token.accessToken}")
+//                Log.d(TAG, "kakaoLogin: ${token.idToken}")
                 kakaoLoginGetUserData()
             }
         }
@@ -143,7 +143,8 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
                             "\n이메일: ${user.kakaoAccount?.email}" +
                             "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
                             "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}" +
-                            "\n이름 : ${user.kakaoAccount?.name}"
+                            "\n이름 : ${user.kakaoAccount?.name}" +
+                            "${user.hasSignedUp}"
                 )
             }
         }

@@ -1,21 +1,31 @@
 package com.app.myfoottrip.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.data.dto.Email
+import com.app.myfoottrip.data.dto.Join
 import com.app.myfoottrip.data.dto.Token
+import com.app.myfoottrip.data.dto.User
+import com.app.myfoottrip.network.api.TokenApi
 import com.app.myfoottrip.network.api.UserApi
 import com.app.myfoottrip.util.NetworkResult
-import com.google.gson.JsonPrimitive
+import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import kotlin.math.log
 
 
 private const val TAG = "싸피"
 
 class UserRepository {
     private val userApi = Application.retrofit.create(UserApi::class.java)
+    private val tokenApi = Application.retrofit.create(TokenApi::class.java)
+
+    // 헤더를 포함한 Retrofit
+    private val headerTokenApi = Application.headerRetrofit.create(TokenApi::class.java)
+    private val headerUserApi = Application.headerRetrofit.create(UserApi::class.java)
 
     private val _userResponseLiveData = MutableLiveData<NetworkResult<Boolean>>()
     val userResponseLiveData: LiveData<NetworkResult<Boolean>>
@@ -30,9 +40,13 @@ class UserRepository {
         get() = _userJoinResponseLiveData
 
 
-    private val _userLoginReponseLiveData = MutableLiveData<NetworkResult<JsonPrimitive>>()
-    val userLoginReponseLiveData: LiveData<NetworkResult<JsonPrimitive>>
+    private val _userLoginReponseLiveData = MutableLiveData<NetworkResult<Token>>()
+    val userLoginReponseLiveData: LiveData<NetworkResult<Token>>
         get() = _userLoginReponseLiveData
+
+    private val _getUserDataResponseLiveData = MutableLiveData<NetworkResult<Join>>()
+    val getUserDataResponseLiveData: LiveData<NetworkResult<Join>>
+        get() = _getUserDataResponseLiveData
 
 
     // 이메일 중복 체크
@@ -112,9 +126,16 @@ class UserRepository {
         }
     } // End of joinUser
 
-    suspend fun userLogin(userEmail: String, userPassword: String) {
-        val response = userApi.userLogin(userEmail, userPassword)
-
+    // 유저 로그인
+    suspend fun userLogin(
+        email: String,
+        password: String
+    ) {
+        val param = JsonObject().apply {
+            addProperty("email", email)
+            addProperty("password", password)
+        }
+        val response = userApi.userLogin(param)
         _userLoginReponseLiveData.postValue(NetworkResult.Loading())
 
         if (response.isSuccessful && response.body() != null) {
@@ -134,4 +155,28 @@ class UserRepository {
         }
     } // End of userLogin
 
+
+    // 토큰을 사용해서 유저 정보가져오기
+    suspend fun getUserDataByAccessToken() {
+        val response = headerTokenApi.getUserDataByAccessToken()
+
+        _getUserDataResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _getUserDataResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _getUserDataResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _getUserDataResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
+
+    } // End of getUserData
 } // End of UserRepository
