@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Board
+import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.databinding.FragmentCreateBoardBinding
 import com.app.myfoottrip.ui.adapter.PhotoAdapter
@@ -24,15 +25,19 @@ import com.google.android.datatransport.runtime.firebase.transport.LogEventDropp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.*
+import kotlin.collections.ArrayList
 
 private const val TAG = "CreateBoardFragment_마이풋트립"
+
 class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
     FragmentCreateBoardBinding::bind, R.layout.fragment_create_board
 ) {
     private lateinit var mainActivity: MainActivity
 
     private lateinit var photoAdapter: PhotoAdapter
-    private var imageList = ArrayList<Uri?>()
+    private var imageList = ArrayList<Uri>()
 
     private val boardViewModel by activityViewModels<BoardViewModel>()
 
@@ -41,14 +46,11 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            Log.d(TAG, "data: ${result} ")
             val imageUri: Uri? = result.data?.data //가져온 이미지의 uri
-            Log.d(TAG, "uri : $imageUri")
             if (imageUri != null) { //이미지 가져오기 성공
                 imageList.add(imageUri)
                 photoAdapter.apply { //recyclerview에 추가
                     notifyItemInserted(imageList.size - 1)
-                    Log.d(TAG, "images : ${imageList.size}")
                 }
             }
         }
@@ -67,21 +69,50 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
 
         binding.apply {
             ivBack.setOnClickListener { findNavController().popBackStack() } //뒤로가기
-            photoAddBtn.setOnClickListener { GalleryUtils.getGallery(requireContext(),imageLauncher)}
+            photoAddBtn.setOnClickListener {
+                GalleryUtils.getGallery(
+                    requireContext(),
+                    imageLauncher
+                )
+            } //갤러리 이미지 불러오기 버튼
+
+            //게시물 등록하기 버튼
+            btnCreate.setOnClickListener {
+                val board = Board(1, 1, "테스트계정", "string", Date(System.currentTimeMillis()), "혼자놀기", "임시제목입니다", "임시 내용입니다.", arrayListOf(), Travel(1,
+                    arrayListOf(), Date(System.currentTimeMillis()),
+                    Date(System.currentTimeMillis()),
+                    arrayListOf()
+                ), 2,)
+                imageList.removeAt(0)
+                CoroutineScope(Dispatchers.IO).launch {
+                    withContext(Dispatchers.IO) {
+                        val urlList: ArrayList<String> = List(imageList.size) { i ->
+                            "IMAGE_${board.boardId}_${i}.png"
+                        } as ArrayList<String>
+                        board.imageList = GalleryUtils.insertImage(urlList, imageList, 0)
+                        board.content = etContent.text.toString()
+                    }
+                    createBoard(board)
+
+                    CoroutineScope(Dispatchers.Main).launch {
+                        createBoardObserver()
+                    }
+                }
+            }
         }
     }
 
-    private fun init(){
-        imageList.add(null)
+    private fun init() {
+        val uri = Uri.parse("https://images.velog.io/images/ccmmss98/post/4de24da3-70a1-4a57-8df8-7d8bd8ef2b70/saffy.png")
+        imageList.add(uri)
         initPhotoAdapter()
     }
 
-    private fun initPhotoAdapter(){
+    private fun initPhotoAdapter() {
         photoAdapter = PhotoAdapter(imageList)
 
         photoAdapter.setItemClickListener(object : PhotoAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int) {
-                Log.d(TAG, "onClick: $position")
                 imageList.removeAt(position)
                 photoAdapter.notifyItemRemoved(position)
             }
@@ -97,7 +128,7 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
 
     // ----------------Retrofit------------------
     //게시물 전체 받아오기
-    private fun createBoard(board : Board){
+    private fun createBoard(board: Board) {
         CoroutineScope(Dispatchers.IO).launch {
             boardViewModel.createBoard(board)
         }
