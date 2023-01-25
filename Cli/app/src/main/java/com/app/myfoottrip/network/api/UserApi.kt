@@ -1,9 +1,7 @@
 package com.app.myfoottrip.network.api
 
-import com.app.myfoottrip.data.dto.Email
-import com.app.myfoottrip.data.dto.Join
-import com.app.myfoottrip.data.dto.Token
-import com.app.myfoottrip.data.dto.User
+import com.app.myfoottrip.data.dto.*
+import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -34,6 +32,8 @@ interface UserApi {
 
     // 로그인
     @POST("login/")
-    suspend fun userLogin(@Body emailId: String, @Body password: String): Response<JsonPrimitive>
+    suspend fun userLogin(
+        @Body userLoginData: JsonObject
+    ): Response<Token>
 
 } // End of UserApi class

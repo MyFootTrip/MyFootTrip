@@ -4,22 +4,22 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Join
+import com.app.myfoottrip.data.dto.Email
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentLoginBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
-import com.app.myfoottrip.util.RetrofitUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private const val TAG = "LoginFragment_마이풋트립"
+private const val TAG = "LoginFragment_싸피"
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>(
     FragmentLoginBinding::bind, R.layout.fragment_login
@@ -37,7 +37,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(
         }
 
         binding.btnLogin.setOnClickListener {
-
             // 로그인을 할 수 있는 환경이 되면 로그인을 진행하도록 함
             if (checkLoginValid()) {
                 login()
@@ -45,7 +44,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(
         }
 
         userLoginResponseObserve()
-
     } // End of onViewCreated
 
     private fun checkLoginValid(): Boolean {
@@ -69,28 +67,42 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(
         CoroutineScope(Dispatchers.IO).launch {
             userViewModel.userLogin(email, password)
         }
-
-//        val intent = Intent(activity, MainActivity::class.java) //fragment라서 activity intent와는 다른 방식
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-//        startActivity(intent)
-
     } // End of login
 
     private fun userLoginResponseObserve() {
         userViewModel.userLoginResponseLiveData.observe(viewLifecycleOwner) {
+            binding.loginProgressbar.isVisible = false
+            binding.loginProgressbar.visibility = View.GONE
 
             when (it) {
                 is NetworkResult.Success -> {
-                    Log.d(TAG, "userLoginResponseObserve: ${it.data}")
-                    Log.d(TAG, "userLoginResponseObserve: ${it.message}")
-                    Log.d(TAG, "userLoginResponseObserve: $it")
+                    if (it.data!!.refresh_token != null && it.data!!.access_token != null) {
+                        Log.d(TAG, "로그인 성공 ")
+
+                        Log.d(TAG, "refresh_token: ${it.data!!.refresh_token.toString()}")
+                        Log.d(TAG, "access_token: ${it.data!!.access_token.toString()}")
+
+                        Application.sharedPreferencesUtil.addUserRefreshToken(it.data!!.refresh_token.toString())
+                        Application.sharedPreferencesUtil.addUserAccessToken(it.data!!.access_token.toString())
+
+                        val intent = Intent(
+                            activity,
+                            MainActivity::class.java
+                        ) //fragment라서 activity intent와는 다른 방식
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                        startActivity(intent)
+                        activity!!.finish()
+                    }
                 }
 
                 is NetworkResult.Error -> {
+                    showToast("아이디 또는 비밀번호가 잘못되었습니다. 다시 시도해주세요")
                     Log.d(TAG, "userLoginResponseObserve: ${it.data}")
                 }
 
                 is NetworkResult.Loading -> {
+                    binding.loginProgressbar.isVisible = true
+                    binding.loginProgressbar.visibility = View.VISIBLE
                     Log.d(TAG, "userLoginResponseObserve: 로딩 중")
                 }
             }

@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.RefreshToken
+import com.app.myfoottrip.data.dto.Token
 import com.app.myfoottrip.data.viewmodel.StartViewModel
 import com.app.myfoottrip.ui.view.dialogs.ServiceClauseCustomDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
@@ -31,12 +31,12 @@ class StartActivity : AppCompatActivity() {
         sharedPreferencesUtil = SharedPreferencesUtil(this)
         val refreshToken = sharedPreferencesUtil.getUserRefreshToken()
 
-        Log.d(TAG, "refreshToken : $refreshToken")
+        Log.d(TAG, "startActivity RefreshToken : $refreshToken")
 
         // 토큰이 있을 경우 해당 refreshToken을 기준으로 유효성 체크를 실시해서
         // 토큰의 기한이 맞을 경우 accessToken을 발급 받을 수 있는지를 확인함
         if (refreshToken != "") {
-            startViewModel.refreshTokenValidCheck(RefreshToken(refreshToken))
+            startViewModel.refreshTokenValidCheck(Token("", refreshToken))
         }
 
         refreshTokenValidCheckObserver()
@@ -54,16 +54,15 @@ class StartActivity : AppCompatActivity() {
 
             when (it) {
                 is NetworkResult.Success -> {
-                    if (it.data!!.access.toString() == "") {
+                    if (it.data!!.access_token.toString() == "") {
                         this.showToastMessage("빈 값이 넘어옴")
                     }
 
-                    if (it.data!!.access.toString() != "") {
-                        this.showToastMessage("발급된 토큰 : ${it.data!!.access.toString()}")
+                    if (it.data!!.access_token.toString() != "") {
                         // 만약 발급된 accessToken이 있다면
                         // sharedPreference에 accesstoken을 저장
-
-                        Application.sharedPreferencesUtil.addUserAccessToken(it.data!!.access.toString())
+                        Application.sharedPreferencesUtil.addUserAccessToken(it.data!!.access_token.toString())
+                        Application.sharedPreferencesUtil.addUserRefreshToken(it.data!!.refresh_token.toString())
 
                         Intent(this, MainActivity::class.java).apply {
                             startActivity(this)
@@ -72,7 +71,7 @@ class StartActivity : AppCompatActivity() {
                     }
                 }
                 is NetworkResult.Error -> {
-                    if (it.data?.access == null) {
+                    if (it.data?.access_token == null) {
                         showToastMessage("토큰이 만료되었습니다 로그인을 다시 해주세요")
                     }
                 }
