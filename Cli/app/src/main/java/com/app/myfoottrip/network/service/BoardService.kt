@@ -1,6 +1,7 @@
 package com.app.myfoottrip.network.service
 
 import com.app.myfoottrip.data.dto.Board
+import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.data.dto.Join
 import retrofit2.Response
 import retrofit2.http.Body
@@ -16,5 +17,9 @@ interface BoardService {
     //게시물 삽입
     @POST("community/board/create/")
     suspend fun writeBoard(@Body board: Board) : Response<Board>
+
+    //게시물 필터
+    @POST("community/board/filter/")
+    suspend fun getFilteredBoardList(@Body filter: Filter) : Response<ArrayList<Board>>
 
 }

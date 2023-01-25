@@ -37,11 +37,13 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(
         }
 
         binding.btnLogin.setOnClickListener {
-
-            // 로그인을 할 수 있는 환경이 되면 로그인을 진행하도록 함
-            if (checkLoginValid()) {
-                login()
-            }
+            val intent = Intent(activity, MainActivity::class.java) //fragment라서 activity intent와는 다른 방식
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivity(intent)
+//            // 로그인을 할 수 있는 환경이 되면 로그인을 진행하도록 함
+//            if (checkLoginValid()) {
+//                login()
+//            }
         }
 
         userLoginResponseObserve()

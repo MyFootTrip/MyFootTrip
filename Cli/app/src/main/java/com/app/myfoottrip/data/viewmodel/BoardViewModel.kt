@@ -2,14 +2,13 @@ package com.app.myfoottrip.data.viewmodel
 
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.myfoottrip.data.dto.Board
+import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.repository.BoardRepository
 import com.app.myfoottrip.util.NetworkResult
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
@@ -45,6 +44,13 @@ class BoardViewModel : ViewModel() {
     fun createBoard(board: Board) {
         viewModelScope.launch {
             boardRepository.createBoard(board)
+        }
+    }
+
+    // 게시물 생성
+    fun getFilteredBoardList(filter: Filter) {
+        viewModelScope.launch {
+            boardRepository.getFilteredBoardList(filter)
         }
     }
 

@@ -18,7 +18,7 @@ class CategoryAdatper(var categoryList:List<String>) : RecyclerView.Adapter<Cate
             categoryName.text = category
 
             itemView.setOnClickListener{
-                itemClickListner.onClick(it, layoutPosition)
+                itemClickListner.onClick(it, layoutPosition, category)
             }
         }
     }
@@ -40,7 +40,7 @@ class CategoryAdatper(var categoryList:List<String>) : RecyclerView.Adapter<Cate
 
     //클릭 인터페이스 정의 사용하는 곳에서 만들어준다.
     interface ItemClickListener {
-        fun onClick(view: View,  position: Int)
+        fun onClick(view: View,  position: Int, category: String)
     }
 
     //클릭리스너 선언
