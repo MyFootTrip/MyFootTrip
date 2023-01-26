@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Place
+import com.app.myfoottrip.util.TimeUtils
 
 class PlaceAdapter(var placeList:List<Place>) : RecyclerView.Adapter<PlaceAdapter.PlaceHolder>(){
 
@@ -19,10 +20,10 @@ class PlaceAdapter(var placeList:List<Place>) : RecyclerView.Adapter<PlaceAdapte
         fun bindInfo(place : Place){
             placeId.text = place.placeId.toString()
             placeName.text = place.placeName
-            saveDate.text = place.saveDate.toString()
+            saveDate.text = TimeUtils.getFormattedString(place.saveDate!!)
 
             itemView.setOnClickListener{
-                itemClickListner.onClick(it, layoutPosition,place.placeId!!)
+                itemClickListner.onClick(it, layoutPosition,place)
             }
         }
     }
@@ -44,7 +45,7 @@ class PlaceAdapter(var placeList:List<Place>) : RecyclerView.Adapter<PlaceAdapte
 
     //클릭 인터페이스 정의 사용하는 곳에서 만들어준다.
     interface ItemClickListener {
-        fun onClick(view: View,  position: Int, placeId : Int)
+        fun onClick(view: View,  position: Int, place : Place)
     }
 
     //클릭리스너 선언

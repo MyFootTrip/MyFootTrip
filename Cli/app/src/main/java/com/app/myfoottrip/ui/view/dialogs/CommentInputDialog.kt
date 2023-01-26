@@ -12,7 +12,8 @@ class CommentInputDialog(private val listener: OnClickListener) :
     View.OnClickListener {
 
     lateinit var sendBtn: ImageView
-    lateinit var comment : MaterialEditText
+    lateinit var comment: MaterialEditText
+
     val mTag = "댓글 입력 다이얼로그"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +30,7 @@ class CommentInputDialog(private val listener: OnClickListener) :
 
         val view: View = inflater.inflate(R.layout.dialog_comment_input, container, false)
 
-        // 텍스트뷰 세팅
+        //뷰 연결
         sendBtn = view.findViewById(R.id.iv_send)!!
         comment = view.findViewById(R.id.et_comment)
         sendBtn.setOnClickListener(this)

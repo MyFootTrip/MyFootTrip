@@ -14,19 +14,22 @@ import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.databinding.FragmentBoardBinding
 import com.app.myfoottrip.ui.adapter.PlaceAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.ui.view.dialogs.CommentInputDialog
+import com.app.myfoottrip.ui.view.dialogs.PlaceBottomDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.TimeUtils
+import com.bumptech.glide.Glide
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.*
+import com.naver.maps.map.overlay.ArrowheadPathOverlay
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
-import com.naver.maps.map.util.MarkerIcons
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.naver.maps.map.overlay.PathOverlay
+import com.naver.maps.map.overlay.PolylineOverlay
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem
-import java.sql.Time
-import java.util.Date
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 private const val TAG = "BoardFragment_마이풋트립"
@@ -38,7 +41,6 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     private var mapFragment: MapFragment = MapFragment()
 
     private lateinit var placeAdapter: PlaceAdapter
-    private lateinit var placeList: ArrayList<Place>
 
     private val boardViewModel by activityViewModels<BoardViewModel>()
 
@@ -64,19 +66,36 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
     private fun init(){
         initData()
-        initViewPager()
-        initPlaceAdapter()
         initMapScroll()
     }
 
     // Board 객체에 담겨있는 데이터값 화면에 갱신
     private fun initData(){
         binding.apply {
-            Log.d(TAG, "initData: ${boardViewModel.board}")
+            // --------------- 게시글 윗쪽 부분 데이터---------------------------
+            initViewPager() //이미지 슬라이더
+            tvLocation.text = convertToString(boardViewModel.board.travel!!.location!!) //여행 지역
+            tvTheme.text = "#${boardViewModel.board.theme}" //여행 테마
+            //여행기간
+            tvTravelDate.text = TimeUtils.getDateString(boardViewModel.board.travel?.startDate!!) +" ~ "+ TimeUtils.getDateString(boardViewModel.board.travel?.endDate!!)
+            tvTitle.text = boardViewModel.board.title //제목
+            Glide.with(this@BoardFragment).load(boardViewModel.board.profileImg).centerCrop().into(ivProfile)
+            tvNickname.text = boardViewModel.board.nickname //닉네임
+            tvWriteDate.text = TimeUtils.getDateString(boardViewModel.board.writeDate)  //작성일자
 
-//            tvTravelDate.text = TimeUtils.getDateString(boardViewModel.board.travel.startDate) + TimeUtils.getDateString(boardViewModel.board.travel.endDate)
-            tvWriteDate.text = TimeUtils.getDateString(boardViewModel.board.writeDate)
+            // -------- 글 후기 부터 밑에 쪽 데이터 -------------
+            tvContent.text = boardViewModel.board.content
+            initPlaceAdapter()
         }
+    }
+
+    //테마 및 지역 #붙인 스트링으로 만들기
+    private fun convertToString(stringList : ArrayList<String>) : String{
+        val sb = StringBuilder()
+        for (str in stringList){
+            sb.append("#${str} ")
+        }
+        return sb.toString()
     }
 
     //게시물 사진 슬라이더
@@ -88,9 +107,9 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
             val list = mutableListOf<CarouselItem>().let {
                 it.apply {
-                    add(CarouselItem(imageUrl = "https://www.innp.co.kr/images/main/07.jpg"))
-                    add(CarouselItem(imageUrl = "https://a.cdn-hotels.com/gdcs/production85/d946/73f139d8-4c1d-4ef6-97b0-9b2ccf29878a.jpg?impolicy=fcrop&w=800&h=533&q=medium"))
-                    add(CarouselItem(imageUrl = "https://a.cdn-hotels.com/gdcs/production127/d1781/ac9d03ef-22b4-4330-8e8d-695093138cf4.jpg"))
+                    for (image in boardViewModel.board.imageList){
+                        add(CarouselItem(imageUrl = image))
+                    }
                 }
             }
 
@@ -100,23 +119,12 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
     //방문 장소 리사이클러뷰 생성
     private fun initPlaceAdapter(){
-        placeList = ArrayList()
 
-        val board = arrayOf(
-            Place(1,"장생포 고래 문화 특구",Date(System.currentTimeMillis()),"메모", arrayListOf(),20.0,20.0,"대구광역시 수성구"),
-            Place(2,"장생포 모노레일",Date(System.currentTimeMillis()),"메모", arrayListOf(),20.0,20.0,"대구광역시 수성구"),
-            Place(3,"울산 대교 전망대",Date(System.currentTimeMillis()),"메모", arrayListOf(),20.0,20.0,"대구광역시 수성구"),
-            Place(4,"울산 시외버스 터미널",Date(System.currentTimeMillis()),"메모", arrayListOf(),20.0,20.0,"대구광역시 수성구"),
-            Place(5,"장생포 모노레일",Date(System.currentTimeMillis()),"메모", arrayListOf(),20.0,20.0,"대구광역시 수성구")
-        )
-
-        placeList.addAll(board)
-
-        placeAdapter = PlaceAdapter(placeList)
+        placeAdapter = PlaceAdapter(boardViewModel.board.travel?.placeList!!)
 
         placeAdapter.setItemClickListener(object : PlaceAdapter.ItemClickListener {
-            override fun onClick(view: View, position: Int, boardId: Int) {
-
+            override fun onClick(view: View, position: Int, place: Place) {
+                initPlaceBottom(place)
             }
         })
 
@@ -147,7 +155,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         })
     }
 
-    override fun onMapReady(naverMap: NaverMap) {
+    //네이버 지도 마커 표시시
+   override fun onMapReady(naverMap: NaverMap) {
         val options = NaverMapOptions()
             .camera(CameraPosition(LatLng(36.02539, 128.380378),  10.0))  // 카메라 위치 (위도,경도,줌)
             .mapType(NaverMap.MapType.Basic)    //지도 유형
@@ -155,11 +164,64 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
         MapFragment.newInstance(options)
 
-        val marker = Marker()
-        marker.position = LatLng(36.02539, 128.380378)
-        marker.icon = OverlayImage.fromResource(R.drawable.ic_footstep)
-        marker.iconTintColor = ContextCompat.getColor(requireContext(),R.color.main)
+        binding.tvMarkerNum.visibility = View.GONE
 
-        marker.map = naverMap
+
+        val markers = mutableListOf<Marker>()
+        val markersPosition = ArrayList<LatLng>()
+
+
+        //마커 생성
+        for (i in boardViewModel.board.travel!!.placeList!!.indices){
+            val marker = boardViewModel.board.travel!!.placeList!![i]
+            markers.add(
+                Marker().apply {
+                    binding.tvMarkerNum.text = "${i+1}"
+                    position = LatLng(marker.latitude!!,marker.longitude!!)
+                    markersPosition.add(position)
+                    icon = OverlayImage.fromView(binding.tvMarkerNum)
+                    width = 70
+                    height = 70
+                    isHideCollidedMarkers = true
+                    isForceShowIcon = true
+                    isHideCollidedSymbols = true
+                    map = naverMap
+                }
+            )
+        }
+
+        //경로 표시
+        val path = PolylineOverlay()
+        path.coords = markersPosition
+        path.color = ContextCompat.getColor(requireContext(),R.color.main)
+        path.globalZIndex = 50000
+        path.joinType = PolylineOverlay.LineJoin.Bevel
+        path.width = 10
+        path.map = naverMap
+
+
+        //카메라 영역 제어
+        val bounds = LatLngBounds.Builder()
+            .include(markersPosition)
+            .build()
+
+        val cameraUpdate = CameraUpdate.fitBounds(bounds,100).animate(CameraAnimation.Easing)
+        naverMap.moveCamera(cameraUpdate)
+
+        naverMap.minZoom = 1.0
+        naverMap.maxZoom = 18.0
+
+    }
+
+    // 장소 바텀시트 다이얼로그 생성
+    //댓글 입력창 생성
+    private fun initPlaceBottom(place:Place){
+        val placeBottom = PlaceBottomDialog(object : PlaceBottomDialog.OnClickListener {
+            override fun onClick(dialog: PlaceBottomDialog) {
+                dialog.dismiss()
+            }
+        },place)
+
+        placeBottom.show(parentFragmentManager, placeBottom.mTag)
     }
 }
