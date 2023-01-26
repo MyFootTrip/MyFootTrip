@@ -52,7 +52,7 @@ class JoinViewModel : ViewModel() {
     val originPassword: LiveData<String>
         get() = _originPassword
 
-    // 확인 비밀번호
+    // 확인 비밀번호1
     private val _confirmPassword = MutableLiveData<String>()
     val confirmPassword: LiveData<String>
         get() = _confirmPassword
@@ -100,7 +100,7 @@ class JoinViewModel : ViewModel() {
         }
     } // End of userJoin
 
-    // 이메일 인증 문자 체크
+    // 이메일 인증 문자 체크1
     fun emailValidateCheck(emailValidateData: Email) {
         viewModelScope.launch {
             userRepository.checkEmailValidateText(emailValidateData)

@@ -48,10 +48,6 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // toast 예시
-        showToast("test", ToastType.WARNING, true)
-        // fragment
-
         binding.apply {
             btnLogin.setOnClickListener {
                 showLoginFragment()
@@ -60,7 +56,6 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
             btnNaver.setOnClickListener {
                 //현재 토큰을 가지고 있다면 삭제함
                 deleteNaverToken()
-
                 naverLogin()
             }
         }

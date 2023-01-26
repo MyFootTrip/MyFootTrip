@@ -90,8 +90,6 @@ class JoinEmailFragment : Fragment() {
 
         // 이메일 인증 버튼 눌렀을 때,
         customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).setOnClickListener {
-            Log.d(TAG, "emailCheckFlag: $emailCheckFlag")
-
             confirmNumberEditText.text!!.clear()
             emailValidBtn.isClickable = false
             emailValidBtn.isEnabled = false

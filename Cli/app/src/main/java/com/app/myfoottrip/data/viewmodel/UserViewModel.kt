@@ -25,6 +25,7 @@ class UserViewModel : ViewModel() {
         get() = userRepository.getUserDataResponseLiveData
 
 
+    // 사용자 로그인
     suspend fun userLogin(emailId: String, password: String) {
         viewModelScope.launch {
             userRepository.userLogin(emailId, password)

@@ -2,6 +2,8 @@ package com.app.myfoottrip.ui.view.start
 
 import android.content.Context
 import android.os.Bundle
+import android.text.InputFilter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +17,10 @@ import androidx.navigation.Navigation
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinPasswordBinding
+import com.app.myfoottrip.util.showToastMessage
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import java.util.regex.Pattern
 
 
 private const val TAG = "싸피"
@@ -27,11 +31,11 @@ class JoinPhoneNumberFragment : Fragment() {
     private lateinit var customViewLayout: JoinCustomView
     private val joinViewModel by activityViewModels<JoinViewModel>()
 
-    private lateinit var secondJoinEd: TextInputEditText
-    private lateinit var nextButton: AppCompatButton
     private lateinit var passwordConfirm: TextInputEditText
-    private lateinit var secondEditTextMessageTv: TextView
+    private lateinit var nextButton: AppCompatButton
+    private lateinit var secondPasswordInformMessageTv: TextView
     private lateinit var pwOrigin: TextInputEditText
+    private lateinit var firstPasswordInformMessageTv: TextView
 
 
     override fun onAttach(context: Context) {
@@ -63,28 +67,52 @@ class JoinPhoneNumberFragment : Fragment() {
         }
 
         customViewLayout.findViewById<AppCompatButton>(R.id.join_next_button).setOnClickListener {
-                joinViewModel.wholeJoinUserData.password = pwOrigin.text.toString()
+            joinViewModel.wholeJoinUserData.password = pwOrigin.text.toString()
 
-                Navigation.findNavController(customViewLayout.findViewById<AppCompatButton>(R.id.join_next_button))
-                    .navigate(R.id.action_joinPasswordFragment_to_joinProfileFragment)
+            Navigation.findNavController(customViewLayout.findViewById<AppCompatButton>(R.id.join_next_button))
+                .navigate(R.id.action_joinPasswordFragment_to_joinProfileFragment)
+        }
+
+//        pwOrigin.addTextChangedListener {
+//            joinViewModel.setPwLiveData(pwOrigin.text.toString(), passwordConfirm.text.toString())
+//        }
+
+        // 각 EditText가 포커싱에서 벗어났을 때 에러메시지를 띄움
+        pwOrigin.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                firstPasswordInformMessageTv.text = emailValidCheck()
             }
-
-        pwOrigin.addTextChangedListener {
-            joinViewModel.setPwLiveData(pwOrigin.text.toString(), secondJoinEd.text.toString())
         }
 
-        secondJoinEd.addTextChangedListener {
-            joinViewModel.setPwLiveData(pwOrigin.text.toString(), secondJoinEd.text.toString())
+        passwordConfirm.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                joinViewModel.setPwLiveData(
+                    pwOrigin.text.toString(),
+                    passwordConfirm.text.toString()
+                )
+            }
         }
+
+//        pwOrigin.filters = arrayOf(InputFilter {
+//            source, _, _, _, _, _ ->
+//            val pwRegex = """^[0-9a-zA-Z!@#$%^+\-=]*$"""
+//            val pwPattern = Pattern.compile(pwRegex)
+//            if(source.isNullOrBlank() || pwPattern.matcher(source).matches()) {
+//                return@InputFilter source
+//            }
+//            //requireContext().showToastMessage("입력할 수 없는 문자열입니다.")
+//        })
+
 
         passwordEqualCheckObserver()
     } // End of onViewCreated
 
     private fun customViewDataInit() {
-        secondJoinEd = customViewLayout.findViewById(R.id.secondJoinEd)
+        passwordConfirm = customViewLayout.findViewById(R.id.secondJoinEd)
         nextButton = customViewLayout.findViewById(R.id.join_next_button)
-        secondEditTextMessageTv = customViewLayout.findViewById(R.id.secondEditTextMessageTv)
+        secondPasswordInformMessageTv = customViewLayout.findViewById(R.id.secondEditTextMessageTv)
         pwOrigin = customViewLayout.findViewById(R.id.editTextJoinEmail)
+        firstPasswordInformMessageTv = customViewLayout.findViewById(R.id.firstEditTextMessageTv)
     } // End of customViewDataInit
 
     override fun onResume() {
@@ -94,24 +122,44 @@ class JoinPhoneNumberFragment : Fragment() {
         nextButton.isEnabled = false
     }
 
-    private fun certifyViewSet() {
-        customViewLayout.findViewById<ConstraintLayout>(R.id.secondTextFieldLayout).visibility =
-            View.VISIBLE
-
-        customViewLayout.findViewById<TextInputLayout>(R.id.secondTextField).hint = "비밀번호"
-    } // End of certifyViewSet
-
     private fun passwordEqualCheckObserver() {
         joinViewModel.confirmPassword.observe(viewLifecycleOwner) {
             if (joinViewModel.originPassword.value == joinViewModel.confirmPassword.value) {
                 nextButton.isClickable = true
                 nextButton.isEnabled = true
-                secondEditTextMessageTv.text = ""
+                secondPasswordInformMessageTv.text = ""
             } else {
-                secondEditTextMessageTv.text = "비밀번호가 다릅니다."
+                secondPasswordInformMessageTv.text = "비밀번호가 다릅니다."
                 nextButton.isClickable = false
                 nextButton.isEnabled = false
             }
         }
     } // End of passwordEqualCheckObserver
+
+    private fun emailValidCheck(): String {
+        val len = pwOrigin.text!!.length
+
+        if (len < 8) return "비밀번호는 8자리 이상이어야 합니다."
+
+        if (len > 15) return "비밀번호는 15자리 이하이어야 합니다."
+
+        if (isPasswordValid(pwOrigin.text.toString()) == false) return "숫자, 문자, 특수문자 모두 포함이 되어야 합니다."
+
+        // 모든 조건 통과
+        return "사용가능"
+    } // End of emailValidCheck
+
+    /*
+        비밀번호 규칙
+        1. 8자리 이상 15자리 이하.
+        2. 숫자, 문자, 특수문자 모두 포함
+     */
+    private companion object {
+        @JvmStatic
+        val PASSWORD_REGEX = """^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^+\-=])(?=\S+$).*$"""
+        fun isPasswordValid(pw: String): Boolean {
+            return PASSWORD_REGEX.toRegex().matches(pw)
+        } // End of isPasswordValid
+    } // End of private companion object
+
 } // End of JoinPhoneNumberFragment class

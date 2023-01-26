@@ -91,7 +91,6 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
                         }
                     }
 
-
                 } // End of onAnimationEnd
 
                 override fun onAnimationCancel(animation: Animator?) {

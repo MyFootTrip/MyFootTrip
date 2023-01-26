@@ -123,6 +123,12 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                     if (it.data != null) {
                         val boardList = ArrayList<Travel>()
                         boardList.addAll(it.data!!)
+
+                        Log.d(
+                            TAG,
+                            "userTravelDataObserver: ${boardList[0].placeList?.get(0)?.placeImgList?.get(0)}"
+                        )
+
                         travelAdapter.setList(boardList)
                         travelAdapter.notifyDataSetChanged()
                     }
@@ -140,6 +146,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
     private fun setData() { //TODO : DB에서 값 가져와서 넣기
         CoroutineScope(Dispatchers.IO).launch {
+            // 더미 데이터 1번 유저 삽입
             travelViewModel.getUserTravel(1)
         }
     } // End of setData
