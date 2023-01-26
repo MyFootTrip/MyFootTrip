@@ -14,9 +14,8 @@ class PlaceBottomDialog(private val listener: OnClickListener,private val place 
     BottomSheetDialogFragment(),
     View.OnClickListener {
 
-    lateinit var sendBtn: ImageView
     lateinit var comment : MaterialEditText
-    val mTag = "댓글 입력 다이얼로그"
+    val mTag = "장소 바텀 시트 다이얼로그"
 
     lateinit var imageSlider: ImageCarousel
 
@@ -36,9 +35,6 @@ class PlaceBottomDialog(private val listener: OnClickListener,private val place 
 
         //뷰 연결
         imageSlider = view.findViewById(R.id.carousel_image)
-//        sendBtn = view.findViewById(R.id.iv_send)!!
-//        comment = view.findViewById(R.id.et_comment)
-//        sendBtn.setOnClickListener(this)
 
         imageSetting()
 
