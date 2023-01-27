@@ -8,9 +8,12 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Travel
+import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
+import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentTravelSelectBinding
 import com.app.myfoottrip.ui.adapter.TravelAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
@@ -28,16 +31,19 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     private var type = 0 // 0 : 여정 기록, 1 : 마이페이지, 2 : 게시글 작성
 
     private val travelViewModel by activityViewModels<TravelViewModel>()
+    private val tokenViewModel by activityViewModels<TokenViewModel>()
+    private val userViewModel by activityViewModels<UserViewModel>()
     private lateinit var travelAdapter: TravelAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //type 받는 코드
         type = requireArguments().getInt("type")
-        Log.d(TAG, "onViewCreated: type : $type")
         initialize()
 
+
     } // End of onViewCreated
+
 
     private fun initialize() {
 
@@ -61,15 +67,13 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             binding.btnSave.setTextColor(
                 ColorStateList.valueOf(
                     ContextCompat.getColor(
-                        requireContext(),
-                        R.color.main
+                        requireContext(), R.color.main
                     )
                 )
             )
             binding.btnSave.backgroundTintList = ColorStateList.valueOf(
                 ContextCompat.getColor(
-                    requireContext(),
-                    R.color.gray_bright
+                    requireContext(), R.color.gray_bright
                 )
             )
         }
@@ -114,19 +118,20 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     } // End of setListener
 
     private fun userTravelDataObserver() {
-        Log.d(TAG, "userTravelDataObserver: 옵저버 등록")
         travelViewModel.travelUserData.observe(viewLifecycleOwner) {
-            Log.d(TAG, "userTravelDataObserver: 옵저버 실행")
-
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data != null) {
                         val boardList = ArrayList<Travel>()
                         boardList.addAll(it.data!!)
 
+
                         Log.d(
-                            TAG,
-                            "userTravelDataObserver: ${boardList[0].placeList?.get(0)?.placeImgList?.get(0)}"
+                            TAG, "userTravelDataObserver: ${
+                                boardList[0].placeList?.get(0)?.placeImgList?.get(
+                                    0
+                                )
+                            }"
                         )
 
                         travelAdapter.setList(boardList)
@@ -144,10 +149,13 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     } // End of userTravelDataObserver
 
 
-    private fun setData() { //TODO : DB에서 값 가져와서 넣기
-        CoroutineScope(Dispatchers.IO).launch {
-            // 더미 데이터 1번 유저 삽입
-            travelViewModel.getUserTravel(1)
+    private fun setData() {
+        Log.d(TAG, "setData: ${userViewModel.wholeMyData.value?.uid}")
+        Log.d(TAG, "setData: ${userViewModel.wholeMyData.value}")
+
+        CoroutineScope(Dispatchers.Main).launch {
+            travelViewModel.getUserTravel(userViewModel.wholeMyData.value!!.uid)
+            Log.d(TAG, "유저 여행 리스트 가져오기 :${userViewModel.wholeMyData.value!!.uid} ")
         }
     } // End of setData
 
@@ -162,15 +170,13 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                 binding.btnSave.setTextColor(
                     ColorStateList.valueOf(
                         ContextCompat.getColor(
-                            requireContext(),
-                            R.color.main
+                            requireContext(), R.color.main
                         )
                     )
                 )
                 binding.btnSave.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
-                        requireContext(),
-                        R.color.gray_bright
+                        requireContext(), R.color.gray_bright
                     )
                 )
             } else { //선택
@@ -180,8 +186,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                 binding.btnSave.setTextColor(
                     ColorStateList.valueOf(
                         ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
+                            requireContext(), R.color.white
                         )
                     )
                 )

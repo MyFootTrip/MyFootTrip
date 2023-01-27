@@ -1,7 +1,5 @@
 package com.app.myfoottrip.data.dto
 
-import android.media.Image
-
 data class Join @JvmOverloads
 constructor(
     var email: String = "", //아이디

@@ -2,7 +2,6 @@ package com.app.myfoottrip.network.api
 
 import com.app.myfoottrip.data.dto.*
 import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -36,4 +35,4 @@ interface UserApi {
         @Body userLoginData: JsonObject
     ): Response<Token>
 
-} // End of UserApi class
+} // End of UserApi Interface

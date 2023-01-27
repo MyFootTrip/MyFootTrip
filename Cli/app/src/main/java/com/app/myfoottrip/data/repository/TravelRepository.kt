@@ -34,7 +34,7 @@ class TravelRepository {
         _travelListResponseLiveData.postValue(NetworkResult.Loading())
 
         if (response.isSuccessful && response.body() != null) {
-            _travelListResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+            _travelListResponseLiveData.postValue(response.body())
         } else if (response.errorBody() != null) {
             _travelListResponseLiveData.postValue(
                 NetworkResult.Error(
@@ -94,7 +94,4 @@ class TravelRepository {
     }
 
     //여정 수정
-//    suspend fun updateTravel(travel: Travel) {
-//
-//    }
 }

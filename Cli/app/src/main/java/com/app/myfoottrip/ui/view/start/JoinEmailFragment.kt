@@ -46,8 +46,6 @@ class JoinEmailFragment : Fragment() {
     private lateinit var progressbar: ProgressBar
     private lateinit var emailConfirmButton: AppCompatButton
 
-    private var emailCheckFlag = false
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context

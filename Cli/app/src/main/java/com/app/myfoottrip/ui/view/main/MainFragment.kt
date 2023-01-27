@@ -3,17 +3,13 @@ package com.app.myfoottrip.ui.view.main
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.User
+import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMainBinding
 import com.app.myfoottrip.ui.base.BaseFragment
@@ -31,6 +27,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
 
     private lateinit var mainActivity: MainActivity
     private val userViewModel by activityViewModels<UserViewModel>()
+    private val tokenViewModel by activityViewModels<TokenViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -40,7 +37,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        init()
+        initNavigation()
 
         binding.apply {
             bottomNavigationView.background = null // 음영 겹치는거 제거
@@ -48,16 +45,16 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
         }
 
 
-        CoroutineScope(Dispatchers.IO).launch {
-            userViewModel.getUserDataByAccessToken()
-        }
+        // 페이지에 들어오면 유저 정보를 가져옴
+        /*
+            1. accessToken을 통해서 먼저 유저 정보를 가져온다.
+            2. accessToken이 만료되었을 경우 refreshToken을 통해서 accessToken을 다시 발급받는다.
+            3. refreshToken도 만료되었을 경우, 로그아웃 처리된다.
+         */
+        getUserMyData()
 
-        getUserDataResponseLiveDataObserve()
+        getAccessTokenByRefreshTokenResponseLiveDataObserver()
     } // End of onViewCreated
-
-    private fun init() {
-        initNavigation()
-    }
 
     //바텀 네비게이션 설정
     private fun initNavigation() {
@@ -71,8 +68,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
             addButton.setOnClickListener { //여정 기록 -> 여정 선택 화면
                 val bundle = bundleOf("type" to 0)
                 findNavController().navigate(
-                    R.id.action_mainFragment_to_travelSelectFragment,
-                    bundle
+                    R.id.action_mainFragment_to_travelSelectFragment, bundle
                 )
             }
         }
@@ -98,21 +94,39 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
         }
     }
 
-    private fun getUserDataResponseLiveDataObserve() {
-        userViewModel.getUserDataResponseLiveData.observe(viewLifecycleOwner) {
+    private fun getUserMyData() {
+        CoroutineScope(Dispatchers.IO).launch {
+            tokenViewModel.getUserDataByAccessToken()
+            Log.d(TAG, "getUserMyData: 얘가 돌음?")
+        }
+    } // End of getUserMyData
+
+    private fun getAccessTokenByRefreshTokenResponseLiveDataObserver() {
+        Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 옵저버 돌음?")
+
+        tokenViewModel.getUserDataByAccessTokenResponseLiveData.observe(viewLifecycleOwner) {
+            Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 옵저버 들어감?")
 
             when (it) {
                 is NetworkResult.Success -> {
-                    Log.d(TAG, "getUserDataResponseLiveDataObserve 성공 : ${it.data} ")
+                    Log.d(TAG, "여기는 됨: ${it.data}")
+                    userViewModel.setWholeMyData(it.data!!)
+                    Log.d(TAG, "여기 나옴: ${it.data}")
+                    Log.d(TAG, " 뷰 모델 저장 : ${userViewModel.wholeMyData.value} ")
                 }
+
                 is NetworkResult.Error -> {
-                    Log.d(TAG, "이메일 체크 Error: ${it.data}")
+                    // AccessToken을 통해서 유저 정보를 가져오기 실패했는지 파악해야됨.
+                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 토큰 만료됨")
+
+                    // RefreshToken을 통해서 AccessToken을 재발급
                 }
+
                 is NetworkResult.Loading -> {
-                    Log.d(TAG, "emailValidateCheckObserver: 로딩 중")
+                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 로딩 중입니다")
                 }
             }
         }
 
-    } // End of getUserDataResponseLiveDataObserve
+    } // End of getAccessTokenByRefreshTokenResponseLiveDataObserver
 } // End of MainFragment class

@@ -42,9 +42,7 @@ class TravelViewModel : ViewModel() {
     //유저별 여정 확인
     suspend fun getUserTravel(userId: Int) {
         viewModelScope.launch {
-            Log.d(TAG, " getUserTravel 들어가기 전: ${travelUserData.value}")
             travelRepository.getUserTravel(userId)
-            Log.d(TAG, "getUserTravel 나옴 : ${travelUserData.value}")
         }
     }
 

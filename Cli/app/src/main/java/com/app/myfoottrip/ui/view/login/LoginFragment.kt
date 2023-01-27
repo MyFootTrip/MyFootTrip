@@ -80,9 +80,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(
                     if (it.data!!.refresh_token != null && it.data!!.access_token != null) {
                         Log.d(TAG, "로그인 성공 ")
 
-                        Log.d(TAG, "refresh_token: ${it.data!!.refresh_token.toString()}")
-                        Log.d(TAG, "access_token: ${it.data!!.access_token.toString()}")
-
                         Application.sharedPreferencesUtil.addUserRefreshToken(it.data!!.refresh_token.toString())
                         Application.sharedPreferencesUtil.addUserAccessToken(it.data!!.access_token.toString())
 
