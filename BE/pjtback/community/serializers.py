@@ -13,14 +13,6 @@ class PlaceSerializer(serializers.ModelSerializer):
         fields = ('placeId','placeName','saveDate','memo','placeImgList','latitude','longitude','address',)
 
 
-    # def create(self, request, *args, **kwargs):
-    #         kwargs["many"] = isinstance(request.data, list)
-    #         serializer = self.get_serializer(data=request.data, **kwargs)
-    #         serializer.is_valid(raise_exception=True)
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
 class TravelSerializer(serializers.ModelSerializer):
     # userId = serializers.IntegerField(source='userId.id', read_only=True)
     travelId = serializers.IntegerField(source='id', required=False, read_only=True)
@@ -42,31 +34,6 @@ class TravelSerializer(serializers.ModelSerializer):
 
         return instance
         
-
-
-class BoardListSerializer(serializers.ModelSerializer):
-    boardId = serializers.IntegerField(source='id', read_only=True)
-    userId = serializers.IntegerField(source ='userId.pk', read_only=True)
-    nickname =  serializers.CharField(source='userId.nickname', read_only=True)
-    profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True)
-    writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
-    travel = TravelSerializer()
-    imageList = serializers.JSONField(required=False)
-
-    class Meta:
-        model = Board
-        fields = ('boardId','userId','nickname', 'profileImg','writeDate','theme','title','content','imageList','travel','likeCount','commentCount',)
-        read_only_fields = ('userId','travel','profileImg','writeDate',)
-
-    # 요거는 혹시나 해서 참고로 남겨 둠
-    # def create(self, validated_data):
-    #     instance = Board.objects.create(**validated_data)
-    #     image_set = self.context['request'].FILES
-    #     for image_data in image_set.getlist('imageList'):
-    #         Imagelist.objects.create(board=instance, image=image_data)
-    #     return instance
-
-
 class CommentSerializer(serializers.ModelSerializer):
     commentId = serializers.IntegerField(source='id', read_only=True)
     boardId = serializers.IntegerField(source='board.pk', read_only=True)
@@ -78,6 +45,24 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
         read_only_fields = ('user',)
+
+class BoardListSerializer(serializers.ModelSerializer):
+    boardId = serializers.IntegerField(source='id', read_only=True)
+    userId = serializers.IntegerField(source ='userId.pk', read_only=True)
+    nickname =  serializers.CharField(source='userId.nickname', read_only=True)
+    profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True)
+    writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
+    travel = TravelSerializer(read_only = True)
+    imageList = serializers.JSONField(required=False)
+    commentList = CommentSerializer(many=True, required = False, allow_null = True ,read_only=True)
+
+    class Meta:
+        model = Board
+        fields = ('boardId','userId','nickname', 'profileImg','writeDate','theme','title','content','imageList','travel','likeList','commentList')
+        read_only_fields = ('userId','travel','profileImg','writeDate')
+
+
+
 
 class LikeSerializer(serializers.ModelSerializer):
 

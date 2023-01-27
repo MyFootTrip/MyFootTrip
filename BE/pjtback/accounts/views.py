@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
 
-from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer, ImageTestSerializer
+from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer, ImageTestSerializer, TestUserDetailSerializer
 
 from .models import EmailValidateModel, ImageTest
 
@@ -37,7 +37,6 @@ from django.utils.crypto import get_random_string
 @api_view(['POST'])
 @csrf_exempt
 def filtering_email(request):
-    print(request.data)
     # emailobj = {"email": request.data['']}
     serializer = EmailUniqueCheckSerializer(data=request.data)
     if serializer.is_valid():
@@ -126,12 +125,7 @@ def social_login(request, social_page):
     except:
         return HttpResponse(False)
     token = get_tokens_for_user(user)
-    context = {
-        "token": {"refresh": token["refresh"],
-                  "access": token["access"], },
-        "user": {"email": user.email}
-    }
-    return JsonResponse(context, status=status.HTTP_200_OK)
+    return JsonResponse(token, status=status.HTTP_200_OK)
 
 # 토큰 생성 함수
 
@@ -140,56 +134,35 @@ def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
 
     return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
+        'refresh_token': str(refresh),
+        'access_token': str(refresh.access_token),
     }
 
-
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 @csrf_exempt
-@api_view(['GET', 'PUT', 'DELETE'])
-def join_views(request, user_pk):
-    user = get_object_or_404(get_user_model(), pk=user_pk)
-    if request.method == 'GET':
-        serializer = CustomUserDetailSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    elif request.method == 'PUT':
-        # if request.user == user:
-        #     serializer = CustomUserDetailSerializer(instance=user, data=request.data)
-        #     print(serializer)
-        #     if serializer.is_valid():
-        #         serializer.save()
-        #         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        #     else:
-        #         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-        # else:
-        #     return Response(status = status.HTTP_401_UNAUTHORIZED)
-        serializer = JoinSerializer(instance=user, data=request.data)
-        print(serializer)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        else:
-            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-    elif request.method == 'DELETE':
-        if request.user == user:
-            user.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def join_views(request):
+    user = request.user
+    serializer = TestUserDetailSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
-@api_view(['POST', 'GET'])
-def image_test(request):
-    print(request.data)
-    # ImageTest.objects.create(profileImg = request.FILES)
-    if request.method == "POST":
-        serializer = ImageTestSerializer(data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        else:
-            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-    else:
-        img = get_list_or_404(ImageTest)
-        serializer = ImageTestSerializer(img, many=True)
-        return Response(serializer.data)
+
+
+
+# @api_view(['POST', 'GET'])
+# def image_test(request):
+#     print(request.data)
+#     # ImageTest.objects.create(profileImg = request.FILES)
+#     if request.method == "POST":
+#         serializer = ImageTestSerializer(data = request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+#         else:
+#             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+#     else:
+#         img = get_list_or_404(ImageTest)
+#         serializer = ImageTestSerializer(img, many=True)
+#         return Response(serializer.data)

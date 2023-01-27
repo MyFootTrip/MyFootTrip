@@ -10,14 +10,13 @@ from dj_rest_auth.serializers import UserDetailsSerializer
 
 from allauth.account.adapter import get_adapter
 from django.core.exceptions import ValidationError as DjangoValidationError
-from allauth.account.utils import setup_user_email
-from django.utils.module_loading import import_string
 
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
 from .models import User, ImageTest
 
-from community.serializers import PlaceSerializer, BoardListSerializer, TravelSerializer
+from community.serializers import PlaceSerializer, BoardListSerializer, TravelSerializer, CommentSerializer
+
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -43,17 +42,21 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     def get_cleaned_data(self):
         data = super().get_cleaned_data()
-        data['profileImg'] = self.validated_data.get('profileImg', '')
+        data['profileImg'] = self.validated_data.get('profileImg', 'default_image.jpg')
         data['phone_number'] = self.validated_data.get('phone_number', '')
         data['naver'] = self.validated_data.get('naver', '')
         data['google'] = self.validated_data.get('google', '')
         data['kakao'] = self.validated_data.get('kakao', '')
         data['nickname'] = self.validated_data.get('nickname', 'Ghost')
-        data['age'] = int(self.validated_data.get('age'))
+        if self.validated_data.get('age'):
+            data['age'] = int(self.validated_data.get('age'))
+        else:
+            data['age'] = self.validated_data.get('age')
 
         return data
 
     def save(self, request):
+        print(request.data)
         adapter = get_adapter()
         user = adapter.new_user(request)
         print(request.FILES)
@@ -69,7 +72,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         user = adapter.save_user(request, user, self, commit=False)
         user.save()
         self.custom_signup(request, user)
-        setup_user_email(request, user, [])
+        # setup_user_email(request, user, [])
         return user
 
 
@@ -94,35 +97,25 @@ class JoinSerializer(serializers.ModelSerializer):
         read_only_fields = ('email', 'password',)
 
 
-class TokenSerializer(JWTSerializer):
-    access_token = serializers.CharField()
-    refresh_token = serializers.CharField()
-    user = ''
-
-    class Meta:
-        fields = ('access_token', 'refresh_token',)
-
-
 class CustomJWTSerializer(JWTSerializer):
     """
     Serializer for JWT authentication.
     """
-    access_token = ''
-    refresh_token = ''
+    # access_token = ''
+    # refresh_token = ''
     user = ''
 
-    uid = serializers.IntegerField(source='user.id')
-    travel = TravelSerializer(source='user.travel', many=True)
-    myLikeBoard = BoardListSerializer(source='user.myLikeBoard', many=True)
-    writeBoard = BoardListSerializer(source='user.writeBoard', many=True)
-    token = TokenSerializer(source='*')
-    join = JoinSerializer(source="user")
-    totalDate = serializers.IntegerField(source='user.id')
+    # uid = serializers.IntegerField(source='user.id')
+    # travel = TravelSerializer(source='user.travel', many=True)
+    # myLikeBoard = BoardListSerializer(source='user.myLikeBoard', many=True)
+    # writeBoard = BoardListSerializer(source='user.writeBoard', many=True)
+    # token = TokenSerializer(source='*')
+    # join = JoinSerializer(source="user")
+    # totalDate = serializers.IntegerField(source='user.id')
     
 
     class Meta:
-        fields = ('uid', 'token',  'join', 'travel',
-                  'myLikeBoard', 'writeBoard', 'totalDate',)
+        fields = ('access_token', 'refresh_token')
 
 
 class EmailUniqueCheckSerializer(serializers.ModelSerializer):
@@ -157,3 +150,48 @@ class ImageTestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageTest
         fields = "__all__"
+
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.settings import api_settings
+from rest_framework_simplejwt.serializers import RefreshToken
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    refresh = ""
+    refresh_token = serializers.CharField()
+    access_token = serializers.CharField(read_only=True)
+    token_class = RefreshToken
+
+    def validate(self, attrs):
+        refresh = self.token_class(attrs["refresh_token"])
+
+        data = {"access_token": str(refresh.access_token), "refresh_token": str(refresh)}
+
+        if api_settings.ROTATE_REFRESH_TOKENS:
+            if api_settings.BLACKLIST_AFTER_ROTATION:
+                try:
+                    # Attempt to blacklist the given refresh token
+                    refresh.blacklist()
+                except AttributeError:
+                    # If blacklist app not installed, `blacklist` method will
+                    # not be present
+                    pass
+
+            refresh.set_jti()
+            refresh.set_exp()
+            refresh.set_iat()
+
+            data["refresh_token"] = str(refresh)
+
+        return data
+
+# 유저 디테일 시리얼라이저
+class TestUserDetailSerializer(UserDetailsSerializer):
+    uid = serializers.IntegerField(source="id", read_only=True)
+    join = JoinSerializer(source="*")
+    travel = TravelSerializer(many=True, read_only=True)
+    myLikeBoard = BoardListSerializer(many=True, read_only=True)
+    writeBoard = BoardListSerializer( many=True, read_only=True)
+    commentList = CommentSerializer(many=True, read_only=True)
+
+    class Meta(UserDetailsSerializer.Meta):
+        fields = ('uid', 'join', 'travel', 'myLikeBoard', 'commentList', 'writeBoard')
+        read_only_fields = ()
