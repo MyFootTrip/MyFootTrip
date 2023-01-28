@@ -4,9 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
-import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.dto.Travel
-import com.app.myfoottrip.network.service.TravelService
+import com.app.myfoottrip.network.api.TravelApi
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -14,7 +13,7 @@ import kotlinx.coroutines.withContext
 private const val TAG = "TravelRepository_싸피"
 
 class TravelRepository {
-    private val travelService = Application.retrofit.create(TravelService::class.java)
+    private val travelApi = Application.retrofit.create(TravelApi::class.java)
 
     //여정 생성 값
     private val _travelResponseLiveData = MutableLiveData<NetworkResult<Boolean>>()
@@ -28,13 +27,13 @@ class TravelRepository {
 
     // 각 유저별 여행 기록 정보를 가져옴
     suspend fun getUserTravel(userId: Int) {
-        val response = travelService.getUserTravel(userId)
+        val response = travelApi.getUserTravel(userId)
 
         // 처음은 Loading 상태로 지정
         _travelListResponseLiveData.postValue(NetworkResult.Loading())
 
         if (response.isSuccessful && response.body() != null) {
-            _travelListResponseLiveData.postValue(response.body())
+            _travelListResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
         } else if (response.errorBody() != null) {
             _travelListResponseLiveData.postValue(
                 NetworkResult.Error(
@@ -55,7 +54,7 @@ class TravelRepository {
         var result: Travel? = null
         withContext(Dispatchers.IO) {
             try {
-                val response = travelService.getTravel(travelId)
+                val response = travelApi.getTravel(travelId)
                 if (response.isSuccessful) {
                     result = response.body() as Travel
                 } else {
@@ -71,7 +70,7 @@ class TravelRepository {
 
     //여정 생성
     suspend fun sendTravel(travel: Travel) {
-        val response = travelService.makeTravel(travel)
+        val response = travelApi.makeTravel(travel)
 
         _travelResponseLiveData.postValue(NetworkResult.Loading())
 

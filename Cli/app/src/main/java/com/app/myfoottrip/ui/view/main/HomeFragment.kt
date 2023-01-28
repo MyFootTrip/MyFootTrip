@@ -1,5 +1,6 @@
 package com.app.myfoottrip.ui.view.main
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -11,53 +12,47 @@ import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Filter
-import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
+import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentHomeBinding
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
 import com.app.myfoottrip.ui.adapter.HomeAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.NetworkResult
 import com.forms.sti.progresslitieigb.ProgressLoadingIGB
-import com.forms.sti.progresslitieigb.finishLoadingIGB
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.collections.ArrayList
 
-private const val TAG = "HomeFragment_마이풋트립"
+private const val TAG = "HomeFragment_싸피"
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(
     FragmentHomeBinding::bind, R.layout.fragment_home
 ) {
 
-    private lateinit var mainActivity: MainActivity
-
+    private lateinit var mContext: Context
     private lateinit var categoryAdapter: CategoryAdatper
     private lateinit var detailList: ArrayList<String>
-    private var selectedDetailList : ArrayList<String> = ArrayList()
-
+    private var selectedDetailList: ArrayList<String> = ArrayList()
     private lateinit var homeAdatper: HomeAdapter
-
     private var sortBy = "최신순" //정렬 기준
-
     private val boardViewModel by activityViewModels<BoardViewModel>()
-
-    private var filter : Filter = Filter(arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
-
+    private var filter: Filter = Filter(arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
     var detector: GestureDetector? = null
+
+    private val userViewModel by activityViewModels<UserViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mainActivity = context as MainActivity
+        mContext = context
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,10 +62,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         //게시물 작성 페이지로 이동
         binding.ivWrite.setOnClickListener {
             val bundle = bundleOf("type" to 2)
-            findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment,bundle)
+            findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment, bundle)
         }
-
-    }
+        
+        Log.d(TAG, "유저 데이터 성공적으로 가져옴 : ${userViewModel.wholeMyData.value} ")
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            whenStarted {
+//            }
+//        }
+    } // End of onViewCreated
 
     private fun init() {
         getBoardListObserver()
@@ -82,20 +82,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         getData()
     }
 
-    private fun startLoading(){
-        ProgressLoadingIGB.startLoadingIGB(requireContext()){
+    private fun startLoading() {
+        ProgressLoadingIGB.startLoadingIGB(requireContext()) {
             message = "Good Morning!" //  Center Message
             srcLottieJson = R.raw.loading_walk // Tour Source JSON Lottie
             timer = 10000                   // Time of live for progress.
             hight = 500 // Optional
             width = 500 // Optional
         }
-    }
+    } // End of startLoading
 
-    private fun initHomeAdapter(boardList : ArrayList<Board>){
+    private fun initHomeAdapter(boardList: ArrayList<Board>) {
 
         //정렬 기준
-        if(sortBy == "최신순") boardList.sortByDescending { it.writeDate }
+        if (sortBy == "최신순") boardList.sortByDescending { it.writeDate }
         else boardList.sortByDescending { it.likeCount }
 
         homeAdatper = HomeAdapter(boardList)
@@ -113,7 +113,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             homeAdatper.stateRestorationPolicy =
                 RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
-    }
+    } // End of initHomeAdapter
 
     //필터 리사이클러뷰 생성
     private fun initFilterAdapter(detailId: Int) {
@@ -122,16 +122,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         when (detailId) { //해당 필터에 대한 기준을 detailList에 추가
             1 -> { //여행 테마
-                detailList.addAll(themeList)
+                detailList.addAll(THEME_LIST)
             }
             2 -> { //여행 지역
-                detailList.addAll(locationList)
+                detailList.addAll(LOCATION_LIST)
             }
             3 -> { //여행 기간
-                detailList.addAll(periodList)
+                detailList.addAll(PERIOD_LIST)
             }
             else -> { //연령대
-                detailList.addAll(ageList)
+                detailList.addAll(AGE_LIST)
             }
         }
 
@@ -141,7 +141,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             override fun onClick(view: View, position: Int, category: String) {
                 if (!selectedDetailList.contains(category)) {
                     //필터에 어떤 유형으로 필터링할 것인지 삽입
-                    when(detailId){
+                    when (detailId) {
                         1 -> { //여행 테마
                             filter.themeList.add(category)
                         }
@@ -155,7 +155,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             filter.ageList.add(category)
                         }
                     }
-                    
+
                     selectedDetailList.add(category)
                     binding.cgDetail.addView(Chip(requireContext()).apply {
                         chipCornerRadius = 10.0f
@@ -163,18 +163,42 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         textSize = 12.0f
                         isCloseIconVisible = true
                         closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
-                        closeIconTint = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
-                        chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
-                        setTextColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
+                        closeIconTint = ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                requireContext(), R.color.white
+                            )
+                        )
+                        chipBackgroundColor = ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                requireContext(), R.color.main
+                            )
+                        )
+                        setTextColor(
+                            ColorStateList.valueOf(
+                                ContextCompat.getColor(
+                                    requireContext(), R.color.white
+                                )
+                            )
+                        )
                         setOnCloseIconClickListener {
                             binding.cgDetail.removeView(this)
                             selectedDetailList.remove(category)
 
                             //필터에서 해당 필터유형 삭제
-                            if (filter.themeList.isNotEmpty() && filter.themeList.contains(category)) filter.themeList.remove(category)
-                            else if (filter.regionList.isNotEmpty() && filter.regionList.contains(category)) filter.regionList.remove(category)
-                            else if (filter.periodList.isNotEmpty() && filter.periodList.contains(category)) filter.periodList.remove(category)
-                            else if(filter.ageList.isNotEmpty() && filter.ageList.contains(category)) filter.ageList.remove(category)
+                            if (filter.themeList.isNotEmpty() && filter.themeList.contains(category)) filter.themeList.remove(
+                                category
+                            )
+                            else if (filter.regionList.isNotEmpty() && filter.regionList.contains(
+                                    category
+                                )
+                            ) filter.regionList.remove(category)
+                            else if (filter.periodList.isNotEmpty() && filter.periodList.contains(
+                                    category
+                                )
+                            ) filter.periodList.remove(category)
+                            else if (filter.ageList.isNotEmpty() && filter.ageList.contains(category)) filter.ageList.remove(
+                                category
+                            )
                             getFilterdData(filter)
                             getFilteredBoardListObserver()
                         }
@@ -189,8 +213,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.rvCategory.apply {
             adapter = categoryAdapter
         }
-    }
-
+    } // End of initFilterAdapter
 
     //필터 생성 메소드
     private fun initChips() {
@@ -205,7 +228,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 }
             }
         }
-    }
+    } // End of initChips
 
     //필터 클릭 시 상세 필터 기준 생성
     private fun initDetail(checkedId: Int) {
@@ -230,10 +253,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             }
 
         }
-    }
+    } // End of initDetail
 
     //최신순 좋아요순 스피너 생성
-    private fun initSpinnerSort(){
+    private fun initSpinnerSort() {
         binding.apply {
             spinnerSort.setOnSpinnerItemSelectedListener<String> { oldIndex, oldItem, newIndex, newItem ->
                 sortBy = newItem //현재 정렬기준 갱신
@@ -241,7 +264,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 getBoardListObserver()
             }
         }
-    }
+    } // End of initSpinnerSort
 
     //스크롤 감지
     private fun detectScroll() {
@@ -261,7 +284,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             }
 
             //화면이 눌린채 일정한 속도와 방향으로 움직였다 떼어지는 경우
-            override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+            override fun onScroll(
+                e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float
+            ): Boolean {
                 binding.cgCategory.clearCheck()
                 return false
             }
@@ -271,14 +296,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             }
 
             //화면이 눌린채 손가락이 가속해서 움직였다 떼어지는 경우
-            override fun onFling(e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+            override fun onFling(
+                e1: MotionEvent, e2: MotionEvent, velocityX: Float, velocityY: Float
+            ): Boolean {
                 return true
             }
         })
-    }
+    } // End of detectScroll
 
     //화면 터치 이벤트
-    private fun touchLayout(){
+    @SuppressLint("ClickableViewAccessibility")
+    private fun touchLayout() {
         binding.root.setOnTouchListener { _, event ->
             detector!!.onTouchEvent(event)
         }
@@ -297,7 +325,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         //리사이클러 뷰 영역에 스크롤 감지 리스너 등록
         binding.rvHome.addOnScrollListener(onScrollListener)
-    }
+    } // End of touchLayout
 
     //새로고침 이벤트
     private fun setUpSwipeRefresh() {
@@ -322,7 +350,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     // ----------------Retrofit------------------
     //게시물 전체 받아오기
-    private fun getData(){
+    private fun getData() {
         CoroutineScope(Dispatchers.IO).launch {
             boardViewModel.getBoardList()
         }
@@ -346,7 +374,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     } // 게시물 전체 받아오기
 
     //필러팅된 게시물 받아오기
-    private fun getFilterdData(filter: Filter){
+    private fun getFilterdData(filter: Filter) {
         CoroutineScope(Dispatchers.IO).launch {
             boardViewModel.getFilteredBoardList(filter)
         }
@@ -369,9 +397,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     } // 게시물 전체 받아오기
 
     companion object {
-        val themeList = arrayOf("혼자","친구와","연인과","배우자와","아이와","부모님과","기타")
-        val locationList = arrayOf("서울","경기","강원","부산","경북·대구","전남·광주","제주","충남·대전","경남","충북","경남","전북","인천")
-        val periodList = arrayOf("당일 치기","1박 2일","2박 3일","3박 4일","4박 5일+")
-        val ageList = arrayOf("10대", "20대", "30대", "40대", "50대", "60대 이상")
+        val THEME_LIST = arrayOf("혼자", "친구와", "연인과", "배우자와", "아이와", "부모님과", "기타")
+        val LOCATION_LIST = arrayOf(
+            "서울", "경기", "강원", "부산", "경북·대구", "전남·광주", "제주", "충남·대전", "경남", "충북", "경남", "전북", "인천"
+        )
+        val PERIOD_LIST = arrayOf("당일 치기", "1박 2일", "2박 3일", "3박 4일", "4박 5일+")
+        val AGE_LIST = arrayOf("10대", "20대", "30대", "40대", "50대", "60대 이상")
     }
-}
+} // End of HomeFragment class

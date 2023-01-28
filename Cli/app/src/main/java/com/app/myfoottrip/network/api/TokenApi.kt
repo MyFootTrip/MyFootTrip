@@ -1,6 +1,7 @@
 package com.app.myfoottrip.network.api
 
-import com.app.myfoottrip.data.dto.*
+import com.app.myfoottrip.data.dto.Token
+import com.app.myfoottrip.data.dto.User
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

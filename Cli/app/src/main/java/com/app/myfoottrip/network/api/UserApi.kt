@@ -1,6 +1,7 @@
 package com.app.myfoottrip.network.api
 
-import com.app.myfoottrip.data.dto.*
+import com.app.myfoottrip.data.dto.Email
+import com.app.myfoottrip.data.dto.Token
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

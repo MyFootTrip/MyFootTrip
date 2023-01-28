@@ -1,6 +1,5 @@
 package com.app.myfoottrip.data.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.repository.TravelRepository
 import com.app.myfoottrip.util.NetworkResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 private const val TAG = "TravelViewModel_싸피"
@@ -42,9 +43,11 @@ class TravelViewModel : ViewModel() {
     //유저별 여정 확인
     suspend fun getUserTravel(userId: Int) {
         viewModelScope.launch {
-            travelRepository.getUserTravel(userId)
+            withContext(Dispatchers.IO) {
+                travelRepository.getUserTravel(userId)
+            }
         }
-    }
+    } // End of getUserTravel
 
     //여정 조회
     fun getTravel(travelId: Int) {
@@ -55,15 +58,14 @@ class TravelViewModel : ViewModel() {
                 _travelData.postValue(travelData)
             }
         }
-    }
+    } // End of getTravel
 
     //여정 추가
     fun makeTravel(travel: Travel) {
         viewModelScope.launch {
             TravelRepository().sendTravel(travel)
         }
-    }
+    } // End of makeTravel
 
-    //여정 수정
 
-}
+} // End of TraveViewModel class

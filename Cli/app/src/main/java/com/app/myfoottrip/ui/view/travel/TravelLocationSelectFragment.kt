@@ -18,26 +18,23 @@ import com.app.myfoottrip.ui.view.main.HomeFragment
 import com.app.myfoottrip.util.LocationConstants
 import com.google.android.material.chip.Chip
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraUpdate
-import com.naver.maps.map.LocationTrackingMode
-import com.naver.maps.map.MapFragment
-import com.naver.maps.map.NaverMap
-import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
 
-private const val TAG = "TravelLocationSelectFra_myfoottrip"
+private const val TAG = "TravelLocationSelectFra_싸피"
+
 class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBinding>(
     FragmentTravelLocationSelectBinding::bind, R.layout.fragment_travel_location_select
 ), OnMapReadyCallback {
     private val travelViewModel by activityViewModels<TravelViewModel>()
     private lateinit var categoryAdapter: CategoryAdatper
-    private var locationList : ArrayList<String> = arrayListOf() //지역 리스트
-    private var selectedList : ArrayList<String> = arrayListOf() //선택된 리스트
+    private var locationList: ArrayList<String> = arrayListOf() //지역 리스트
+    private var selectedList: ArrayList<String> = arrayListOf() //선택된 리스트
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
     private var mapFragment: MapFragment = MapFragment()
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
-    private lateinit var locationSource : FusedLocationSource
+    private lateinit var locationSource: FusedLocationSource
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,7 +42,8 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         LocationConstants.serviceBind(requireContext())
 
         binding.fabStart.apply {
-            backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.gray_500)
+            backgroundTintList =
+                AppCompatResources.getColorStateList(requireContext(), R.color.gray_500)
             isEnabled = false
         }
 
@@ -56,22 +54,22 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         initListener()
     }
 
-    private fun initMap(){
+    private fun initMap() {
         Log.d(TAG, "initMap: ")
         // TouchFrameLayout 에 mapFragment 올려놓기
         val fragmentTransaction = childFragmentManager.beginTransaction()
-        if(mapFragment.isAdded){
-            fragmentTransaction.remove( mapFragment )
+        if (mapFragment.isAdded) {
+            fragmentTransaction.remove(mapFragment)
             mapFragment = MapFragment()
         }
         fragmentTransaction.add(R.id.map_fragment, mapFragment).commit()
         mapFragment.getMapAsync(this)
     }
 
-    private fun initAdapter(){
+    private fun initAdapter() {
         locationList.clear()
         selectedList.clear()
-        locationList.addAll(HomeFragment.locationList)
+        locationList.addAll(HomeFragment.LOCATION_LIST)
         categoryAdapter = CategoryAdatper(locationList)
 
         categoryAdapter.setItemClickListener(object : CategoryAdatper.ItemClickListener {
@@ -79,10 +77,11 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
                 if (!selectedList.contains(locationList[position])) {
                     setChipListener(position)
                 }
-                if(selectedList.isNotEmpty()){
+                if (selectedList.isNotEmpty()) {
                     binding.tvLocationHint.visibility = View.GONE
                     binding.fabStart.apply {
-                        backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.main)
+                        backgroundTintList =
+                            AppCompatResources.getColorStateList(requireContext(), R.color.main)
                         isEnabled = true
                     }
                 }
@@ -95,7 +94,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
 
     }
 
-    private fun initListener(){
+    private fun initListener() {
         binding.apply {
             fabStart.setOnClickListener {
                 //위치 기록 시작
@@ -119,7 +118,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         }
     }
 
-    private fun setChipListener(position : Int){
+    private fun setChipListener(position: Int) {
         selectedList.add(locationList[position])
 
         binding.cgDetail.addView(Chip(requireContext()).apply {
@@ -128,17 +127,27 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
             textSize = 12.0f
             isCloseIconVisible = true
             closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
-            closeIconTint = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
-            chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
-            setTextColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white)))
+            closeIconTint =
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+            chipBackgroundColor =
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
+            setTextColor(
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.white
+                    )
+                )
+            )
 
             setOnCloseIconClickListener {
                 binding.cgDetail.removeView(this)
                 selectedList.remove(locationList[position])
-                if(selectedList.isEmpty()){
+                if (selectedList.isEmpty()) {
                     binding.tvLocationHint.visibility = View.VISIBLE
                     binding.fabStart.apply {
-                        backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.gray_500)
+                        backgroundTintList =
+                            AppCompatResources.getColorStateList(requireContext(), R.color.gray_500)
                         isEnabled = false
                     }
                 }
@@ -154,27 +163,30 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
 
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
 
-        locationSource = FusedLocationSource(this,LOCATION_PERMISSION_REQUEST_CODE)
+        locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
 
-        if(locationSource.lastLocation != null){
+        if (locationSource.lastLocation != null) {
             val cameraUpdate = CameraUpdate.scrollTo(
-                LatLng(locationSource.lastLocation!!.latitude, locationSource.lastLocation!!.longitude)
+                LatLng(
+                    locationSource.lastLocation!!.latitude,
+                    locationSource.lastLocation!!.longitude
+                )
             )
             naverMap.moveCamera(cameraUpdate)
         }
 
-        naverMap.onMapClickListener = object : NaverMap.OnMapClickListener{
+        naverMap.onMapClickListener = object : NaverMap.OnMapClickListener {
             override fun onMapClick(p0: PointF, p1: LatLng) {
                 Log.d(TAG, "onTouch: ")
-                if(binding.rvCategory.visibility == View.VISIBLE){
+                if (binding.rvCategory.visibility == View.VISIBLE) {
                     binding.rvCategory.visibility = View.GONE
                 }
             }
         }
     }
 
-    private fun setRotaionAnimation(){
+    private fun setRotaionAnimation() {
         binding.apply {
             if (rvCategory.visibility == View.VISIBLE) {
                 rvCategory.visibility = View.GONE

@@ -8,7 +8,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.viewmodel.TokenViewModel
@@ -20,7 +19,6 @@ import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 private const val TAG = "TravelSelectFragment_싸피"
@@ -39,19 +37,25 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         super.onViewCreated(view, savedInstanceState)
         //type 받는 코드
         type = requireArguments().getInt("type")
-        initialize()
 
+        initCustomView()
 
+        initAdapter()
+
+        setListener()
+
+        setData()
     } // End of onViewCreated
 
-
-    private fun initialize() {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         // 데이터를 가져오는 옵저버
         userTravelDataObserver()
+    }
 
-        setData()
 
+    private fun initCustomView() {
         if (type == 0) { //여정 선택 부분
             binding.tvTravelTitle.text = "여정을 선택해주세요."
             binding.btnSave.visibility = View.VISIBLE
@@ -77,12 +81,10 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                 )
             )
         }
-        initAdapter()
-        setListener()
-    } // End of initialize
+    } // End of initCustomView
 
     private fun initAdapter() {
-        travelAdapter = TravelAdapter(arrayListOf(), type)
+        travelAdapter = TravelAdapter(type)
         binding.rvTravel.adapter = travelAdapter
 
         travelAdapter.setItemClickListener(object : TravelAdapter.ItemClickListener {
@@ -125,15 +127,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                         val boardList = ArrayList<Travel>()
                         boardList.addAll(it.data!!)
 
-
-                        Log.d(
-                            TAG, "userTravelDataObserver: ${
-                                boardList[0].placeList?.get(0)?.placeImgList?.get(
-                                    0
-                                )
-                            }"
-                        )
-
                         travelAdapter.setList(boardList)
                         travelAdapter.notifyDataSetChanged()
                     }
@@ -148,14 +141,9 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         }
     } // End of userTravelDataObserver
 
-
     private fun setData() {
-        Log.d(TAG, "setData: ${userViewModel.wholeMyData.value?.uid}")
-        Log.d(TAG, "setData: ${userViewModel.wholeMyData.value}")
-
-        CoroutineScope(Dispatchers.Main).launch {
-            travelViewModel.getUserTravel(userViewModel.wholeMyData.value!!.uid)
-            Log.d(TAG, "유저 여행 리스트 가져오기 :${userViewModel.wholeMyData.value!!.uid} ")
+        CoroutineScope(Dispatchers.IO).launch {
+            userViewModel.wholeMyData.value?.uid?.let { travelViewModel.getUserTravel(it) }
         }
     } // End of setData
 

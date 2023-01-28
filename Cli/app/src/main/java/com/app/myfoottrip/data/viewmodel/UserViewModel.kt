@@ -1,11 +1,9 @@
 package com.app.myfoottrip.data.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.myfoottrip.data.dto.Join
 import com.app.myfoottrip.data.dto.Token
 import com.app.myfoottrip.data.dto.User
 import com.app.myfoottrip.data.repository.UserRepository
@@ -34,8 +32,6 @@ class UserViewModel : ViewModel() {
     } // End of userLogin
 
     fun setWholeMyData(myData: User) {
-        Log.d(TAG, "setWholeMyData: ${_wholeMyData.value} ")
         _wholeMyData.value = myData
-        Log.d(TAG, "setWholeMyData: ${_wholeMyData.value} ")
     } // End of setWholeMyData
 } // End of UserViewModel class

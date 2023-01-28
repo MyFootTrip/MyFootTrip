@@ -7,7 +7,9 @@ import com.app.myfoottrip.data.dto.Token
 import com.app.myfoottrip.data.dto.User
 import com.app.myfoottrip.data.repository.TokenRepository
 import com.app.myfoottrip.util.NetworkResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class TokenViewModel : ViewModel() {
     private val tokenRepository = TokenRepository()
@@ -25,7 +27,9 @@ class TokenViewModel : ViewModel() {
 
     suspend fun getUserDataByAccessToken() {
         viewModelScope.launch {
-            tokenRepository.getUserDataByAccessToken()
+            withContext(Dispatchers.IO) {
+                tokenRepository.getUserDataByAccessToken()
+            }
         }
     } // End of getUserDataByAccessToken
 } // End of TokenViewModel class

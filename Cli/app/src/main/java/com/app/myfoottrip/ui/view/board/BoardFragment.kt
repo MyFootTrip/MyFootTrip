@@ -74,7 +74,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         binding.apply {
             // --------------- 게시글 윗쪽 부분 데이터---------------------------
             initViewPager() //이미지 슬라이더
-            tvLocation.text = convertToString(boardViewModel.board.travel!!.location!!) //여행 지역
+            tvLocation.text = convertToString(boardViewModel.board.travel!!.location!! as ArrayList<String>) //여행 지역
             tvTheme.text = "#${boardViewModel.board.theme}" //여행 테마
             //여행기간
             tvTravelDate.text = TimeUtils.getDateString(boardViewModel.board.travel?.startDate!!) +" ~ "+ TimeUtils.getDateString(boardViewModel.board.travel?.endDate!!)

@@ -164,11 +164,6 @@ class JoinEmailFragment : Fragment() {
         showViewInit()
     } // End of onResume
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
-
     // 다시 비워져야 할 항목들
     private fun showViewInit() {
         customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).isClickable = false
