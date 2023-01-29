@@ -32,14 +32,11 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
-            loadBtn.setOnClickListener {
-
-            }
-
-//            saveBtn.setOnClickListener {
-
+//        binding.apply {
+//            myTravelBtn.setOnClickListener {
+//
 //            }
-        }
+//
+//        }
     }
 }
