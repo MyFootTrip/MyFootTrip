@@ -11,11 +11,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinProfileBinding
@@ -30,6 +32,7 @@ private const val TAG = "JoinProfileFragment_싸피"
 class JoinProfileFragment : Fragment() {
     private lateinit var mContext: Context
     private lateinit var binding: FragmentJoinProfileBinding
+    private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
     private val joinViewModel by activityViewModels<JoinViewModel>()
 
     override fun onAttach(context: Context) {
@@ -51,6 +54,13 @@ class JoinProfileFragment : Fragment() {
         binding.joinProfileImagePlusButton.setOnClickListener {
             selectGallery()
         }
+
+        joinBackButtonCustomView = binding.joinBackButtonCustomview
+        joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
+            .setOnClickListener {
+                findNavController().popBackStack()
+            }
+
 
         // 연령대 선택 프래그먼트로 이동
         binding.joinNextButton.setOnClickListener {

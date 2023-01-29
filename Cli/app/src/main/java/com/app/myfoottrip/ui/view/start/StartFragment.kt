@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.viewmodel.KakaoAuthViewModel
 import com.app.myfoottrip.databinding.FragmentStartBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.kakao.sdk.auth.model.OAuthToken
@@ -35,7 +34,6 @@ private const val TAG = "StartFragment_싸피"
 class StartFragment : BaseFragment<FragmentStartBinding>(
     FragmentStartBinding::bind, R.layout.fragment_start
 ) {
-    private val kakaoAuthViewModel: KakaoAuthViewModel by viewModels()
     private var email: String = ""
     private var phone: String = ""
     private var name: String = ""

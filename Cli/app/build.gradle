@@ -168,4 +168,8 @@ dependencies {
 
     //애니메이션 라이브러리
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
+
+    // 네이버 맵 클러스터링
+    implementation 'io.github.ParkSangGwon:tedclustering-naver:1.0.2'
+
 }

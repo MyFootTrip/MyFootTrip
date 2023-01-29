@@ -1,11 +1,11 @@
 package com.app.myfoottrip.ui.view.travel
 
-
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
@@ -38,35 +38,33 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         //type 받는 코드
         type = requireArguments().getInt("type")
 
-        initCustomView()
+        userTravelDataObserver()
 
-        initAdapter()
+        initCustomView()
 
         setListener()
 
         setData()
+
+        initAdapter()
+
+        binding.ivBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     } // End of onViewCreated
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        // 데이터를 가져오는 옵저버
-        userTravelDataObserver()
-    }
-
 
     private fun initCustomView() {
         if (type == 0) { //여정 선택 부분
-            binding.tvTravelTitle.text = "여정을 선택해주세요."
+            binding.tvTravelTitle.setText(R.string.plz_travel_select_button_text)
             binding.btnSave.visibility = View.VISIBLE
-            binding.btnSave.text = "+ 여정 새로 만들기"
+            binding.btnSave.setText(R.string.make_new_travel_button_text)
         } else if (type == 1) { //여정 관리 부분
-            binding.tvTravelTitle.text = "나의 여정"
+            binding.tvTravelTitle.setText(R.string.select_travel_title)
             binding.btnSave.visibility = View.GONE
         } else { //게시글
-            binding.tvTravelTitle.text = "여정 선택하기"
+            binding.tvTravelTitle.setText(R.string.select_travel_title)
             binding.btnSave.visibility = View.VISIBLE
-            binding.btnSave.text = "여정을 선택해주세요"
+            binding.btnSave.setText(R.string.plz_travel_select_button_text)
             binding.btnSave.isEnabled = false
             binding.btnSave.setTextColor(
                 ColorStateList.valueOf(
@@ -75,11 +73,14 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                     )
                 )
             )
-            binding.btnSave.backgroundTintList = ColorStateList.valueOf(
-                ContextCompat.getColor(
-                    requireContext(), R.color.gray_bright
-                )
-            )
+//            binding.btnSave.backgroundTintList = ColorStateList.valueOf(
+//                ContextCompat.getColor(
+//                    requireContext(), R.color.gray_bright
+//                )
+//            )
+
+            binding.btnSave.isClickable = false
+            binding.btnSave.isEnabled = false
         }
     } // End of initCustomView
 
@@ -121,12 +122,16 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
     private fun userTravelDataObserver() {
         travelViewModel.travelUserData.observe(viewLifecycleOwner) {
+            binding.travelSelectProgressbar.visibility = View.GONE
+            binding.travelSelectProgressbar.isVisible = false
+
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data != null) {
                         val boardList = ArrayList<Travel>()
                         boardList.addAll(it.data!!)
 
+                        binding.rvTravel.visibility = View.VISIBLE
                         travelAdapter.setList(boardList)
                         travelAdapter.notifyDataSetChanged()
                     }
@@ -135,7 +140,8 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                     Log.d(TAG, "userTravel 체크 Error: ${it.data}")
                 }
                 is NetworkResult.Loading -> {
-                    //TODO: 로딩바
+                    binding.travelSelectProgressbar.visibility = View.VISIBLE
+                    binding.travelSelectProgressbar.isVisible = true
                 }
             }
         }
@@ -153,40 +159,30 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             var lastPos = getSelected()
             if (position == lastPos) { //선택 해제
                 setSelected(-1)
-                settingPage(false)
-                if (type == 2) binding.btnSave.isEnabled = false
+                settingView(false)
+                if (type == 2) {
+                    binding.btnSave.isClickable = false
+                    binding.btnSave.isEnabled = false
+                }
                 binding.btnSave.setTextColor(
                     ColorStateList.valueOf(
                         ContextCompat.getColor(
-                            requireContext(), R.color.main
+                            requireContext(), R.color.gray_bright
                         )
-                    )
-                )
-                binding.btnSave.backgroundTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(), R.color.gray_bright
                     )
                 )
             } else { //선택
                 setSelected(position)
-                settingPage(true)
-                if (type == 2) binding.btnSave.isEnabled = true
-                binding.btnSave.setTextColor(
-                    ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(), R.color.white
-                        )
-                    )
-                )
-                binding.btnSave.backgroundTintList =
-                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
+                settingView(true)
+                if (type == 2) {
+                    binding.btnSave.isClickable = true
+                    binding.btnSave.isEnabled = true
+                }
             }
-            notifyItemChanged(lastPos) // 선택 해제
-            notifyItemChanged(position) // 선택
         }
-    }
+    } // End of changeSelected
 
-    private fun settingPage(isChecked: Boolean) {
+    private fun settingView(isChecked: Boolean) {
         if (isChecked) {
             when (type) {
                 0 -> {
@@ -199,12 +195,16 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         } else {
             when (type) {
                 0 -> {
-                    binding.btnSave.text = "+ 여정 새로 만들기"
+                    binding.btnSave.setText(R.string.make_new_travel_button_text)
+                    binding.btnSave.isClickable = true
+                    binding.btnSave.isEnabled = true
                 }
                 2 -> {
-                    binding.btnSave.text = "여정을 선택해주세요"
+                    binding.btnSave.setText(R.string.plz_travel_select_button_text)
+                    binding.btnSave.isClickable = false
+                    binding.btnSave.isEnabled = false
                 }
             }
         }
-    }
+    } // End of settingView
 }

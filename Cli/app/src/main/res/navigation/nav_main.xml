@@ -54,7 +54,15 @@
         android:id="@+id/travelLocationWriteFragment"
         android:name="com.app.myfoottrip.ui.view.travel.TravelLocationWriteFragment"
         android:label="fragment_travel_location_write"
-        tools:layout="@layout/fragment_travel_location_write" />
+        tools:layout="@layout/fragment_travel_location_write" >
+        <action
+            android:id="@+id/action_travelLocationWriteFragment_to_editSaveTravelFragment"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim"
+            app:destination="@id/editSaveTravelFragment" />
+    </fragment>
     <fragment
         android:id="@+id/commentFragment"
         android:name="com.app.myfoottrip.ui.view.board.CommentFragment"
@@ -65,5 +73,9 @@
         android:name="com.app.myfoottrip.ui.view.board.CreateBoardFragment"
         android:label="fragment_create_board"
         tools:layout="@layout/fragment_create_board" />
+    <fragment
+        android:id="@+id/editSaveTravelFragment"
+        android:name="com.app.myfoottrip.ui.view.travel.EditSaveTravelFragment"
+        android:label="EditSaveTravelFragment" />
 
 </navigation>

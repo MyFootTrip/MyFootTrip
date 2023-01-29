@@ -1,5 +1,7 @@
 package com.app.myfoottrip.ui.view.travel
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.PointF
 import android.os.Bundle
@@ -15,13 +17,16 @@ import com.app.myfoottrip.databinding.FragmentTravelLocationSelectBinding
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.HomeFragment
+import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.LocationConstants
 import com.google.android.material.chip.Chip
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 
-private const val TAG = "TravelLocationSelectFra_싸피"
+private const val TAG = "TravelLocationSelectFragment_싸피"
 
 class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBinding>(
     FragmentTravelLocationSelectBinding::bind, R.layout.fragment_travel_location_select
@@ -35,6 +40,12 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
     private var mapFragment: MapFragment = MapFragment()
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
     private lateinit var locationSource: FusedLocationSource
+    private lateinit var mContext: Context
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+    } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,10 +63,12 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         }
         initAdapter()
         initListener()
-    }
+
+        Log.d(TAG, "onViewCreated: ")
+    } // End of onViewCreated
+
 
     private fun initMap() {
-        Log.d(TAG, "initMap: ")
         // TouchFrameLayout 에 mapFragment 올려놓기
         val fragmentTransaction = childFragmentManager.beginTransaction()
         if (mapFragment.isAdded) {
@@ -64,7 +77,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         }
         fragmentTransaction.add(R.id.map_fragment, mapFragment).commit()
         mapFragment.getMapAsync(this)
-    }
+    } // End of initMap
 
     private fun initAdapter() {
         locationList.clear()
@@ -91,18 +104,28 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         binding.rvCategory.apply {
             adapter = categoryAdapter
         }
+    } // End of initAdapter
 
-    }
+    // 위치 기록 시작
+    private fun startLocationRecording() {
+        binding.fabStart.setOnClickListener {
+            travelViewModel.setLocationList(selectedList)
+//            val view = TravelLocationSelectFragment().view
+//            if (view != null) {
+//                serviceStart(view)
+//            }
+
+            val mainActivity = requireActivity() as MainActivity
+            mainActivity.startLocationService()
+
+            // LocationConstants.startBackgroundService(requireContext())
+            showToast("위치 기록을 시작합니다.", ToastType.SUCCESS)
+            findNavController().navigate(R.id.action_travelLocationSelectFragment_to_travelLocationWriteFragment)
+        }
+    } // End of startLocationRecording
 
     private fun initListener() {
         binding.apply {
-            fabStart.setOnClickListener {
-                //위치 기록 시작
-                travelViewModel.setLocationList(selectedList)
-                LocationConstants.startBackgroundService(requireContext())
-                showToast("위치 기록을 시작합니다.", ToastType.SUCCESS)
-                findNavController().navigate(R.id.action_travelLocationSelectFragment_to_travelLocationWriteFragment)
-            }
             ivLocationDrop.setOnClickListener {
                 setRotaionAnimation()
             }
@@ -115,6 +138,8 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
 //            btnEnd.setOnClickListener{
 //                LocationConstants.stopLocation()
 //            }
+
+            startLocationRecording()
         }
     }
 
@@ -134,8 +159,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
             setTextColor(
                 ColorStateList.valueOf(
                     ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
+                        requireContext(), R.color.white
                     )
                 )
             )
@@ -155,9 +179,16 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         })
     }
 
-    override fun onMapReady(p0: NaverMap) {
-        Log.d(TAG, "onMapReady: ")
-        this.naverMap = p0
+    fun setMarker(marker: Marker, lat: Double, lng: Double) {
+        marker.isIconPerspectiveEnabled = true
+        marker.icon = OverlayImage.fromResource(R.drawable.ic_marker_test)
+        marker.alpha = 0.8f
+        marker.position = LatLng(lat, lng)
+        marker.map = naverMap
+    } // End of setMaker
+
+    override fun onMapReady(naverMap: NaverMap) {
+        this.naverMap = naverMap
         val uiSetting = naverMap.uiSettings
         uiSetting.isLocationButtonEnabled = true
 
@@ -169,8 +200,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         if (locationSource.lastLocation != null) {
             val cameraUpdate = CameraUpdate.scrollTo(
                 LatLng(
-                    locationSource.lastLocation!!.latitude,
-                    locationSource.lastLocation!!.longitude
+                    locationSource.lastLocation!!.latitude, locationSource.lastLocation!!.longitude
                 )
             )
             naverMap.moveCamera(cameraUpdate)
@@ -178,7 +208,6 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
 
         naverMap.onMapClickListener = object : NaverMap.OnMapClickListener {
             override fun onMapClick(p0: PointF, p1: LatLng) {
-                Log.d(TAG, "onTouch: ")
                 if (binding.rvCategory.visibility == View.VISIBLE) {
                     binding.rvCategory.visibility = View.GONE
                 }
@@ -220,7 +249,6 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "onDestroy: ")
         LocationConstants.serviceUnBind(requireContext())
     }
 

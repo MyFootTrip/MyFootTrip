@@ -11,12 +11,13 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentServiceClauseBinding
 
 
-private const val TAG = "싸피"
+private const val TAG = "ServiceClauseFragment_싸피"
 
 class ServiceClauseFragment : Fragment() {
     private lateinit var mContext: Context
@@ -78,7 +79,8 @@ class ServiceClauseFragment : Fragment() {
 
         joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
             .setOnClickListener {
-                Log.d(TAG, "onViewCreated: onBackPressed Test 입니다.")
+                Log.d(TAG, "joinBackButtonCustomView onClick: ")
+                findNavController().popBackStack()
             }
 
     } // End of onViewCreated

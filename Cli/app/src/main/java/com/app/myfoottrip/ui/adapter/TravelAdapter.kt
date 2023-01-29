@@ -18,6 +18,10 @@ class TravelAdapter(
     private var selected: Int = -1
     private var travelList: List<Travel> = emptyList()
 
+    //클릭리스너 선언
+    private lateinit var itemClickListner: ItemClickListener
+
+
     fun getSelected(): Int {
         return selected
     }
@@ -66,9 +70,6 @@ class TravelAdapter(
         fun onAllClick(position: Int, travelDto: Travel) //전체 클릭한 경우
         fun onChipClick(type: Int, position: Int, travelDto: Travel) //chip만 클릭한 경우
     }
-
-    //클릭리스너 선언
-    private lateinit var itemClickListner: ItemClickListener
 
     //클릭리스너 등록 매소드
     fun setItemClickListener(itemClickListener: ItemClickListener) {

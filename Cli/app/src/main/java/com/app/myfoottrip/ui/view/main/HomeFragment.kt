@@ -12,8 +12,6 @@ import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
@@ -64,8 +62,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             val bundle = bundleOf("type" to 2)
             findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment, bundle)
         }
-        
-        Log.d(TAG, "유저 데이터 성공적으로 가져옴 : ${userViewModel.wholeMyData.value} ")
+
 //        viewLifecycleOwner.lifecycleScope.launch {
 //            whenStarted {
 //            }
@@ -348,7 +345,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
     }
 
-    // ----------------Retrofit------------------
     //게시물 전체 받아오기
     private fun getData() {
         CoroutineScope(Dispatchers.IO).launch {

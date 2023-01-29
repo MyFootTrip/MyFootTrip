@@ -14,7 +14,7 @@ import com.google.android.gms.location.LocationServices.getFusedLocationProvider
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 
-private const val TAG = "LocationConstants_myfoottrip"
+private const val TAG = "LocationConstants_싸피"
 object LocationConstants {
     val LOCATION_SERVICE_ID = 175
 
@@ -40,7 +40,7 @@ object LocationConstants {
                 serviceBind(context)
             }
             if(isConService && locationService != null){ //서비스가 있을 때
-                locationService?.startLocationService()
+                locationService?.setNotification()
             }else{
                 Log.d(TAG, "callBindServiceTest: nulll======================= ")
             }

@@ -30,14 +30,13 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="04:30" />
 
-        <com.naver.maps.map.MapView
-            android:id="@+id/map_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_start_time"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="164dp"
-            />
+    <com.naver.maps.map.MapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="164dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_start_time" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_add_point"
@@ -51,11 +50,10 @@
         android:textColor="@color/join_next_button_text_color"
         android:textSize="16sp"
         android:translationZ="10dp"
-        app:layout_goneMarginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="@id/map_view"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_goneMarginBottom="24dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_pause"
@@ -65,10 +63,10 @@
         android:src="@drawable/ic_pause"
         app:borderWidth="0dp"
         app:fabCustomSize="72dp"
-        app:layout_constraintTop_toBottomOf="@id/map_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/map_view"
         app:maxImageSize="36dp"
         app:tint="@color/main"
         tools:ignore="SpeakableTextPresentCheck" />
@@ -82,11 +80,11 @@
         android:visibility="gone"
         app:borderWidth="0dp"
         app:fabCustomSize="72dp"
-        app:layout_constraintTop_toBottomOf="@id/map_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fab_restart"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/map_view"
         app:maxImageSize="26dp"
         app:tint="@color/white"
         tools:ignore="SpeakableTextPresentCheck" />
@@ -100,11 +98,11 @@
         android:visibility="gone"
         app:borderWidth="0dp"
         app:fabCustomSize="72dp"
-        app:layout_constraintTop_toBottomOf="@id/map_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/fab_stop"
+        app:layout_constraintTop_toBottomOf="@id/map_view"
         app:maxImageSize="28dp"
         app:tint="@color/white"
         tools:ignore="SpeakableTextPresentCheck" />

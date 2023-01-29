@@ -1,5 +1,6 @@
 package com.app.myfoottrip.ui.view.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -9,24 +10,28 @@ import androidx.navigation.fragment.NavHostFragment
 import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.ActivityMainBinding
+import com.app.myfoottrip.ui.view.travel.LocationService
 import com.app.myfoottrip.util.NetworkResult
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 private const val TAG = "MainActivity_싸피"
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainActivity class
 
     private lateinit var binding: ActivityMainBinding
     lateinit var navHostFragment: NavHostFragment
     lateinit var navController: NavController
     private val userViewModel: UserViewModel by viewModels()
     private val tokenViewModel: TokenViewModel by viewModels()
+    lateinit var naverMap: NaverMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         // 한번만 유저 정보를 가져오기
         getAccessTokenByRefreshTokenResponseLiveDataObserver()
@@ -52,8 +57,16 @@ class MainActivity : AppCompatActivity() {
 
             when (it) {
                 is NetworkResult.Success -> {
-                    userViewModel.setWholeMyData(it.data!!)
-                    setBinding()
+
+                    CoroutineScope(Dispatchers.Main).launch {
+                        userViewModel.setWholeMyData(it.data!!)
+
+                        coroutineScope {
+                            if (it.data != null) {
+                                setBinding()
+                            }
+                        }
+                    }
                 }
 
                 is NetworkResult.Error -> {
@@ -75,4 +88,20 @@ class MainActivity : AppCompatActivity() {
 
     } // End of getAccessTokenByRefreshTokenResponseLiveDataObserver
 
-} // End of MainActivity class
+    fun stopLocationService() {
+        val intent = Intent(this, LocationService::class.java)
+        stopService(intent)
+    } // End of stopService
+
+    fun startLocationService() {
+        val intent = Intent(this, LocationService::class.java)
+        startService(intent)
+    } // End of stopService
+
+    override fun onMapReady(naverMap: NaverMap) {
+        this.naverMap = naverMap
+
+        TODO("Not yet implemented")
+    }
+
+}
