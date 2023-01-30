@@ -76,9 +76,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                         Place(
                             null,
                             "",
-                            Date(0),
+                            Date(20),
                             "test 입니다 ",
-                            null,
+                            ArrayList(),
                             temp.lat,
                             temp.lng,
                             temp.address
@@ -89,8 +89,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 val createTravelData = Travel(
                     null,
                     travelViewModel.selectLocationList,
-                    Date(0),
-                    Date(0),
+                    Date(20),
+                    Date(20),
                     placeList
                 )
 
