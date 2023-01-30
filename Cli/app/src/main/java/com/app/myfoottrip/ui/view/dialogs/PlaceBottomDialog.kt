@@ -114,7 +114,7 @@ class PlaceBottomDialog(private val listener: OnClickListener,private val place 
             icon = MarkerIcons.BLACK
             iconTintColor = ContextCompat.getColor(requireContext(),R.color.main)
             width = 60
-            height = 70
+            height = 80
             map = naverMap
         }
 
