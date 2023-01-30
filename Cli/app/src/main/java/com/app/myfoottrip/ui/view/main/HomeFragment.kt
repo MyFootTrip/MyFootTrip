@@ -92,8 +92,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private fun initHomeAdapter(boardList: ArrayList<Board>) {
 
         //정렬 기준
-        if (sortBy == "최신순") boardList.sortByDescending { it.writeDate }
-        else boardList.sortByDescending { it.likeCount }
+        if(sortBy == "최신순") boardList.sortByDescending { it.writeDate }
+        else boardList.sortByDescending { it.likeList.size }
 
         homeAdatper = HomeAdapter(boardList)
 

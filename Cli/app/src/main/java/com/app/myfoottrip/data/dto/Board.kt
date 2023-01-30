@@ -14,6 +14,6 @@ data class Board @JvmOverloads constructor(
     var content: String,
     var imageList : ArrayList<String>,
     val travel : Travel?, //여정 정보 객체
-    var likeCount : Int = 0, //좋아요 수
-    var commentCount : Int = 0, //댓글 수
+    var likeList : ArrayList<Int>, //좋아요한 유저 정보
+    var commentList : ArrayList<Comment>, //댓글 수
 )

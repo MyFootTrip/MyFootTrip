@@ -31,8 +31,8 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
 
             title.text = board.title
             nickname.text = board.nickname
-            likeCount.text = board.likeCount.toString()
-            commentCount.text = board.commentCount.toString()
+            likeCount.text = board.likeList.size.toString()
+            commentCount.text = board.commentList.size.toString()
 
             itemView.setOnClickListener{
                 itemClickListner.onClick(it, layoutPosition,board.boardId)
