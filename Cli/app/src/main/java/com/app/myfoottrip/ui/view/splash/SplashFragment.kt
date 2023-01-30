@@ -7,8 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
@@ -67,7 +65,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
                     lottieView.visibility = View.INVISIBLE
                     ivLogo.visibility = View.VISIBLE
 
-                    val job1 = CoroutineScope(Dispatchers.Main).async {
+                    CoroutineScope(Dispatchers.Main).launch {
                         YoYo.with(Techniques.FadeIn) //화면에 FadeIn 효과를 처리한 로고뷰가 나타남
                             .duration(700)
                             .repeat(1)

@@ -1,11 +1,10 @@
 package com.app.myfoottrip.network.api
 
-import com.app.myfoottrip.Application
-import com.app.myfoottrip.data.dto.*
+import com.app.myfoottrip.data.dto.Token
+import com.app.myfoottrip.data.dto.User
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface TokenApi {
@@ -18,6 +17,6 @@ interface TokenApi {
 
     // access_token을 헤더에 담아서 보내기
     @GET("accounts/jwtdetail/")
-    suspend fun getUserDataByAccessToken(): Response<Join>
+    suspend fun getUserDataByAccessToken(): Response<User>
 
-}
+} // End of TokenApi Interface

@@ -119,11 +119,11 @@ dependencies {
     //workmaanger
     implementation "androidx.work:work-runtime-ktx:2.7.1" // Kotlin + Coroutines
 
-    //room
-    def room_version = "2.4.3"
-    implementation("androidx.room:room-runtime:$room_version")
-    // To use Kotlin annotation processing tool (kapt)
-    kapt("androidx.room:room-compiler:$room_version")
+    //Room 의존성 추가
+    implementation 'androidx.room:room-runtime:2.4.2'
+    annotationProcessor('androidx.room:room-compiler-processing:2.4.2')
+    kapt 'androidx.room:room-compiler:2.4.2'
+    implementation 'androidx.room:room-ktx:2.4.2'
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.13.0'
@@ -168,4 +168,8 @@ dependencies {
 
     //애니메이션 라이브러리
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
+
+    // 네이버 맵 클러스터링
+    implementation 'io.github.ParkSangGwon:tedclustering-naver:1.0.2'
+
 }

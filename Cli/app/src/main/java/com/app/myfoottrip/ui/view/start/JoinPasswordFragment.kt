@@ -2,25 +2,20 @@ package com.app.myfoottrip.ui.view.start
 
 import android.content.Context
 import android.os.Bundle
-import android.text.InputFilter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinPasswordBinding
-import com.app.myfoottrip.util.showToastMessage
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import java.util.regex.Pattern
 
 
 private const val TAG = "싸피"
@@ -29,6 +24,7 @@ class JoinPhoneNumberFragment : Fragment() {
     private lateinit var mContext: Context
     private lateinit var binding: FragmentJoinPasswordBinding
     private lateinit var customViewLayout: JoinCustomView
+    private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
     private val joinViewModel by activityViewModels<JoinViewModel>()
 
     private lateinit var passwordConfirm: TextInputEditText
@@ -56,10 +52,18 @@ class JoinPhoneNumberFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         customViewLayout = binding.joinCustomViewLayout
+        joinBackButtonCustomView = customViewLayout.findViewById(R.id.join_back_button_customview)
         customViewDataInit()
+
+        joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
+            .setOnClickListener {
+                Log.d(TAG, "joinBackButtonCustomView : onClick")
+                findNavController().popBackStack()
+            }
 
         // 커스텀 뷰 2번으로 설정해서 비밀번호 화면이 보이도록 설정
         customViewLayout.setView(2)
+
 
         customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).setOnClickListener {
             // 인증 버튼을 눌러서 인증번호 보내는 요청이 successful이 되면 밑에 인증번호를 적는 화면이 보이게 됨
@@ -73,9 +77,6 @@ class JoinPhoneNumberFragment : Fragment() {
                 .navigate(R.id.action_joinPasswordFragment_to_joinProfileFragment)
         }
 
-//        pwOrigin.addTextChangedListener {
-//            joinViewModel.setPwLiveData(pwOrigin.text.toString(), passwordConfirm.text.toString())
-//        }
 
         // 각 EditText가 포커싱에서 벗어났을 때 에러메시지를 띄움
         pwOrigin.setOnFocusChangeListener { v, hasFocus ->
@@ -92,17 +93,6 @@ class JoinPhoneNumberFragment : Fragment() {
                 )
             }
         }
-
-//        pwOrigin.filters = arrayOf(InputFilter {
-//            source, _, _, _, _, _ ->
-//            val pwRegex = """^[0-9a-zA-Z!@#$%^+\-=]*$"""
-//            val pwPattern = Pattern.compile(pwRegex)
-//            if(source.isNullOrBlank() || pwPattern.matcher(source).matches()) {
-//                return@InputFilter source
-//            }
-//            //requireContext().showToastMessage("입력할 수 없는 문자열입니다.")
-//        })
-
 
         passwordEqualCheckObserver()
     } // End of onViewCreated

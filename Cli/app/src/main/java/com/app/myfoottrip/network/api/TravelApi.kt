@@ -1,10 +1,10 @@
-package com.app.myfoottrip.network.service
+package com.app.myfoottrip.network.api
 
 import com.app.myfoottrip.data.dto.Travel
 import retrofit2.Response
 import retrofit2.http.*
 
-interface TravelService {
+interface TravelApi {
     //유저별 여정 조회
     @GET("/community/travel/user/{userId}")
     suspend fun getUserTravel(@Path("userId") userId: Int): Response<ArrayList<Travel>>

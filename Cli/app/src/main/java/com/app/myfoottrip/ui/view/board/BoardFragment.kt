@@ -74,7 +74,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         binding.apply {
             // --------------- 게시글 윗쪽 부분 데이터---------------------------
             initViewPager() //이미지 슬라이더
-            tvLocation.text = convertToString(boardViewModel.board.travel!!.location!!) //여행 지역
+            tvLocation.text = convertToString(boardViewModel.board.travel!!.location!! as ArrayList<String>) //여행 지역
             tvTheme.text = "#${boardViewModel.board.theme}" //여행 테마
             //여행기간
             tvTravelDate.text = TimeUtils.getDateString(boardViewModel.board.travel?.startDate!!) +" ~ "+ TimeUtils.getDateString(boardViewModel.board.travel?.endDate!!)
@@ -86,6 +86,9 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
             // -------- 글 후기 부터 밑에 쪽 데이터 -------------
             tvContent.text = boardViewModel.board.content
             initPlaceAdapter()
+            tvLikeCount.text = boardViewModel.board.likeList.size.toString()
+            tvCommentCount.text = boardViewModel.board.commentList.size.toString()
+
         }
     }
 
@@ -155,7 +158,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         })
     }
 
-    //네이버 지도 마커 표시시
+    //네이버 지도
    override fun onMapReady(naverMap: NaverMap) {
         val options = NaverMapOptions()
             .camera(CameraPosition(LatLng(36.02539, 128.380378),  10.0))  // 카메라 위치 (위도,경도,줌)
@@ -166,10 +169,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
         binding.tvMarkerNum.visibility = View.GONE
 
-
         val markers = mutableListOf<Marker>()
         val markersPosition = ArrayList<LatLng>()
-
 
         //마커 생성
         for (i in boardViewModel.board.travel!!.placeList!!.indices){
@@ -214,14 +215,12 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     }
 
     // 장소 바텀시트 다이얼로그 생성
-    //댓글 입력창 생성
     private fun initPlaceBottom(place:Place){
         val placeBottom = PlaceBottomDialog(object : PlaceBottomDialog.OnClickListener {
             override fun onClick(dialog: PlaceBottomDialog) {
                 dialog.dismiss()
             }
         },place)
-
         placeBottom.show(parentFragmentManager, placeBottom.mTag)
     }
 }

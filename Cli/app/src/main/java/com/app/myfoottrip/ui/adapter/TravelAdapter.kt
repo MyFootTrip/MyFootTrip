@@ -1,25 +1,26 @@
 package com.app.myfoottrip.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.databinding.ListItemTravelBinding
 import com.app.myfoottrip.util.TimeUtils
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.TransformationUtils.*
 
 // 0 : 여정 선택, 1: 여정 보기
 private const val TAG = "TravelAdapter_싸피"
 
 class TravelAdapter(
-    private var travelList: ArrayList<Travel> = arrayListOf(),
     private val type: Int = 1
 ) : RecyclerView.Adapter<TravelAdapter.TravelHolder>() {
     private var selected: Int = -1
+    private var travelList: List<Travel> = emptyList()
+
+    //클릭리스너 선언
+    private lateinit var itemClickListner: ItemClickListener
+
 
     fun getSelected(): Int {
         return selected
@@ -69,9 +70,6 @@ class TravelAdapter(
         fun onAllClick(position: Int, travelDto: Travel) //전체 클릭한 경우
         fun onChipClick(type: Int, position: Int, travelDto: Travel) //chip만 클릭한 경우
     }
-
-    //클릭리스너 선언
-    private lateinit var itemClickListner: ItemClickListener
 
     //클릭리스너 등록 매소드
     fun setItemClickListener(itemClickListener: ItemClickListener) {

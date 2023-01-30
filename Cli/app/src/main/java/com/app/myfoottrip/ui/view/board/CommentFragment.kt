@@ -59,7 +59,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
 
     // 댓글이 없을 시 보여주는 뷰
     private fun initCommentExist(){
-        if (boardViewModel.board.commentCount == 0) binding.tvCommentExist.visibility = View.VISIBLE
+        if (boardViewModel.board.commentList.size == 0) binding.tvCommentExist.visibility = View.VISIBLE
         else binding.tvCommentExist.visibility = View.INVISIBLE
     }
 

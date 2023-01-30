@@ -58,4 +58,11 @@
         <item>좋아요순</item>
     </string-array>
 
+
+    <!-- 여행 파트 -->
+    <string name ="save_button_text">저장</string>
+    <string name="plz_travel_select_button_text">여행을 선택해주세요.</string>
+    <string name="make_new_travel_button_text">+ 여행 새로 만들기</string>
+    <string name="select_travel_title">여행 선택하기</string>
+
 </resources>

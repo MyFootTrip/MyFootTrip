@@ -17,6 +17,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Email
 import com.app.myfoottrip.data.viewmodel.JoinViewModel
@@ -27,12 +28,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private const val TAG = "싸피"
+private const val TAG = "JoinEmailFragment_싸피"
 
 class JoinEmailFragment : Fragment() {
     private lateinit var mContext: Context
     private lateinit var binding: FragmentJoinEmailBinding
     private lateinit var customViewLayout: JoinCustomView
+    private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
     private val joinViewModel by activityViewModels<JoinViewModel>()
 
     private lateinit var emailWarningTextView: TextView
@@ -45,8 +47,6 @@ class JoinEmailFragment : Fragment() {
     private lateinit var emailValidBtn: AppCompatButton
     private lateinit var progressbar: ProgressBar
     private lateinit var emailConfirmButton: AppCompatButton
-
-    private var emailCheckFlag = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -68,7 +68,14 @@ class JoinEmailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         customViewLayout = binding.joinCustomViewLayout
+        joinBackButtonCustomView = customViewLayout.findViewById(R.id.join_back_button_customview)
         customViewDataInit()
+
+        joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
+            .setOnClickListener {
+                Log.d(TAG, "joinBackButtonCustomView : onClick")
+                findNavController().popBackStack()
+            }
 
 
         // 이메일 입력창의 값이 변해서 이메일 형식에 부합할 경우, 인증하기 버튼 상태 변화
@@ -165,11 +172,6 @@ class JoinEmailFragment : Fragment() {
         super.onResume()
         showViewInit()
     } // End of onResume
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
 
     // 다시 비워져야 할 항목들
     private fun showViewInit() {

@@ -1,23 +1,24 @@
 package com.app.myfoottrip.ui.view.travel
 
-
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Travel
+import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
+import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentTravelSelectBinding
 import com.app.myfoottrip.ui.adapter.TravelAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 private const val TAG = "TravelSelectFragment_싸피"
@@ -28,57 +29,63 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     private var type = 0 // 0 : 여정 기록, 1 : 마이페이지, 2 : 게시글 작성
 
     private val travelViewModel by activityViewModels<TravelViewModel>()
+    private val tokenViewModel by activityViewModels<TokenViewModel>()
+    private val userViewModel by activityViewModels<UserViewModel>()
     private lateinit var travelAdapter: TravelAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //type 받는 코드
         type = requireArguments().getInt("type")
-        Log.d(TAG, "onViewCreated: type : $type")
-        initialize()
 
-    } // End of onViewCreated
-
-    private fun initialize() {
-
-        // 데이터를 가져오는 옵저버
         userTravelDataObserver()
+
+        initCustomView()
+
+        setListener()
 
         setData()
 
+        initAdapter()
+
+        binding.ivBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+    } // End of onViewCreated
+
+    private fun initCustomView() {
         if (type == 0) { //여정 선택 부분
-            binding.tvTravelTitle.text = "여정을 선택해주세요."
+            binding.tvTravelTitle.setText(R.string.plz_travel_select_button_text)
             binding.btnSave.visibility = View.VISIBLE
-            binding.btnSave.text = "+ 여정 새로 만들기"
+            binding.btnSave.setText(R.string.make_new_travel_button_text)
         } else if (type == 1) { //여정 관리 부분
-            binding.tvTravelTitle.text = "나의 여정"
+            binding.tvTravelTitle.setText(R.string.select_travel_title)
             binding.btnSave.visibility = View.GONE
         } else { //게시글
-            binding.tvTravelTitle.text = "여정 선택하기"
+            binding.tvTravelTitle.setText(R.string.select_travel_title)
             binding.btnSave.visibility = View.VISIBLE
-            binding.btnSave.text = "여정을 선택해주세요"
+            binding.btnSave.setText(R.string.plz_travel_select_button_text)
             binding.btnSave.isEnabled = false
             binding.btnSave.setTextColor(
                 ColorStateList.valueOf(
                     ContextCompat.getColor(
-                        requireContext(),
-                        R.color.main
+                        requireContext(), R.color.main
                     )
                 )
             )
-            binding.btnSave.backgroundTintList = ColorStateList.valueOf(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.gray_bright
-                )
-            )
+//            binding.btnSave.backgroundTintList = ColorStateList.valueOf(
+//                ContextCompat.getColor(
+//                    requireContext(), R.color.gray_bright
+//                )
+//            )
+
+            binding.btnSave.isClickable = false
+            binding.btnSave.isEnabled = false
         }
-        initAdapter()
-        setListener()
-    } // End of initialize
+    } // End of initCustomView
 
     private fun initAdapter() {
-        travelAdapter = TravelAdapter(arrayListOf(), type)
+        travelAdapter = TravelAdapter(type)
         binding.rvTravel.adapter = travelAdapter
 
         travelAdapter.setItemClickListener(object : TravelAdapter.ItemClickListener {
@@ -114,9 +121,9 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     } // End of setListener
 
     private fun userTravelDataObserver() {
-        Log.d(TAG, "userTravelDataObserver: 옵저버 등록")
         travelViewModel.travelUserData.observe(viewLifecycleOwner) {
-            Log.d(TAG, "userTravelDataObserver: 옵저버 실행")
+            binding.travelSelectProgressbar.visibility = View.GONE
+            binding.travelSelectProgressbar.isVisible = false
 
             when (it) {
                 is NetworkResult.Success -> {
@@ -124,11 +131,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                         val boardList = ArrayList<Travel>()
                         boardList.addAll(it.data!!)
 
-                        Log.d(
-                            TAG,
-                            "userTravelDataObserver: ${boardList[0].placeList?.get(0)?.placeImgList?.get(0)}"
-                        )
-
+                        binding.rvTravel.visibility = View.VISIBLE
                         travelAdapter.setList(boardList)
                         travelAdapter.notifyDataSetChanged()
                     }
@@ -137,17 +140,16 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                     Log.d(TAG, "userTravel 체크 Error: ${it.data}")
                 }
                 is NetworkResult.Loading -> {
-                    //TODO: 로딩바
+                    binding.travelSelectProgressbar.visibility = View.VISIBLE
+                    binding.travelSelectProgressbar.isVisible = true
                 }
             }
         }
     } // End of userTravelDataObserver
 
-
-    private fun setData() { //TODO : DB에서 값 가져와서 넣기
+    private fun setData() {
         CoroutineScope(Dispatchers.IO).launch {
-            // 더미 데이터 1번 유저 삽입
-            travelViewModel.getUserTravel(1)
+            userViewModel.wholeMyData.value?.uid?.let { travelViewModel.getUserTravel(it) }
         }
     } // End of setData
 
@@ -157,43 +159,30 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             var lastPos = getSelected()
             if (position == lastPos) { //선택 해제
                 setSelected(-1)
-                settingPage(false)
-                if (type == 2) binding.btnSave.isEnabled = false
+                settingView(false)
+                if (type == 2) {
+                    binding.btnSave.isClickable = false
+                    binding.btnSave.isEnabled = false
+                }
                 binding.btnSave.setTextColor(
                     ColorStateList.valueOf(
                         ContextCompat.getColor(
-                            requireContext(),
-                            R.color.main
+                            requireContext(), R.color.gray_bright
                         )
-                    )
-                )
-                binding.btnSave.backgroundTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.gray_bright
                     )
                 )
             } else { //선택
                 setSelected(position)
-                settingPage(true)
-                if (type == 2) binding.btnSave.isEnabled = true
-                binding.btnSave.setTextColor(
-                    ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
-                        )
-                    )
-                )
-                binding.btnSave.backgroundTintList =
-                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
+                settingView(true)
+                if (type == 2) {
+                    binding.btnSave.isClickable = true
+                    binding.btnSave.isEnabled = true
+                }
             }
-            notifyItemChanged(lastPos) // 선택 해제
-            notifyItemChanged(position) // 선택
         }
-    }
+    } // End of changeSelected
 
-    private fun settingPage(isChecked: Boolean) {
+    private fun settingView(isChecked: Boolean) {
         if (isChecked) {
             when (type) {
                 0 -> {
@@ -206,12 +195,16 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         } else {
             when (type) {
                 0 -> {
-                    binding.btnSave.text = "+ 여정 새로 만들기"
+                    binding.btnSave.setText(R.string.make_new_travel_button_text)
+                    binding.btnSave.isClickable = true
+                    binding.btnSave.isEnabled = true
                 }
                 2 -> {
-                    binding.btnSave.text = "여정을 선택해주세요"
+                    binding.btnSave.setText(R.string.plz_travel_select_button_text)
+                    binding.btnSave.isClickable = false
+                    binding.btnSave.isEnabled = false
                 }
             }
         }
-    }
+    } // End of settingView
 }

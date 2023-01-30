@@ -8,9 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.JoinViewModel
@@ -28,6 +30,7 @@ class JoinAgeFragment : Fragment() {
     private lateinit var binding: FragmentJoinAgeBinding
     private lateinit var mContext: Context
     private val joinViewModel by activityViewModels<JoinViewModel>()
+    private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
     private lateinit var imageViewArray: Array<ImageView>
     private lateinit var selectedImageViewArray: Array<Int>
     private lateinit var nonSelectedImageViewArray: Array<Int>
@@ -48,7 +51,6 @@ class JoinAgeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // 처음 데이터 호출
         initData()
 
@@ -84,6 +86,14 @@ class JoinAgeFragment : Fragment() {
     } // End of onViewCreated
 
     private fun initData() {
+        joinBackButtonCustomView = binding.joinBackButtonCustomview
+
+        joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
+            .setOnClickListener {
+                Log.d(TAG, "joinBackButtonCustomView : onClick")
+                findNavController().popBackStack()
+            }
+
         imageViewArray = arrayOf(
             binding.joinAgeButton10,
             binding.joinAgeButton20,

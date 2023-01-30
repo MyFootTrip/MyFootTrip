@@ -196,17 +196,20 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/base_line" />
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_comment"
                 app:layout_constraintTop_toBottomOf="@id/tv_content_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"
-                app:cardBackgroundColor="@color/gray_bright"
+                app:strokeColor="@color/gray_80"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                android:minHeight="100dp"
                 android:layout_marginHorizontal="10dp"
                 android:paddingVertical="20dp"
                 android:paddingHorizontal="10dp"
-                app:cardCornerRadius="10dp">
+                app:cardCornerRadius="4dp">
 
                 <TextView
                     android:id="@+id/tv_content"
@@ -220,7 +223,7 @@
                     android:textSize="16sp"
                     app:layout_constraintTop_toBottomOf="@id/tv_content_header" />
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
 
             <com.app.myfoottrip.ui.view.board.TouchFrameLayout
