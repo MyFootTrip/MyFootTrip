@@ -57,7 +57,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 
             when (it) {
                 is NetworkResult.Success -> {
-
                     CoroutineScope(Dispatchers.Main).launch {
                         userViewModel.setWholeMyData(it.data!!)
 

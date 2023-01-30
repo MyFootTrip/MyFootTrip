@@ -15,15 +15,49 @@ private const val TAG = "TravelRepository_싸피"
 class TravelRepository {
     private val travelApi = Application.retrofit.create(TravelApi::class.java)
 
-    //여정 생성 값
-    private val _travelResponseLiveData = MutableLiveData<NetworkResult<Boolean>>()
-    val travelResponseLiveData: LiveData<NetworkResult<Boolean>>
-        get() = _travelResponseLiveData
+    // 헤더가 담긴
+    private val travelHeaderApi = Application.headerRetrofit.create(TravelApi::class.java)
+
 
     //유저 여정 값
     private val _travelListResponseLiveData = MutableLiveData<NetworkResult<ArrayList<Travel>>>()
     val travelListResponseLiveData: LiveData<NetworkResult<ArrayList<Travel>>>
         get() = _travelListResponseLiveData
+
+    // 여행 추가
+    private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Void>>()
+    val createTravelResponseLiveData: LiveData<NetworkResult<Void>>
+        get() = _createTravelResponseLiveData
+
+
+    // 여행 데이터 추가
+    suspend fun createTravel(travel: Travel) {
+        val response = travelHeaderApi.createTravel(travel)
+        _createTravelResponseLiveData.postValue(NetworkResult.Loading())
+
+        Log.d(TAG, "createTravel response: ${response}")
+        Log.d(TAG, "createTravel response.headers: ${response.headers()}")
+        Log.d(TAG, "createTravel response.body : ${response.body()}")
+
+
+        if (response.isSuccessful) {
+            Log.d(TAG, "checkEmailValidateText: 여기로 들어가나요?")
+            _createTravelResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _createTravelResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _createTravelResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
+    } // End of createTravel
+
 
     // 각 유저별 여행 기록 정보를 가져옴
     suspend fun getUserTravel(userId: Int) {
@@ -47,7 +81,7 @@ class TravelRepository {
                 )
             )
         }
-    }
+    } // End of getUserTravel
 
     //여정 조회
     suspend fun getTravel(travelId: Int): Travel? {
@@ -66,31 +100,5 @@ class TravelRepository {
         }
 
         return result
-    }
-
-    //여정 생성
-    suspend fun sendTravel(travel: Travel) {
-        val response = travelApi.makeTravel(travel)
-
-        _travelResponseLiveData.postValue(NetworkResult.Loading())
-
-        if (response.isSuccessful && response.body() != null) {
-            Log.d(TAG, "checkEmailValidateText: 여기로 들어가나요?")
-            _travelResponseLiveData.postValue(NetworkResult.Success(true))
-        } else if (response.errorBody() != null) {
-            _travelResponseLiveData.postValue(
-                NetworkResult.Error(
-                    response.errorBody()!!.string()
-                )
-            )
-        } else {
-            _travelResponseLiveData.postValue(
-                NetworkResult.Error(
-                    response.headers().toString()
-                )
-            )
-        }
-    }
-
-    //여정 수정
-}
+    } // End of getTravel
+} // End of TravelRepository class

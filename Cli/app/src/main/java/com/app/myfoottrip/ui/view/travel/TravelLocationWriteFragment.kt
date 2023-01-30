@@ -8,8 +8,10 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.dto.Travel
+import com.app.myfoottrip.data.dto.VisitPlace
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentTravelLocationWriteBinding
 import com.app.myfoottrip.ui.base.BaseFragment
@@ -41,7 +43,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
     private lateinit var locationSource: FusedLocationSource
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
-
+    private lateinit var visitPlaceRepository: VisitPlaceRepository
     val channelId = "com.app.myfoottrip"
     val channelName = "My Foot Trip channel"
 
@@ -54,6 +56,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        visitPlaceRepository = VisitPlaceRepository.get()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -120,7 +123,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
     //위치 기록 정지 및 저장
     private fun stopLocationRecordingAndSave() {
-        
+
         // 저장 버튼 클릭시 이벤트
         binding.fabStop.setOnClickListener {
             saveData()
@@ -151,6 +154,23 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             val longitude: Double = locationProvider.getLocationLongitude()
 
             Log.d(TAG, "현재 위치 저장:  $latitude , $longitude")
+
+            val temp = VisitPlace(
+                0,
+                "test",
+                latitude,
+                longitude,
+                0L,
+                emptyList()
+            )
+            CoroutineScope(Dispatchers.IO).launch {
+                visitPlaceRepository.insertVisitPlace(temp)
+            }
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val temp2 = visitPlaceRepository.getVisitPlace()
+                Log.d(TAG, "visitPlaceRepository.getVisitPlace(): ${temp2}")
+            }
         }
     } // End of nowLocationSaving
 
@@ -229,11 +249,11 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     private fun makeTravelData() { //TODO : DB에서 값 가져와서 넣기
         CoroutineScope(Dispatchers.IO).launch {
             var placeList = arrayListOf<Place>()
-            travelViewModel.makeTravel(
-                Travel(
-                    null, arrayListOf("서울"), Date(), Date(), placeList
-                )
-            )
+//            travelViewModel.makeTravel(
+//                Travel(
+//                    null, arrayListOf("서울"), Date(), Date(), placeList
+//                )
+//            )
         }
     } // End of makeTravelData
 

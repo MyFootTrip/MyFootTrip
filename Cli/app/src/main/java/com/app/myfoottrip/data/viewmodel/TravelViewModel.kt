@@ -18,8 +18,8 @@ class TravelViewModel : ViewModel() {
     private val travelRepository = TravelRepository()
 
     // 선택된 지역 리스트
-    private val _selectLocationList = MutableLiveData<List<String>>(emptyList())
-    val selectLocationList: LiveData<List<String>>
+    private val _selectLocationList = MutableList<String>(0) { "" }
+    val selectLocationList: List<String>
         get() = _selectLocationList
 
 
@@ -36,6 +36,11 @@ class TravelViewModel : ViewModel() {
         get() = travelRepository.travelListResponseLiveData
 
 
+    // 여정 생성 response값 LiveData
+    val createTravelResponseLiveData: LiveData<NetworkResult<Void>>
+        get() = travelRepository.createTravelResponseLiveData
+
+
     //여정 기록 state
     private val _travelResponseStatus = MutableLiveData(false)
     val travelResponseStatus: LiveData<Boolean>
@@ -44,7 +49,6 @@ class TravelViewModel : ViewModel() {
     fun setLocationList(list: List<String>) {
         locationList = list as ArrayList<String>
     } // End of setLocationList
-
 
 
     //유저별 여정 확인
@@ -68,9 +72,10 @@ class TravelViewModel : ViewModel() {
     } // End of getTravel
 
     //여정 추가
-    fun makeTravel(travel: Travel) {
+    fun createTravel(travel: Travel) {
         viewModelScope.launch {
-            TravelRepository().sendTravel(travel)
+            TravelRepository().createTravel(travel)
         }
     } // End of makeTravel
+
 } // End of TraveViewModel class
