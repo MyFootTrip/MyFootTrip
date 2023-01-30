@@ -57,5 +57,7 @@
         <item>최신순</item>
         <item>좋아요순</item>
     </string-array>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

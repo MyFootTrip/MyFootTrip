@@ -7,6 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.view.main.MyPageFragment">
 
+
     <ImageView
         android:id="@+id/iv_one_side_rounded_shape"
         android:layout_width="match_parent"
@@ -34,6 +35,7 @@
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         android:text="마이페이지" />
 
+    <!-- 알림 button -->
     <ImageView
         android:id="@+id/iv_alarm"
         android:layout_width="28dp"
@@ -68,6 +70,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
+    <!-- 개인정보수정 button-->
     <ImageView
         android:id="@+id/iv_next"
         android:layout_width="17dp"
@@ -86,6 +89,7 @@
         app:layout_constraintTop_toBottomOf="@+id/iv_one_side_rounded_shape">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cv_my_travel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
@@ -157,6 +161,7 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cv_i_wrote"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
@@ -227,6 +232,7 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cv_i_liked"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
@@ -244,7 +250,7 @@
                 android:paddingVertical="20dp">
 
                 <ImageView
-                    android:id="@+id/iv_i_like_image"
+                    android:id="@+id/iv_i_liked_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_black_circle"
@@ -253,7 +259,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/tv_i_like"
+                    android:id="@+id/tv_i_liked"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -261,22 +267,22 @@
                     android:text="내가 좋아한"
                     android:textColor="@color/black"
                     android:textSize="17sp"
-                    app:layout_constraintStart_toEndOf="@id/iv_i_like_image"
+                    app:layout_constraintStart_toEndOf="@id/iv_i_liked_image"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/tv_i_like_cnt"
+                    android:id="@+id/tv_i_liked_cnt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="12dp"
                     android:fontFamily="@font/inter_regular"
                     android:text="4개"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/iv_i_like_image"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_i_like" />
+                    app:layout_constraintStart_toEndOf="@+id/iv_i_liked_image"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_i_liked" />
 
                 <ImageView
-                    android:id="@+id/iv_to_i_like"
+                    android:id="@+id/iv_to_i_liked"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:src="@drawable/ic_next"
