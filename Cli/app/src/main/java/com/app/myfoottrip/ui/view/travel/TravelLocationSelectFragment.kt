@@ -15,6 +15,7 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentTravelLocationSelectBinding
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
+import com.app.myfoottrip.ui.adapter.HomeAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.HomeFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
@@ -33,8 +34,8 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
 ), OnMapReadyCallback {
     private val travelViewModel by activityViewModels<TravelViewModel>()
     private lateinit var categoryAdapter: CategoryAdatper
-    private var locationList: ArrayList<String> = arrayListOf() //지역 리스트
-    private var selectedList: ArrayList<String> = arrayListOf() //선택된 리스트
+    private var locationList: MutableList<String>? = null //지역 리스트
+    private var selectedList: MutableList<String>? = null //선택된 리스트
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
     private var mapFragment: MapFragment = MapFragment()
@@ -61,10 +62,12 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         LocationConstants.getLocationPermission {
             initMap()
         }
-        initAdapter()
-        initListener()
 
-        Log.d(TAG, "onViewCreated: ")
+        // Adapter 초기화
+        initAdapter()
+
+        // EventListener 초기화
+        initListener()
     } // End of onViewCreated
 
 
@@ -80,17 +83,19 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
     } // End of initMap
 
     private fun initAdapter() {
-        locationList.clear()
-        selectedList.clear()
-        locationList.addAll(HomeFragment.LOCATION_LIST)
-        categoryAdapter = CategoryAdatper(locationList)
+        locationList = ArrayList()
+        selectedList = ArrayList()
+        locationList?.addAll(HomeFragment.LOCATION_LIST)
+        categoryAdapter = CategoryAdatper(locationList!!)
 
+
+        // categoryAdapter에서 아이템 클릭했을 경우 이벤트처리
         categoryAdapter.setItemClickListener(object : CategoryAdatper.ItemClickListener {
             override fun onClick(view: View, position: Int, category: String) {
-                if (!selectedList.contains(locationList[position])) {
+                if (!selectedList!!.contains(locationList!![position])) {
                     setChipListener(position)
                 }
-                if (selectedList.isNotEmpty()) {
+                if (selectedList!!.isNotEmpty()) {
                     binding.tvLocationHint.visibility = View.GONE
                     binding.fabStart.apply {
                         backgroundTintList =
@@ -109,7 +114,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
     // 위치 기록 시작
     private fun startLocationRecording() {
         binding.fabStart.setOnClickListener {
-            travelViewModel.setLocationList(selectedList)
+            travelViewModel.setLocationList(selectedList!!)
 //            val view = TravelLocationSelectFragment().view
 //            if (view != null) {
 //                serviceStart(view)
@@ -141,14 +146,14 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
 
             startLocationRecording()
         }
-    }
+    } // End of initListener
 
     private fun setChipListener(position: Int) {
-        selectedList.add(locationList[position])
+        selectedList!!.add(locationList!![position])
 
         binding.cgDetail.addView(Chip(requireContext()).apply {
             chipCornerRadius = 10.0f
-            text = locationList[position]
+            text = locationList!![position]
             textSize = 12.0f
             isCloseIconVisible = true
             closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
@@ -164,10 +169,13 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
                 )
             )
 
+            // closeIcon 클릭시 이벤트
             setOnCloseIconClickListener {
                 binding.cgDetail.removeView(this)
-                selectedList.remove(locationList[position])
-                if (selectedList.isEmpty()) {
+                // element를 기준으로 삭제
+                selectedList!!.remove(locationList!![position])
+
+                if (selectedList!!.isEmpty()) {
                     binding.tvLocationHint.visibility = View.VISIBLE
                     binding.fabStart.apply {
                         backgroundTintList =
@@ -177,7 +185,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
                 }
             }
         })
-    }
+    } // End of setChipListener
 
     fun setMarker(marker: Marker, lat: Double, lng: Double) {
         marker.isIconPerspectiveEnabled = true
@@ -213,7 +221,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
                 }
             }
         }
-    }
+    } // End of onMapReady
 
     private fun setRotaionAnimation() {
         binding.apply {
@@ -225,7 +233,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
                 ivLocationDrop.animate().setDuration(200).rotation(180f)
             }
         }
-    }
+    } // End of setRotaionAnimation
 
     override fun onStart() {
         super.onStart()

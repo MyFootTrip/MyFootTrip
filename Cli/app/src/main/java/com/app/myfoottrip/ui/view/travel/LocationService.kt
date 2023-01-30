@@ -12,8 +12,9 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Location
-import com.app.myfoottrip.data.repository.AppDatabase
+import com.app.myfoottrip.data.dao.TravelDatabase
+import com.app.myfoottrip.data.dao.VisitPlaceRepository
+import com.app.myfoottrip.data.dto.VisitPlace
 import com.app.myfoottrip.util.LocationConstants
 import com.app.myfoottrip.util.TimeUtils
 import com.google.android.gms.location.LocationCallback
@@ -34,18 +35,19 @@ class LocationService : Service() {
     private lateinit var naverMap: NaverMap
     val channelId = "com.app.myfoottrip"
     val channelName = "My Foot Trip channel"
-
+    lateinit var visitPlaceRepository: VisitPlaceRepository
 
     private var travelLocationWriteFragment: TravelLocationWriteFragment =
         TravelLocationWriteFragment()
     private var travelLocationSelectFragment: TravelLocationSelectFragment =
         TravelLocationSelectFragment()
 
+    override fun onCreate() {
+        super.onCreate()
 
-    init {
+        visitPlaceRepository = VisitPlaceRepository.get()
         travelLocationWriteFragment = TravelLocationWriteFragment()
         travelLocationSelectFragment = TravelLocationSelectFragment()
-
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -66,31 +68,31 @@ class LocationService : Service() {
                     "위도 : ${latitude}, 경도 : ${longitude}, 시간 : ${TimeUtils.getDateTimeString(time)}"
                 )
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    AppDatabase.getInstance(applicationContext).locationDao().apply {
-                        val location: Location? = getLastOne()
-                        if (location != null) {
-                            var diff = abs(latitude - location.lat)
-                            diff += abs(longitude - location.lng)
-                            if (diff < 0.0005) {
-                                Log.d(TAG, "onLocationResult: 동일한 거리")
-                                return@apply
-                            }
-                        }
-                        insertLocation(
-                            Location(
-                                null, null, latitude, longitude, time, "주소"
-                            )
-                        ) //TODO :
-                        val count = getCount()
-                        Log.d(TAG, "DB에 들어감 COUNT : $count")
-                    }
-                }
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    visitPlaceDao().apply {
+//                        val visitPlace: VisitPlace? = getLastOne()
+//                        if (visitPlace != null) {
+//                            var diff = abs(latitude - visitPlace.lat)
+//                            diff += abs(longitude - visitPlace.lng)
+//                            if (diff < 0.0005) {
+//                                Log.d(TAG, "onLocationResult: 동일한 거리")
+//                                return@apply
+//                            }
+//                        }
+//                        insertVisitPlace(
+//                            VisitPlace(
+//                                0L, "", latitude, longitude, time, emptyList()
+//                            )
+//                        ) //TODO :
+//                        val count = getCount()
+//                        Log.d(TAG, "DB에 들어감 COUNT : $count")
+//                    }
+//                }
             }
         }
     } // End of mLocationCallback
 
-    
+
     // 포어그라운드를 위한 notification 등록
     fun setNotification() {
         if (Build.VERSION.SDK_INT >= 26) {
@@ -116,8 +118,8 @@ class LocationService : Service() {
 
         getNowMyLocation(notificationBuilder)
     } // End of setNotification
-    
-    
+
+
     // 현재 위치 가져오기
     private fun getNowMyLocation(notificationBuilder: NotificationCompat.Builder) {
         val locationRequest = LocationRequest.create()
@@ -144,7 +146,7 @@ class LocationService : Service() {
                 .setSmallIcon(R.mipmap.ic_launcher).build()
         startForeground(1, nc)
 
-        when(intent?.action) {
+        when (intent?.action) {
             Actions.START_FOREGROUND -> {
                 startForeground(1, nc)
             }
@@ -153,8 +155,6 @@ class LocationService : Service() {
             }
         }; return START_STICKY
     }
-
-
 
 
     fun stopLocationService() { //위치 받아오기 종료
@@ -208,7 +208,6 @@ class LocationService : Service() {
 //                notificationManager.createNotificationChannel(notificationChannel)
 //            }
 //        }
-
 
 
         //권한 확인

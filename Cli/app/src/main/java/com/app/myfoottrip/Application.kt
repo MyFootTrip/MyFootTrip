@@ -1,6 +1,7 @@
 package com.app.myfoottrip
 
 import android.app.Application
+import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.util.SharedPreferencesUtil
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -21,6 +22,7 @@ class Application : Application() {
         sharedPreferencesUtil = SharedPreferencesUtil(applicationContext)
         initRetrofit(AppInterceptor())
         initKakao()
+        VisitPlaceRepository.initialize(this)
     } // End of onCreate
 
     private fun initRetrofit(interceptor: AppInterceptor) {

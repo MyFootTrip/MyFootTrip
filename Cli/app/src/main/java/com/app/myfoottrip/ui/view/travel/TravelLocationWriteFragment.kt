@@ -5,16 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Location
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.dto.Travel
-import com.app.myfoottrip.data.repository.AppDatabase
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentTravelLocationWriteBinding
 import com.app.myfoottrip.ui.base.BaseFragment
@@ -75,7 +70,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         LocationConstants.getLocationPermission {
             initMap()
         }
-        
+
         setButtonListener()
 
         initData()
@@ -125,6 +120,8 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
     //위치 기록 정지 및 저장
     private fun stopLocationRecordingAndSave() {
+        
+        // 저장 버튼 클릭시 이벤트
         binding.fabStop.setOnClickListener {
             saveData()
             showToast("성공적으로 저장했습니다.", ToastType.SUCCESS)
@@ -137,12 +134,16 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             mainActivity.stopLocationService()
 
 
+            // 페이지 이동하면서, SQL Lite에 모든 저장을 마쳐야함.
+
+
             // 수정하는 페이지로 이동
-            Navigation.findNavController(binding.fabStop).navigate(R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment)
+            Navigation.findNavController(binding.fabStop)
+                .navigate(R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment)
             //findNavController().popBackStack()
         }
     } // End of stopLocationRecordingAndSaving
-    
+
     private fun nowLocationSave() {
         binding.btnAddPoint.setOnClickListener {
             //LocationConstants.getNowLocation(requireContext())
@@ -157,13 +158,13 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     private fun saveData() {
         //LocationConstants.stopLocation()
         CoroutineScope(Dispatchers.IO).launch {
-            val list = AppDatabase.getInstance(requireContext()).locationDao().getAll()
-            var placeList = arrayListOf<Place>()
-            travelViewModel.makeTravel(
-                Travel(
-                    null, arrayListOf("서울"), Date(), Date(), placeList
-                )
-            )
+//            val list = TravelDatabase.getInstance(requireContext()).locationDao().getAll()
+//            var placeList = arrayListOf<Place>()
+//            travelViewModel.makeTravel(
+//                Travel(
+//                    null, arrayListOf("서울"), Date(), Date(), placeList
+//                )
+//            )
         }
     } // End of saveData
 
@@ -216,14 +217,13 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 fabStop.visibility = View.VISIBLE
             }
         }
-    }
+    } // End of changeMode
 
-    
+
     // 마커를 표시하는 메소드
     fun setMarker(marker: Marker, lat: Double, lng: Double) {
         marker.position = LatLng(lat, lng)
         marker.map = naverMap
-        
     } // End of setMaker
 
     private fun makeTravelData() { //TODO : DB에서 값 가져와서 넣기
@@ -235,20 +235,8 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 )
             )
         }
-    }
+    } // End of makeTravelData
 
-    private fun locationToPlace(location: Location): Place {
-        return Place(
-            location.placeId,
-            null,
-            Date(location.time),
-            null,
-            null,
-            location.lat,
-            location.lng,
-            location.address
-        )
-    }
 
     override fun onStart() {
         super.onStart()
