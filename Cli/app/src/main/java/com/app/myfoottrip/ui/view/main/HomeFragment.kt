@@ -64,8 +64,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
 
 //        viewLifecycleOwner.lifecycleScope.launch {
-//            whenStarted {
-//            }
+////            whenStarted {
+////          }
 //        }
     } // End of onViewCreated
 
@@ -99,7 +99,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         homeAdatper.setItemClickListener(object : HomeAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, boardId: Int) {
-                boardViewModel.board = boardList[position]
+                boardViewModel.boardId = boardId
                 findNavController().navigate(R.id.action_mainFragment_to_boardFragment)
             }
         })
@@ -394,9 +394,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     companion object {
         val THEME_LIST = arrayOf("혼자", "친구와", "연인과", "배우자와", "아이와", "부모님과", "기타")
-        val LOCATION_LIST = arrayOf(
-            "서울", "경기", "강원", "부산", "경북·대구", "전남·광주", "제주", "충남·대전", "경남", "충북", "경남", "전북", "인천"
-        )
+        val LOCATION_LIST = arrayOf("서울", "경기", "강원", "부산", "경북·대구", "전남·광주", "제주", "충남·대전", "경남", "충북", "경남", "전북", "인천")
         val PERIOD_LIST = arrayOf("당일 치기", "1박 2일", "2박 3일", "3박 4일", "4박 5일+")
         val AGE_LIST = arrayOf("10대", "20대", "30대", "40대", "50대", "60대 이상")
     }

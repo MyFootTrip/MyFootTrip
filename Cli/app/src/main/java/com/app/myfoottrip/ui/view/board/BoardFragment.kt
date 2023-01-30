@@ -1,6 +1,8 @@
 package com.app.myfoottrip.ui.view.board
 
+import android.animation.Animator
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,14 +11,17 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
+import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentBoardBinding
 import com.app.myfoottrip.ui.adapter.PlaceAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.dialogs.CommentInputDialog
 import com.app.myfoottrip.ui.view.dialogs.PlaceBottomDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
+import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.TimeUtils
 import com.bumptech.glide.Glide
 import com.naver.maps.geometry.LatLng
@@ -27,8 +32,10 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.overlay.PolylineOverlay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -43,9 +50,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     private lateinit var placeAdapter: PlaceAdapter
 
     private val boardViewModel by activityViewModels<BoardViewModel>()
-
-    //지도 객체 변수
-    private lateinit var mapView: MapView
+    private val userViewModel by activityViewModels<UserViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -59,35 +64,52 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
         binding.apply {
             ivBack.setOnClickListener { findNavController().popBackStack()} //뒤로가기
-            ivComment.setOnClickListener {findNavController().navigate(R.id.action_boardFragment_to_commentFragment)} //댓글 페이지로 이동
+            ivComment.setOnClickListener { findNavController().navigate(R.id.action_boardFragment_to_commentFragment)} //댓글 페이지로 이동
+            lottieLike.setOnClickListener {
+                getLike()
+                getLikeObserver()
+            }
         }
 
     }
 
     private fun init(){
-        initData()
-        initMapScroll()
+        getBoard()
+        getBoardObserver()
     }
 
     // Board 객체에 담겨있는 데이터값 화면에 갱신
-    private fun initData(){
+    private fun initData(board: Board){
         binding.apply {
             // --------------- 게시글 윗쪽 부분 데이터---------------------------
-            initViewPager() //이미지 슬라이더
-            tvLocation.text = convertToString(boardViewModel.board.travel!!.location!! as ArrayList<String>) //여행 지역
-            tvTheme.text = "#${boardViewModel.board.theme}" //여행 테마
+            initViewPager(board) //이미지 슬라이더
+            tvLocation.text = convertToString(board.travel!!.location!! as ArrayList<String>) //여행 지역
+            tvTheme.text = "#${board.theme}" //여행 테마
             //여행기간
-            tvTravelDate.text = TimeUtils.getDateString(boardViewModel.board.travel?.startDate!!) +" ~ "+ TimeUtils.getDateString(boardViewModel.board.travel?.endDate!!)
-            tvTitle.text = boardViewModel.board.title //제목
-            Glide.with(this@BoardFragment).load(boardViewModel.board.profileImg).centerCrop().into(ivProfile)
-            tvNickname.text = boardViewModel.board.nickname //닉네임
-            tvWriteDate.text = TimeUtils.getDateString(boardViewModel.board.writeDate)  //작성일자
+            tvTravelDate.text = TimeUtils.getDateString(board.travel.startDate!!) +" ~ "+ TimeUtils.getDateString(board.travel.endDate!!)
+            tvTitle.text = board.title //제목
+            //프로필 이미지
+            if (board.profileImg.isNullOrEmpty()){
+                Glide.with(this@BoardFragment).load(R.drawable.ic_my).fitCenter().into(ivProfile)
+                ivProfile.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
+                cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.main)))
+            }else {
+                Glide.with(this@BoardFragment).load(board.profileImg).centerCrop().into(ivProfile)
+                cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white)))
+            }
+            tvNickname.text = board.nickname //닉네임
+            tvWriteDate.text = TimeUtils.getDateString(board.writeDate)  //작성일자
 
             // -------- 글 후기 부터 밑에 쪽 데이터 -------------
-            tvContent.text = boardViewModel.board.content
-            initPlaceAdapter()
-            tvLikeCount.text = boardViewModel.board.likeList.size.toString()
-            tvCommentCount.text = boardViewModel.board.commentList.size.toString()
+            tvContent.text = board.content
+            initPlaceAdapter(board)
+            tvLikeCount.text = board.likeList.size.toString()
+            tvCommentCount.text = board.commentList.size.toString()
+
+            //좋아요한 게시물인지 체크
+            if (board.likeList.contains(userViewModel.wholeMyData.value?.uid)){ //좋아요한 게시물일 때
+                lottieLike.progress = 100f
+            }
 
         }
     }
@@ -102,7 +124,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     }
 
     //게시물 사진 슬라이더
-    private fun initViewPager() {
+    private fun initViewPager(board: Board) {
 
         binding.apply {
 
@@ -110,7 +132,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
             val list = mutableListOf<CarouselItem>().let {
                 it.apply {
-                    for (image in boardViewModel.board.imageList){
+                    for (image in board.imageList){
                         add(CarouselItem(imageUrl = image))
                     }
                 }
@@ -121,9 +143,9 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     }
 
     //방문 장소 리사이클러뷰 생성
-    private fun initPlaceAdapter(){
+    private fun initPlaceAdapter(board: Board){
 
-        placeAdapter = PlaceAdapter(boardViewModel.board.travel?.placeList!!)
+        placeAdapter = PlaceAdapter(board.travel?.placeList!!)
 
         placeAdapter.setItemClickListener(object : PlaceAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, place: Place) {
@@ -173,8 +195,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         val markersPosition = ArrayList<LatLng>()
 
         //마커 생성
-        for (i in boardViewModel.board.travel!!.placeList!!.indices){
-            val marker = boardViewModel.board.travel!!.placeList!![i]
+        for (i in boardViewModel.board.value?.data?.travel!!.placeList!!.indices){
+            val marker = boardViewModel.board.value?.data?.travel!!.placeList!![i]
             markers.add(
                 Marker().apply {
                     binding.tvMarkerNum.text = "${i+1}"
@@ -222,5 +244,62 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
             }
         },place)
         placeBottom.show(parentFragmentManager, placeBottom.mTag)
+    }
+
+    //게시물 데이터 받아오기
+    private fun getBoard() {
+        CoroutineScope(Dispatchers.IO).launch {
+            boardViewModel.getBoard(boardViewModel.boardId)
+        }
+    }
+
+    private fun getBoardObserver() {
+        boardViewModel.board.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    initData(it.data!!)
+                    initMapScroll()
+                }
+                is NetworkResult.Error -> {
+                }
+                is NetworkResult.Loading -> {
+                }
+            }
+        }
+    }
+
+    //좋아요 상태 받아오기
+    private fun getLike() {
+        CoroutineScope(Dispatchers.IO).launch {
+            boardViewModel.likeBoard(boardViewModel.boardId)
+        }
+    }
+
+    private fun getLikeObserver() {
+        // viewModel에서 전체 게시글 데이터 LiveData 옵저버 적용
+        boardViewModel.likeCheck.observe(viewLifecycleOwner) {
+            binding.lottieLike.isEnabled = false //터치 불가능하게 만들기
+            when (it) {
+                is NetworkResult.Success -> {
+                    if (it.data == true) {
+                        binding.lottieLike.playAnimation()
+                        if (boardViewModel.board.value?.data?.likeList!!.contains(userViewModel.wholeMyData.value?.uid)){ //좋아요한 게시물일 때
+                            binding.tvLikeCount.text = "${boardViewModel.board.value?.data?.likeList!!.size}"
+                        }else binding.tvLikeCount.text = "${boardViewModel.board.value?.data?.likeList!!.size + 1}"
+                    }
+                    else if(it.data == false) {
+                        binding.lottieLike.progress = 0f
+                        binding.lottieLike.pauseAnimation()
+                        if (boardViewModel.board.value?.data?.likeList!!.contains(userViewModel.wholeMyData.value?.uid)){ //좋아요한 게시물일 때
+                            binding.tvLikeCount.text = "${boardViewModel.board.value?.data?.likeList!!.size-1}"
+                        }else binding.tvLikeCount.text = "${boardViewModel.board.value?.data?.likeList!!.size}"
+                    }
+                    binding.lottieLike.isEnabled = true //터치 가능하게 만들기
+
+                }
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
+            }
+        }
     }
 }

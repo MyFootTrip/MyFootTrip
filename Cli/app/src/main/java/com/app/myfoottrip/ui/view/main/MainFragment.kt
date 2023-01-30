@@ -2,13 +2,21 @@ package com.app.myfoottrip.ui.view.main
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.dto.Board
+import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMainBinding
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.util.NetworkResult
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 private const val TAG = "MainFragment_싸피"
@@ -22,6 +30,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
         super.onAttach(context)
         mContext = context
     } // End of onAttack
+
+    private val userViewModel by activityViewModels<UserViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -72,5 +82,4 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
             return false
         }
     }
-
 } // End of MainFragment class

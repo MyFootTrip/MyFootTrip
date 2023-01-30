@@ -4,10 +4,13 @@ package com.app.myfoottrip.data.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.myfoottrip.Application
 import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.repository.BoardRepository
+import com.app.myfoottrip.network.api.UserApi
+import com.app.myfoottrip.network.service.BoardService
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.launch
 import java.util.*
@@ -23,14 +26,16 @@ class BoardViewModel : ViewModel() {
     val boardList: LiveData<NetworkResult<ArrayList<Board>>>
         get() = boardRepository.boardListResponseLiveData
 
-    var board = Board(
-        -1, -1, "", "", Date(0), "", "", "", arrayListOf(), Travel(
-            1, arrayListOf(), Date(0), Date(0), arrayListOf(),
-        ), arrayListOf(), arrayListOf()
-    )
+    var boardId : Int = -1
+
+    val board: LiveData<NetworkResult<Board>>
+        get() = boardRepository.boardResponseLiveData
 
     val isCreated: LiveData<NetworkResult<Board>>
         get() = boardRepository.createResponseLiveData
+
+    val likeCheck : LiveData<NetworkResult<Boolean>>
+        get() = boardRepository.likeResponseLiveData
 
 
     // 게시물 전체 조회
@@ -53,6 +58,21 @@ class BoardViewModel : ViewModel() {
             boardRepository.getFilteredBoardList(filter)
         }
     }
+
+    //게시물 좋아요
+    fun likeBoard(boardId: Int){
+        viewModelScope.launch {
+            boardRepository.likeBoard(boardId)
+        }
+    }
+
+    //게시물 조회
+    fun getBoard(boardId: Int){
+        viewModelScope.launch {
+            boardRepository.getBoard(boardId)
+        }
+    }
+
 
 
 } // End of BoardViewModel

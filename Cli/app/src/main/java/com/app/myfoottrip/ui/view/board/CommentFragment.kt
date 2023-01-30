@@ -1,16 +1,12 @@
 package com.app.myfoottrip.ui.view.board
 
-import android.app.Activity.RESULT_OK
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Comment
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.databinding.FragmentCommentBinding
@@ -18,9 +14,6 @@ import com.app.myfoottrip.ui.adapter.CommentAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.dialogs.CommentInputDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
-import com.app.myfoottrip.util.GalleryUtils
-import com.app.myfoottrip.util.NetworkResult
-import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -59,7 +52,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
 
     // 댓글이 없을 시 보여주는 뷰
     private fun initCommentExist(){
-        if (boardViewModel.board.commentList.size == 0) binding.tvCommentExist.visibility = View.VISIBLE
+        if (boardViewModel.board.value?.data?.commentList?.size == 0) binding.tvCommentExist.visibility = View.VISIBLE
         else binding.tvCommentExist.visibility = View.INVISIBLE
     }
 
