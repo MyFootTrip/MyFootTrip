@@ -6,7 +6,9 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
@@ -15,6 +17,7 @@ import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentEditSaveTravelBinding
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import com.naver.maps.map.MapView
@@ -32,6 +35,11 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     private lateinit var mContext: Context
     lateinit var visitPlaceRepository: VisitPlaceRepository
     private val travelViewModel by activityViewModels<TravelViewModel>()
+    private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
+
+    private var userVisitPlaceDataList: List<Place> = emptyList()
+    private var userTravelData: Travel? = null
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -47,18 +55,50 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         super.onViewCreated(view, savedInstanceState)
         mapView = binding.mapFragment
 
+        // 첫번째 UI에 데이터 뿌려야 되므로 데이터 부터 가져오기
+        getData()
+
         createTravelResponseObserve()
 
-        // 버튼 클릭시 일어나는 모든 이벤트를 관리하는 메소드
-        buttonEvents()
 
-        // SQL Lite의 데이터를 불러와서 UI를 뿌리기
-        setUI()
     } // End of onViewCreated
 
-    // SQL Lite의 데이터를 불러와서 UI를 뿌리기
+
+    // 첫번째 UI에 데이터 뿌려야 되므로 데이터 부터 가져오기
+    private fun getData() {
+        /*
+            데이터를 가져오고나서, Travel타입으로 변환한 후 UI로 뿌리는 작업을 진행한다.
+         */
+        CoroutineScope(Dispatchers.IO).launch {
+            userVisitPlaceDataList = getSqlLiteAllData()
+
+            // Travel Dto로 변환
+            coroutineScope {
+                changeToTravelDto()
+            }
+
+            setUI()
+
+            buttonEvents()
+        }
+    } // End of getData
+
+    private suspend fun changeToTravelDto() {
+        userTravelData = Travel(
+            null,
+            travelViewModel.locationList,
+            userVisitPlaceDataList[0].saveDate, // 처음 시작 저장 시간
+            Date(System.currentTimeMillis()), // 마지막 저장 시간
+            userVisitPlaceDataList
+        )
+    } // End of changeToTravelDto
+
+    // 유저의 여행 데이터를 불러와서 UI를 뿌리기
     private fun setUI() {
 
+
+        joinBackButtonCustomView = binding.joinBackButtonCustomview
+        binding.tvTravelTitle.text = userTravelData?.location?.get(0).toString()
 
     } // End of setUI
 
@@ -70,31 +110,34 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 createTravel()
             }
         }
+
+        joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
+            .setOnClickListener {
+                findNavController().popBackStack()
+            }
     } // End of buttonEvents
 
     private suspend fun createTravel() {
         CoroutineScope(Dispatchers.IO).launch {
             var tempList: List<Place> = emptyList()
 
-            val job1 = CoroutineScope(Dispatchers.IO).launch {
-                tempList = getSqlLiteAllData()
-            }
-
-            job1.join()
-
-            Log.d(TAG, "travelViewModel.selectLocationList: ${travelViewModel.locationList} ")
-
-            val createTravelData = Travel(
-                null,
-                travelViewModel.locationList,
-                tempList[0].saveDate, // 처음 시작 저장 시간
-                Date(System.currentTimeMillis()), // 마지막 저장 시간
-                tempList
-            )
+//            val job = CoroutineScope(Dispatchers.IO).launch {
+//                tempList = getSqlLiteAllData()
+//            }
+//
+//            job.join()
+//
+//            val createTravelData = Travel(
+//                null,
+//                travelViewModel.locationList,
+//                tempList[0].saveDate, // 처음 시작 저장 시간
+//                Date(System.currentTimeMillis()), // 마지막 저장 시간
+//                tempList
+//            )
 
             // 변환된 Travel데이터를 서버에 저장
             coroutineScope {
-                travelViewModel.createTravel(createTravelData)
+                userTravelData?.let { travelViewModel.createTravel(it) }
             }
         }
     } // End of createTravel
@@ -112,6 +155,19 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             for (i in 0 until size) {
                 val temp = allVisitPlaceList[i]
 
+                Log.d(TAG, "temp.lat, temp.lng:  ${temp.lat}, ${temp.lng}")
+                Log.d(
+                    TAG,
+                    "getAddressByCoordinates: ${getAddressByCoordinates(temp.lat, temp.lng)} "
+                )
+
+                var address = ""
+                val job = CoroutineScope(Dispatchers.IO).launch {
+                    address = getAddressByCoordinates(temp.lat, temp.lng)!!.getAddressLine(0)
+                }
+
+                job.join()
+
                 placeList.add(
                     Place(
                         null,
@@ -121,7 +177,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                         ArrayList(), // 일단 빈 이미지를 넣어야됨
                         temp.lat, // 좌표
                         temp.lng, // 좌표
-                        getAddressByCoordinates(temp.lat, temp.lng)!!.getAddressLine(0)
+                        address
                     )
                 )
             }
@@ -146,7 +202,12 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                             // DB를 비우고 빠져나가기
                             coroutineScope {
                                 withContext(Dispatchers.Main) {
-                                    findNavController().popBackStack()
+
+                                    // 다시 여행을 선택하는 화면으로 이동
+                                    findNavController().clearBackStack(R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment)
+
+                                    Navigation.findNavController(binding.travelEditSaveButton)
+                                        .navigate(R.id.action_editSaveTravelFragment_to_travelSelectFragment)
                                 }
                             }
                         }
@@ -167,7 +228,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     } // End of createTravelResponseObserve
 
 
-    private fun getAddressByCoordinates(latitude: Double, longitude: Double): Address? {
+    private suspend fun getAddressByCoordinates(latitude: Double, longitude: Double): Address? {
         val geocoder = Geocoder(mContext, Locale.KOREA)
 
         val addresses: List<Address>?
