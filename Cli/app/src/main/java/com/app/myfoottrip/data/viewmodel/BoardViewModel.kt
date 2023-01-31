@@ -10,6 +10,7 @@ import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.repository.BoardRepository
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -25,7 +26,7 @@ class BoardViewModel : ViewModel() {
 
     var board = Board(
         -1, -1, "", "", Date(0), "", "", "", arrayListOf(), Travel(
-            1, arrayListOf(), Date(0), Date(0), arrayListOf(),
+            1, arrayListOf(), null, null, arrayListOf(),
         ), arrayListOf(), arrayListOf()
     )
 

@@ -10,7 +10,6 @@ import androidx.navigation.Navigation
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Place
-import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.dto.VisitPlace
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentTravelLocationWriteBinding
@@ -29,7 +28,6 @@ import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 
 private const val TAG = "TravelLocationWriteFrag_싸피"
 
@@ -92,8 +90,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         val latitude: Double = locationProvider.getLocationLatitude()
         val longitude: Double = locationProvider.getLocationLongitude()
 
-        Log.d(TAG, "updateUI: ${latitude}, ${longitude}")
-
         val marker = Marker()
         marker.position = LatLng(37.5670135, 126.9783740)
         // marker.map = requireActivity()
@@ -126,9 +122,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
         // 저장 버튼 클릭시 이벤트
         binding.fabStop.setOnClickListener {
-            saveData()
             showToast("성공적으로 저장했습니다.", ToastType.SUCCESS)
-            //serviceStop()
 
             // 포어그라운드 중지
             val intent = Intent(mContext, LocationService::class.java)
@@ -136,31 +130,30 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             val mainActivity = requireActivity() as MainActivity
             mainActivity.stopLocationService()
 
-
-            // 페이지 이동하면서, SQL Lite에 모든 저장을 마쳐야함.
-
-
             // 수정하는 페이지로 이동
             Navigation.findNavController(binding.fabStop)
                 .navigate(R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment)
-            //findNavController().popBackStack()
         }
     } // End of stopLocationRecordingAndSaving
 
+    private fun getNowTime(): Long {
+        return System.currentTimeMillis()
+    } // End of getNowTime
+
+    
+    // 현재 위치를 저장하는 메소드
     private fun nowLocationSave() {
         binding.btnAddPoint.setOnClickListener {
             //LocationConstants.getNowLocation(requireContext())
             val latitude: Double = locationProvider.getLocationLatitude()
             val longitude: Double = locationProvider.getLocationLongitude()
-
-            Log.d(TAG, "현재 위치 저장:  $latitude , $longitude")
-
+            
             val temp = VisitPlace(
                 0,
-                "test",
+                "",
                 latitude,
                 longitude,
-                0L,
+                getNowTime(),
                 emptyList()
             )
             CoroutineScope(Dispatchers.IO).launch {
@@ -168,28 +161,13 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             }
 
             CoroutineScope(Dispatchers.IO).launch {
-                val temp2 = visitPlaceRepository.getVisitPlace()
-                Log.d(TAG, "visitPlaceRepository.getVisitPlace(): ${temp2}")
+                visitPlaceRepository.getVisitPlace()
             }
         }
     } // End of nowLocationSaving
 
 
-    private fun saveData() {
-        //LocationConstants.stopLocation()
-        CoroutineScope(Dispatchers.IO).launch {
-//            val list = TravelDatabase.getInstance(requireContext()).locationDao().getAll()
-//            var placeList = arrayListOf<Place>()
-//            travelViewModel.makeTravel(
-//                Travel(
-//                    null, arrayListOf("서울"), Date(), Date(), placeList
-//                )
-//            )
-        }
-    } // End of saveData
-
     private fun initMap() {
-        Log.d(TAG, "initMap: ")
         // TouchFrameLayout 에 mapFragment 올려놓기
         val fragmentTransaction = childFragmentManager.beginTransaction()
         if (mapFragment.isAdded) {
@@ -201,14 +179,12 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     } // End of initMap
 
     override fun onMapReady(naverMap: NaverMap) {
-        Log.d(TAG, "onMapReady: ")
         this.naverMap = naverMap
 
         val uiSetting = naverMap.uiSettings
         uiSetting.isLocationButtonEnabled = true
 
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
-
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
 
@@ -245,18 +221,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         marker.position = LatLng(lat, lng)
         marker.map = naverMap
     } // End of setMaker
-
-    private fun makeTravelData() { //TODO : DB에서 값 가져와서 넣기
-        CoroutineScope(Dispatchers.IO).launch {
-            var placeList = arrayListOf<Place>()
-//            travelViewModel.makeTravel(
-//                Travel(
-//                    null, arrayListOf("서울"), Date(), Date(), placeList
-//                )
-//            )
-        }
-    } // End of makeTravelData
-
 
     override fun onStart() {
         super.onStart()

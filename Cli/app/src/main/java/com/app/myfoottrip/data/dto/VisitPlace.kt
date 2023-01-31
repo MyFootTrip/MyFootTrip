@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import okhttp3.MultipartBody
 import org.jetbrains.annotations.NotNull
+import java.util.*
 
 @Entity(tableName = "visit_place")
 data class VisitPlace(
@@ -11,7 +12,7 @@ data class VisitPlace(
     val address: String, //수정 가능한 주소
     val lat: Double, //위도
     val lng: Double, //경도
-    val date: Long, //기록 시간
+    val date: Long? = 0, //기록 시간
     val imgList: List<MultipartBody.Part> = emptyList()
 ) {
     @PrimaryKey(autoGenerate = true)

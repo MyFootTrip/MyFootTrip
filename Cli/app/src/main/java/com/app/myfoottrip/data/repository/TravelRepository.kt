@@ -9,6 +9,9 @@ import com.app.myfoottrip.network.api.TravelApi
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
+import retrofit2.Response
 
 private const val TAG = "TravelRepository_싸피"
 
@@ -25,8 +28,8 @@ class TravelRepository {
         get() = _travelListResponseLiveData
 
     // 여행 추가
-    private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Void>>()
-    val createTravelResponseLiveData: LiveData<NetworkResult<Void>>
+    private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Int>>()
+    val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _createTravelResponseLiveData
 
 
@@ -35,14 +38,8 @@ class TravelRepository {
         val response = travelHeaderApi.createTravel(travel)
         _createTravelResponseLiveData.postValue(NetworkResult.Loading())
 
-        Log.d(TAG, "createTravel response: ${response}")
-        Log.d(TAG, "createTravel response.headers: ${response.headers()}")
-        Log.d(TAG, "createTravel response.body : ${response.body()}")
-
-
         if (response.isSuccessful) {
-            Log.d(TAG, "checkEmailValidateText: 여기로 들어가나요?")
-            _createTravelResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+            _createTravelResponseLiveData.postValue(NetworkResult.Success(response.code()))
         } else if (response.errorBody() != null) {
             _createTravelResponseLiveData.postValue(
                 NetworkResult.Error(

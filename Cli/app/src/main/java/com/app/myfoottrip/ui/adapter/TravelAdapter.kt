@@ -1,5 +1,6 @@
 package com.app.myfoottrip.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,6 +9,9 @@ import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.databinding.ListItemTravelBinding
 import com.app.myfoottrip.util.TimeUtils
 import com.bumptech.glide.Glide
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 // 0 : 여정 선택, 1: 여정 보기
 private const val TAG = "TravelAdapter_싸피"
@@ -37,6 +41,15 @@ class TravelAdapter(
     inner class TravelHolder(private val binding: ListItemTravelBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindInfo(position: Int, travelDto: Travel) {
+
+            val startDateFormat = SimpleDateFormat("yyyy-MM.dd", Locale("ko", "KR"))
+            val endDateFormat = SimpleDateFormat("MM.dd", Locale("ko", "KR"))
+
+            val startDateString = startDateFormat.format(travelList[0].startDate!!)
+            val endDateString = endDateFormat.format(travelList[0].endDate!!)
+            // 시작 날짜와 끝날짜를 연결시켜서 넣어야함
+            binding.tvTravelDate.text = "${startDateString} - ${endDateString}"
+
             binding.apply {
                 if (type == 1) { //여정 선택
                     chipTravelSelect.text = "삭제"
@@ -46,15 +59,21 @@ class TravelAdapter(
 
                 chipTravelSelect.isChecked = (selected == position) //선택은 하나만 하도록
 
-                Glide.with(itemView)
-                    .load(travelList[0].placeList?.get(position)?.placeImgList?.get(0))
-                    .centerCrop()
-                    .into(ivTravel)
+                // 이미지가 없을 경우 기본이지미로 대체됨.
+                if (travelList[0].placeList?.get(0)?.placeImgList?.size == 0) {
+                    Glide.with(itemView)
+                        .load(R.drawable.place_default_img)
+                        .centerCrop()
+                        .into(ivTravel)
+                } else {
+                    Glide.with(itemView)
+                        .load(travelList[0].placeList?.get(0)?.placeImgList?.get(0))
+                        .centerCrop()
+                        .into(ivTravel)
+                }
+
 
                 tvTravelName.text = travelDto.location!!.joinToString(", ")
-                tvTravelDate.text = "${TimeUtils.getDateString(travelDto.startDate!!)} - ${
-                    TimeUtils.getDateString(travelDto.endDate!!)
-                }"
 
                 clTravelItem.setOnClickListener {
                     itemClickListner.onAllClick(position, travelDto)
@@ -64,19 +83,19 @@ class TravelAdapter(
                 }
             }
         }
-    }
+    } // End of TravelHolder inner class
 
     interface ItemClickListener {
         fun onAllClick(position: Int, travelDto: Travel) //전체 클릭한 경우
         fun onChipClick(type: Int, position: Int, travelDto: Travel) //chip만 클릭한 경우
-    }
+    } // End of ItemClickListener
 
     //클릭리스너 등록 매소드
     fun setItemClickListener(itemClickListener: ItemClickListener) {
         this.itemClickListner = itemClickListener
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TravelHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TravelAdapter.TravelHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.list_item_travel, parent, false)
         return TravelHolder(ListItemTravelBinding.bind(view))
@@ -87,4 +106,4 @@ class TravelAdapter(
     }
 
     override fun getItemCount(): Int = travelList.size
-}
+} // End of TravelAdapter class
