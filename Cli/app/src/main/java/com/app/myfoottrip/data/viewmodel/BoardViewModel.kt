@@ -72,7 +72,4 @@ class BoardViewModel : ViewModel() {
             boardRepository.getBoard(boardId)
         }
     }
-
-
-
 } // End of BoardViewModel

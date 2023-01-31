@@ -115,7 +115,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginRight="5dp"
-                android:src="@drawable/ic_comment"
+                android:src="@drawable/ic_comment_main"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/tv_comment_count"
                 app:layout_constraintTop_toBottomOf="@id/tv_title" />
@@ -142,7 +142,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/tv_like_count"
                 app:layout_constraintTop_toBottomOf="@id/tv_title"
-                app:tint="@color/red" />
+                app:tint="@color/heart_color" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

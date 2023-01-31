@@ -30,5 +30,6 @@
 
 
     <color name="red">#FF0000</color>
+    <color name="heart_color">#FF5959</color>
     <color name="gray_700">#4A5056</color>
 </resources>

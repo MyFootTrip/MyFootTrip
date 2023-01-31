@@ -137,7 +137,6 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
                     }
                 }
             }
-
             carouselImage.setData(list)
         }
     }
@@ -214,14 +213,15 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         }
 
         //경로 표시
-        val path = PolylineOverlay()
-        path.coords = markersPosition
-        path.color = ContextCompat.getColor(requireContext(),R.color.main)
-        path.globalZIndex = 50000
-        path.joinType = PolylineOverlay.LineJoin.Bevel
-        path.width = 10
-        path.map = naverMap
-
+        if(boardViewModel.board.value?.data?.travel!!.placeList!!.size >= 2){ //좌표가 2개이상일 때 경로 생성
+            val path = PolylineOverlay()
+            path.coords = markersPosition
+            path.color = ContextCompat.getColor(requireContext(),R.color.main)
+            path.globalZIndex = 50000
+            path.joinType = PolylineOverlay.LineJoin.Bevel
+            path.width = 10
+            path.map = naverMap
+        }
 
         //카메라 영역 제어
         val bounds = LatLngBounds.Builder()

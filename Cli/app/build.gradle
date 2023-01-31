@@ -171,5 +171,4 @@ dependencies {
 
     // 네이버 맵 클러스터링
     implementation 'io.github.ParkSangGwon:tedclustering-naver:1.0.2'
-
 }
