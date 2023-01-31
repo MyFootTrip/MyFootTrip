@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Comment
@@ -22,7 +24,8 @@ class CommentAdapter(var commentList:List<Comment>,val userId : Int) : RecyclerV
             binding.apply {
                 //프로필 이미지
                 if (comment.profileImg.isNullOrEmpty()){
-                    Glide.with(itemView).load(R.drawable.ic_my).fitCenter().into(ivProfile)
+                    ivProfile.setPadding(10)
+                    Glide.with(itemView).asBitmap().load(R.drawable.ic_my).fitCenter().into(ivProfile)
                     ivProfile .imageTintList = ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.white))
                     cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.main)))
                 }else {
