@@ -18,6 +18,7 @@ private const val TAG = "싸피"
 class BoardRepository {
 
     private val boardService = Application.retrofit.create(BoardService::class.java)
+    private val headerBoardService = Application.headerRetrofit.create(BoardService::class.java)
 
     private val _boardListResponseLiveData = MutableLiveData<NetworkResult<ArrayList<Board>>>()
     val boardListResponseLiveData: LiveData<NetworkResult<ArrayList<Board>>>
@@ -26,6 +27,14 @@ class BoardRepository {
     private val _createResponseLiveData = MutableLiveData<NetworkResult<Board>>()
     val createResponseLiveData: LiveData<NetworkResult<Board>>
         get() = _createResponseLiveData
+
+    private val _likeResponseLiveData = MutableLiveData<NetworkResult<Boolean>>()
+    val likeResponseLiveData: LiveData<NetworkResult<Boolean>>
+        get() = _likeResponseLiveData
+
+    private val _boardResponseLiveData = MutableLiveData<NetworkResult<Board>>()
+    val boardResponseLiveData: LiveData<NetworkResult<Board>>
+        get() = _boardResponseLiveData
 
     // 전체 게시물 조회
     suspend fun getBoardList(){
@@ -67,7 +76,32 @@ class BoardRepository {
         } else {
             _boardListResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
         }
+    }
 
+    //게시물 좋아요
+    suspend fun likeBoard(boardId : Int){
+        var response = headerBoardService.likeBoard(boardId)
+
+        if (response.isSuccessful && response.body() != null) {
+            _likeResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _likeResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
+        } else {
+            _likeResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
+    }
+
+    //게시물 조회
+    suspend fun getBoard(boardId: Int){
+        var response = headerBoardService.getBoard(boardId)
+
+        if (response.isSuccessful && response.body() != null) {
+            _boardResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _boardResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
+        } else {
+            _boardResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
     }
 
 } // End of BoardRepository

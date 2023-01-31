@@ -11,6 +11,8 @@ class CommentInputDialog(private val listener: OnClickListener) :
     BottomSheetDialogFragment(),
     View.OnClickListener {
 
+//    private lateinit var binding:
+
     lateinit var sendBtn: ImageView
     lateinit var comment: MaterialEditText
 

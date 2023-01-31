@@ -1,5 +1,6 @@
 package com.app.myfoottrip.ui.adapter
 
+import android.content.res.ColorStateList
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -7,32 +8,51 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Board
+import com.app.myfoottrip.data.dto.Image
+import com.app.myfoottrip.databinding.DialogPlaceBottomBinding
+import com.app.myfoottrip.databinding.ListItemHomeBinding
 import com.bumptech.glide.Glide
 
 private const val TAG = "HomeAdapter_마이풋트립"
 class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.BoardHolder>(){
 
-    inner class BoardHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    inner class BoardHolder(val binding: ListItemHomeBinding) : RecyclerView.ViewHolder(binding.root){
 
-        val image = itemView.findViewById<ImageView>(R.id.iv_image)
-        val title = itemView.findViewById<TextView>(R.id.tv_title)
         val nickname = itemView.findViewById<TextView>(R.id.tv_nickname)
         val likeCount = itemView.findViewById<TextView>(R.id.tv_like_count)
         val commentCount = itemView.findViewById<TextView>(R.id.tv_comment_count)
 
         fun bindInfo(board : Board){
-            Glide.with(itemView)
-                .load(board.imageList[0]).centerCrop()
-                .into(image)
 
-            title.text = board.title
-            nickname.text = board.nickname
-            likeCount.text = board.likeList.size.toString()
-            commentCount.text = board.commentList.size.toString()
+            binding.apply {
+                //게시물 사진
+                Glide.with(itemView)
+                    .load(board.imageList[0]).centerCrop()
+                    .into(ivImage)
+
+                //프로필 이미지
+                if (board.profileImg.isNullOrEmpty()){
+                    Glide.with(itemView).load(R.drawable.ic_my).fitCenter().into(ivProfile)
+                    ivProfile.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.white))
+                    cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.main)))
+                }else {
+                    Glide.with(itemView).load(board.profileImg).centerCrop().into(ivProfile)
+                    cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.white)))
+                }
+
+                tvTheme.text = "#${board.theme}"
+                tvLocation.text = convertToString(board.travel!!.location!! as ArrayList<String>) //여행 지역
+                tvTitle.text = board.title
+                tvNickname.text = board.nickname
+                tvLikeCount.text = board.likeList.size.toString()
+                tvCommentCount.text = board.commentList.size.toString()
+            }
 
             itemView.setOnClickListener{
                 itemClickListner.onClick(it, layoutPosition,board.boardId)
@@ -41,8 +61,9 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_home, parent, false)
-        return BoardHolder(view)
+        val view = LayoutInflater.from(parent.context) //recyclerview에 각 아이템에 들어갈 layout 인플레이트
+                .inflate(R.layout.list_item_home, parent, false)
+        return BoardHolder(ListItemHomeBinding.bind(view))
     }
 
     override fun onBindViewHolder(holder: BoardHolder, position: Int) {
@@ -65,5 +86,14 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
     //클릭리스너 등록 매소드
     fun setItemClickListener(itemClickListener: ItemClickListener) {
         this.itemClickListner = itemClickListener
+    }
+
+    //테마 및 지역 #붙인 스트링으로 만들기
+    private fun convertToString(stringList : ArrayList<String>) : String{
+        val sb = StringBuilder()
+        for (str in stringList){
+            sb.append("#${str} ")
+        }
+        return sb.toString()
     }
 }

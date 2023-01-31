@@ -1,5 +1,6 @@
 package com.app.myfoottrip.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,16 +10,17 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.util.TimeUtils
 
+private const val TAG = "PlaceAdapter_마이풋트립"
 class PlaceAdapter(var placeList:List<Place>) : RecyclerView.Adapter<PlaceAdapter.PlaceHolder>(){
 
     inner class PlaceHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
 
-        val placeId = itemView.findViewById<TextView>(R.id.iv_place_order)
+        val placeOrder = itemView.findViewById<TextView>(R.id.iv_place_order)
         val placeName = itemView.findViewById<TextView>(R.id.tv_place_name)
         val saveDate = itemView.findViewById<TextView>(R.id.tv_place_save_date)
 
         fun bindInfo(place : Place){
-            placeId.text = place.placeId.toString()
+            placeOrder.text = "${layoutPosition+1}"
             placeName.text = place.placeName
             saveDate.text = TimeUtils.getFormattedString(place.saveDate!!)
 

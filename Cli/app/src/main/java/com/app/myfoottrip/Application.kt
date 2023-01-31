@@ -79,7 +79,7 @@ class Application : Application() {
     companion object {
         lateinit var retrofit: Retrofit
         lateinit var headerRetrofit: Retrofit
-        const val SERVER_URL = "https://i8d103.p.ssafy.io/"    // TODO : AWS Hosting + URL 변경
+        const val SERVER_URL = "https://i8d103.p.ssafy.io/"    // TODO : AWS Hosting + URL 변경 //54.248.64.154
         const val IMG_URL = "http://54.248.64.154"
         lateinit var sharedPreferencesUtil: SharedPreferencesUtil
     }

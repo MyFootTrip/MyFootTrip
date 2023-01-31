@@ -15,8 +15,6 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Board
-import com.app.myfoottrip.data.viewmodel.BoardViewModel
-import com.app.myfoottrip.databinding.FragmentMyPageBinding
 import com.app.myfoottrip.databinding.FragmentMyTravelBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.mypage.MyTravelFragment
@@ -38,9 +36,9 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        binding.apply {
-//
-//        }
+        binding.apply {
+            ivBack.setOnClickListener { findNavController().popBackStack()} //뒤로가기
+        }
     }
 
 }
