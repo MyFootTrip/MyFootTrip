@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
@@ -67,6 +68,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
     private fun initProfileImg(){
         binding.apply {
             if (boardViewModel.board.value?.data?.profileImg.isNullOrEmpty()){
+                ivProfile.setPadding(10)
                 Glide.with(this@CommentFragment).load(R.drawable.ic_my).fitCenter().into(ivProfile)
                 ivProfile.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.main)))
@@ -125,12 +127,12 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         val inputDialog = CommentInputDialog(object : CommentInputDialog.OnClickListener {
             override fun onClick(dialog: CommentInputDialog) {
                 val user = userViewModel.wholeMyData.value
-                val comment = Comment(-1, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.comment.text.toString(),Date(System.currentTimeMillis()))
+                val comment = Comment(-1, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()))
                 writeCommentObserver()
                 writeComment(comment)
                 dialog.dismiss()
             }
-        })
+        },userViewModel.wholeMyData.value!!)
 
         inputDialog.show(parentFragmentManager, inputDialog.mTag)
     }
@@ -140,12 +142,12 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         val updateDialog = CommentInputDialog(object : CommentInputDialog.OnClickListener {
             override fun onClick(dialog: CommentInputDialog) {
                 val user = userViewModel.wholeMyData.value
-                val comment = Comment(commentId, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.comment.text.toString(),Date(System.currentTimeMillis()))
+                val comment = Comment(commentId, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()))
                 updateCommentObserver()
                 updateComment(comment)
                 dialog.dismiss()
             }
-        })
+        },userViewModel.wholeMyData.value!!)
 
         updateDialog.show(parentFragmentManager, updateDialog.mTag)
     }

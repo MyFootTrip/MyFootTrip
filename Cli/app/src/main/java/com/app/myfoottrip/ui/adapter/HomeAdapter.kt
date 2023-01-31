@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
@@ -38,7 +39,8 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
 
                 //프로필 이미지
                 if (board.profileImg.isNullOrEmpty()){
-                    Glide.with(itemView).load(R.drawable.ic_my).fitCenter().into(ivProfile)
+                    ivProfile.setPadding(10)
+                    Glide.with(itemView).asBitmap().load(R.drawable.ic_my).fitCenter().into(ivProfile)
                     ivProfile.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.white))
                     cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.main)))
                 }else {

@@ -20,9 +20,8 @@
             android:id="@+id/iv_profile"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:padding="5dp"
-            android:src="@drawable/ic_my"
-            app:tint="@color/white" />
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_my" />
     </androidx.cardview.widget.CardView>
 
 

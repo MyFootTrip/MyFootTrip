@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -90,6 +91,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
             tvTitle.text = board.title //제목
             //프로필 이미지
             if (board.profileImg.isNullOrEmpty()){
+                ivProfile.setPadding(10)
                 Glide.with(this@BoardFragment).load(R.drawable.ic_my).fitCenter().into(ivProfile)
                 ivProfile.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.main)))
