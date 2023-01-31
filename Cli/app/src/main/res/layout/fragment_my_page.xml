@@ -72,7 +72,7 @@
 
     <!-- 개인정보수정 button-->
     <ImageView
-        android:id="@+id/iv_next"
+        android:id="@+id/iv_to_edit_account"
         android:layout_width="17dp"
         android:layout_height="17dp"
         android:layout_marginStart="10dp"

@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_mainFragment_to_myTravelFragment"
             app:destination="@id/myTravelFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_editAccountFragment"
+            app:destination="@id/editAccountFragment" />
 
     </fragment>
     <fragment
@@ -73,6 +76,11 @@
         android:name="com.app.myfoottrip.ui.view.mypage.MyTravelFragment"
         android:label="fragment_my_travel"
         tools:layout="@layout/fragment_my_travel" />
+    <fragment
+        android:id="@+id/editAccountFragment"
+        android:name="com.app.myfoottrip.ui.view.mypage.EditAccountFragment"
+        android:label="fragment_edit_account"
+        tools:layout="@layout/fragment_edit_account" />
 
 
 </navigation>

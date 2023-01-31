@@ -28,20 +28,6 @@
         android:theme="@style/Theme.MyFootTrip"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name=".EditAccountFragment"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".EditPersonalInfoFragment"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
 
         <service
             android:name=".ui.view.travel.LocationService"

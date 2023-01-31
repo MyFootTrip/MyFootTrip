@@ -18,14 +18,18 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+
+            // 내 여정 페이지로 이동
             cvMyTravel.setOnClickListener {
-                Log.d(TAG, "onViewCreated: 눌림?")
                 Navigation.findNavController(binding.cvMyTravel)
                     .navigate(R.id.action_mainFragment_to_myTravelFragment)
+            }
+            // 개인정보수정 페이지로 이동
+            ivToEditAccount.setOnClickListener{
+                Navigation.findNavController(binding.ivToEditAccount)
+                    .navigate(R.id.action_mainFragment_to_editAccountFragment)
+            }
 
-
-                // findNavController().navigate(R.id.action_myPageFragment_to_myTravelFragment)
-            } // 내 여정 페이지로 이동
         }
     }
 
