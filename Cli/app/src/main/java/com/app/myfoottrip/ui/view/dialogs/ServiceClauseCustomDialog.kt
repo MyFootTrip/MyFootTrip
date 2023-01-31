@@ -53,7 +53,6 @@ class ServiceClauseCustomDialog() : DialogFragment() {
             adapter = serviceClauseDetailAdapter
             layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
         }
-
     } // End of onViewCreated
 
     override fun onResume() {
@@ -64,7 +63,7 @@ class ServiceClauseCustomDialog() : DialogFragment() {
         params?.width = (size.x * 0.87).toInt()
         params?.height = (size.y * 0.77).toInt()
         dialog?.window?.attributes = params as WindowManager.LayoutParams
-    }
+    } // End of onResume
 
     private fun initDialog() {
         serviceClauseDetailAdapter = ServiceClauseDetailAdapter(mContext, allServiceClauseList)
@@ -74,4 +73,4 @@ class ServiceClauseCustomDialog() : DialogFragment() {
         super.onDestroyView()
         _binding = null
     } // End of onDestroyView
-} // End of ServiceClauseCustomDialo
+} // End of ServiceClauseCustomDialog

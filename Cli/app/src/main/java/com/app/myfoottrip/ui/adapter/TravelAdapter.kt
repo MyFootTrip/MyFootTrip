@@ -1,17 +1,14 @@
 package com.app.myfoottrip.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.databinding.ListItemTravelBinding
-import com.app.myfoottrip.util.TimeUtils
 import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 // 0 : 여정 선택, 1: 여정 보기
 private const val TAG = "TravelAdapter_싸피"

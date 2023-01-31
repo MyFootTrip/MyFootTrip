@@ -21,11 +21,10 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
-    } // End of onAttack
+    } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initNavigation()
 
         binding.apply {
