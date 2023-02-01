@@ -24,8 +24,8 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
                     .navigate(R.id.action_mainFragment_to_myTravelFragment)
             }
             // 개인정보수정 페이지로 이동
-            ivToEditAccount.setOnClickListener{
-                Navigation.findNavController(binding.ivToEditAccount)
+            llToEditAccount.setOnClickListener{
+                Navigation.findNavController(binding.llToEditAccount)
                     .navigate(R.id.action_mainFragment_to_editAccountFragment)
             }
         }

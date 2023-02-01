@@ -28,7 +28,7 @@
         android:theme="@style/Theme.MyFootTrip"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
+        
         <service
             android:name=".ui.view.travel.LocationService"
             android:enabled="true"
