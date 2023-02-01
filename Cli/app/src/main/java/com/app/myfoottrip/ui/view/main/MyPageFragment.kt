@@ -18,7 +18,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-
             // 내 여정 페이지로 이동
             cvMyTravel.setOnClickListener {
                 Navigation.findNavController(binding.cvMyTravel)
@@ -29,7 +28,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
                 Navigation.findNavController(binding.ivToEditAccount)
                     .navigate(R.id.action_mainFragment_to_editAccountFragment)
             }
-
         }
     }
 

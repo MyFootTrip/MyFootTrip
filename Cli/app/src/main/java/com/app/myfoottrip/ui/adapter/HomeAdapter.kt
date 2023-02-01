@@ -28,7 +28,6 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
     inner class BoardHolder(val binding: ListItemHomeBinding) : RecyclerView.ViewHolder(binding.root){
         
         fun bindInfo(board : Board){
-            Log.d(TAG, "bindInfo: $board")
             binding.apply {
                 //게시물 사진
                 Glide.with(itemView)
@@ -77,6 +76,10 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
 
     override fun getItemCount(): Int {
         return boardList.size
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 
     //클릭 인터페이스 정의 사용하는 곳에서 만들어준다.
