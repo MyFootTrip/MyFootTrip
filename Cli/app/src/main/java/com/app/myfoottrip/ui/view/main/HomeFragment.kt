@@ -69,6 +69,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 //        }
     } // End of onViewCreated
 
+    override fun onResume() {
+        super.onResume()
+        init()
+    }
+
     private fun init() {
         getBoardListObserver()
         initSpinnerSort()
