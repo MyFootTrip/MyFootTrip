@@ -28,7 +28,6 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
     inner class BoardHolder(val binding: ListItemHomeBinding) : RecyclerView.ViewHolder(binding.root){
         
         fun bindInfo(board : Board){
-            Log.d(TAG, "bindInfo: $board")
             binding.apply {
                 //게시물 사진
                 Glide.with(itemView)
@@ -45,7 +44,7 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
                     ivProfile.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.white))
                     cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.main)))
                 }else {
-                    Glide.with(itemView).load(board.profileImg).apply(options).centerCrop().into(ivProfile)
+                    Glide.with(itemView).load(board.profileImg).skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE).centerCrop().into(ivProfile)
                     cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.white)))
                 }
 
@@ -77,6 +76,10 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
 
     override fun getItemCount(): Int {
         return boardList.size
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 
     //클릭 인터페이스 정의 사용하는 곳에서 만들어준다.

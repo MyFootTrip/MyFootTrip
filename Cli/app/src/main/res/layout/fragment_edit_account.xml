@@ -12,6 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- 뒤로 가기 -->
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:elevation="10dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
         <!-- 프로필 이미지 수정 -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/edit_profile_image_layout"
@@ -41,6 +54,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.cardview.widget.CardView>
 
             <androidx.appcompat.widget.AppCompatButton
@@ -52,6 +66,423 @@
                 app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 개인정보 수정 / SNS 연결 / 로그아웃 layout  -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/edit_account_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginVertical="65dp"
+            app:cardCornerRadius="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_profile_image_layout"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <!-- 개인정보 수정 -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="13dp"
+                    android:layout_marginTop="33dp"
+                    android:layout_marginBottom="60dp">
+
+                    <TextView
+                        android:id="@+id/tv_edit_account_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_bold"
+                        android:text="개인정보 수정"
+                        android:textColor="@color/black"
+                        android:textSize="24sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- 닉네임 변경 -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_edit_nickname"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="24dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_edit_account_title">
+
+                        <TextView
+                            android:id="@+id/tv_nickname_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_semibold"
+                            android:text="닉네임"
+                            android:textColor="@color/black"
+                            android:textSize="21sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_my_nickname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="짱구"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_nickname_title" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_edit_account"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="변경"
+                            android:textColor="@color/select_category_text"
+                            android:textSize="16sp"
+                            app:chipBackgroundColor="@color/select_category_background"
+                            app:chipEndPadding="10dp"
+                            app:chipStartPadding="10dp"
+                            app:chipStrokeColor="@color/select_category_text"
+                            app:chipStrokeWidth="1dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:rippleColor="@null" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- 아이디 변경 -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_edit_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cl_edit_nickname">
+
+                        <TextView
+                            android:id="@+id/tv_email_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_semibold"
+                            android:text="아이디"
+                            android:textColor="@color/black"
+                            android:textSize="21sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_my_email"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="abc@gmail.com"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_email_title" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_edit_email"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="변경"
+                            android:textColor="@color/select_category_text"
+                            android:textSize="16sp"
+                            app:chipBackgroundColor="@color/select_category_background"
+                            app:chipEndPadding="10dp"
+                            app:chipStartPadding="10dp"
+                            app:chipStrokeColor="@color/select_category_text"
+                            app:chipStrokeWidth="1dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:rippleColor="@null" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- 비밀번호 변경 -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_edit_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cl_edit_email">
+
+                        <TextView
+                            android:id="@+id/tv_password_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_semibold"
+                            android:text="비밀번호"
+                            android:textColor="@color/black"
+                            android:textSize="21sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_my_password"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="·········"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_password_title" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_edit_password"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="변경"
+                            android:textColor="@color/select_category_text"
+                            android:textSize="16sp"
+                            app:chipBackgroundColor="@color/select_category_background"
+                            app:chipEndPadding="10dp"
+                            app:chipStartPadding="10dp"
+                            app:chipStrokeColor="@color/select_category_text"
+                            app:chipStrokeWidth="1dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:rippleColor="@null" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- SNS 연결 -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="13dp"
+                    android:layout_marginBottom="60dp">
+
+                    <TextView
+                        android:id="@+id/tv_connect_sns_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_bold"
+                        android:text="연결된 SNS 계정"
+                        android:textColor="@color/black"
+                        android:textSize="24sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- 카카오 -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_connect_kakao"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="24dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_connect_sns_title">
+
+                        <com.github.nikartm.button.FitButton
+                            android:id="@+id/btn_kakao"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginLeft="1dp"
+                            android:gravity="center"
+                            app:fb_backgroundColor="@color/yellow"
+                            app:fb_icon="@drawable/ic_kakao"
+                            app:fb_iconHeight="14dp"
+                            app:fb_iconWidth="14dp"
+                            app:fb_shape="circle"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_kakao_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="9dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="카카오"
+                            android:textColor="@color/black"
+                            android:textSize="21sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/btn_kakao"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_connect_kakao"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="연결하기"
+                            android:textColor="@color/select_category_text"
+                            android:textSize="16sp"
+                            app:chipBackgroundColor="@color/select_category_background"
+                            app:chipEndPadding="10dp"
+                            app:chipStartPadding="10dp"
+                            app:chipStrokeColor="@color/select_category_text"
+                            app:chipStrokeWidth="1dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:rippleColor="@null" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- 구글 -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_connect_google"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cl_connect_kakao">
+
+                        <com.github.nikartm.button.FitButton
+                            android:id="@+id/btn_google"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginLeft="1dp"
+                            android:gravity="center"
+                            app:fb_backgroundColor="@color/white_smoke"
+                            app:fb_icon="@drawable/ic_google"
+                            app:fb_iconHeight="19dp"
+                            app:fb_iconWidth="19dp"
+                            app:fb_shape="circle"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_google_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="9dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="구글"
+                            android:textColor="@color/black"
+                            android:textSize="21sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/btn_google"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_connect_google"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="연결하기"
+                            android:textColor="@color/select_category_text"
+                            android:textSize="16sp"
+                            app:chipBackgroundColor="@color/select_category_background"
+                            app:chipEndPadding="10dp"
+                            app:chipStartPadding="10dp"
+                            app:chipStrokeColor="@color/select_category_text"
+                            app:chipStrokeWidth="1dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:rippleColor="@null" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- 네이버 -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_connect_naver"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cl_connect_google">
+
+                        <com.github.nikartm.button.FitButton
+                            android:id="@+id/btn_naver"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginLeft="1dp"
+                            android:gravity="center"
+                            app:fb_backgroundColor="@color/green"
+                            app:fb_icon="@drawable/ic_naver"
+                            app:fb_iconHeight="12dp"
+                            app:fb_iconWidth="12dp"
+                            app:fb_shape="circle"
+                            app:fb_iconColor="@color/white"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_naver_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="9dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="네이버"
+                            android:textColor="@color/black"
+                            android:textSize="21sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/btn_naver"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_connect_naver"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="연결하기"
+                            android:textColor="@color/select_category_text"
+                            android:textSize="16sp"
+                            app:chipBackgroundColor="@color/select_category_background"
+                            app:chipEndPadding="10dp"
+                            app:chipStartPadding="10dp"
+                            app:chipStrokeColor="@color/select_category_text"
+                            app:chipStrokeWidth="1dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:rippleColor="@null" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!-- 로그아웃 -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="33dp">
+
+                    <TextView
+                        android:id="@+id/tv_logout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="로그아웃"
+                        android:textColor="@color/gray_500"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
