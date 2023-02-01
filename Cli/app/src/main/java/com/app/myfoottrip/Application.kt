@@ -35,7 +35,7 @@ class Application : Application() {
             .build()
 
         val gson: Gson = GsonBuilder() //날짜 데이터 포맷
-            .setDateFormat("yyyy-mm-dd HH:mm:ss")
+            .setDateFormat("yyyy-MM-dd HH:mm:ss")
             .create()
 
         retrofit = Retrofit.Builder()
