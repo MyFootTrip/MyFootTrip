@@ -8,6 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMainBinding
 import com.app.myfoottrip.ui.base.BaseFragment
@@ -18,11 +19,17 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
     FragmentMainBinding::bind, R.layout.fragment_main
 ) {
 
+    private val navigationViewModel by activityViewModels<NavigationViewModel>()
+
     private lateinit var mContext: Context
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
     } // End of onAttach
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     private val userViewModel by activityViewModels<UserViewModel>()
 
@@ -40,8 +47,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
     //바텀 네비게이션 설정
     private fun initNavigation() {
         binding.apply {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.nav_bottom_fragment, HomeFragment()).commit()
+            when(navigationViewModel.type){
+                0 -> {parentFragmentManager.beginTransaction()
+                    .replace(R.id.nav_bottom_fragment, HomeFragment()).commit()}
+                1 -> {parentFragmentManager.beginTransaction()
+                    .replace(R.id.nav_bottom_fragment, MyPageFragment()).commit()}
+            }
 
             bottomNavigationView.setOnItemSelectedListener {
                 navigationSelected(it)

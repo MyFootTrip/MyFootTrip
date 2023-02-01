@@ -131,6 +131,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         binding.apply {
 
             carouselImage.registerLifecycle(viewLifecycleOwner)
+            carouselImage.imagePlaceholder = ContextCompat.getDrawable(requireContext(),R.raw.loading_image)
 
             val list = mutableListOf<CarouselItem>().let {
                 it.apply {

@@ -31,7 +31,7 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
             binding.apply {
                 //게시물 사진
                 Glide.with(itemView)
-                    .load(board.imageList[0]).centerCrop()
+                    .load(board.imageList[0]).thumbnail(Glide.with(itemView).load(R.drawable.loading_image)).centerCrop()
                     .into(ivImage)
 
                 //이미지 적용 (Glide 라이브러리 사용)
