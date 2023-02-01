@@ -22,7 +22,7 @@ class PlaceAdapter(var placeList:List<Place>) : RecyclerView.Adapter<PlaceAdapte
         fun bindInfo(place : Place){
             placeOrder.text = "${layoutPosition+1}"
             placeName.text = place.placeName
-            saveDate.text = TimeUtils.getFormattedString(place.saveDate!!)
+            saveDate.text = TimeUtils.getDateString(place.saveDate!!)
 
             itemView.setOnClickListener{
                 itemClickListner.onClick(it, layoutPosition,place)

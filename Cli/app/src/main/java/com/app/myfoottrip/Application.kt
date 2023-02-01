@@ -15,6 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
+private const val TAG = "Application_싸피"
 class Application : Application() {
 
     override fun onCreate() {
@@ -26,6 +27,13 @@ class Application : Application() {
     } // End of onCreate
 
     private fun initRetrofit(interceptor: AppInterceptor) {
+        val logging = HttpLoggingInterceptor()
+        if(BuildConfig.DEBUG) {
+            logging.level = HttpLoggingInterceptor.Level.BODY
+        } else {
+            logging.level = HttpLoggingInterceptor.Level.NONE
+        }
+
         val okHttpClient = OkHttpClient.Builder()
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(15, TimeUnit.SECONDS)
@@ -35,7 +43,7 @@ class Application : Application() {
             .build()
 
         val gson: Gson = GsonBuilder() //날짜 데이터 포맷
-            .setDateFormat("yyyy-mm-dd HH:mm:ss")
+            .setDateFormat("yyyy-MM-dd HH:mm:ss")
             .create()
 
         retrofit = Retrofit.Builder()
@@ -43,7 +51,6 @@ class Application : Application() {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .build()
-
 
         val headerOkHttpClient = OkHttpClient.Builder()
             .readTimeout(30, TimeUnit.SECONDS)
@@ -79,7 +86,9 @@ class Application : Application() {
     companion object {
         lateinit var retrofit: Retrofit
         lateinit var headerRetrofit: Retrofit
+
         const val SERVER_URL = "https://i8d103.p.ssafy.io/"    // TODO : AWS Hosting + URL 변경 //54.248.64.154
+
         const val IMG_URL = "http://54.248.64.154"
         lateinit var sharedPreferencesUtil: SharedPreferencesUtil
     }

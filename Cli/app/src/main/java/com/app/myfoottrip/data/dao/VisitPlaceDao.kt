@@ -26,10 +26,9 @@ interface VisitPlaceDao {
     @Query("SELECT * FROM visit_place order by date DESC limit 1 ")
     fun getLastOne(): VisitPlace? // 가장 최근 항목 하나를 가져옴
 
-//    @Query("DELETE FROM visit_place")
-//    suspend fun deleteAll() // 전체 삭제
-//
-//    @Query("select count(*) from visit_place")
-//    suspend fun getCount(): Int
+    // 테이블의 데이터 전체 삭제
+    @Query("DELETE FROM visit_place")
+    fun deleteAllData()
+
 
 } // End of VisitPlaceDao interface

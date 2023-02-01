@@ -39,6 +39,10 @@ class VisitPlaceRepository private constructor(context: Context) {
         visitPlaceDao.delete(dto)
     } // End of deleteVisitPlace
 
+    suspend fun deleteAllVisitPlace() = database.withTransaction {
+        visitPlaceDao.deleteAllData()
+    } // End of deleteAllVisitPlace
+
     // 싱글톤을 위한 구현
     companion object {
         // INSTANCE가 null일 때, get()을 바로 호출할 경우, 에러가 발생할 수 있음

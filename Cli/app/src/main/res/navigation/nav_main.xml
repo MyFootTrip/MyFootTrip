@@ -82,7 +82,15 @@
     <fragment
         android:id="@+id/editSaveTravelFragment"
         android:name="com.app.myfoottrip.ui.view.travel.EditSaveTravelFragment"
-        android:label="EditSaveTravelFragment" />
+        android:label="EditSaveTravelFragment">
+        <action
+            android:id="@+id/action_editSaveTravelFragment_to_travelSelectFragment"
+            app:destination="@id/travelSelectFragment"
+            app:enterAnim="@anim/enter_anim"
+            app:exitAnim="@anim/exit_anim"
+            app:popEnterAnim="@anim/enter_anim"
+            app:popExitAnim="@anim/exit_anim" />
+    </fragment>
 
     <fragment
         android:id="@+id/editAccountFragment"

@@ -13,6 +13,7 @@ import com.app.myfoottrip.network.api.UserApi
 import com.app.myfoottrip.network.service.BoardService
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.collections.ArrayList
 

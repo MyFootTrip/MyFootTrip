@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
@@ -18,31 +19,33 @@ import com.app.myfoottrip.data.dto.Image
 import com.app.myfoottrip.databinding.DialogPlaceBottomBinding
 import com.app.myfoottrip.databinding.ListItemHomeBinding
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 
 private const val TAG = "HomeAdapter_마이풋트립"
 class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.BoardHolder>(){
 
     inner class BoardHolder(val binding: ListItemHomeBinding) : RecyclerView.ViewHolder(binding.root){
-
-        val nickname = itemView.findViewById<TextView>(R.id.tv_nickname)
-        val likeCount = itemView.findViewById<TextView>(R.id.tv_like_count)
-        val commentCount = itemView.findViewById<TextView>(R.id.tv_comment_count)
-
+        
         fun bindInfo(board : Board){
-
+            Log.d(TAG, "bindInfo: $board")
             binding.apply {
                 //게시물 사진
                 Glide.with(itemView)
                     .load(board.imageList[0]).centerCrop()
                     .into(ivImage)
 
+                //이미지 적용 (Glide 라이브러리 사용)
+                val options = RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)
+                
                 //프로필 이미지
                 if (board.profileImg.isNullOrEmpty()){
+                    ivProfile.setPadding(10)
                     Glide.with(itemView).load(R.drawable.ic_my).fitCenter().into(ivProfile)
                     ivProfile.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.white))
                     cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.main)))
                 }else {
-                    Glide.with(itemView).load(board.profileImg).centerCrop().into(ivProfile)
+                    Glide.with(itemView).load(board.profileImg).apply(options).centerCrop().into(ivProfile)
                     cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.white)))
                 }
 

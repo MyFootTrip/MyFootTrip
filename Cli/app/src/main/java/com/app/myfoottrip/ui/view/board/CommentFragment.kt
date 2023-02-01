@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
@@ -58,20 +59,21 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
     }
 
     private fun init(){
+        initProfileImg()
         getBoardObserver()
         getBoard()
-        initProfileImg()
     }
 
     // 프로필 이미지 불러오기
     private fun initProfileImg(){
         binding.apply {
-            if (boardViewModel.board.value?.data?.profileImg.isNullOrEmpty()){
+            if (userViewModel.wholeMyData.value?.join?.profile_image.isNullOrEmpty()){
+                ivProfile.setPadding(10)
                 Glide.with(this@CommentFragment).load(R.drawable.ic_my).fitCenter().into(ivProfile)
                 ivProfile.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.main)))
             }else {
-                Glide.with(this@CommentFragment).load(boardViewModel.board.value?.data?.profileImg).centerCrop().into(ivProfile)
+                Glide.with(this@CommentFragment).load(userViewModel.wholeMyData.value?.join?.profile_image).centerCrop().into(ivProfile)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white)))
             }
         }
@@ -86,6 +88,8 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
 
     //댓글 리사이클러 뷰 생성
     private fun initCommentAdapter(commentList: ArrayList<Comment>){
+
+        commentList.sortByDescending {it.writeDate}
 
         commentAdapter = CommentAdapter(commentList,userViewModel.wholeMyData.value!!.uid)
 
@@ -125,12 +129,12 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         val inputDialog = CommentInputDialog(object : CommentInputDialog.OnClickListener {
             override fun onClick(dialog: CommentInputDialog) {
                 val user = userViewModel.wholeMyData.value
-                val comment = Comment(-1, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.comment.text.toString(),Date(System.currentTimeMillis()))
+                val comment = Comment(-1, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()))
                 writeCommentObserver()
                 writeComment(comment)
                 dialog.dismiss()
             }
-        })
+        },userViewModel.wholeMyData.value!!)
 
         inputDialog.show(parentFragmentManager, inputDialog.mTag)
     }
@@ -140,12 +144,12 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         val updateDialog = CommentInputDialog(object : CommentInputDialog.OnClickListener {
             override fun onClick(dialog: CommentInputDialog) {
                 val user = userViewModel.wholeMyData.value
-                val comment = Comment(commentId, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.comment.text.toString(),Date(System.currentTimeMillis()))
+                val comment = Comment(commentId, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()))
                 updateCommentObserver()
                 updateComment(comment)
                 dialog.dismiss()
             }
-        })
+        },userViewModel.wholeMyData.value!!)
 
         updateDialog.show(parentFragmentManager, updateDialog.mTag)
     }
@@ -184,7 +188,8 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     initCommentExist(it.data!!)
-                    commentAdapter.commentList = it.data!!.commentList
+                    val commentList = it.data!!.commentList.sortedByDescending { list -> list.writeDate }
+                    commentAdapter.commentList = commentList
                     commentAdapter.notifyDataSetChanged()
                     binding.root.showSnackBarMessage("댓글이 등록되었습니다.")
                 }
@@ -209,12 +214,12 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     initCommentExist(it.data!!)
-                    commentAdapter.commentList = it.data!!.commentList
+                    val commentList = it.data!!.commentList.sortedByDescending { list -> list.writeDate }
+                    commentAdapter.commentList = commentList
                     commentAdapter.notifyDataSetChanged()
                     binding.root.showSnackBarMessage("댓글이 수정되었습니다.")
                 }
                 is NetworkResult.Error -> {
-                    Log.d(TAG, "writeCommentObserver: 통신에러")
                 }
                 is NetworkResult.Loading -> {
                 }
@@ -231,11 +236,11 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
 
     private fun deleteCommentObserver() {
         commentViewModel.deleteBoard.observe(viewLifecycleOwner) {
-            Log.d(TAG, "deleteCommentObserver: 테스트")
             when (it) {
                 is NetworkResult.Success -> {
                     initCommentExist(it.data!!)
-                    commentAdapter.commentList = it.data!!.commentList
+                    val commentList = it.data!!.commentList.sortedByDescending { list -> list.writeDate }
+                    commentAdapter.commentList = commentList
                     commentAdapter.notifyDataSetChanged()
                     binding.root.showSnackBarMessage("댓글이 삭제되었습니다.")
                 }

@@ -1,7 +1,6 @@
 package com.app.myfoottrip.ui.view.travel
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.PointF
 import android.os.Bundle
@@ -15,7 +14,6 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentTravelLocationSelectBinding
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
-import com.app.myfoottrip.ui.adapter.HomeAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.HomeFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
@@ -34,8 +32,8 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
 ), OnMapReadyCallback {
     private val travelViewModel by activityViewModels<TravelViewModel>()
     private lateinit var categoryAdapter: CategoryAdatper
-    private var locationList: MutableList<String>? = null //지역 리스트
-    private var selectedList: MutableList<String>? = null //선택된 리스트
+    private var locationList: MutableList<String> = ArrayList() //지역 리스트
+    private var selectedList: MutableList<String> = ArrayList() //선택된 리스트
 
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
     private var mapFragment: MapFragment = MapFragment()
@@ -101,6 +99,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
                         backgroundTintList =
                             AppCompatResources.getColorStateList(requireContext(), R.color.main)
                         isEnabled = true
+                        isClickable = true
                     }
                 }
             }
@@ -114,11 +113,8 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
     // 위치 기록 시작
     private fun startLocationRecording() {
         binding.fabStart.setOnClickListener {
-            travelViewModel.setLocationList(selectedList!!)
-//            val view = TravelLocationSelectFragment().view
-//            if (view != null) {
-//                serviceStart(view)
-//            }
+            Log.d(TAG, "selectedList: ${selectedList}")
+            travelViewModel.setLocationList(selectedList!! as ArrayList<String>)
 
             val mainActivity = requireActivity() as MainActivity
             mainActivity.startLocationService()
@@ -149,11 +145,11 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
     } // End of initListener
 
     private fun setChipListener(position: Int) {
-        selectedList!!.add(locationList!![position])
+        selectedList.add(locationList[position])
 
         binding.cgDetail.addView(Chip(requireContext()).apply {
             chipCornerRadius = 10.0f
-            text = locationList!![position]
+            text = locationList[position]
             textSize = 12.0f
             isCloseIconVisible = true
             closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
@@ -181,6 +177,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
                         backgroundTintList =
                             AppCompatResources.getColorStateList(requireContext(), R.color.gray_500)
                         isEnabled = false
+                        isClickable = false
                     }
                 }
             }
