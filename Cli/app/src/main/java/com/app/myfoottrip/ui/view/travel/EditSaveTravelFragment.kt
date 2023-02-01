@@ -1,6 +1,7 @@
 package com.app.myfoottrip.ui.view.travel
 
 import android.content.Context
+import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -23,7 +24,14 @@ import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapView
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.util.FusedLocationSource
+import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -33,7 +41,7 @@ private const val TAG = "EditSaveTravelFragment_싸피"
 
 class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     FragmentEditSaveTravelBinding::bind, R.layout.fragment_edit_save_travel
-) {
+), OnMapReadyCallback { // End of EditSaveTravelFragment class
     lateinit var mapView: MapView
     private lateinit var mContext: Context
     lateinit var visitPlaceRepository: VisitPlaceRepository
@@ -45,6 +53,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     private lateinit var recyclerView: RecyclerView
     private lateinit var travelEditSaveItemAdapter: TravelEditSaveItemAdapter
     private var count = 0
+    private lateinit var naverMap: NaverMap
+    private lateinit var locationSource: FusedLocationSource
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -59,6 +69,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mapView = binding.mapFragment
+
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
+        locationSource = FusedLocationSource(this, 1000)
 
         // 첫번째 UI에 데이터 뿌려야 하므로 데이터 부터 가져오기
         getData()
@@ -80,11 +94,26 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             activity!!.runOnUiThread {
                 CoroutineScope(Dispatchers.Main).launch {
                     setUI()
+                    setMapInMark()
                     buttonEvents()
                 }
             }
         }
     } // End of getData
+
+    // 가져온 데이터로 지도에 좌표 마크 표시하기
+    private fun setMapInMark() {
+        val size = userVisitPlaceDataList.size
+        for(i in 0 until size) {
+            val marker = Marker()
+            val data = userVisitPlaceDataList[i]
+
+            marker.position = LatLng(data.latitude!!, data.longitude!!)
+            marker.map = naverMap
+            marker.icon = MarkerIcons.BLACK
+            marker.iconTintColor = Color.RED
+        }
+    } // End of setMapInMark
 
     private fun changeToTravelDto() {
         userTravelData = Travel(
@@ -106,7 +135,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         val endDateString = endDateFormat.format(userTravelData!!.endDate!!)
         binding.travelDateTv.text = "$startDateString - $endDateString"
 
-        binding.traveTotalTimeTv.text = "총시간 : ${totalTimeCalc()} "
+        binding.traveTotalTimeTv.text = "총 시간 : ${totalTimeCalc()} "
 
         recyclerView = binding.travelEditSaveRecyclerview
         initRecyclerViewAdapter()
@@ -115,6 +144,14 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             adapter = travelEditSaveItemAdapter
             layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
         }
+
+        travelEditSaveItemAdapter.setItemClickListener(object :
+            TravelEditSaveItemAdapter.ItemClickListener {
+            override fun onEditButtonClick(position: Int, placeData: Place) {
+                // 리사이클러뷰 포지션에 해당하는 수정 버튼을 눌렀을 때 이벤트
+                showToast("${position + 1}의 아이템을 선택함")
+            }
+        })
     } // End of setUI
 
     private fun initRecyclerViewAdapter() {
@@ -123,7 +160,19 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
     private fun totalTimeCalc(): String {
         val result = "00시간 00분"
+        
+        val startTime = userTravelData!!.startDate!!.time
+        val endTime = userTravelData!!.endDate!!.time
+        val diff = endTime - startTime
 
+        val dateFormat = SimpleDateFormat("HH : mm", Locale("ko", "KR"))
+        val temp = dateFormat.format(diff)
+
+        Log.d(TAG, "totalTimeCalc: $temp ")
+
+        /*
+            출발 시간 에서 끝난 시간을 Long타입으로 계산해서 차이값을 시간으로 표현하면됨
+         */
         return result
     } // End of totalTimeCalc
 
@@ -265,7 +314,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     override fun onResume() {
         super.onResume()
         mapView.onResume()
-        Log.d(TAG, "userTravelData: ${userTravelData} ")
     }
 
     override fun onPause() {
@@ -292,4 +340,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         super.onLowMemory()
         mapView.onLowMemory()
     }
-} // End of EditSaveTravelFragment class
+
+    override fun onMapReady(naverMap: NaverMap) {
+        this.naverMap = naverMap
+        naverMap.locationSource = locationSource
+        naverMap.locationTrackingMode = LocationTrackingMode.Follow
+    } // End of onMapReady
+} // End of EditSaveTravelFragment

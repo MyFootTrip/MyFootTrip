@@ -68,7 +68,6 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         initListener()
     } // End of onViewCreated
 
-
     private fun initMap() {
         // TouchFrameLayout 에 mapFragment 올려놓기
         val fragmentTransaction = childFragmentManager.beginTransaction()
