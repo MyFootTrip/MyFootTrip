@@ -57,29 +57,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_my_page_title" />
 
-    <TextView
-        android:id="@+id/textView"
+    <!-- 개인정보수정 button-->
+    <LinearLayout
+        android:id="@+id/ll_to_edit_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/inter_bold"
-        android:text="짱구님"
-        android:textColor="@color/white"
-        android:textSize="24sp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="@+id/iv_one_side_rounded_shape"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
 
-    <!-- 개인정보수정 button-->
-    <ImageView
-        android:id="@+id/iv_to_edit_account"
-        android:layout_width="17dp"
-        android:layout_height="17dp"
-        android:layout_marginStart="10dp"
-        android:src="@drawable/ic_next"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_one_side_rounded_shape"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_bold"
+                android:text="짱구님"
+                android:textColor="@color/white"
+                android:textSize="23sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <ImageView
+                android:id="@+id/iv_to_edit_account"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/ic_next"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/textView"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
 
     <!-- 나의 여정 button-->
     <LinearLayout

@@ -19,7 +19,7 @@
         app:tint="@color/gray_700" />
 
     <TextView
-        android:id="@+id/tv_travel_title"
+        android:id="@+id/tv_my_travel_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -30,20 +30,18 @@
         app:layout_constraintTop_toTopOf="@+id/iv_back"
         tools:text="나의 여정" />
 
-    <!--  수정 필요  -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_travel"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_travel_title"
-        tools:listitem="@layout/list_item_travel" />
-
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/rv_my_travel"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:orientation="vertical"-->
+<!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tv_my_travel_title"-->
+<!--        tools:listitem="@layout/list_item_travel" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
