@@ -65,6 +65,10 @@ class CommentAdapter(var commentList:List<Comment>,val userId : Int) : RecyclerV
         return commentList.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
     //클릭 인터페이스 정의 사용하는 곳에서 만들어준다.
     interface ItemClickListener {
         fun onClick(view: View,  position: Int, commentId : Int)

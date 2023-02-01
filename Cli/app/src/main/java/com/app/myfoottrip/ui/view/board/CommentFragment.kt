@@ -103,11 +103,12 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
                 popupMenu.setOnMenuItemClickListener {
                     when(it.itemId){
                         R.id.menu_update -> {
+                            updateCommentObserver(position)
                             updateCommentInput(commentId)
                             return@setOnMenuItemClickListener true
                         }
                         R.id.menu_delete -> {
-                            deleteCommentObserver()
+                            deleteCommentObserver(position)
                             deleteComment(commentId)
                             return@setOnMenuItemClickListener true
                         }else ->{
@@ -145,7 +146,6 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
             override fun onClick(dialog: CommentInputDialog) {
                 val user = userViewModel.wholeMyData.value
                 val comment = Comment(commentId, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()))
-                updateCommentObserver()
                 updateComment(comment)
                 dialog.dismiss()
             }
@@ -188,9 +188,9 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     initCommentExist(it.data!!)
-                    val commentList = it.data!!.commentList.sortedByDescending { list -> list.writeDate }
-                    commentAdapter.commentList = commentList
-                    commentAdapter.notifyDataSetChanged()
+                    initCommentAdapter(it.data!!.commentList)
+                    commentAdapter.notifyItemInserted(0)
+                    binding.rvComment.scrollToPosition(0)
                     binding.root.showSnackBarMessage("댓글이 등록되었습니다.")
                 }
                 is NetworkResult.Error -> {
@@ -209,14 +209,13 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         }
     }
 
-    private fun updateCommentObserver() {
+    private fun updateCommentObserver(position: Int) {
         commentViewModel.updateBoard.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
                     initCommentExist(it.data!!)
-                    val commentList = it.data!!.commentList.sortedByDescending { list -> list.writeDate }
-                    commentAdapter.commentList = commentList
-                    commentAdapter.notifyDataSetChanged()
+                    initCommentAdapter(it.data!!.commentList)
+                    commentAdapter.notifyItemChanged(position)
                     binding.root.showSnackBarMessage("댓글이 수정되었습니다.")
                 }
                 is NetworkResult.Error -> {
@@ -234,14 +233,13 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         }
     }
 
-    private fun deleteCommentObserver() {
+    private fun deleteCommentObserver(position: Int) {
         commentViewModel.deleteBoard.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
                     initCommentExist(it.data!!)
-                    val commentList = it.data!!.commentList.sortedByDescending { list -> list.writeDate }
-                    commentAdapter.commentList = commentList
-                    commentAdapter.notifyDataSetChanged()
+                    initCommentAdapter(it.data!!.commentList)
+                    commentAdapter.notifyItemRemoved(position)
                     binding.root.showSnackBarMessage("댓글이 삭제되었습니다.")
                 }
                 is NetworkResult.Error -> {}
