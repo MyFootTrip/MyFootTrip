@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.data.dto.ServiceClauseText
 import com.app.myfoottrip.databinding.ListItemServiceClauseBinding
 
-private const val TAG = "싸피"
+private const val TAG = "ServiceClauseDetailAdapter_싸피"
 
 class ServiceClauseDetailAdapter(val context: Context, private val list: List<ServiceClauseText>) :
     RecyclerView.Adapter<ServiceClauseDetailAdapter.ServiceClauseTextHolder>() {

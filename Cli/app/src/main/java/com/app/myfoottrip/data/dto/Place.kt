@@ -3,7 +3,6 @@ package com.app.myfoottrip.data.dto
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 data class Place @JvmOverloads constructor(
     var placeId: Int? = 0, //장소 아이디
     var placeName: String? = "", //장소 이름

@@ -6,11 +6,11 @@ import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Travel
-import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentTravelSelectBinding
@@ -29,7 +29,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     private var type = 0 // 0 : 여정 기록, 1 : 마이페이지, 2 : 게시글 작성
 
     private val travelViewModel by activityViewModels<TravelViewModel>()
-    private val tokenViewModel by activityViewModels<TokenViewModel>()
     private val userViewModel by activityViewModels<UserViewModel>()
     private lateinit var travelAdapter: TravelAdapter
 
@@ -52,6 +51,18 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             findNavController().popBackStack()
         }
     } // End of onViewCreated
+
+    override fun onResume() {
+        super.onResume()
+
+        // 앞에서 실행되었던 프레그먼트 스택 비우기
+        //fragmentBackStackClear()
+    } // End of onResume
+
+    private fun fragmentBackStackClear() {
+        val fragmentManager: FragmentManager = activity!!.supportFragmentManager
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    } // End of backStackClear
 
     private fun initCustomView() {
         if (type == 0) { //여정 선택 부분
