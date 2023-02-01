@@ -2,24 +2,17 @@ package com.app.myfoottrip.ui.view.main
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMainBinding
 import com.app.myfoottrip.ui.base.BaseFragment
-import com.app.myfoottrip.util.NetworkResult
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-
-private const val TAG = "MainFragment_싸피"
+private const val TAG = "MainFragment_마이풋트립"
 
 class MainFragment : BaseFragment<FragmentMainBinding>(
     FragmentMainBinding::bind, R.layout.fragment_main
@@ -35,15 +28,15 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initNavigation()
 
         binding.apply {
             bottomNavigationView.background = null // 음영 겹치는거 제거
             bottomNavigationView.menu.getItem(1).isEnabled = false //가운데 아이템 선택 불가능
         }
-
     } // End of onViewCreated
-
+    
     //바텀 네비게이션 설정
     private fun initNavigation() {
         binding.apply {
@@ -81,4 +74,5 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
             return false
         }
     }
+
 } // End of MainFragment class

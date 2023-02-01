@@ -10,6 +10,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.ActivityMainBinding
+import com.app.myfoottrip.network.fcm.MyFireBaseMessagingService
 import com.app.myfoottrip.ui.view.travel.LocationService
 import com.app.myfoottrip.util.NetworkResult
 import com.naver.maps.map.NaverMap
@@ -19,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-private const val TAG = "MainActivity_싸피"
+private const val TAG = "MainActivity_마이풋트립"
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainActivity class
 
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
         CoroutineScope(Dispatchers.IO).launch {
             getUserMyData()
         }
+
     } // End of onCreate
 
     private fun setBinding() {
@@ -102,5 +104,4 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 
         TODO("Not yet implemented")
     }
-
 }

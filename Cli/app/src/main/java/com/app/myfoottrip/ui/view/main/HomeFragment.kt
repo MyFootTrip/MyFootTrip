@@ -20,6 +20,7 @@ import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentHomeBinding
+import com.app.myfoottrip.network.fcm.MyFireBaseMessagingService
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
 import com.app.myfoottrip.ui.adapter.HomeAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
@@ -55,6 +56,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        Log.d(TAG, "onViewCreated: 테스트")
+        /** FCM설정, Token값 가져오기 */
+        MyFireBaseMessagingService().getFirebaseToken()
+
+        /** DynamicLink 수신확인 */
+        initDynamicLink()
+
         init()
 
         //게시물 작성 페이지로 이동
@@ -396,6 +405,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             }
         }
     } // 게시물 전체 받아오기
+
+    private fun initDynamicLink() {
+        val dynamicLinkData = requireActivity().intent.extras
+        if (dynamicLinkData != null) {
+            var dataStr = "DynamicLink 수신받은 값\n"
+            for (key in dynamicLinkData.keySet()) {
+                dataStr += "key: $key / value: ${dynamicLinkData.getString(key)}\n"
+            }
+
+//            binding.tvToken.text = dataStr
+            Log.d(TAG, "initDynamicLink: $dataStr")
+        }
+    }
 
     companion object {
         val THEME_LIST = arrayOf("혼자", "친구와", "연인과", "배우자와", "아이와", "부모님과", "기타")
