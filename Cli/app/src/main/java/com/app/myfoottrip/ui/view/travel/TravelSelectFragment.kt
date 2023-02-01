@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
@@ -30,6 +31,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
     private val travelViewModel by activityViewModels<TravelViewModel>()
     private val userViewModel by activityViewModels<UserViewModel>()
+    lateinit var visitPlaceRepository: VisitPlaceRepository
     private lateinit var travelAdapter: TravelAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,9 +56,19 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
     override fun onResume() {
         super.onResume()
+        travelViewModel.createTravelResponseLiveData.value
 
-        // 앞에서 실행되었던 프레그먼트 스택 비우기
-        //fragmentBackStackClear()
+        // 혹시 모를 SQLLite DB를 항상 비워야함
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                visitPlaceRepository.deleteAllVisitPlace()
+            } catch (exception: Exception) {
+                Log.d(TAG, "onResume: DB에 비울 값이 없습니다.")
+            }
+        }
+
+        // 유저 생성 ResponseLiveData 다시 초기화
+        travelViewModel.setCreateTravelResponseLiveData()
     } // End of onResume
 
     private fun fragmentBackStackClear() {
@@ -218,4 +230,4 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             }
         }
     } // End of settingView
-}
+} // End of TravelSelectFragment class

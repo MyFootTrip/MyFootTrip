@@ -119,7 +119,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
     //위치 기록 정지 및 저장
     private fun stopLocationRecordingAndSave() {
-
         // 저장 버튼 클릭시 이벤트
         binding.fabStop.setOnClickListener {
             showToast("성공적으로 저장했습니다.", ToastType.SUCCESS)
@@ -136,36 +135,34 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         }
     } // End of stopLocationRecordingAndSaving
 
-    private fun getNowTime(): Long {
-        return System.currentTimeMillis()
-    } // End of getNowTime
-
-    
     // 현재 위치를 저장하는 메소드
     private fun nowLocationSave() {
         binding.btnAddPoint.setOnClickListener {
             //LocationConstants.getNowLocation(requireContext())
             val latitude: Double = locationProvider.getLocationLatitude()
             val longitude: Double = locationProvider.getLocationLongitude()
-            
+
             val temp = VisitPlace(
                 0,
                 "",
                 latitude,
                 longitude,
-                getNowTime(),
+                System.currentTimeMillis(),
                 emptyList()
             )
+
+            var result = 0L
             CoroutineScope(Dispatchers.IO).launch {
-                visitPlaceRepository.insertVisitPlace(temp)
+                result = visitPlaceRepository.insertVisitPlace(temp)
             }
 
-            CoroutineScope(Dispatchers.IO).launch {
-                visitPlaceRepository.getVisitPlace()
+            Log.d(TAG, "insert Result : $result }")
+
+            if(result != 0L) {
+                showToast("현재 위치 저장 성공")
             }
         }
     } // End of nowLocationSaving
-
 
     private fun initMap() {
         // TouchFrameLayout 에 mapFragment 올려놓기

@@ -95,6 +95,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         )
     } // End of changeToTravelDto
 
+
+
+
     // 유저의 여행 데이터를 불러와서 UI를 뿌리기
     private suspend fun setUI() {
         joinBackButtonCustomView = binding.joinBackButtonCustomview
@@ -121,7 +124,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     } // End of setUI
 
     private fun initRecyclerViewAdapter() {
-        travelEditSaveItemAdapter =  TravelEditSaveItemAdapter(mContext, userTravelData?.placeList!!)
+        travelEditSaveItemAdapter = TravelEditSaveItemAdapter(mContext, userTravelData?.placeList!!)
     } // End of
 
     private fun totalTimeCalc(): String {
@@ -157,7 +160,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         val placeList: MutableList<Place> = ArrayList()
 
         val job = CoroutineScope(Dispatchers.IO).async {
-            val allVisitPlaceList = visitPlaceRepository.getVisitPlace()
+            val allVisitPlaceList = visitPlaceRepository.getAllVisitPlace()
 
             // visitPlace를 변경해서 Place로 변경
             val size = allVisitPlaceList.size
@@ -194,7 +197,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         return placeList
     } // End of getSqlLiteAllData
 
-
     private fun createTravelResponseObserve() {
         travelViewModel.createTravelResponseLiveData.observe(viewLifecycleOwner) {
             when (it) {
@@ -203,6 +205,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                         // 성공하면, SQLLite table 모두 비우기
                         CoroutineScope(Dispatchers.IO).launch {
                             visitPlaceRepository.deleteAllVisitPlace()
+                            Log.d(
+                                TAG,
+                                "현재 남아있는 SQLLite Data : ${visitPlaceRepository.getAllVisitPlace()}"
+                            )
 
                             // DB를 비우고 빠져나가기
                             coroutineScope {
@@ -234,7 +240,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             }
         }
     } // End of createTravelResponseObserve
-
 
     private suspend fun getAddressByCoordinates(latitude: Double, longitude: Double): Address? {
         val geocoder = Geocoder(mContext, Locale.KOREA)
@@ -270,6 +275,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     override fun onResume() {
         super.onResume()
         mapView.onResume()
+        Log.d(TAG, "userTravelData: ${userTravelData} ")
     }
 
     override fun onPause() {

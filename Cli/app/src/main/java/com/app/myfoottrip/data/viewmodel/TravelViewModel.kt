@@ -50,6 +50,10 @@ class TravelViewModel : ViewModel() {
     } // End of setLocationList
 
 
+    fun setCreateTravelResponseLiveData() {
+        travelRepository.setCreateTravelResponseLiveData()
+    } // End of setCreateTravelResponseLiveData
+
     //유저별 여정 확인
     suspend fun getUserTravel(userId: Int) {
         viewModelScope.launch {

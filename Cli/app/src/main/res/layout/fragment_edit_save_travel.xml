@@ -68,7 +68,7 @@
     <androidx.recyclerview.widget.RecyclerView
             tools:listitem="@layout/list_itme_travel_edit_save"
             android:id="@+id/travel_edit_save_recyclerview"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
