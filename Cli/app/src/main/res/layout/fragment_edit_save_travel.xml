@@ -62,14 +62,14 @@
             android:layout_height="240dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/travel_edit_save_recyclerview"
             app:layout_constraintTop_toBottomOf="@id/travel_edit_save_top_constraintlayout" />
 
     <androidx.recyclerview.widget.RecyclerView
             tools:listitem="@layout/list_itme_travel_edit_save"
             android:id="@+id/travel_edit_save_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="240dp"
+            app:layout_constraintBottom_toBottomOf="@id/travel_edit_save_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/map_fragment" />

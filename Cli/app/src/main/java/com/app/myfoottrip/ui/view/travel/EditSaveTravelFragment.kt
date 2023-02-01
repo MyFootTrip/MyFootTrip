@@ -44,6 +44,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     private var userTravelData: Travel? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var travelEditSaveItemAdapter: TravelEditSaveItemAdapter
+    private var count = 0
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -87,16 +88,11 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
     private fun changeToTravelDto() {
         userTravelData = Travel(
-            null,
-            travelViewModel.locationList,
-            userVisitPlaceDataList[0].saveDate, // 처음 시작 저장 시간
+            null, travelViewModel.locationList, userVisitPlaceDataList[0].saveDate, // 처음 시작 저장 시간
             Date(System.currentTimeMillis()), // 마지막 저장 시간
             userVisitPlaceDataList
         )
     } // End of changeToTravelDto
-
-
-
 
     // 유저의 여행 데이터를 불러와서 UI를 뿌리기
     private suspend fun setUI() {
@@ -119,13 +115,11 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             adapter = travelEditSaveItemAdapter
             layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
         }
-
-
     } // End of setUI
 
     private fun initRecyclerViewAdapter() {
         travelEditSaveItemAdapter = TravelEditSaveItemAdapter(mContext, userTravelData?.placeList!!)
-    } // End of
+    } // End of initRecyclerViewAdapter
 
     private fun totalTimeCalc(): String {
         val result = "00시간 00분"
@@ -178,10 +172,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
                 placeList.add(
                     Place(
-                        null,
-                        "",
-                        temp.date?.let { Date(it) },
-                        "", // 일단 처음에는 메모 빈 값
+                        null, "", temp.date?.let { Date(it) }, "", // 일단 처음에는 메모 빈 값
                         ArrayList(), // 일단 빈 이미지를 넣어야됨
                         temp.lat, // 좌표
                         temp.lng, // 좌표
@@ -216,11 +207,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
                                     // 다시 여행 선택페이지로 이동
                                     val bundle = bundleOf("type" to 0)
-                                    findNavController()
-                                        .navigate(
-                                            R.id.action_editSaveTravelFragment_to_travelSelectFragment,
-                                            bundle
-                                        )
+                                    findNavController().navigate(
+                                        R.id.action_editSaveTravelFragment_to_travelSelectFragment,
+                                        bundle
+                                    )
 
                                 }
                             }

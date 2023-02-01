@@ -61,7 +61,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         super.onViewCreated(view, savedInstanceState)
         initialize()
 
-
         locationProvider = LocationProvider(requireContext() as MainActivity)
         updateUI()
     } // End of onViewCreated

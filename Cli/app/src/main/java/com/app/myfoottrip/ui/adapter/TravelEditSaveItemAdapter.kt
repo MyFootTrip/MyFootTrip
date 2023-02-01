@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.databinding.ListItmeTravelEditSaveBinding
 
+
 private const val TAG = "TravelEditSaveItemAdapt_싸피"
 
 class TravelEditSaveItemAdapter(val context: Context, private val placeList: List<Place>) :
@@ -25,13 +26,22 @@ class TravelEditSaveItemAdapter(val context: Context, private val placeList: Lis
         }
     } // End of inner class
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TravelEditSaveItemHolder {
-        binding = ListItmeTravelEditSaveBinding.inflate(LayoutInflater.from(parent.context))
+        binding = ListItmeTravelEditSaveBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return TravelEditSaveItemHolder(binding.root)
     } // End of onCreateViewHolder
 
     override fun onBindViewHolder(holder: TravelEditSaveItemHolder, position: Int) {
-        holder.bindInfo(placeList[position], position)
+        val item = placeList.get(holder.absoluteAdapterPosition)
+        holder.bindInfo(item, holder.absoluteAdapterPosition)
     } // End of onCreateViewHolder
 
     override fun getItemCount(): Int = placeList.size
