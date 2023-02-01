@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.databinding.ListItmeTravelEditSaveBinding
 
-private const val TAG = "TravelEditSaveItemAdapt"
+private const val TAG = "TravelEditSaveItemAdapt_싸피"
 class TravelEditSaveItemAdapter(val context: Context, private val placeList: List<Place>) :
     RecyclerView.Adapter<TravelEditSaveItemAdapter.TravelEditSaveItemHolder>() {
     private lateinit var binding: ListItmeTravelEditSaveBinding
