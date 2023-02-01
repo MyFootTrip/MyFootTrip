@@ -9,18 +9,19 @@ import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.databinding.ListItmeTravelEditSaveBinding
 
 private const val TAG = "TravelEditSaveItemAdapt_싸피"
+
 class TravelEditSaveItemAdapter(val context: Context, private val placeList: List<Place>) :
     RecyclerView.Adapter<TravelEditSaveItemAdapter.TravelEditSaveItemHolder>() {
     private lateinit var binding: ListItmeTravelEditSaveBinding
-    private val list: List<Place> = emptyList()
 
     //클릭리스너 선언
     private lateinit var itemClickListner: ItemClickListener
 
     inner class TravelEditSaveItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindInfo(data: Place) {
-            binding.travelItemAddressTv.text = data.address
-            binding.travelItemDateTv.text = data.memo
+        fun bindInfo(data: Place, index: Int) {
+            binding.travelNumberTv.text = "${index + 1}"
+            binding.travelItemAddressTv.text = data.address.toString()
+            binding.travelItemDateTv.text = data.memo.toString()
         }
     } // End of inner class
 
@@ -30,7 +31,7 @@ class TravelEditSaveItemAdapter(val context: Context, private val placeList: Lis
     } // End of onCreateViewHolder
 
     override fun onBindViewHolder(holder: TravelEditSaveItemHolder, position: Int) {
-        holder.bindInfo(list[position])
+        holder.bindInfo(placeList[position], position)
     } // End of onCreateViewHolder
 
     override fun getItemCount(): Int = placeList.size

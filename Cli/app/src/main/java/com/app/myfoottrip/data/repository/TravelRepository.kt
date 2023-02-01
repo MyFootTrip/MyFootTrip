@@ -55,6 +55,10 @@ class TravelRepository {
         }
     } // End of createTravel
 
+    fun setCreateTravelResponseLiveData() {
+        _createTravelResponseLiveData.postValue(null)
+    } // End of setCreateTravelResponseLiveData
+
 
     // 각 유저별 여행 기록 정보를 가져옴
     suspend fun getUserTravel(userId: Int) {
