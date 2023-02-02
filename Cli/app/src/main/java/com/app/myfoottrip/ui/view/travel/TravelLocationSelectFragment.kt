@@ -5,32 +5,41 @@ import android.content.res.ColorStateList
 import android.graphics.PointF
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.viewmodel.TravelActivityViewModel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentTravelLocationSelectBinding
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
-import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.HomeFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.LocationConstants
+import com.app.myfoottrip.util.NetworkResult
 import com.google.android.material.chip.Chip
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
-import com.naver.maps.map.overlay.Marker
-import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "TravelLocationSelectFragment_싸피"
 
-class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBinding>(
-    FragmentTravelLocationSelectBinding::bind, R.layout.fragment_travel_location_select
-), OnMapReadyCallback {
-    private val travelViewModel by activityViewModels<TravelViewModel>()
+class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
+    // ViewModel
+    private val travelViewModel by viewModels<TravelViewModel>()
+
+    // ActivityViewModel
+    private val travelActivityViewModel by activityViewModels<TravelActivityViewModel>()
+
     private lateinit var categoryAdapter: CategoryAdatper
     private var locationList: MutableList<String> = ArrayList() //지역 리스트
     private var selectedList: MutableList<String> = ArrayList() //선택된 리스트
@@ -41,13 +50,33 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
     private lateinit var locationSource: FusedLocationSource
     private lateinit var mContext: Context
 
+    private var selectedTravelId = 0
+    private lateinit var binding: FragmentTravelLocationSelectBinding
+
+    // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
+    private var fragmentType = 0
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
     } // End of onAttach
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentTravelLocationSelectBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
+        fragmentType = requireArguments().getInt("type")
+
+        // 다시 null 값으로 초기화
+        getUserTravelDataResponseLiveDataObserve()
+
         //서비스 연결
         LocationConstants.serviceBind(requireContext())
 
@@ -61,12 +90,24 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
             initMap()
         }
 
-        // Adapter 초기화
-        initAdapter()
+        if (fragmentType == 2) {
+            selectedTravelId = requireArguments().getInt("travelId")
+            getUserTravelData()
 
-        // EventListener 초기화
-        initListener()
+        } else {
+            // Adapter 초기화
+            initAdapter()
+
+            // EventListener 초기화
+            initListener()
+        }
     } // End of onViewCreated
+
+    private fun getUserTravelData() {
+        CoroutineScope(Dispatchers.IO).launch {
+            travelViewModel.getUserTravelData(selectedTravelId)
+        }
+    } // End of getUserTravelData
 
     private fun initMap() {
         // TouchFrameLayout 에 mapFragment 올려놓기
@@ -80,19 +121,16 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
     } // End of initMap
 
     private fun initAdapter() {
-        locationList = ArrayList()
-        selectedList = ArrayList()
-        locationList?.addAll(HomeFragment.LOCATION_LIST)
-        categoryAdapter = CategoryAdatper(locationList!!)
-
+        locationList.addAll(HomeFragment.LOCATION_LIST)
+        categoryAdapter = CategoryAdatper(locationList)
 
         // categoryAdapter에서 아이템 클릭했을 경우 이벤트처리
         categoryAdapter.setItemClickListener(object : CategoryAdatper.ItemClickListener {
             override fun onClick(view: View, position: Int, category: String) {
-                if (!selectedList!!.contains(locationList!![position])) {
+                if (!selectedList.contains(locationList[position])) {
                     setChipListener(position)
                 }
-                if (selectedList!!.isNotEmpty()) {
+                if (selectedList.isNotEmpty()) {
                     binding.tvLocationHint.visibility = View.GONE
                     binding.fabStart.apply {
                         backgroundTintList =
@@ -112,14 +150,13 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
     // 위치 기록 시작
     private fun startLocationRecording() {
         binding.fabStart.setOnClickListener {
-            Log.d(TAG, "selectedList: ${selectedList}")
-            travelViewModel.setLocationList(selectedList!! as ArrayList<String>)
+            travelActivityViewModel.setLocationList(selectedList as ArrayList<String>)
 
             val mainActivity = requireActivity() as MainActivity
             mainActivity.startLocationService()
 
             // LocationConstants.startBackgroundService(requireContext())
-            showToast("위치 기록을 시작합니다.", ToastType.SUCCESS)
+            //showToast("위치 기록을 시작합니다.", BaseFragment.ToastType.SUCCESS)
             findNavController().navigate(R.id.action_travelLocationSelectFragment_to_travelLocationWriteFragment)
         }
     } // End of startLocationRecording
@@ -133,6 +170,7 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
                 setRotaionAnimation()
             }
             ivBack.setOnClickListener {
+                travelViewModel
                 findNavController().popBackStack()
             }
 //            btnEnd.setOnClickListener{
@@ -144,6 +182,8 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
     } // End of initListener
 
     private fun setChipListener(position: Int) {
+//        locationList = ArrayList() //지역 리스트
+//        selectedList = ArrayList() //선택된 리스트
         selectedList.add(locationList[position])
 
         binding.cgDetail.addView(Chip(requireContext()).apply {
@@ -168,9 +208,9 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
             setOnCloseIconClickListener {
                 binding.cgDetail.removeView(this)
                 // element를 기준으로 삭제
-                selectedList!!.remove(locationList!![position])
+                selectedList.remove(locationList[position])
 
-                if (selectedList!!.isEmpty()) {
+                if (selectedList.isEmpty()) {
                     binding.tvLocationHint.visibility = View.VISIBLE
                     binding.fabStart.apply {
                         backgroundTintList =
@@ -183,13 +223,36 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         })
     } // End of setChipListener
 
-    fun setMarker(marker: Marker, lat: Double, lng: Double) {
-        marker.isIconPerspectiveEnabled = true
-        marker.icon = OverlayImage.fromResource(R.drawable.ic_marker_test)
-        marker.alpha = 0.8f
-        marker.position = LatLng(lat, lng)
-        marker.map = naverMap
-    } // End of setMaker
+
+    private fun getUserTravelDataResponseLiveDataObserve() {
+        travelViewModel.getUserTravelDataResponseLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    travelActivityViewModel.setGetUserTravelData(it.data!!)
+                    val placeList = travelActivityViewModel.userTravelData.value!!.location
+                    locationList = ArrayList()
+                    selectedList = ArrayList()
+
+                    // Adapter 초기화
+                    initAdapter()
+
+                    // EventListener 초기화
+                    initListener()
+
+                    val size = placeList!!.size
+                    for (i in 0 until size) {
+                        setChipListener(locationList.indexOf(placeList[i]))
+                    }
+                }
+                is NetworkResult.Error -> {
+                    Log.d(TAG, "유저 데이터 가져오기 실패")
+                }
+                is NetworkResult.Loading -> {
+                    Log.d(TAG, "getUserTravelDataResponseLiveDataObserve: 로딩 중")
+                }
+            }
+        }
+    } // End of getUserTravelDataResponseLiveDataObserve
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
@@ -260,5 +323,4 @@ class TravelLocationSelectFragment : BaseFragment<FragmentTravelLocationSelectBi
         super.onLowMemory()
         binding.mapFragment.onLowMemory()
     }
-
-}
+} // End of TravelLocationSelectFragment class

@@ -6,11 +6,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
-import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.dto.VisitPlace
+import com.app.myfoottrip.data.viewmodel.TravelActivityViewModel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentTravelLocationWriteBinding
 import com.app.myfoottrip.ui.base.BaseFragment
@@ -29,14 +30,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private const val TAG = "TravelLocationWriteFrag_싸피"
+private const val TAG = "TravelLocationWriteFragment_싸피"
 
 class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBinding>(
     FragmentTravelLocationWriteBinding::bind, R.layout.fragment_travel_location_write
 ), OnMapReadyCallback {
+    // ViewModel
+    private val travelViewModel by viewModels<TravelViewModel>()
 
-    lateinit var locationProvider: LocationProvider
-    private val travelViewModel by activityViewModels<TravelViewModel>()
+    // ActivityViewModel
+    private val travelActivityViewModel by activityViewModels<TravelActivityViewModel>()
+
+    private lateinit var locationProvider: LocationProvider
     private var mapFragment: MapFragment = MapFragment()
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
     private lateinit var locationSource: FusedLocationSource
@@ -50,6 +55,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+        Log.d(TAG, "onAttach: TravelLocationWriteFragment 켜짐 ")
     } // End of onAttach
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +68,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         initialize()
 
         locationProvider = LocationProvider(requireContext() as MainActivity)
-        updateUI()
     } // End of onViewCreated
 
     private fun initialize() {
@@ -80,19 +85,8 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         binding.tvStartTime.text = TimeUtils.getDateTimeString(System.currentTimeMillis())
         if (travelViewModel.selectedtravel == null) {
             //TODO : 기존 여정 세팅
-
         }
     } // End of initData
-
-    fun updateUI() {
-        // 위도와 경도 정보를 가져오기
-        val latitude: Double = locationProvider.getLocationLatitude()
-        val longitude: Double = locationProvider.getLocationLongitude()
-
-        val marker = Marker()
-        marker.position = LatLng(37.5670135, 126.9783740)
-        // marker.map = requireActivity()
-    } // End of updateUI
 
 
     private fun setButtonListener() {
@@ -155,9 +149,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 result = visitPlaceRepository.insertVisitPlace(temp)
             }
 
-            Log.d(TAG, "insert Result : $result }")
-
-            if(result != 0L) {
+            if (result != 0L) {
                 showToast("현재 위치 저장 성공")
             }
         }
@@ -210,6 +202,11 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             }
         }
     } // End of changeMode
+
+
+    // 사용자 데이터 가져오기
+
+
 
 
     // 마커를 표시하는 메소드
