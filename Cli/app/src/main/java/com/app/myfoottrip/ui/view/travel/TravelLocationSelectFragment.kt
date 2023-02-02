@@ -223,7 +223,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         })
     } // End of setChipListener
 
-
     private fun getUserTravelDataResponseLiveDataObserve() {
         travelViewModel.getUserTravelDataResponseLiveData.observe(viewLifecycleOwner) {
             when (it) {

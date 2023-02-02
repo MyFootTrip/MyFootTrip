@@ -202,11 +202,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             }
         }
     } // End of changeMode
-
-
     // 사용자 데이터 가져오기
-
-
 
 
     // 마커를 표시하는 메소드

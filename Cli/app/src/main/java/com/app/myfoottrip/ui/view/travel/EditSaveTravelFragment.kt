@@ -126,28 +126,26 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     } // End of getData
 
     // 가져온 데이터로 지도에 좌표 마크 표시하기
-    private suspend fun setMapInMark() {
-        CoroutineScope(Dispatchers.Main).async {
-            TedNaverClustering.with<Place>(mContext, naverMap).customMarker {
-                Marker().apply {
-                    icon = OverlayImage.fromResource(R.drawable.ic_black_circle)
-                    width = 120
-                    height = 120
-                    captionText = "테스트2"
-                }
-            }.customCluster {
-                TextView(activity).apply {
-                    text = "테스트1"
-                    setTextSize(Dimension.SP, 12.0F)
-                    setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.main))
-                    setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                    setPadding(10, 10, 10, 10)
-                }
-            }.items(userVisitPlaceDataList).make()
-        }.join()
+    private suspend fun setMapInMark() = CoroutineScope(Dispatchers.Main).launch {
+        TedNaverClustering.with<Place>(mContext, naverMap).customMarker {
+            Marker().apply {
+                icon = OverlayImage.fromResource(R.drawable.ic_black_circle)
+                width = 120
+                height = 120
+                captionText = "테스트2"
+            }
+        }.customCluster {
+            TextView(activity).apply {
+                text = "테스트1"
+                setTextSize(Dimension.SP, 12.0F)
+                setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.main))
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                setPadding(10, 10, 10, 10)
+            }
+        }.items(userVisitPlaceDataList).make()
 
         Log.d(TAG, "setMapInMark: 이거 다 돌음?")
-    } // End of setMapInMark
+    }.join() // End of setMapInMark
 
     private fun changeToTravelDto() {
         userTravelData = Travel(
