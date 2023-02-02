@@ -5,49 +5,102 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:background="@drawable/view_round_white_15"
-    android:gravity="center"
+    android:minWidth="300dp"
     android:padding="25dp">
-    
-    <!-- Linear layout 넣기? 암튼 수정 중 -->
-
-    <TextView
-        android:id="@+id/tv_edit_nickname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/inter_extra_bold"
-        android:minHeight="30dp"
-        android:text="닉네임 변경"
-        android:textColor="@color/black"
-        android:textSize="21sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/edit_nickname_cutline_deco_layout"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/gray_400"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_edit_nickname"
+        android:id="@+id/linearLayout3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/et_edit_nickname">
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_edit_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_extra_bold"
+            android:text="닉네임 변경"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="21sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_cancel_btn"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_cancel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/gray_400" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <EditText
+    <View
+        android:id="@+id/edit_nickname_cutline_deco_layout"
+        android:layout_width="0dp"
+        android:layout_height="2px"
+        android:layout_marginTop="10dp"
+        android:background="@color/gray_400"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/et_edit_nickname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/dialog_edittext_background"
-        android:layout_marginVertical="14dp"
-        android:paddingVertical="2.25dp"
-        android:paddingHorizontal="7.5dp"
+        android:hint="닉네임"
+        android:layout_marginTop="23dp"
+        android:inputType="text"
+        android:textSize="15sp"
+        android:maxLength="15"
+        android:cursorVisible="true"
+        android:paddingStart="5dp"
+        app:met_maxCharacters="15"
+        app:met_errorColor="@color/heart_color"
+        app:met_primaryColor="@color/main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_nickname_cutline_deco_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_nickname_cutline_deco_layout"/>
 
+    <TextView
+        android:id="@+id/tv_nickname_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/inter_regular"
+        android:text="한글/영어/숫자를 사용할 수 있습니다."
+        android:textColor="@color/gray_400"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/btn_save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_edit_nickname" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_save"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/ripple"
+        android:backgroundTint="@color/main"
+        android:text="저장"
+        android:fontFamily="@font/inter_bold"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@id/tv_nickname_info"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

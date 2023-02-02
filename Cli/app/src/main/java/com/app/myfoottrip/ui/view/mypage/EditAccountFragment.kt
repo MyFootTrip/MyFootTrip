@@ -12,7 +12,7 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentEditAccountBinding
 import com.app.myfoottrip.ui.base.BaseFragment
-import com.app.myfoottrip.ui.view.start.StartActivity
+import com.app.myfoottrip.ui.view.dialogs.EditNicknameDialog
 
 private const val TAG = "EditAccountFragment_마이풋트립"
 
@@ -45,8 +45,8 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
 
             // 닉네임 변경 다이얼로그 나오기
             chipEditAccount.setOnClickListener {
-                val mainAct = requireActivity() as StartActivity
-                mainAct.showServiceDialog()
+                val dialog = EditNicknameDialog()
+                dialog.show(activity?.supportFragmentManager!!, "EditNicknameDialog")
             }
 
 
