@@ -57,9 +57,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d(TAG, "onViewCreated: 테스트")
-        /** FCM설정, Token값 가져오기 */
-        MyFireBaseMessagingService().getFirebaseToken()
 
         /** DynamicLink 수신확인 */
         initDynamicLink()

@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Email
+import com.app.myfoottrip.data.viewmodel.FcmViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentLoginBinding
 import com.app.myfoottrip.ui.base.BaseFragment
@@ -25,6 +26,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(
     FragmentLoginBinding::bind, R.layout.fragment_login
 ) {
     private val userViewModel by activityViewModels<UserViewModel>()
+    private val fcmViewModel by activityViewModels<FcmViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,13 +85,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(
                         Application.sharedPreferencesUtil.addUserRefreshToken(it.data!!.refresh_token.toString())
                         Application.sharedPreferencesUtil.addUserAccessToken(it.data!!.access_token.toString())
 
-                        val intent = Intent(
-                            activity,
-                            MainActivity::class.java
-                        ) //fragment라서 activity intent와는 다른 방식
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                        startActivity(intent)
-                        activity!!.finish()
+                        addFcmTokenObserver()
+                        addFcmToken()
                     }
                 }
 
@@ -107,5 +104,29 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(
 
         }
     } // End of userLoginResponseObserve
+
+    //FCM 토큰 저장하기
+    private fun addFcmToken() {
+        CoroutineScope(Dispatchers.IO).launch {
+            fcmViewModel.addFcmToken(Application.sharedPreferencesUtil.getFcmToken())
+        }
+    }
+
+    private fun addFcmTokenObserver() {
+        fcmViewModel.addFcmToken.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    val intent = Intent(activity, MainActivity::class.java) //fragment라서 activity intent와는 다른 방식
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                    startActivity(intent)
+                    activity!!.finish()
+                }
+                is NetworkResult.Error -> {
+                }
+                is NetworkResult.Loading -> {
+                }
+            }
+        }
+    }
 
 } // End of LoginFragment class

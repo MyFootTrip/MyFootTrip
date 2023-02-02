@@ -11,8 +11,10 @@ import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Token
+import com.app.myfoottrip.data.viewmodel.FcmViewModel
 import com.app.myfoottrip.data.viewmodel.StartViewModel
 import com.app.myfoottrip.databinding.FragmentSplashBinding
+import com.app.myfoottrip.network.fcm.MyFireBaseMessagingService
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.ui.view.start.StartActivity
@@ -24,7 +26,7 @@ import com.daimajia.androidanimations.library.YoYo
 import kotlinx.coroutines.*
 
 
-private const val TAG = "SplashFragment_싸피"
+private const val TAG = "SplashFragment_마이풋트립"
 
 class SplashFragment : BaseFragment<FragmentSplashBinding>(
     FragmentSplashBinding::bind, R.layout.fragment_splash
@@ -32,6 +34,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
     private lateinit var startActivity: StartActivity
     private val startViewModel by activityViewModels<StartViewModel>()
     private lateinit var sharedPreferencesUtil: SharedPreferencesUtil
+    private val fcmViewModel by activityViewModels<FcmViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -40,12 +43,20 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
         lottieControl()
+        
+        getFcmToken()
 
         binding.lottieProgress.visibility = View.INVISIBLE
         binding.lottieProgress.playAnimation()
 
         refreshTokenValidCheckObserver()
+    }
+    
+    //SharedPreference에 FCM 토큰 저장
+    private fun getFcmToken(){
+        MyFireBaseMessagingService().getFirebaseToken()
     }
 
     //로띠 애니메이션
@@ -119,11 +130,8 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
                         // sharedPreference에 accesstoken을 저장
                         Application.sharedPreferencesUtil.addUserAccessToken(it.data!!.access_token.toString())
                         Application.sharedPreferencesUtil.addUserRefreshToken(it.data!!.refresh_token.toString())
-
-                        val intent = Intent(activity, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                        startActivity(intent)
-                        activity!!.finish()
+                        addFcmTokenObserver()
+                        addFcmToken()
                     }
                 }
                 is NetworkResult.Error -> {
@@ -139,6 +147,30 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
                 }
             }
         }
-
     } // End of refreshTokenValidCheckObserver
+
+    //FCM 토큰 저장하기
+    private fun addFcmToken() {
+        CoroutineScope(Dispatchers.IO).launch {
+            fcmViewModel.addFcmToken(Application.sharedPreferencesUtil.getFcmToken())
+        }
+    }
+
+    private fun addFcmTokenObserver() {
+        fcmViewModel.addFcmToken.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    Log.d(TAG, "addFcmTokenObserver: 토큰저장완료")
+                    val intent = Intent(activity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                    startActivity(intent)
+                    activity!!.finish()
+                }
+                is NetworkResult.Error -> {
+                }
+                is NetworkResult.Loading -> {
+                }
+            }
+        }
+    }
 }

@@ -8,6 +8,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
+import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.google.firebase.messaging.FirebaseMessaging
@@ -56,6 +57,7 @@ class MyFireBaseMessagingService : FirebaseMessagingService() {
     fun getFirebaseToken() {
         //비동기 방식
         FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            Application.sharedPreferencesUtil.addFcmToken(it)
             Log.d(TAG, "token=${it}")
         }
 

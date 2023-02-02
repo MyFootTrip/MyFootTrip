@@ -14,6 +14,7 @@ class SharedPreferencesUtil(context: Context) {
         const val COOKIES_KEY_NAME = "cookies"
         const val ACCESS_TOKEN = "access_token"
         const val REFRESH_TOKEN = "refresh_token"
+        const val FCM_TOKEN = "fcm_token"
     }
 
     fun addUserRefreshToken(refresh_token: String) {
@@ -56,5 +57,15 @@ class SharedPreferencesUtil(context: Context) {
     fun deleteUserCookie() {
         preferences.edit().remove(COOKIES_KEY_NAME).apply()
     } // End of deleteUserCookie
+
+    fun addFcmToken(fcmToken: String){
+        val editor = preferences.edit()
+        editor.putString(FCM_TOKEN, fcmToken)
+        editor.apply()
+    }
+
+    fun getFcmToken(): String{
+        return preferences.getString(FCM_TOKEN,"").toString()
+    }
 
 } // End of SharedPreferencesUtil class

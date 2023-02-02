@@ -15,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.viewmodel.FcmViewModel
 import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinAgeBinding
 import com.app.myfoottrip.ui.view.main.MainActivity
@@ -34,6 +35,7 @@ class JoinAgeFragment : Fragment() {
     private lateinit var imageViewArray: Array<ImageView>
     private lateinit var selectedImageViewArray: Array<Int>
     private lateinit var nonSelectedImageViewArray: Array<Int>
+    private val fcmViewModel by activityViewModels<FcmViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -174,14 +176,11 @@ class JoinAgeFragment : Fragment() {
 
                     // refreshToken & accessToken
                     // savedInstance 저장하기
-                    Application.sharedPreferencesUtil.addUserRefreshToken(
-                        "${it.data!!.refresh_token}"
-                    )
+                    Application.sharedPreferencesUtil.addUserAccessToken(it.data!!.access_token.toString())
+                    Application.sharedPreferencesUtil.addUserRefreshToken("${it.data!!.refresh_token}")
 
-                    val intent = Intent(activity, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                    startActivity(intent)
-                    activity!!.finish()
+                    addFcmTokenObserver()
+                    addFcmToken()
                 }
                 is NetworkResult.Error -> {
                     Log.d(TAG, "회원가입 실패: ${it.data}")
@@ -194,4 +193,28 @@ class JoinAgeFragment : Fragment() {
             }
         }
     } // End of joinResponseLiveDataObserver {
+
+    //FCM 토큰 저장하기
+    private fun addFcmToken() {
+        CoroutineScope(Dispatchers.IO).launch {
+            fcmViewModel.addFcmToken(Application.sharedPreferencesUtil.getFcmToken())
+        }
+    }
+
+    private fun addFcmTokenObserver() {
+        fcmViewModel.addFcmToken.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    val intent = Intent(activity, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                    startActivity(intent)
+                    activity!!.finish()
+                }
+                is NetworkResult.Error -> {
+                }
+                is NetworkResult.Loading -> {
+                }
+            }
+        }
+    }
 } // End of JoinAgeFragment class

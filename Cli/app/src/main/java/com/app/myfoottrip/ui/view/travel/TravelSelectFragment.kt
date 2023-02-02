@@ -1,9 +1,11 @@
 package com.app.myfoottrip.ui.view.travel
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
@@ -12,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Travel
+import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentTravelSelectBinding
@@ -33,6 +36,20 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     private val userViewModel by activityViewModels<UserViewModel>()
     lateinit var visitPlaceRepository: VisitPlaceRepository
     private lateinit var travelAdapter: TravelAdapter
+
+    private val navigationViewModel by activityViewModels<NavigationViewModel>()
+    private lateinit var callback: OnBackPressedCallback
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigationViewModel.type = 0
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -70,6 +87,11 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         // 유저 생성 ResponseLiveData 다시 초기화
         travelViewModel.setCreateTravelResponseLiveData()
     } // End of onResume
+
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
+    }
 
     private fun fragmentBackStackClear() {
         val fragmentManager: FragmentManager = activity!!.supportFragmentManager
