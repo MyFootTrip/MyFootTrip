@@ -107,4 +107,34 @@ class TravelRepository {
             )
         }
     } // End of getTravel
+
+
+    // 여행 데이터 수정 response값 LiveData
+    private val _userTravelDataUpdateResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
+    val userTravelDataUpdateResponseLiveData: LiveData<NetworkResult<Travel>>
+        get() = _userTravelDataUpdateResponseLiveData
+
+    suspend fun userTravelDataUpdate(travelId: Int, updateTravelData: Travel) {
+        val response = travelHeaderApi.updateTravel(travelId, updateTravelData)
+
+        // 처음은 Loading 상태로 지정
+        _userTravelDataUpdateResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _userTravelDataUpdateResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _userTravelDataUpdateResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _userTravelDataUpdateResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
+    } // End of userTravelDataUpdate
+
 } // End of TravelRepository class

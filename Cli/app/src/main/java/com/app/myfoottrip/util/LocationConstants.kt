@@ -24,9 +24,9 @@ object LocationConstants {
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val b = service as LocationService.MyServiceBinder
-            locationService = b.getService()
-            isConService = true
+//            val b = service as LocationService.MyServiceBinder
+//            locationService = b.getService()
+//            isConService = true
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -56,13 +56,6 @@ object LocationConstants {
         builder.addLocationRequest(locationRequest)
 
         mFusedLocationClient = getFusedLocationProviderClient(context)
-//        getLocationPermission {
-//            mFusedLocationClient?.requestLocationUpdates(
-//                locationRequest,
-//                locationCallback,
-//                Looper.myLooper()!!
-//            )
-//        }
     }
 
     var locationCallback:LocationCallback = object :LocationCallback(){
@@ -98,7 +91,7 @@ object LocationConstants {
 //    }
 
     fun stopLocation(){
-        locationService?.stopLocationService()
+        //locationService?.stopLocationService()
     }
 
     fun serviceBind(context : Context){

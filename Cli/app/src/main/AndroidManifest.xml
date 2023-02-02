@@ -31,17 +31,10 @@
         tools:targetApi="31">
 
         <service
-            android:name=".ui.view.travel.CoordinatesService"
+            android:name=".ui.view.travel.LocationService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="location" />
-
-        <!--
-        <service
-            android:name=".ui.view.travel.LocationService"
-            android:enabled="true"
-            android:exported="true" />
-            -->
 
         <service
             android:name=".network.fcm.MyFireBaseMessagingService"

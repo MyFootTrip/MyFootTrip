@@ -12,7 +12,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.ActivityMainBinding
-import com.app.myfoottrip.ui.view.travel.CoordinatesService
+import com.app.myfoottrip.ui.view.travel.LocationService
 import com.app.myfoottrip.util.NetworkResult
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
 
         // 한번만 유저 정보를 가져오기
@@ -100,16 +99,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 
     } // End of getAccessTokenByRefreshTokenResponseLiveDataObserver
 
-//    fun stopLocationService() {
-//        val intent = Intent(this, LocationService::class.java)
-//        stopService(intent)
-//    } // End of stopService
-//
-//    fun startLocationService() {
-//        val intent = Intent(this, LocationService::class.java)
-//        startService(intent)
-//    } // End of stopService
-
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
 
@@ -117,20 +106,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
     }
 
     fun startLocationBackground() {
-        Intent(applicationContext, CoordinatesService::class.java).apply {
-            action = CoordinatesService.ACTION_START
+        Intent(applicationContext, LocationService::class.java).apply {
+            action = LocationService.ACTION_START
             startService(this)
         }
 
         Log.d(TAG, "startLocationBackground: 동작함?")
     } // End of startLocationBackground
 
-    fun endLocationBackground() {
-        Intent(applicationContext, CoordinatesService::class.java).apply {
-            action = CoordinatesService.ACTION_STOP
+    fun stopLocationBackground() {
+        Intent(applicationContext, LocationService::class.java).apply {
+            action = LocationService.ACTION_STOP
             startService(this)
         }
-    } // End of endLocationBackground
+    } // End of stopLocationBackground
 
 
 //    private fun moveFragment(index : Int) {

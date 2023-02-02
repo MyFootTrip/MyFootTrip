@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.app.myfoottrip.Application
+import com.app.myfoottrip.data.dto.Coordinates
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.repository.TravelRepository
 import com.app.myfoottrip.util.NetworkResult
@@ -15,14 +17,22 @@ private const val TAG = "TravelViewModel_싸피"
 
 class TravelViewModel : ViewModel() {
     private val travelRepository = TravelRepository()
-
-
     var selectedtravel: Travel? = null
+
+    // 가장 최근에 찍힌 좌표값
+    private val _recentCoor = MutableLiveData<Coordinates>()
+    val recentCoor: LiveData<Coordinates>
+        get() = _recentCoor
+
+    fun setRecentCoor(newCoordinates: Coordinates) {
+        _recentCoor.postValue(newCoordinates)
+    } // End of setRecentCoor
 
     //여정 조회 값
     private val _travelData = MutableLiveData<Travel>()
     val travelData: LiveData<Travel>
         get() = _travelData
+
 
     //유저별 여정 조회 값
     val travelUserData: LiveData<NetworkResult<ArrayList<Travel>>>
@@ -46,6 +56,7 @@ class TravelViewModel : ViewModel() {
     // 기존의 여행 데이터를 가져오는 response 값
     val getUserTravelDataResponseLiveData: LiveData<NetworkResult<Travel>>
         get() = travelRepository.getUserTravelDataResponseLiveData
+
 
     fun setCreateTravelResponseLiveData() {
         travelRepository.setCreateTravelResponseLiveData()
@@ -81,4 +92,15 @@ class TravelViewModel : ViewModel() {
             travelRepository.getUserTravelData(travelId)
         }
     } // End of getUserTravelData
+
+    // 여행 데이터 수정 response값 LiveData
+    val userTravelDataUpdateResponseLiveData: LiveData<NetworkResult<Travel>>
+        get() = travelRepository.userTravelDataUpdateResponseLiveData
+
+    // 여행 데이터 수정
+    suspend fun userTravelDataUpdate(travelId: Int, updateTravelData: Travel) {
+        viewModelScope.launch {
+            travelRepository.userTravelDataUpdate(travelId, updateTravelData)
+        }
+    } // End of userTravelDataUpdate
 } // End of TravelViewModel class
