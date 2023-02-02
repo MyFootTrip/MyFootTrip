@@ -68,13 +68,18 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         initialize()
 
         locationProvider = LocationProvider(requireContext() as MainActivity)
+
+
+        val mainActivity = requireActivity() as MainActivity
+        mainActivity.startLocationBackground()
+
     } // End of onViewCreated
 
     private fun initialize() {
         changeMode(true)
-        LocationConstants.getLocationPermission {
-            initMap()
-        }
+//        LocationConstants.getLocationPermission {
+//            initMap()
+//        }
 
         setButtonListener()
 
@@ -92,12 +97,12 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     private fun setButtonListener() {
         binding.apply {
             fabPause.setOnClickListener { //일시정지
-                LocationConstants.stopLocation()
+                // LocationConstants.stopLocation()
                 changeMode(false)
             }
 
             fabRestart.setOnClickListener {
-                LocationConstants.startBackgroundService(requireContext())
+                // LocationConstants.startBackgroundService(requireContext())
                 showToast("위치 기록을 시작합니다.", ToastType.SUCCESS)
                 changeMode(true)
             }
@@ -118,9 +123,10 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
             // 포어그라운드 중지
             val intent = Intent(mContext, LocationService::class.java)
-            intent.action = LocationService.Actions.STOP_FOREGROUND
+            //intent.action = LocationService.Actions.STOP_FOREGROUND
             val mainActivity = requireActivity() as MainActivity
-            mainActivity.stopLocationService()
+            //mainActivity.stopLocationService()
+            mainActivity.endLocationBackground()
 
             // 수정하는 페이지로 이동
             Navigation.findNavController(binding.fabStop)
@@ -166,18 +172,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         mapFragment.getMapAsync(this)
     } // End of initMap
 
-    override fun onMapReady(naverMap: NaverMap) {
-        this.naverMap = naverMap
-
-        val uiSetting = naverMap.uiSettings
-        uiSetting.isLocationButtonEnabled = true
-
-        naverMap.locationTrackingMode = LocationTrackingMode.Follow
-        locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
-        naverMap.locationSource = locationSource
-
-        setMarker(Marker(), 37.5970135, 126.9783740)
-    } // End of onMapReady
 
     //기록 중인지 일시정지 중인지 화면 전환하는 코드
     private fun changeMode(type: Boolean) { // true : 진행중 false : 일시정지
@@ -204,12 +198,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     } // End of changeMode
     // 사용자 데이터 가져오기
 
-
-    // 마커를 표시하는 메소드
-    fun setMarker(marker: Marker, lat: Double, lng: Double) {
-        marker.position = LatLng(lat, lng)
-        marker.map = naverMap
-    } // End of setMaker
 
     override fun onStart() {
         super.onStart()
@@ -241,5 +229,16 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         super.onLowMemory()
         binding.mapView.onLowMemory()
     } // End of onLowMemory
+
+    override fun onMapReady(naverMap: NaverMap) {
+        this.naverMap = naverMap
+
+        val uiSetting = naverMap.uiSettings
+        uiSetting.isLocationButtonEnabled = true
+
+        naverMap.locationTrackingMode = LocationTrackingMode.Follow
+        locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
+        naverMap.locationSource = locationSource
+    } // End of onMapReady
 
 } // End of TravelLocationWriteFragment class

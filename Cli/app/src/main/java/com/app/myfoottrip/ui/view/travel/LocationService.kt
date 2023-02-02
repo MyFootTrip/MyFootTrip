@@ -60,8 +60,8 @@ class LocationService : Service() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
             if (locationResult != null && locationResult.lastLocation != null) {
-                var latitude = locationResult.lastLocation.latitude
-                var longitude = locationResult.lastLocation.longitude
+                var latitude = locationResult.lastLocation!!.latitude
+                var longitude = locationResult.lastLocation!!.longitude
                 var time = System.currentTimeMillis()
                 Log.d(
                     TAG,
@@ -99,7 +99,7 @@ class LocationService : Service() {
             val notificationChannel = NotificationChannel(
                 channelId,
                 channelName,
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_LOW
             )
             var notificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -138,23 +138,23 @@ class LocationService : Service() {
         startForeground(LocationConstants.LOCATION_SERVICE_ID, notificationBuilder.build())
     } // End of getNowMyLocation
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        setNotification()
-
-        val nc: Notification =
-            NotificationCompat.Builder(this, channelId).setContentTitle("MyFootTrip")
-                .setSmallIcon(R.mipmap.ic_launcher).build()
-        startForeground(1, nc)
-
-        when (intent?.action) {
-            Actions.START_FOREGROUND -> {
-                startForeground(1, nc)
-            }
-            Actions.STOP_FOREGROUND -> {
-                stopLocationService()
-            }
-        }; return START_STICKY
-    }
+//    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+//        setNotification()
+//
+//        val nc: Notification =
+//            NotificationCompat.Builder(this, channelId).setContentTitle("MyFootTrip")
+//                .setSmallIcon(R.mipmap.ic_launcher).build()
+//        startForeground(1, nc)
+//
+//        when (intent?.action) {
+//            Actions.START_FOREGROUND -> {
+//                startForeground(1, nc)
+//            }
+//            Actions.STOP_FOREGROUND -> {
+//                stopLocationService()
+//            }
+//        }; return START_STICKY
+//    }
 
 
     fun stopLocationService() { //위치 받아오기 종료
@@ -175,12 +175,12 @@ class LocationService : Service() {
         Log.d(TAG, "onDestroy: ")
     } // End of onDestroy
 
-    object Actions {
-        private const val prefix = "com.app.myfoottrip"
-        const val START_FOREGROUND = prefix + "startforeground"
-        const val STOP_FOREGROUND = prefix + "stopforeground"
-        const val STOP = prefix + "stop"
-    }
+//    object Actions {
+//        private const val prefix = "com.app.myfoottrip"
+//        const val START_FOREGROUND = prefix + "startforeground"
+//        const val STOP_FOREGROUND = prefix + "stopforeground"
+//        const val STOP = prefix + "stop"
+//    }
 
     fun startLocationService() { //위치 저장 시작
 //        var notificationManager =

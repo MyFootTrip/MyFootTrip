@@ -23,6 +23,7 @@ import com.app.myfoottrip.ui.view.main.HomeFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.LocationConstants
 import com.app.myfoottrip.util.NetworkResult
+import com.app.myfoottrip.util.showToastMessage
 import com.google.android.material.chip.Chip
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
@@ -78,7 +79,8 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         getUserTravelDataResponseLiveDataObserve()
 
         //서비스 연결
-        LocationConstants.serviceBind(requireContext())
+        //LocationConstants.serviceBind(requireContext())
+
 
         binding.fabStart.apply {
             backgroundTintList =
@@ -86,9 +88,9 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             isEnabled = false
         }
 
-        LocationConstants.getLocationPermission {
-            initMap()
-        }
+//        LocationConstants.getLocationPermission {
+//            initMap()
+//        }
 
         if (fragmentType == 2) {
             selectedTravelId = requireArguments().getInt("travelId")
@@ -101,6 +103,8 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             // EventListener 초기화
             initListener()
         }
+
+
     } // End of onViewCreated
 
     private fun getUserTravelData() {
@@ -110,7 +114,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     } // End of getUserTravelData
 
     private fun initMap() {
-        // TouchFrameLayout 에 mapFragment 올려놓기
+        // TouchFrameLayout에 mapFragment 올려놓기
         val fragmentTransaction = childFragmentManager.beginTransaction()
         if (mapFragment.isAdded) {
             fragmentTransaction.remove(mapFragment)
@@ -153,10 +157,14 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             travelActivityViewModel.setLocationList(selectedList as ArrayList<String>)
 
             val mainActivity = requireActivity() as MainActivity
-            mainActivity.startLocationService()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                mainActivity.startLocationBackground()
+            }
+
 
             // LocationConstants.startBackgroundService(requireContext())
-            //showToast("위치 기록을 시작합니다.", BaseFragment.ToastType.SUCCESS)
+            mContext.showToastMessage("위치 기록을 시작합니다.")
             findNavController().navigate(R.id.action_travelLocationSelectFragment_to_travelLocationWriteFragment)
         }
     } // End of startLocationRecording

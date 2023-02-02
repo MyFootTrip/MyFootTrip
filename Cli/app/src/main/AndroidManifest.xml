@@ -5,7 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" /> <!-- gps 위치 권한 허용 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 갤러리 권한 추가 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -28,13 +29,22 @@
         android:theme="@style/Theme.MyFootTrip"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        
+
+        <service
+            android:name=".ui.view.travel.CoordinatesService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="location" />
+
+        <!--
         <service
             android:name=".ui.view.travel.LocationService"
             android:enabled="true"
             android:exported="true" />
+            -->
 
-        <service android:name=".network.fcm.MyFireBaseMessagingService"
+        <service
+            android:name=".network.fcm.MyFireBaseMessagingService"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
