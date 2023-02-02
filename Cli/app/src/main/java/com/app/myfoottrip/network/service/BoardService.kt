@@ -5,10 +5,7 @@ import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.data.dto.Join
 import com.app.myfoottrip.data.dto.Travel
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface BoardService {
 
@@ -25,8 +22,9 @@ interface BoardService {
     suspend fun getFilteredBoardList(@Body filter: Filter) : Response<ArrayList<Board>>
 
     //게시물 좋아요
+    @FormUrlEncoded
     @POST("/community/board/like/{boardId}/")
-    suspend fun likeBoard(@Path("boardId") boardId: Int): Response<Boolean>
+    suspend fun likeBoard(@Path("boardId") boardId: Int, @Field("message") message: String): Response<Boolean>
 
     //게시물 조회
     @GET("/community/board/detail/{boardId}/")

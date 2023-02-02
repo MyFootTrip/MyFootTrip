@@ -290,7 +290,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     //좋아요 상태 받아오기
     private fun getLike() {
         CoroutineScope(Dispatchers.IO).launch {
-            boardViewModel.likeBoard(boardViewModel.boardId)
+            val message = "${userViewModel.wholeMyData.value?.join?.nickname}님이 ${boardViewModel.board.value?.data?.title}에 좋아요를 눌렀습니다! ❤"
+            boardViewModel.likeBoard(boardViewModel.boardId,message)
         }
     }
 

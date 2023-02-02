@@ -79,8 +79,8 @@ class BoardRepository {
     }
 
     //게시물 좋아요
-    suspend fun likeBoard(boardId : Int){
-        var response = headerBoardService.likeBoard(boardId)
+    suspend fun likeBoard(boardId : Int, message: String){
+        var response = headerBoardService.likeBoard(boardId,message)
 
         if (response.isSuccessful && response.body() != null) {
             _likeResponseLiveData.postValue(NetworkResult.Success(response.body()!!))

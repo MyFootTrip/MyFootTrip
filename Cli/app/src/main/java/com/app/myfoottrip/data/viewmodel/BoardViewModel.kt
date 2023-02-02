@@ -61,9 +61,9 @@ class BoardViewModel : ViewModel() {
     }
 
     //게시물 좋아요
-    fun likeBoard(boardId: Int){
+    fun likeBoard(boardId: Int, message: String){
         viewModelScope.launch {
-            boardRepository.likeBoard(boardId)
+            boardRepository.likeBoard(boardId,message)
         }
     }
 

@@ -10,4 +10,5 @@ data class Comment @JvmOverloads constructor(
     val nickname : String,
     val content : String,
     val writeDate : Date,
+    val message: String,
     )

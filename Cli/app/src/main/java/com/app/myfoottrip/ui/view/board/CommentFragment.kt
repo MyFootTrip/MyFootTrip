@@ -130,7 +130,8 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         val inputDialog = CommentInputDialog(object : CommentInputDialog.OnClickListener {
             override fun onClick(dialog: CommentInputDialog) {
                 val user = userViewModel.wholeMyData.value
-                val comment = Comment(-1, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()))
+                val message = "${user?.join?.nickname}님이 ${boardViewModel.board.value?.data?.title}에 댓글이 달렸습니다!\uD83D\uDCAC"
+                val comment = Comment(-1, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()),message)
                 writeCommentObserver()
                 writeComment(comment)
                 dialog.dismiss()
@@ -145,7 +146,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         val updateDialog = CommentInputDialog(object : CommentInputDialog.OnClickListener {
             override fun onClick(dialog: CommentInputDialog) {
                 val user = userViewModel.wholeMyData.value
-                val comment = Comment(commentId, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()))
+                val comment = Comment(commentId, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()),"")
                 updateComment(comment)
                 dialog.dismiss()
             }

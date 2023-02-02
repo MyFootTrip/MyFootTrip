@@ -1,41 +1,24 @@
 package com.app.myfoottrip.ui.view.mypage
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
-import com.app.myfoottrip.databinding.FragmentMyTravelBinding
+import com.app.myfoottrip.databinding.FragmentMyLikeBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
-import com.app.myfoottrip.ui.view.mypage.MyTravelFragment
-import com.app.myfoottrip.util.GalleryUtils
-import com.app.myfoottrip.util.NetworkResult
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.*
-import kotlin.collections.ArrayList
 
-private const val TAG = "MyTravelFragment_마이풋트립"
 
-class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
-    FragmentMyTravelBinding::bind, R.layout.fragment_my_travel
-){
+class MyLikeFragment : BaseFragment<FragmentMyLikeBinding>(
+    FragmentMyLikeBinding::bind, R.layout.fragment_my_like
+) {
 
     private lateinit var mainActivity: MainActivity
 
@@ -53,23 +36,25 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
                 findNavController().popBackStack()
             }
         }
-        requireActivity().onBackPressedDispatcher.addCallback(this@MyTravelFragment, callback)
+        requireActivity().onBackPressedDispatcher.addCallback(this@MyLikeFragment, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+
+            // 뒤로가기
             ivBack.setOnClickListener {
                 navigationViewModel.type = 1
                 findNavController().popBackStack()
-            } //뒤로가기
+            }
         }
+
     }
 
     override fun onDetach() {
         super.onDetach()
         callback.remove()
     }
-
 }
