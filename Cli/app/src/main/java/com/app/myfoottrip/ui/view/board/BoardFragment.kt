@@ -1,6 +1,5 @@
 package com.app.myfoottrip.ui.view.board
 
-import android.animation.Animator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -21,7 +20,6 @@ import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentBoardBinding
 import com.app.myfoottrip.ui.adapter.PlaceAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
-import com.app.myfoottrip.ui.view.dialogs.CommentInputDialog
 import com.app.myfoottrip.ui.view.dialogs.PlaceBottomDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
@@ -30,10 +28,8 @@ import com.bumptech.glide.Glide
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.*
-import com.naver.maps.map.overlay.ArrowheadPathOverlay
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
-import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.overlay.PolylineOverlay
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -78,8 +74,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
             ivBack.setOnClickListener { findNavController().popBackStack()} //뒤로가기
             ivComment.setOnClickListener { findNavController().navigate(R.id.action_boardFragment_to_commentFragment)} //댓글 페이지로 이동
             lottieLike.setOnClickListener {
-                getLike()
                 getLikeObserver()
+                getLike()
             }
         }
 
@@ -91,8 +87,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     }
 
     private fun init(){
-        getBoard()
         getBoardObserver()
+        getBoard()
     }
 
     // Board 객체에 담겨있는 데이터값 화면에 갱신
@@ -125,10 +121,11 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
             tvCommentCount.text = board.commentList.size.toString()
 
             //좋아요한 게시물인지 체크
-            if (board.likeList.contains(userViewModel.wholeMyData.value?.uid)){ //좋아요한 게시물일 때
+            if (boardViewModel.board.value?.data?.likeList!!.contains(userViewModel.wholeMyData.value?.uid)){ //좋아요한 게시물일 때
                 lottieLike.progress = 100f
+            }else{
+                lottieLike.progress = 0f
             }
-
         }
     }
 

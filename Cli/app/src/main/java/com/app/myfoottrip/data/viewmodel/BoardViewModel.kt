@@ -38,6 +38,12 @@ class BoardViewModel : ViewModel() {
     val likeCheck : LiveData<NetworkResult<Boolean>>
         get() = boardRepository.likeResponseLiveData
 
+    val writeList : LiveData<NetworkResult<ArrayList<Board>>>
+        get() = boardRepository.writeBoardResponseLiveData
+
+    val likeList : LiveData<NetworkResult<ArrayList<Board>>>
+        get() = boardRepository.likeBoardResponseLiveData
+
 
     // 게시물 전체 조회
     fun getBoardList() {
@@ -71,6 +77,20 @@ class BoardViewModel : ViewModel() {
     fun getBoard(boardId: Int){
         viewModelScope.launch {
             boardRepository.getBoard(boardId)
+        }
+    }
+
+    //내가 작성한 전체 게시물 조회
+    fun getWriteBoardList(){
+        viewModelScope.launch {
+            boardRepository.getWriteBoardList()
+        }
+    }
+
+    //내가 좋아요한 전체 게시물 조회
+    fun getLikeBoardList(){
+        viewModelScope.launch {
+            boardRepository.getLikeBoardList()
         }
     }
 } // End of BoardViewModel

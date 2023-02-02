@@ -36,6 +36,14 @@ class BoardRepository {
     val boardResponseLiveData: LiveData<NetworkResult<Board>>
         get() = _boardResponseLiveData
 
+    private val _writeBoardResponseLiveData = MutableLiveData<NetworkResult<ArrayList<Board>>>()
+    val writeBoardResponseLiveData: LiveData<NetworkResult<ArrayList<Board>>>
+        get() = _writeBoardResponseLiveData
+
+    private val _likeBoardResponseLiveData = MutableLiveData<NetworkResult<ArrayList<Board>>>()
+    val likeBoardResponseLiveData: LiveData<NetworkResult<ArrayList<Board>>>
+        get() = _likeBoardResponseLiveData
+
     // 전체 게시물 조회
     suspend fun getBoardList(){
         var response = boardService.getBoardList()
@@ -101,6 +109,38 @@ class BoardRepository {
             _boardResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
         } else {
             _boardResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
+    }
+
+    //자신이 작성한 전체 게시물 조회
+    suspend fun getWriteBoardList(){
+        var response = headerBoardService.getWriteBoardList()
+
+        // 처음은 Loading 상태로 지정
+        _writeBoardResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _writeBoardResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _writeBoardResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
+        } else {
+            _writeBoardResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
+    }
+
+    //좋아요한 전체 게시물 조회
+    suspend fun getLikeBoardList(){
+        var response = headerBoardService.getLikeBoardList()
+
+        // 처음은 Loading 상태로 지정
+        _likeBoardResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _likeBoardResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _likeBoardResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
+        } else {
+            _likeBoardResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
         }
     }
 

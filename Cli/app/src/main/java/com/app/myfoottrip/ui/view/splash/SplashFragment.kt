@@ -160,7 +160,6 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
         fcmViewModel.addFcmToken.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
-                    Log.d(TAG, "addFcmTokenObserver: 토큰저장완료")
                     val intent = Intent(activity, MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
                     startActivity(intent)

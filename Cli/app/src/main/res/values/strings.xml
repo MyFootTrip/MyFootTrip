@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyFootTrip</string>
+    <string name="app_name">마이풋트립</string>
 
     <!-- 회원 가입 파트 string 상수값 Start -->
     <string name="email_join_title">이메일을 입력해주세요</string>

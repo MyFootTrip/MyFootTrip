@@ -30,4 +30,12 @@ interface BoardService {
     @GET("/community/board/detail/{boardId}/")
     suspend fun getBoard(@Path("boardId") boardId: Int): Response<Board>
 
+    //내가 작성한 게시물 전체 리스트 조회
+    @GET("/community/board/user/")
+    suspend fun getWriteBoardList() : Response<ArrayList<Board>>
+
+    //내가 좋아요한 게시물 리스트 조회
+    @GET("/community/board/user/like/")
+    suspend fun getLikeBoardList() : Response<ArrayList<Board>>
+
 }
