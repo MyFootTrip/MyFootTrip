@@ -110,6 +110,10 @@
         android:id="@+id/myLikeFragment"
         android:name="com.app.myfoottrip.ui.view.mypage.MyLikeFragment"
         android:label="fragment_my_like"
-        tools:layout="@layout/fragment_my_like" />
+        tools:layout="@layout/fragment_my_like" >
+        <action
+            android:id="@+id/action_myLikeFragment_to_boardFragment"
+            app:destination="@id/boardFragment" />
+    </fragment>
 
 </navigation>

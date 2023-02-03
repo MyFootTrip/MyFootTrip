@@ -58,7 +58,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         mainActivity = context as MainActivity
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                navigationViewModel.type = 0
+                if (navigationViewModel.type == 3) navigationViewModel.type = 1
+                else navigationViewModel.type = 0
                 findNavController().popBackStack()
             }
         }
@@ -71,7 +72,11 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         init()
 
         binding.apply {
-            ivBack.setOnClickListener { findNavController().popBackStack()} //뒤로가기
+            ivBack.setOnClickListener { //뒤로가기
+                if (navigationViewModel.type == 3) navigationViewModel.type = 1
+                else navigationViewModel.type = 0
+                findNavController().popBackStack()
+            }
             ivComment.setOnClickListener { findNavController().navigate(R.id.action_boardFragment_to_commentFragment)} //댓글 페이지로 이동
             lottieLike.setOnClickListener {
                 getLikeObserver()

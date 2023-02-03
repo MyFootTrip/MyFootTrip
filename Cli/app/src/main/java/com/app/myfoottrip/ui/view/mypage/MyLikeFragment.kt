@@ -79,7 +79,8 @@ class MyLikeFragment : BaseFragment<FragmentMyLikeBinding>(
         likeBoardAdapter.setItemClickListener(object : LikeBoardAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, boardId: Int) {
                 boardViewModel.boardId = boardId
-//                findNavController().navigate(R.id.action_mainFragment_to_boardFragment)
+                navigationViewModel.type = 3
+                findNavController().navigate(R.id.action_myLikeFragment_to_boardFragment)
             }
         })
 
