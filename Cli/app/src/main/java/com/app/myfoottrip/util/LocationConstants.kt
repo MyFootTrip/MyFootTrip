@@ -24,9 +24,9 @@ object LocationConstants {
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val b = service as LocationService.MyServiceBinder
-            locationService = b.getService()
-            isConService = true
+//            val b = service as LocationService.MyServiceBinder
+//            locationService = b.getService()
+//            isConService = true
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -35,16 +35,16 @@ object LocationConstants {
     }
 
     fun startBackgroundService(context: Context){
-        getLocationPermission{
-            if(!isConService){ //서비스가 연결되어 있지 않을 때
-                serviceBind(context)
-            }
-            if(isConService && locationService != null){ //서비스가 있을 때
-                locationService?.setNotification()
-            }else{
-                Log.d(TAG, "callBindServiceTest: nulll======================= ")
-            }
-        }
+//        getLocationPermission{
+//            if(!isConService){ //서비스가 연결되어 있지 않을 때
+//                serviceBind(context)
+//            }
+//            if(isConService && locationService != null){ //서비스가 있을 때
+//                locationService?.setNotification()
+//            }else{
+//                Log.d(TAG, "callBindServiceTest: nulll======================= ")
+//            }
+//        }
     }
 
     fun getNowLocation(context: Context){
@@ -56,13 +56,6 @@ object LocationConstants {
         builder.addLocationRequest(locationRequest)
 
         mFusedLocationClient = getFusedLocationProviderClient(context)
-        getLocationPermission {
-            mFusedLocationClient?.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.myLooper()!!
-            )
-        }
     }
 
     var locationCallback:LocationCallback = object :LocationCallback(){
@@ -80,25 +73,25 @@ object LocationConstants {
         }
     }
 
-    fun getLocationPermission(callback : ()->Unit){//위치 권한 확인
-        TedPermission.create().setPermissionListener(object : PermissionListener {
-            //권한 허용
-            override fun onPermissionGranted() {
-                callback()
-            }
-
-            override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
-                Log.d(TAG, "권한 요청 거부됨======================= ")
-            }
-        }).setDeniedMessage("위치 권한이 필요합니다.")
-            .setPermissions(
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-            .check()
-    }
+//    fun getLocationPermission(callback : ()->Unit){//위치 권한 확인
+//        TedPermission.create().setPermissionListener(object : PermissionListener {
+//            //권한 허용
+//            override fun onPermissionGranted() {
+//                callback()
+//            }
+//
+//            override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+//                Log.d(TAG, "권한 요청 거부됨======================= ")
+//            }
+//        }).setDeniedMessage("위치 권한이 필요합니다.")
+//            .setPermissions(
+//                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+//                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+//            .check()
+//    }
 
     fun stopLocation(){
-        locationService?.stopLocationService()
+        //locationService?.stopLocationService()
     }
 
     fun serviceBind(context : Context){

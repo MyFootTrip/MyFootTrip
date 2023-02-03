@@ -12,6 +12,7 @@
             android:layout_height="50dp"
             android:backgroundTint="@color/main"
             app:cardCornerRadius="40dp"
+            app:layout_constraintEnd_toStartOf="@id/travel_content_cardview"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -29,7 +30,7 @@
 
     <androidx.cardview.widget.CardView
             android:id="@+id/travel_content_cardview"
-            android:layout_width="match_parent"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:background="@drawable/travel_edit_list_item_cardview_stroke"
@@ -78,6 +79,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/ic_more_horiz"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/travel_item_date_tv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

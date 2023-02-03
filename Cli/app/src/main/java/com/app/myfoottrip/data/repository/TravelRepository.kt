@@ -1,17 +1,11 @@
 package com.app.myfoottrip.data.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.network.api.TravelApi
 import com.app.myfoottrip.util.NetworkResult
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import okhttp3.ResponseBody
-import okhttp3.ResponseBody.Companion.toResponseBody
-import retrofit2.Response
 
 private const val TAG = "TravelRepository_싸피"
 
@@ -31,6 +25,12 @@ class TravelRepository {
     private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Int>>()
     val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _createTravelResponseLiveData
+
+
+    // 유저 여행 데이터 조회
+    private val _getUserTravelDataResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
+    val getUserTravelDataResponseLiveData: LiveData<NetworkResult<Travel>>
+        get() = _getUserTravelDataResponseLiveData
 
 
     // 여행 데이터 추가
@@ -85,21 +85,56 @@ class TravelRepository {
     } // End of getUserTravel
 
     //여정 조회
-    suspend fun getTravel(travelId: Int): Travel? {
-        var result: Travel? = null
-        withContext(Dispatchers.IO) {
-            try {
-                val response = travelApi.getTravel(travelId)
-                if (response.isSuccessful) {
-                    result = response.body() as Travel
-                } else {
-                    Log.d(TAG, "getTravel: response 실패 ${response.errorBody().toString()}")
-                }
-            } catch (e: Exception) {
-                Log.d(TAG, "getTravel: $e")
-            }
-        }
+    suspend fun getUserTravelData(travelId: Int) {
+        val response = travelHeaderApi.getTravel(travelId)
 
-        return result
+        // 처음은 Loading 상태로 지정
+        _getUserTravelDataResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _getUserTravelDataResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _getUserTravelDataResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _getUserTravelDataResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
     } // End of getTravel
+
+
+    // 여행 데이터 수정 response값 LiveData
+    private val _userTravelDataUpdateResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
+    val userTravelDataUpdateResponseLiveData: LiveData<NetworkResult<Travel>>
+        get() = _userTravelDataUpdateResponseLiveData
+
+    suspend fun userTravelDataUpdate(travelId: Int, updateTravelData: Travel) {
+        val response = travelHeaderApi.updateTravel(travelId, updateTravelData)
+
+        // 처음은 Loading 상태로 지정
+        _userTravelDataUpdateResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _userTravelDataUpdateResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _userTravelDataUpdateResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _userTravelDataUpdateResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
+    } // End of userTravelDataUpdate
+
 } // End of TravelRepository class

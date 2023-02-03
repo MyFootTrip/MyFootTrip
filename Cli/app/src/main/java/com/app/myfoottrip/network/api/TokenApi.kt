@@ -18,5 +18,4 @@ interface TokenApi {
     // access_token을 헤더에 담아서 보내기
     @GET("accounts/jwtdetail/")
     suspend fun getUserDataByAccessToken(): Response<User>
-
 } // End of TokenApi Interface

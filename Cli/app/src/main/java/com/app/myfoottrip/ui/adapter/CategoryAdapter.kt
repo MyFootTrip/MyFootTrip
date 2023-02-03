@@ -17,7 +17,6 @@ class CategoryAdatper(private var categoryList: List<String> = emptyList()) :
 
         fun bindInfo(category: String) {
             categoryName.text = category
-
             itemView.setOnClickListener {
                 itemClickListner.onClick(it, layoutPosition, category)
             }

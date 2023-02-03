@@ -14,5 +14,4 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_main"
         tools:layout="@layout/fragment_main" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,6 +1,10 @@
 package com.app.myfoottrip
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.util.SharedPreferencesUtil
 import com.google.gson.Gson
@@ -24,6 +28,20 @@ class Application : Application() {
         initRetrofit(AppInterceptor())
         initKakao()
         VisitPlaceRepository.initialize(this)
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            // 서비스의 채널과 이름이 같아야함
+            val channel = NotificationChannel(
+                "location",
+                "Location",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+
     } // End of onCreate
 
     private fun initRetrofit(interceptor: AppInterceptor) {
@@ -89,7 +107,7 @@ class Application : Application() {
 
         const val SERVER_URL = "https://i8d103.p.ssafy.io/"    // TODO : AWS Hosting + URL 변경 //54.248.64.154
 //        const val SERVER_URL = "http://i8d103.p.ssafy.io:7777/"
-
+        
         const val IMG_URL = "http://54.248.64.154"
         lateinit var sharedPreferencesUtil: SharedPreferencesUtil
     }

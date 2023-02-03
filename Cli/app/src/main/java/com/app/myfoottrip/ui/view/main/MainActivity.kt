@@ -1,10 +1,12 @@
 package com.app.myfoottrip.ui.view.main
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.app.myfoottrip.data.viewmodel.TokenViewModel
@@ -34,12 +36,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         // 한번만 유저 정보를 가져오기
         getAccessTokenByRefreshTokenResponseLiveDataObserver()
 
         CoroutineScope(Dispatchers.IO).launch {
             getUserMyData()
         }
+
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ), 0
+        )
 
     } // End of onCreate
 
@@ -89,21 +100,39 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 
     } // End of getAccessTokenByRefreshTokenResponseLiveDataObserver
 
-    fun stopLocationService() {
-        val intent = Intent(this, LocationService::class.java)
-        stopService(intent)
-    } // End of stopService
-
-    fun startLocationService() {
-        val intent = Intent(this, LocationService::class.java)
-        startService(intent)
-    } // End of stopService
-
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
 
         TODO("Not yet implemented")
     }
 
+
+    fun startLocationBackground() {
+        Intent(applicationContext, LocationService::class.java).apply {
+            action = LocationService.ACTION_START
+            startService(this)
+        }
+
+        Log.d(TAG, "startLocationBackground: 동작함?")
+    } // End of startLocationBackground
+
+    fun stopLocationBackground() {
+        Intent(applicationContext, LocationService::class.java).apply {
+            action = LocationService.ACTION_STOP
+            startService(this)
+        }
+    } // End of stopLocationBackground
+
+//    private fun moveFragment(index : Int) {
+//        val transaction = supportFragmentManager.beginTransaction()
+//        when(index) {
+//            1 -> {
+//                transaction.replace(R.id.frame_layout_main, TravelSelectFragment())
+//                    .addToBackStack(null)
+//            }
+//        }
+//
+//
+//    } // End of moveFragment
 
 }

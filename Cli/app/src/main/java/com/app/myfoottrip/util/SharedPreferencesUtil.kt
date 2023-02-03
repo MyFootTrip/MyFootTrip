@@ -2,7 +2,6 @@ package com.app.myfoottrip.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.app.myfoottrip.data.dto.Token
 
 class SharedPreferencesUtil(context: Context) {
 
@@ -15,6 +14,8 @@ class SharedPreferencesUtil(context: Context) {
         const val ACCESS_TOKEN = "access_token"
         const val REFRESH_TOKEN = "refresh_token"
         const val FCM_TOKEN = "fcm_token"
+        const val LATITUDE = "latitude"
+        const val LONITUDE = "longitude"
     }
 
     fun addUserRefreshToken(refresh_token: String) {
@@ -68,4 +69,24 @@ class SharedPreferencesUtil(context: Context) {
         return preferences.getString(FCM_TOKEN,"").toString()
     }
 
+    fun addLatitude(latitude: Double) {
+        val editor = preferences.edit()
+        editor.putLong(LATITUDE, latitude.toRawBits())
+        editor.apply()
+    } // End of addLatitude
+
+    fun addLongitude(longitude: Double) {
+        val editor = preferences.edit()
+        editor.putLong(LONITUDE, longitude.toRawBits())
+        editor.apply()
+    } // End of addLongitude
+
+    fun getLatitude(): Double {
+        return Double.fromBits(preferences.getLong(LATITUDE, 0L))
+    } // End of addLatitude
+
+    fun getLongitude(): Double {
+        return Double.fromBits(preferences.getLong(LONITUDE, 0L))
+    } // End of addLongitude
+    
 } // End of SharedPreferencesUtil class

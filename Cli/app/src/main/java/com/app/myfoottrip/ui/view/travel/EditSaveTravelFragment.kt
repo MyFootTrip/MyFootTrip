@@ -6,9 +6,13 @@ import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
+import androidx.annotation.Dimension
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +20,7 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.dto.Travel
+import com.app.myfoottrip.data.viewmodel.TravelActivityViewModel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentEditSaveTravelBinding
 import com.app.myfoottrip.ui.adapter.TravelEditSaveItemAdapter
@@ -23,27 +28,43 @@ import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
+import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapView
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.OverlayImage
+import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.coroutines.*
+import ted.gun0912.clustering.naver.TedNaverClustering
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 private const val TAG = "EditSaveTravelFragment_싸피"
 
 class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     FragmentEditSaveTravelBinding::bind, R.layout.fragment_edit_save_travel
-) {
+), OnMapReadyCallback { // End of EditSaveTravelFragment class
+    // ViewModel
+    private val travelViewModel by viewModels<TravelViewModel>()
+
+    // ActivityViewModel
+    private val travelActivityViewModel by activityViewModels<TravelActivityViewModel>()
+
     lateinit var mapView: MapView
     private lateinit var mContext: Context
     lateinit var visitPlaceRepository: VisitPlaceRepository
-    private val travelViewModel by activityViewModels<TravelViewModel>()
-    private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
 
+    private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
     private var userVisitPlaceDataList: List<Place> = emptyList()
     private var userTravelData: Travel? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var travelEditSaveItemAdapter: TravelEditSaveItemAdapter
+    private var count = 0
+    private lateinit var naverMap: NaverMap
+    private lateinit var locationSource: FusedLocationSource
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -59,48 +80,87 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         super.onViewCreated(view, savedInstanceState)
         mapView = binding.mapFragment
 
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
+        locationSource = FusedLocationSource(this, 1000)
+
         // 첫번째 UI에 데이터 뿌려야 하므로 데이터 부터 가져오기
-        getData()
+        CoroutineScope(Dispatchers.IO).launch {
+            getData()
+        }
+
 
         createTravelResponseObserve()
     } // End of onViewCreated
 
     // 첫번째 UI에 데이터 뿌려야 하므로 데이터 부터 가져오기
-    private fun getData() {
+    private suspend fun getData() {
         // 데이터를 가져오고나서, Travel타입으로 변환한 후 UI로 뿌리는 작업을 진행한다.
-        CoroutineScope(Dispatchers.IO).launch {
+        val dataJob = CoroutineScope(Dispatchers.IO).async {
             userVisitPlaceDataList = getSqlLiteAllData()
 
             // Travel Dto로 변환
-            coroutineScope {
+            val job = coroutineScope {
                 changeToTravelDto()
+            }
+
+            withContext(Dispatchers.Main) {
+                setUI()
+                setMapInMark()
+                buttonEvents()
             }
 
             activity!!.runOnUiThread {
                 CoroutineScope(Dispatchers.Main).launch {
-                    setUI()
-                    buttonEvents()
+                    //job1.await()
+                    //job1.join()
+                    //job2.await()
+                    //job2.join()
+                    //job3.await()
+                    // job3.join()
                 }
             }
         }
+
+        dataJob.join()
     } // End of getData
+
+    // 가져온 데이터로 지도에 좌표 마크 표시하기
+    private suspend fun setMapInMark() = CoroutineScope(Dispatchers.Main).launch {
+        TedNaverClustering.with<Place>(mContext, naverMap).customMarker {
+            Marker().apply {
+                icon = OverlayImage.fromResource(R.drawable.ic_black_circle)
+                width = 120
+                height = 120
+                captionText = "테스트2"
+            }
+        }.customCluster {
+            TextView(activity).apply {
+                text = "테스트1"
+                setTextSize(Dimension.SP, 12.0F)
+                setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.main))
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                setPadding(10, 10, 10, 10)
+            }
+        }.items(userVisitPlaceDataList).make()
+
+        Log.d(TAG, "setMapInMark: 이거 다 돌음?")
+    }.join() // End of setMapInMark
 
     private fun changeToTravelDto() {
         userTravelData = Travel(
             null,
-            travelViewModel.locationList,
+            travelActivityViewModel.locationList,
             userVisitPlaceDataList[0].saveDate, // 처음 시작 저장 시간
             Date(System.currentTimeMillis()), // 마지막 저장 시간
             userVisitPlaceDataList
         )
     } // End of changeToTravelDto
 
-
-
-
     // 유저의 여행 데이터를 불러와서 UI를 뿌리기
-    private suspend fun setUI() {
+    private fun setUI() {
         joinBackButtonCustomView = binding.joinBackButtonCustomview
+        // 선택된 지역들을 쉼표로 연결해서 텍스트로 만듬
         binding.tvTravelTitle.text = userTravelData?.location?.joinToString(", ")
 
         val startDateFormat = SimpleDateFormat("yyyy-MM.dd", Locale("ko", "KR"))
@@ -110,7 +170,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         val endDateString = endDateFormat.format(userTravelData!!.endDate!!)
         binding.travelDateTv.text = "$startDateString - $endDateString"
 
-        binding.traveTotalTimeTv.text = "총시간 : ${totalTimeCalc()} "
+        binding.traveTotalTimeTv.text = "총 시간 : ${totalTimeCalc()} "
 
         recyclerView = binding.travelEditSaveRecyclerview
         initRecyclerViewAdapter()
@@ -120,17 +180,29 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
         }
 
+        travelEditSaveItemAdapter.setItemClickListener(object :
+            TravelEditSaveItemAdapter.ItemClickListener {
+            override fun onEditButtonClick(position: Int, placeData: Place) {
+                // 리사이클러뷰 포지션에 해당하는 수정 버튼을 눌렀을 때 이벤트
+                showToast("${position + 1}의 아이템을 선택함")
+            }
+        })
 
+
+        Log.d(TAG, "setUI: 이거 다 돌음?")
     } // End of setUI
 
     private fun initRecyclerViewAdapter() {
         travelEditSaveItemAdapter = TravelEditSaveItemAdapter(mContext, userTravelData?.placeList!!)
-    } // End of
+    } // End of initRecyclerViewAdapter
 
     private fun totalTimeCalc(): String {
-        val result = "00시간 00분"
+        val startTime = userTravelData!!.startDate!!.time
+        val endTime = userTravelData!!.endDate!!.time
+        val diff = endTime - startTime
 
-        return result
+        val dateFormat = SimpleDateFormat("HH시간 mm분", Locale("ko", "KR"))
+        return dateFormat.format(diff)
     } // End of totalTimeCalc
 
     private fun buttonEvents() {
@@ -145,6 +217,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             .setOnClickListener {
                 findNavController().popBackStack()
             }
+
+        Log.d(TAG, "buttonEvents: 이거 다 돌음?")
     } // End of buttonEvents
 
     private suspend fun createTravel() {
@@ -178,10 +252,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
                 placeList.add(
                     Place(
-                        null,
-                        "",
-                        temp.date?.let { Date(it) },
-                        "", // 일단 처음에는 메모 빈 값
+                        null, "", temp.date?.let { Date(it) }, "", // 일단 처음에는 메모 빈 값
                         ArrayList(), // 일단 빈 이미지를 넣어야됨
                         temp.lat, // 좌표
                         temp.lng, // 좌표
@@ -202,13 +273,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data == 201) {
-                        // 성공하면, SQLLite table 모두 비우기
                         CoroutineScope(Dispatchers.IO).launch {
+                            // 성공하면, SQLLite table 모두 비우기
                             visitPlaceRepository.deleteAllVisitPlace()
-                            Log.d(
-                                TAG,
-                                "현재 남아있는 SQLLite Data : ${visitPlaceRepository.getAllVisitPlace()}"
-                            )
 
                             // DB를 비우고 빠져나가기
                             coroutineScope {
@@ -216,11 +283,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
                                     // 다시 여행 선택페이지로 이동
                                     val bundle = bundleOf("type" to 0)
-                                    findNavController()
-                                        .navigate(
-                                            R.id.action_editSaveTravelFragment_to_travelSelectFragment,
-                                            bundle
-                                        )
+                                    findNavController().navigate(
+                                        R.id.action_editSaveTravelFragment_to_travelSelectFragment,
+                                        bundle
+                                    )
 
                                 }
                             }
@@ -241,7 +307,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         }
     } // End of createTravelResponseObserve
 
-    private suspend fun getAddressByCoordinates(latitude: Double, longitude: Double): Address? {
+    private fun getAddressByCoordinates(latitude: Double, longitude: Double): Address? {
         val geocoder = Geocoder(mContext, Locale.KOREA)
 
         val addresses: List<Address>?
@@ -275,7 +341,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     override fun onResume() {
         super.onResume()
         mapView.onResume()
-        Log.d(TAG, "userTravelData: ${userTravelData} ")
     }
 
     override fun onPause() {
@@ -302,4 +367,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         super.onLowMemory()
         mapView.onLowMemory()
     }
-} // End of EditSaveTravelFragment class
+
+    override fun onMapReady(naverMap: NaverMap) {
+        this.naverMap = naverMap
+        naverMap.locationSource = locationSource
+        naverMap.locationTrackingMode = LocationTrackingMode.Follow
+    } // End of onMapReady
+} // End of EditSaveTravelFragment
