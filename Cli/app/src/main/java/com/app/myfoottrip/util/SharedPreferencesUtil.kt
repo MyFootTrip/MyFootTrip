@@ -88,5 +88,5 @@ class SharedPreferencesUtil(context: Context) {
     fun getLongitude(): Double {
         return Double.fromBits(preferences.getLong(LONITUDE, 0L))
     } // End of addLongitude
-    
+
 } // End of SharedPreferencesUtil class
