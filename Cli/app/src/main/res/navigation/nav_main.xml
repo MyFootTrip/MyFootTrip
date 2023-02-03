@@ -106,7 +106,14 @@
         android:id="@+id/editAccountFragment"
         android:name="com.app.myfoottrip.ui.view.mypage.EditAccountFragment"
         android:label="fragment_edit_account"
-        tools:layout="@layout/fragment_edit_account" />
+        tools:layout="@layout/fragment_edit_account" >
+        <action
+            android:id="@+id/action_editAccountFragment_to_editEmailFragment"
+            app:destination="@id/editEmailFragment" />
+        <action
+            android:id="@+id/action_editAccountFragment_to_editPasswordFragment"
+            app:destination="@id/editPasswordFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/myTravelFragment"
@@ -135,5 +142,16 @@
             android:id="@+id/action_myWriteFragment_to_boardFragment"
             app:destination="@id/boardFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/editEmailFragment"
+        android:name="com.app.myfoottrip.ui.view.mypage.EditEmailFragment"
+        android:label="fragment_edit_email"
+        tools:layout="@layout/fragment_edit_email" />
+    <fragment
+        android:id="@+id/editPasswordFragment"
+        android:name="com.app.myfoottrip.ui.view.mypage.EditPasswordFragment"
+        android:label="fragment_edit_password"
+        tools:layout="@layout/fragment_edit_password" />
+
 
 </navigation>

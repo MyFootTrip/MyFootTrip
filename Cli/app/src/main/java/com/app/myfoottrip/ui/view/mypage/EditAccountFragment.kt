@@ -63,7 +63,8 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
             // 뒤로가기
             ivBack.setOnClickListener {
                 navigationViewModel.type = 1
-                findNavController().popBackStack()}
+                findNavController().popBackStack()
+            }
 
             // 닉네임 변경 다이얼로그 나오기
             chipEditAccount.setOnClickListener {
@@ -71,14 +72,24 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
                 dialog.show(activity?.supportFragmentManager!!, "EditNicknameDialog")
             }
 
+
             //로그아웃
             tvLogout.setOnClickListener {
                 deleteRefreshTokenObserver()
                 deleteRefreshToken()
+
+                // 아이디 변경 페이지로 이동
+                chipEditEmail.setOnClickListener {
+                    findNavController().navigate(R.id.action_editAccountFragment_to_editEmailFragment)
+                }
+
+                // 비밀번호 변경 페이지로 이동
+                chipEditPassword.setOnClickListener {
+                    findNavController().navigate(R.id.action_editAccountFragment_to_editPasswordFragment)
+                }
+
             }
-
         }
-
     } // End of onViewCreated
 
     private fun init() {
@@ -86,17 +97,29 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
     } // End of init
 
     // 유저정보 데이터 초기화
-    private fun initUser(){
+    private fun initUser() {
         binding.apply {
             //프로필 이미지
-            if (userViewModel.wholeMyData.value?.join?.profile_image.isNullOrEmpty()){
+            if (userViewModel.wholeMyData.value?.join?.profile_image.isNullOrEmpty()) {
                 editProfileImageview.setPadding(55)
-                Glide.with(this@EditAccountFragment).load(R.drawable.ic_my).fitCenter().into(editProfileImageview)
-                cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white)))
-            }else {
-                Glide.with(this@EditAccountFragment).load(userViewModel.wholeMyData.value?.join?.profile_image).skipMemoryCache(true).diskCacheStrategy(
-                    DiskCacheStrategy.NONE).thumbnail(Glide.with(this@EditAccountFragment).load(R.drawable.loading_image).centerCrop()).centerCrop().into(editProfileImageview)
-                cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white)))
+                Glide.with(this@EditAccountFragment).load(R.drawable.ic_my).fitCenter().into(editProfileImageview)cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
+            } else {
+                Glide.with(this@EditAccountFragment)
+                    .load(userViewModel.wholeMyData.value?.join?.profile_image)
+                    .skipMemoryCache(true).diskCacheStrategy(
+                        DiskCacheStrategy.NONE
+                    ).thumbnail(
+                        Glide.with(this@EditAccountFragment).load(R.drawable.loading_image)
+                            .centerCrop()
+                    ).centerCrop().into(editProfileImageview)
+                cvProfileLayout.setCardBackgroundColor(
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.white
+                        )
+                    )
+                )
             }
 
             tvMyNickname.text = "${userViewModel.wholeMyData.value?.join?.nickname}" // 닉네임
@@ -120,7 +143,7 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
         tokenViewModel.deleteRefreshTokenResponseLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
-                  deleteFcmTokenObserver()
+                    deleteFcmTokenObserver()
                     deleteFcmToken()
                 }
                 is NetworkResult.Error -> {
@@ -143,7 +166,7 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     val intent = Intent(activity, StartActivity::class.java)
-                    intent.putExtra("page",1)
+                    intent.putExtra("page", 1)
                     Application.sharedPreferencesUtil.deleteAccessToken()
                     Application.sharedPreferencesUtil.deleteRefreshToken()
                     startActivity(intent)
