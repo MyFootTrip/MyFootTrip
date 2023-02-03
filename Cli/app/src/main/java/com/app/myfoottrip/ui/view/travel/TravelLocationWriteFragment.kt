@@ -247,6 +247,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 // 가장 최근에 찍힌 좌표와 현재 나의 위치를 기준으로 500M를 벗어나면 데이터를 저장함
                 if (dist > 500) {
                     saveTravel(it.latitude!!, it.longitude!!)
+                    Log.d(TAG, "dist calc: 오차 범위를 벗어나지 못함")
                 }
             }
         }

@@ -45,7 +45,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     private var locationList: MutableList<String> = ArrayList() //지역 리스트
     private var selectedList: MutableList<String> = ArrayList() //선택된 리스트
 
-    private val LOCATION_PERMISSION_REQUEST_CODE = 1000
     private var mapFragment: MapFragment = MapFragment()
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
     private lateinit var locationSource: FusedLocationSource
@@ -162,8 +161,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                 mainActivity.startLocationBackground()
             }
 
-
-            // LocationConstants.startBackgroundService(requireContext())
             mContext.showToastMessage("위치 기록을 시작합니다.")
             findNavController().navigate(R.id.action_travelLocationSelectFragment_to_travelLocationWriteFragment)
         }
@@ -330,4 +327,9 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         super.onLowMemory()
         binding.mapFragment.onLowMemory()
     }
+
+    private companion object {
+        const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+    }
+
 } // End of TravelLocationSelectFragment class
