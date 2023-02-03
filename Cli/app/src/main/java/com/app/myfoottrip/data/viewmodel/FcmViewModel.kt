@@ -13,10 +13,20 @@ class FcmViewModel : ViewModel() {
     val addFcmToken: LiveData<NetworkResult<String>>
         get() = fcmRepository.addTokenResponseLiveData
 
+    val deleteFcmToken: LiveData<NetworkResult<String>>
+        get() = fcmRepository.deleteTokenResponseLiveData
+
     // 토큰 저장
     fun addFcmToken(token: String) {
         viewModelScope.launch {
             fcmRepository.addFcmToken(token)
+        }
+    }
+
+    // 토큰 저장
+    fun deleteFcmToken(token: String) {
+        viewModelScope.launch {
+            fcmRepository.deleteFcmToken(token)
         }
     }
 }

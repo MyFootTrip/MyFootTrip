@@ -21,6 +21,12 @@ class TokenViewModel : ViewModel() {
     val getUserDataByAccessTokenResponseLiveData: LiveData<NetworkResult<User>>
         get() = tokenRepository.getUserDataByAccessTokenResponseLiveData
 
+    val getUserResponseLiveData: LiveData<NetworkResult<User>>
+        get() = tokenRepository.getUserDataResponseLiveData
+
+    val deleteRefreshTokenResponseLiveData: LiveData<NetworkResult<String>>
+        get() = tokenRepository.deleteRefreshTokenResponseLiveData
+
     suspend fun getAccessTokenByRefreshToken(refreshToken: Token) {
         tokenRepository.getAccessTokenByRefreshToken(refreshToken)
     } // End of getAccessTokenByRefreshToken
@@ -32,4 +38,16 @@ class TokenViewModel : ViewModel() {
             }
         }
     } // End of getUserDataByAccessToken
+
+    fun getUserData() {
+        viewModelScope.launch {
+            tokenRepository.getUserData()
+        }
+    } // End of getUserDataByAccessToken
+
+    fun deleteRefreshToken(token: String){
+        viewModelScope.launch {
+            tokenRepository.deleteRefreshToken(token)
+        }
+    }
 } // End of TokenViewModel class

@@ -29,7 +29,7 @@ class MyFireBaseMessagingService : FirebaseMessagingService() {
             val intent = Intent(this, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             val pendingIntent =
-                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE) //PendingIntent.FLAG_ONE_SHOT
             val channelId = "Channel ID"
             val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val notificationBuilder: Notification.Builder = Notification.Builder(

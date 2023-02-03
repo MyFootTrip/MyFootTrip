@@ -18,6 +18,7 @@ import com.app.myfoottrip.network.fcm.MyFireBaseMessagingService
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.ui.view.start.StartActivity
+import com.app.myfoottrip.ui.view.start.StartFragment
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.SharedPreferencesUtil
 import com.app.myfoottrip.util.showToastMessage
@@ -96,7 +97,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
                         if (refreshToken != "") {
                             startViewModel.refreshTokenValidCheck(Token("", refreshToken))
                         } else {
-                            findNavController().navigate(R.id.action_splashFragment_to_startFragment)
+                            parentFragmentManager.beginTransaction().replace(R.id.fragment_start, StartFragment()).commit()
                         }
                     }
 
@@ -137,7 +138,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
                 is NetworkResult.Error -> {
                     if (it.data?.access_token == null) {
                         startActivity.showToastMessage("토큰이 만료되었습니다 로그인을 다시 해주세요")
-                        findNavController().navigate(R.id.action_splashFragment_to_startFragment)
+                        parentFragmentManager.beginTransaction().replace(R.id.fragment_start, StartFragment()).commit()
                     }
                 }
                 is NetworkResult.Loading -> {

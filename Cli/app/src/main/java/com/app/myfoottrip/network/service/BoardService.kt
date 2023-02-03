@@ -30,6 +30,12 @@ interface BoardService {
     @GET("/community/board/detail/{boardId}/")
     suspend fun getBoard(@Path("boardId") boardId: Int): Response<Board>
 
+    //게시물 수정
+
+    //게시물 삭제
+    @DELETE("/community/board/detail/{boardId}/")
+    suspend fun deleteBoard(@Path("boardId") boardId: Int) : Response<String>
+
     //내가 작성한 게시물 전체 리스트 조회
     @GET("/community/board/user/")
     suspend fun getWriteBoardList() : Response<ArrayList<Board>>

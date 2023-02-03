@@ -47,8 +47,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private var filter: Filter = Filter(arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
     var detector: GestureDetector? = null
 
-    private val userViewModel by activityViewModels<UserViewModel>()
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -56,7 +54,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         /** DynamicLink 수신확인 */
         initDynamicLink()

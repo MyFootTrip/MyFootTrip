@@ -14,6 +14,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.JoinViewModel
+import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentServiceClauseBinding
 
 
@@ -26,6 +27,8 @@ class ServiceClauseFragment : Fragment() {
     private val joinViewModel by activityViewModels<JoinViewModel>()
     private lateinit var callback: OnBackPressedCallback
 
+    private val navigationViewModel by activityViewModels<NavigationViewModel>()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -33,8 +36,11 @@ class ServiceClauseFragment : Fragment() {
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 Log.d(TAG, "handleOnBackPressed: ")
+                navigationViewModel.startPage = 1
+                findNavController().popBackStack()
             }
         }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     } // End of onAttach
 
     override fun onCreateView(
@@ -80,6 +86,7 @@ class ServiceClauseFragment : Fragment() {
         joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
             .setOnClickListener {
                 Log.d(TAG, "joinBackButtonCustomView onClick: ")
+                navigationViewModel.startPage = 1
                 findNavController().popBackStack()
             }
 

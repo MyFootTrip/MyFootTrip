@@ -208,6 +208,7 @@
             app:layout_constraintTop_toBottomOf="@+id/iv_one_side_rounded_shape">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_write"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="10dp"

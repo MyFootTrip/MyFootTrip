@@ -153,6 +153,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:20.1.0'
     implementation 'com.google.firebase:firebase-messaging-ktx'
 
+    // FCM 버전으로 인한 오류 문제
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+
 
     /* SNS 로그인 */
     //네이버 로그인

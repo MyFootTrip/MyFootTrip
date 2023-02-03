@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
@@ -82,6 +83,31 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
                 getLikeObserver()
                 getLike()
             }
+
+            //게시글 edit 버튼 클릭 시
+            ivEdit.setOnClickListener {
+                var popupMenu = PopupMenu(requireContext(),binding.ivEdit)
+
+                mainActivity.menuInflater.inflate(R.menu.comment_menu,popupMenu.menu)
+
+                popupMenu.show()
+                popupMenu.setOnMenuItemClickListener {
+                    when(it.itemId){
+                        R.id.menu_update -> {
+//                            updateCommentObserver(position)
+//                            updateCommentInput(commentId)
+                            return@setOnMenuItemClickListener true
+                        }
+                        R.id.menu_delete -> {
+                            deleteBoardObserver()
+                            deleteBoard()
+                            return@setOnMenuItemClickListener true
+                        }else ->{
+                        return@setOnMenuItemClickListener true
+                    }
+                    }
+                }
+            }
         }
 
     }
@@ -100,6 +126,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     private fun initData(board: Board){
         binding.apply {
             // --------------- 게시글 윗쪽 부분 데이터---------------------------
+            if(board.userId == userViewModel.wholeMyData.value?.uid) ivEdit.visibility = View.VISIBLE
             initViewPager(board) //이미지 슬라이더
             tvLocation.text = convertToString(board.travel!!.location!! as ArrayList<String>) //여행 지역
             tvTheme.text = "#${board.theme}" //여행 테마
@@ -279,7 +306,30 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     initData(it.data!!)
+                    boardViewModel.boardId = it.data!!.boardId
                     initMapScroll()
+                }
+                is NetworkResult.Error -> {
+                }
+                is NetworkResult.Loading -> {
+                }
+            }
+        }
+    }
+
+    //게시물 삭제
+    private fun deleteBoard() {
+        CoroutineScope(Dispatchers.IO).launch {
+            boardViewModel.deleteBoard(boardViewModel.boardId)
+        }
+    }
+
+    private fun deleteBoardObserver() {
+        boardViewModel.deleteBoard.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    navigationViewModel.type = 4
+                    findNavController().navigate(R.id.action_boardFragment_to_mainFragment)
                 }
                 is NetworkResult.Error -> {
                 }

@@ -39,6 +39,14 @@ class SharedPreferencesUtil(context: Context) {
         return preferences.getString(ACCESS_TOKEN, "").toString()
     } // End of getUserAccessToken
 
+    fun deleteAccessToken(){
+        preferences.edit().remove(ACCESS_TOKEN).apply()
+    }
+
+    fun deleteRefreshToken(){
+        preferences.edit().remove(REFRESH_TOKEN).apply()
+    }
+
     fun deleteUser() {
         val editor = preferences.edit()
         editor.clear()

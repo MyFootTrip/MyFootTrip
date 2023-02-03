@@ -1,18 +1,22 @@
 package com.app.myfoottrip.ui.view.main
 
 import android.Manifest
+import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.ActivityMainBinding
-import com.app.myfoottrip.network.fcm.MyFireBaseMessagingService
 import com.app.myfoottrip.ui.view.travel.LocationService
 import com.app.myfoottrip.util.NetworkResult
 import com.naver.maps.map.NaverMap
@@ -21,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+
 
 private const val TAG = "MainActivity_마이풋트립"
 
@@ -35,7 +40,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         // 한번만 유저 정보를 가져오기
         getAccessTokenByRefreshTokenResponseLiveDataObserver()
@@ -134,5 +138,4 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 //
 //
 //    } // End of moveFragment
-
 }

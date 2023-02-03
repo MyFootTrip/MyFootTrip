@@ -44,6 +44,9 @@ class BoardViewModel : ViewModel() {
     val likeList : LiveData<NetworkResult<ArrayList<Board>>>
         get() = boardRepository.likeBoardResponseLiveData
 
+    val deleteBoard : LiveData<NetworkResult<String>>
+        get() = boardRepository.deleteBoardResponseLiveData
+
 
     // 게시물 전체 조회
     fun getBoardList() {
@@ -77,6 +80,13 @@ class BoardViewModel : ViewModel() {
     fun getBoard(boardId: Int){
         viewModelScope.launch {
             boardRepository.getBoard(boardId)
+        }
+    }
+
+    //게시물 삭제
+    fun deleteBoard(boardId: Int){
+        viewModelScope.launch {
+            boardRepository.deleteBoard(boardId)
         }
     }
 

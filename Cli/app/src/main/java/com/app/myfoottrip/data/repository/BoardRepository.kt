@@ -44,6 +44,10 @@ class BoardRepository {
     val likeBoardResponseLiveData: LiveData<NetworkResult<ArrayList<Board>>>
         get() = _likeBoardResponseLiveData
 
+    private val _deleteBoardResponseLiveData = MutableLiveData<NetworkResult<String>>()
+    val deleteBoardResponseLiveData: LiveData<NetworkResult<String>>
+        get() = _deleteBoardResponseLiveData
+
     // 전체 게시물 조회
     suspend fun getBoardList(){
         var response = boardService.getBoardList()
@@ -141,6 +145,22 @@ class BoardRepository {
             _likeBoardResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
         } else {
             _likeBoardResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
+    }
+
+    //게시물 삭제
+    suspend fun deleteBoard(boardId: Int){
+        var response = headerBoardService.deleteBoard(boardId)
+
+        // 처음은 Loading 상태로 지정
+        _deleteBoardResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _deleteBoardResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _deleteBoardResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
+        } else {
+            _deleteBoardResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
         }
     }
 

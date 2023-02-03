@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_mainFragment_to_myLikeFragment"
             app:destination="@id/myLikeFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_myWriteFragment"
+            app:destination="@id/myWriteFragment" />
 
     </fragment>
     <fragment
@@ -38,6 +41,10 @@
         <action
             android:id="@+id/action_boardFragment_to_commentFragment"
             app:destination="@id/commentFragment" />
+        <action
+            android:id="@+id/action_boardFragment_to_mainFragment"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="false"/>
     </fragment>
     <fragment
         android:id="@+id/travelSelectFragment"
@@ -105,7 +112,11 @@
         android:id="@+id/myTravelFragment"
         android:name="com.app.myfoottrip.ui.view.mypage.MyTravelFragment"
         android:label="fragment_my_travel"
-        tools:layout="@layout/fragment_my_travel" />
+        tools:layout="@layout/fragment_my_travel" >
+        <action
+            android:id="@+id/action_myTravelFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
     <fragment
         android:id="@+id/myLikeFragment"
         android:name="com.app.myfoottrip.ui.view.mypage.MyLikeFragment"
@@ -113,6 +124,15 @@
         tools:layout="@layout/fragment_my_like" >
         <action
             android:id="@+id/action_myLikeFragment_to_boardFragment"
+            app:destination="@id/boardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/myWriteFragment"
+        android:name="com.app.myfoottrip.ui.view.mypage.MyWriteFragment"
+        android:label="fragment_my_write"
+        tools:layout="@layout/fragment_my_write" >
+        <action
+            android:id="@+id/action_myWriteFragment_to_boardFragment"
             app:destination="@id/boardFragment" />
     </fragment>
 

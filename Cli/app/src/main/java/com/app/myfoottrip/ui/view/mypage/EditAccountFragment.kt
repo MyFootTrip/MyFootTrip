@@ -1,6 +1,7 @@
 package com.app.myfoottrip.ui.view.mypage
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
@@ -11,14 +12,23 @@ import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.viewmodel.FcmViewModel
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
+import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentEditAccountBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.dialogs.EditNicknameDialog
+import com.app.myfoottrip.ui.view.main.MainActivity
+import com.app.myfoottrip.ui.view.start.StartActivity
+import com.app.myfoottrip.util.NetworkResult
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "EditAccountFragment_마이풋트립"
 
@@ -29,6 +39,9 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
     private val userViewModel by activityViewModels<UserViewModel>()
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
     private lateinit var callback: OnBackPressedCallback
+
+    private val fcmViewModel by activityViewModels<FcmViewModel>()
+    private val tokenViewModel by activityViewModels<TokenViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -58,6 +71,11 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
                 dialog.show(activity?.supportFragmentManager!!, "EditNicknameDialog")
             }
 
+            //로그아웃
+            tvLogout.setOnClickListener {
+                deleteRefreshTokenObserver()
+                deleteRefreshToken()
+            }
 
         }
 
@@ -90,4 +108,52 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
         super.onDetach()
         callback.remove()
     } // End of onDetach
+
+    //refresh 토큰 삭제하기
+    private fun deleteRefreshToken() {
+        CoroutineScope(Dispatchers.IO).launch {
+            tokenViewModel.deleteRefreshToken(Application.sharedPreferencesUtil.getUserRefreshToken())
+        }
+    }
+
+    private fun deleteRefreshTokenObserver() {
+        tokenViewModel.deleteRefreshTokenResponseLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                  deleteFcmTokenObserver()
+                    deleteFcmToken()
+                }
+                is NetworkResult.Error -> {
+                }
+                is NetworkResult.Loading -> {
+                }
+            }
+        }
+    }
+
+    //FCM 토큰 삭제하기
+    private fun deleteFcmToken() {
+        CoroutineScope(Dispatchers.IO).launch {
+            fcmViewModel.deleteFcmToken(Application.sharedPreferencesUtil.getFcmToken())
+        }
+    }
+
+    private fun deleteFcmTokenObserver() {
+        fcmViewModel.deleteFcmToken.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    val intent = Intent(activity, StartActivity::class.java)
+                    intent.putExtra("page",1)
+                    Application.sharedPreferencesUtil.deleteAccessToken()
+                    Application.sharedPreferencesUtil.deleteRefreshToken()
+                    startActivity(intent)
+                    activity!!.finish()
+                }
+                is NetworkResult.Error -> {
+                }
+                is NetworkResult.Loading -> {
+                }
+            }
+        }
+    }
 }

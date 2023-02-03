@@ -2,6 +2,7 @@ package com.app.myfoottrip.ui.view.main
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.core.os.bundleOf
@@ -29,9 +30,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (navigationViewModel.type == 4){
+            binding.bottomNavigationView.menu.setGroupCheckable(0,true,false)
+            binding.bottomNavigationView.menu.findItem(R.id.mypageFragment).isChecked = false
+            navigationViewModel.type = 0
+        }
     }
-
-    private val userViewModel by activityViewModels<UserViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -47,16 +51,24 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
     //바텀 네비게이션 설정
     private fun initNavigation() {
         binding.apply {
-            when(navigationViewModel.type){
-                0 -> {parentFragmentManager.beginTransaction()
-                    .replace(R.id.nav_bottom_fragment, HomeFragment()).commit()}
-                1 -> {parentFragmentManager.beginTransaction()
-                    .replace(R.id.nav_bottom_fragment, MyPageFragment()).commit()}
-            }
+            if (navigationViewModel.type == 4){
+                bottomNavigationView.menu.setGroupCheckable(0,true,false)
+                bottomNavigationView.menu.findItem(R.id.mypageFragment).isChecked = false
+                navigationViewModel.type = 0
+            }else{
+                when(navigationViewModel.type){
+                    0 -> {parentFragmentManager.beginTransaction()
+                        .replace(R.id.nav_bottom_fragment, HomeFragment()).commit()
+                    }
+                    1 -> {parentFragmentManager.beginTransaction()
+                        .replace(R.id.nav_bottom_fragment, MyPageFragment()).commit()}
+                }
 
+            }
             bottomNavigationView.setOnItemSelectedListener {
                 navigationSelected(it)
             }
+
             addButton.setOnClickListener { //여정 기록 -> 여정 선택 화면
                 val bundle = bundleOf("type" to 0)
                 findNavController().navigate(
