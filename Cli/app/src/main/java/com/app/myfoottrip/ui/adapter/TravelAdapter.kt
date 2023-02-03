@@ -56,8 +56,7 @@ class TravelAdapter(
 
                 chipTravelSelect.isChecked = (selected == position) //선택은 하나만 하도록
 
-                // 이미지가 없을 경우 기본이지미로 대체됨.
-                if (travelList[0].placeList?.get(0)?.placeImgList?.size == 0) {
+                if (travelList.isNotEmpty() && travelList[0].placeList?.get(0)?.placeImgList?.size == 0) {
                     Glide.with(itemView)
                         .load(R.drawable.place_default_img)
                         .centerCrop()
@@ -68,7 +67,6 @@ class TravelAdapter(
                         .centerCrop()
                         .into(ivTravel)
                 }
-
 
                 tvTravelName.text = travelDto.location!!.joinToString(", ")
 

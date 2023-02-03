@@ -20,6 +20,7 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "Application_싸피"
+
 class Application : Application() {
 
     override fun onCreate() {
@@ -29,8 +30,7 @@ class Application : Application() {
         initKakao()
         VisitPlaceRepository.initialize(this)
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // 서비스의 채널과 이름이 같아야함
             val channel = NotificationChannel(
                 "location",
@@ -38,15 +38,15 @@ class Application : Application() {
                 NotificationManager.IMPORTANCE_HIGH
             )
 
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
-
     } // End of onCreate
 
     private fun initRetrofit(interceptor: AppInterceptor) {
         val logging = HttpLoggingInterceptor()
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             logging.level = HttpLoggingInterceptor.Level.BODY
         } else {
             logging.level = HttpLoggingInterceptor.Level.NONE
@@ -106,7 +106,7 @@ class Application : Application() {
         lateinit var headerRetrofit: Retrofit
 
         const val SERVER_URL = "https://i8d103.p.ssafy.io/"    // TODO : AWS Hosting + URL 변경 //54.248.64.154
-//        const val SERVER_URL = "http://i8d103.p.ssafy.io:7777/"
+        // const val SERVER_URL = "http://i8d103.p.ssafy.io:7777/"
 
         const val IMG_URL = "http://54.248.64.154"
         lateinit var sharedPreferencesUtil: SharedPreferencesUtil

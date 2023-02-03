@@ -27,10 +27,7 @@ class TravelRepository {
         get() = _createTravelResponseLiveData
 
 
-    // 유저 여행 데이터 조회
-    private val _getUserTravelDataResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
-    val getUserTravelDataResponseLiveData: LiveData<NetworkResult<Travel>>
-        get() = _getUserTravelDataResponseLiveData
+
 
 
     // 여행 데이터 추가
@@ -84,7 +81,11 @@ class TravelRepository {
         }
     } // End of getUserTravel
 
-    //여정 조회
+    // ======================== 유저 여행 데이터 조회 ========================
+    private val _getUserTravelDataResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
+    val getUserTravelDataResponseLiveData: LiveData<NetworkResult<Travel>>
+        get() = _getUserTravelDataResponseLiveData
+
     suspend fun getUserTravelData(travelId: Int) {
         val response = travelHeaderApi.getTravel(travelId)
 
@@ -109,7 +110,7 @@ class TravelRepository {
     } // End of getTravel
 
 
-    // 여행 데이터 수정 response값 LiveData
+    // ======================== 유저 여행 데이터 수정 ========================
     private val _userTravelDataUpdateResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
     val userTravelDataUpdateResponseLiveData: LiveData<NetworkResult<Travel>>
         get() = _userTravelDataUpdateResponseLiveData

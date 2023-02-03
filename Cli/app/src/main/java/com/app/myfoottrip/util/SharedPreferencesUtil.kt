@@ -39,11 +39,11 @@ class SharedPreferencesUtil(context: Context) {
         return preferences.getString(ACCESS_TOKEN, "").toString()
     } // End of getUserAccessToken
 
-    fun deleteUser() {
+    fun deleteRefreshToken() {
         val editor = preferences.edit()
         editor.clear()
         editor.apply()
-    } // End of deleteUser
+    } // End of deleteRefreshToken
 
     fun addUserCookie(cookies: HashSet<String>) {
         val editor = preferences.edit()

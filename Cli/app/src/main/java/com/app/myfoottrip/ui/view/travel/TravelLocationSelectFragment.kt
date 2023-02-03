@@ -9,12 +9,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContentProviderCompat.*
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.dao.VisitPlaceRepository
+import com.app.myfoottrip.data.dto.VisitPlace
 import com.app.myfoottrip.data.viewmodel.TravelActivityViewModel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentTravelLocationSelectBinding
@@ -28,9 +32,8 @@ import com.google.android.material.chip.Chip
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
 
 private const val TAG = "TravelLocationSelectFragment_싸피"
 
@@ -49,6 +52,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
     private lateinit var locationSource: FusedLocationSource
     private lateinit var mContext: Context
+    lateinit var visitPlaceRepository: VisitPlaceRepository
 
     private var selectedTravelId = 0
     private lateinit var binding: FragmentTravelLocationSelectBinding
@@ -60,6 +64,11 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         super.onAttach(context)
         mContext = context
     } // End of onAttach
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        visitPlaceRepository = VisitPlaceRepository.get()
+    } // End of onCreate
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -77,10 +86,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         // 다시 null 값으로 초기화
         getUserTravelDataResponseLiveDataObserve()
 
-        //서비스 연결
-        //LocationConstants.serviceBind(requireContext())
-
-
         binding.fabStart.apply {
             backgroundTintList =
                 AppCompatResources.getColorStateList(requireContext(), R.color.gray_500)
@@ -93,7 +98,10 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
         if (fragmentType == 2) {
             selectedTravelId = requireArguments().getInt("travelId")
+            Log.d(TAG, "onViewCreated: 수정 작업 입니다.")
+
             getUserTravelData()
+            // 기존의 수정해야 할 유저데이터를 가져오고 나서, UI가 보여야됨
 
         } else {
             // Adapter 초기화
@@ -102,8 +110,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             // EventListener 초기화
             initListener()
         }
-
-
     } // End of onViewCreated
 
     private fun getUserTravelData() {
@@ -111,6 +117,24 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             travelViewModel.getUserTravelData(selectedTravelId)
         }
     } // End of getUserTravelData
+
+    private fun saveRoomDB() = CoroutineScope(Dispatchers.IO).launch {
+        val size = travelActivityViewModel.userTravelData.value!!.placeList!!.size
+        for (i in 0 until size) {
+            val place = travelActivityViewModel.userTravelData.value!!.placeList!![i]
+
+            val temp = VisitPlace(
+                i,
+                place.address!!,
+                place.latitude!!,
+                place.longitude!!,
+                place.saveDate!!.time,
+                place.placeImgList!!
+            )
+            visitPlaceRepository.insertVisitPlace(temp)
+        }
+
+    } // End of saveRoomDB
 
     private fun initMap() {
         // TouchFrameLayout에 mapFragment 올려놓기
@@ -162,7 +186,14 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             }
 
             mContext.showToastMessage("위치 기록을 시작합니다.")
-            findNavController().navigate(R.id.action_travelLocationSelectFragment_to_travelLocationWriteFragment)
+
+            val bundle = bundleOf(
+                "type" to fragmentType
+            )
+            findNavController().navigate(
+                R.id.action_travelLocationSelectFragment_to_travelLocationWriteFragment,
+                bundle
+            )
         }
     } // End of startLocationRecording
 
@@ -233,9 +264,19 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             when (it) {
                 is NetworkResult.Success -> {
                     travelActivityViewModel.setGetUserTravelData(it.data!!)
-                    val placeList = travelActivityViewModel.userTravelData.value!!.location
                     locationList = ArrayList()
                     selectedList = ArrayList()
+
+
+                    // 수정해야할 데이터를 RoomDB에 저장.
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val deffered: Deferred<Int> = async {
+                            saveRoomDB()
+                            1
+                        }
+
+                        deffered.await()
+                    }
 
                     // Adapter 초기화
                     initAdapter()
@@ -243,10 +284,22 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                     // EventListener 초기화
                     initListener()
 
-                    val size = placeList!!.size
+                    val size = travelActivityViewModel.userTravelData.value!!.location!!.size
                     for (i in 0 until size) {
-                        setChipListener(locationList.indexOf(placeList[i]))
+                        setChipListener(locationList.indexOf(travelActivityViewModel.userTravelData.value!!.location!![i]))
                     }
+
+                    if (selectedList.isNotEmpty()) {
+                        binding.tvLocationHint.visibility = View.GONE
+                        binding.fabStart.apply {
+                            backgroundTintList =
+                                AppCompatResources.getColorStateList(requireContext(), R.color.main)
+                            isEnabled = true
+                            isClickable = true
+                        }
+                    }
+
+
                 }
                 is NetworkResult.Error -> {
                     Log.d(TAG, "유저 데이터 가져오기 실패")

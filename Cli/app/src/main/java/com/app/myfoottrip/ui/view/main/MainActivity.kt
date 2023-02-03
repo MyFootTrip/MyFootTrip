@@ -2,6 +2,7 @@ package com.app.myfoottrip.ui.view.main
 
 import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -48,7 +49,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
             this,
             arrayOf(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ), 0
         )
 

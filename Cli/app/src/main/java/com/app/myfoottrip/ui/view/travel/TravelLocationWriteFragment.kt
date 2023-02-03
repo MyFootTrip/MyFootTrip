@@ -4,8 +4,11 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
@@ -56,6 +59,10 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         SupervisorJob() + Dispatchers.IO
     )
 
+    // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
+    private var fragmentType = 0
+    private var getUserTravelData: List<VisitPlace> = emptyList()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -68,58 +75,40 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         locationProvider = LocationProvider(requireContext() as MainActivity)
     }
 
-    private fun locationClientSet() {
-        serviceScope = CoroutineScope(
-            SupervisorJob() + Dispatchers.IO
-        )
-
-        locationClient = DefaultLocationClient(
-            mContext, LocationServices.getFusedLocationProviderClient(mContext)
-        )
-
-        // 15분 기준으로 측정
-        locationClient!!.getLocationUpdates(1000L * 60L * 15L).catch { exception ->
-            exception.printStackTrace()
-        }.onEach { location ->
-
-            withContext(Dispatchers.IO) {
-                travelViewModel.setRecentCoor(Coordinates(location.latitude, location.longitude))
-            }
-
-        }.launchIn(
-            serviceScope
-        )
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initialize()
-
+        fragmentType = requireArguments().getInt("type")
         recentCoordinatesLiveDataObserve()
+
+        if (fragmentType == 2) {
+            Log.d(TAG, "onViewCreated: 수정 작업 입니다.")
+            Log.d(TAG, "가져온 데이터 : ${travelActivityViewModel.userTravelData.value}")
+
+            // 가져온 데이터가 제대로 확인되면, RoomDB에 저장된 값 가져오기
+            CoroutineScope(Dispatchers.IO).launch {
+                getUserTravelData = visitPlaceRepository.getAllVisitPlace()
+            }
+        }
+
+        changeMode(true)
+        initMap()
 
         // 처음 시작 하자마자 좌표를 바로 들고옴
         locationClientSet()
+
+        binding.tvStartTime.text = TimeUtils.getDateTimeString(System.currentTimeMillis())
+        CoroutineScope(Dispatchers.IO).launch {
+            setButtonListener()
+        }
+
+
+
     } // End of onViewCreated
 
-    private fun initialize() {
-        changeMode(true)
-        initMap()
-        setButtonListener()
-        initData()
-    } // End of initialize
-
-    private fun initData() {
-        binding.tvStartTime.text = TimeUtils.getDateTimeString(System.currentTimeMillis())
-        if (travelViewModel.selectedtravel == null) {
-            //TODO : 기존 여정 세팅
-        }
-    } // End of initData
-
-
-    private fun setButtonListener() {
+    private suspend fun setButtonListener() {
         binding.apply {
-            fabPause.setOnClickListener { //일시정지
-                // LocationConstants.stopLocation()
+            // 좌표 백그라운드 작업 중지
+            fabPause.setOnClickListener {
                 changeMode(false)
 
                 val mainActivity = requireActivity() as MainActivity
@@ -131,10 +120,12 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 serviceScope.cancel()
             }
 
+
+            // 좌표 백그라운드 다시 시작
             fabRestart.setOnClickListener {
                 val mainActivity = requireActivity() as MainActivity
                 CoroutineScope(Dispatchers.IO).launch {
-                    mainActivity.stopLocationBackground()
+                    mainActivity.startLocationBackground()
                 }
                 showToast("위치 기록을 시작합니다.", ToastType.SUCCESS)
                 changeMode(true)
@@ -160,23 +151,52 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             val mainActivity = requireActivity() as MainActivity
             mainActivity.stopLocationBackground()
 
+            val bundle = bundleOf("type" to fragmentType)
+
             // 수정하는 페이지로 이동
             Navigation.findNavController(binding.fabStop)
-                .navigate(R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment)
+                .navigate(R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment, bundle)
         }
     } // End of stopLocationRecordingAndSaving
 
     // 현재 위치를 저장하는 메소드
-    private fun nowLocationSave() {
+    private suspend fun nowLocationSave() = CoroutineScope(Dispatchers.IO).launch {
         binding.btnAddPoint.setOnClickListener {
-            saveTravel(
-                locationProvider.getLocationLatitude(),
-                locationProvider.getLocationLongitude()
-            )
+            CoroutineScope(Dispatchers.IO).launch {
+                saveTravel(
+                    locationProvider.getLocationLatitude(),
+                    locationProvider.getLocationLongitude()
+                )
+            }
         }
+
     } // End of nowLocationSaving
 
-    private fun saveTravel(lat: Double, lon: Double) {
+    private fun locationClientSet() {
+        serviceScope = CoroutineScope(
+            SupervisorJob() + Dispatchers.IO
+        )
+
+        locationClient = DefaultLocationClient(
+            mContext, LocationServices.getFusedLocationProviderClient(mContext)
+        )
+
+        // 15분 기준으로 측정
+        locationClient!!.getLocationUpdates(2000L).catch { exception ->
+            exception.printStackTrace()
+        }.onEach { location ->
+
+            travelViewModel.setRecentCoor(Coordinates(location.latitude, location.longitude))
+
+        }.launchIn(
+            serviceScope
+        )
+    }
+
+    private suspend fun saveTravel(lat: Double, lon: Double) {
+        binding.fabStop.isClickable = false
+        binding.btnAddPoint.isClickable = false
+
         val temp = VisitPlace(
             0,
             "",
@@ -187,10 +207,34 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         )
 
         CoroutineScope(Dispatchers.IO).launch {
-            visitPlaceRepository.insertVisitPlace(temp)
+            val deffered: Deferred<Int> = async {
+                visitPlaceRepository.insertVisitPlace(temp)
+                1
+            }
+
+            deffered.await()
+
+            var temp: List<VisitPlace> = emptyList()
+
+            val deffered2: Deferred<Int> = async {
+                Log.d(TAG, "visitPlaceRepository.getAllVisitPlace(): 시작 ")
+                temp = visitPlaceRepository.getAllVisitPlace()
+                Log.d(TAG, "visitPlaceRepository.getAllVisitPlace(): 끝 ")
+                1
+            }
+            deffered2.await()
+
+            Log.d(TAG, "temp: ${temp} ")
+
+            binding.fabStop.isClickable = true
+            binding.btnAddPoint.isClickable = true
         }
 
-        showToast("현재 위치 저장 성공")
+        withContext(Dispatchers.Main) {
+            showToast("현재 위치 저장 성공")
+        }
+
+        Log.d(TAG, "saveTravel: 저장 성공끝")
     } // End of saveTravel
 
 
@@ -231,9 +275,13 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     } // End of changeMode
 
     private fun recentCoordinatesLiveDataObserve() {
-        travelViewModel.recentCoor.observe(viewLifecycleOwner) {
-            // 좌표에 새로운 값이 들어왔는데, 오차 범위를 벗어나는지 계산해야됨.
 
+
+
+        travelActivityViewModel.recentCoor.observe(viewLifecycleOwner) {
+            // 좌표에 새로운 값이 들어왔는데, 오차 범위를 벗어나는지 계산해야됨.
+            Log.d(TAG, "recentCoordinatesLiveDataObserve: 잘 동작하나요?")
+            
             if (preCoor != null) {
                 val dist = DistanceManager.getDistance(
                     it.latitude!!,
@@ -241,18 +289,22 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                     preCoor.latitude!!,
                     preCoor.longitude!!
                 )
+                // 이전의 좌표를 아래에 저장해서 비교함
                 preCoor.latitude = it.latitude
                 preCoor.longitude = it.longitude
 
                 // 가장 최근에 찍힌 좌표와 현재 나의 위치를 기준으로 500M를 벗어나면 데이터를 저장함
                 if (dist > 500) {
-                    saveTravel(it.latitude!!, it.longitude!!)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        saveTravel(it.latitude!!, it.longitude!!)
+                    }
+                    Log.d(TAG, "같은 위치")
                     Log.d(TAG, "dist calc: 오차 범위를 벗어나지 못함")
                 }
             }
         }
     } // End of recentCoordinatesLiveDataObserve
-    
+
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
@@ -275,7 +327,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "onDestroy: ")
         LocationConstants.serviceUnBind(requireContext())
     } // End of onDestroy
 
@@ -294,5 +345,4 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
     } // End of onMapReady
-
 } // End of TravelLocationWriteFragment class

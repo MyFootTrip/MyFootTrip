@@ -39,7 +39,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     // ActivityViewModel
     private val travelActivityViewModel by activityViewModels<TravelActivityViewModel>()
 
-
     private var type = 0 // 0 : 여정 기록, 1 : 마이페이지, 2 : 게시글 작성
     private val userViewModel by activityViewModels<UserViewModel>()
     private lateinit var visitPlaceRepository: VisitPlaceRepository
@@ -128,10 +127,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         callback.remove()
     }
 
-    private fun fragmentBackStackClear() {
-        val fragmentManager: FragmentManager = activity!!.supportFragmentManager
-        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-    } // End of backStackClear
     
     private fun initCustomView() {
         if (type == 0) {
@@ -189,7 +184,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 //                findNavController().popBackStack()
             }
             btnSave.setOnClickListener {
-                //TODO : select 된 상태이면 -> 하는거
                 when (type) {
                     0 -> {
                         findNavController().navigate(

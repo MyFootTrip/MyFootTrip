@@ -28,6 +28,7 @@ import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
+import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
@@ -35,6 +36,7 @@ import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
+import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.*
 import ted.gun0912.clustering.naver.TedNaverClustering
 import java.io.IOException
@@ -62,9 +64,11 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     private var userTravelData: Travel? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var travelEditSaveItemAdapter: TravelEditSaveItemAdapter
-    private var count = 0
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
+
+    // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
+    private var fragmentType = 0
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -79,6 +83,12 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mapView = binding.mapFragment
+        fragmentType = requireArguments().getInt("type")
+
+        if (fragmentType == 2) {
+            Log.d(TAG, "onViewCreated: 수정 작업니다.")
+
+        }
 
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
@@ -89,37 +99,48 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             getData()
         }
 
-
         createTravelResponseObserve()
     } // End of onViewCreated
 
     // 첫번째 UI에 데이터 뿌려야 하므로 데이터 부터 가져오기
     private suspend fun getData() {
         // 데이터를 가져오고나서, Travel타입으로 변환한 후 UI로 뿌리는 작업을 진행한다.
-        val dataJob = CoroutineScope(Dispatchers.IO).async {
-            userVisitPlaceDataList = getSqlLiteAllData()
+        val dataJob = CoroutineScope(Dispatchers.IO).launch {
+            val defferedGetData : Deferred<Int> = async {
+                userVisitPlaceDataList = getSqlLiteAllData()
+                1
+            }
+
+            Log.d(TAG, "getData 1: ${getSqlLiteAllData()}")
+
+            defferedGetData.await()
+
+            Log.d(TAG, "getData 2: ${getSqlLiteAllData()}")
+
 
             // Travel Dto로 변환
-            val job = coroutineScope {
-                changeToTravelDto()
-            }
+            // 작업이 끝날 때 까지 기다려야됨
+
+            Log.d(TAG, "getData: ${userVisitPlaceDataList}")
+            changeToTravelDto()
 
             withContext(Dispatchers.Main) {
                 setUI()
+            }
+
+            withContext(Dispatchers.Main) {
                 setMapInMark()
+            }
+
+            withContext(Dispatchers.Main) {
                 buttonEvents()
             }
 
-            activity!!.runOnUiThread {
-                CoroutineScope(Dispatchers.Main).launch {
-                    //job1.await()
-                    //job1.join()
-                    //job2.await()
-                    //job2.join()
-                    //job3.await()
-                    // job3.join()
-                }
-            }
+//            activity!!.runOnUiThread {
+//                CoroutineScope(Dispatchers.Main).launch {
+//
+//                }
+//            }
         }
 
         dataJob.join()
@@ -127,38 +148,61 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
     // 가져온 데이터로 지도에 좌표 마크 표시하기
     private suspend fun setMapInMark() = CoroutineScope(Dispatchers.Main).launch {
-        TedNaverClustering.with<Place>(mContext, naverMap).customMarker {
-            Marker().apply {
-                icon = OverlayImage.fromResource(R.drawable.ic_black_circle)
-                width = 120
-                height = 120
-                captionText = "테스트2"
+//        TedNaverClustering.with<Place>(mContext, naverMap).customMarker {
+//            Marker().apply {
+//                icon = OverlayImage.fromResource(R.drawable.ic_black_circle)
+//                width = 120
+//                height = 120
+//                captionText = "테스트2"
+//            }
+//        }.customCluster {
+//            TextView(activity).apply {
+//                text = "테스트1"
+//                setTextSize(Dimension.SP, 12.0F)
+//                setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.main))
+//                setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+//                setPadding(10, 10, 10, 10)
+//            }
+//        }.items(userVisitPlaceDataList).make()
+
+        val markers = mutableListOf<Marker>()
+        userVisitPlaceDataList.forEach {
+            markers += Marker().apply {
+                position = LatLng(it.latitude!!, it.longitude!!)
+                icon = MarkerIcons.BLACK
+                captionText = it.placeName.toString()
             }
-        }.customCluster {
-            TextView(activity).apply {
-                text = "테스트1"
-                setTextSize(Dimension.SP, 12.0F)
-                setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.main))
-                setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                setPadding(10, 10, 10, 10)
-            }
-        }.items(userVisitPlaceDataList).make()
+        }
+
+        markers.forEach {
+            marker -> marker.map = naverMap
+        }
 
         Log.d(TAG, "setMapInMark: 이거 다 돌음?")
     }.join() // End of setMapInMark
 
     private fun changeToTravelDto() {
+        Log.d(TAG, "changeToTravelDto: $userVisitPlaceDataList")
+        
+//        userTravelData = Travel(
+//            null,
+//            travelActivityViewModel.locationList,
+//            userVisitPlaceDataList[0].saveDate, // 처음 시작 저장 시간
+//            Date(System.currentTimeMillis()), // 마지막 저장 시간
+//            userVisitPlaceDataList
+//        )
+
         userTravelData = Travel(
             null,
             travelActivityViewModel.locationList,
-            userVisitPlaceDataList[0].saveDate, // 처음 시작 저장 시간
+            Date(0), // 처음 시작 저장 시간
             Date(System.currentTimeMillis()), // 마지막 저장 시간
             userVisitPlaceDataList
         )
     } // End of changeToTravelDto
 
     // 유저의 여행 데이터를 불러와서 UI를 뿌리기
-    private fun setUI() {
+    private fun setUI() = CoroutineScope(Dispatchers.Main).launch {
         joinBackButtonCustomView = binding.joinBackButtonCustomview
         // 선택된 지역들을 쉼표로 연결해서 텍스트로 만듬
         binding.tvTravelTitle.text = userTravelData?.location?.joinToString(", ")
@@ -168,8 +212,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
         val startDateString = startDateFormat.format(userTravelData!!.startDate!!)
         val endDateString = endDateFormat.format(userTravelData!!.endDate!!)
-        binding.travelDateTv.text = "$startDateString - $endDateString"
 
+        binding.travelDateTv.text = "$startDateString - $endDateString"
         binding.traveTotalTimeTv.text = "총 시간 : ${totalTimeCalc()} "
 
         recyclerView = binding.travelEditSaveRecyclerview
@@ -188,8 +232,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             }
         })
 
-
-        Log.d(TAG, "setUI: 이거 다 돌음?")
     } // End of setUI
 
     private fun initRecyclerViewAdapter() {
@@ -205,7 +247,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         return dateFormat.format(diff)
     } // End of totalTimeCalc
 
-    private fun buttonEvents() {
+    private fun buttonEvents() = CoroutineScope(Dispatchers.Main).launch {
         // 저장 버튼 눌렀을 때 이벤트
         binding.travelEditSaveButton.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
@@ -236,19 +278,19 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         val job = CoroutineScope(Dispatchers.IO).async {
             val allVisitPlaceList = visitPlaceRepository.getAllVisitPlace()
 
+            // SQLLite데이터 전체 가져와서,
             // visitPlace를 변경해서 Place로 변경
             val size = allVisitPlaceList.size
-
-            // SQLLite 전체 데이터 가져오기
             for (i in 0 until size) {
                 val temp = allVisitPlaceList[i]
 
-                var address = ""
+                var address: String? = null
                 val job = CoroutineScope(Dispatchers.IO).launch {
                     address = getAddressByCoordinates(temp.lat, temp.lng)!!.getAddressLine(0)
                 }
 
                 job.join()
+                if (address == null) continue
 
                 placeList.add(
                     Place(
@@ -264,6 +306,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
         job.await()
         job.join()
+
+        Log.d(TAG, "placeList: $placeList")
 
         return placeList
     } // End of getSqlLiteAllData
@@ -287,8 +331,11 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                                         R.id.action_editSaveTravelFragment_to_travelSelectFragment,
                                         bundle
                                     )
-
                                 }
+                            }
+
+                            withContext(Dispatchers.Main) {
+                                showToast("저장이 완료되었습니다.")
                             }
                         }
                     }

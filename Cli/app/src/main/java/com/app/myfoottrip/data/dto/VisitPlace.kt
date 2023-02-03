@@ -13,20 +13,20 @@ data class VisitPlace(
     val lat: Double, //위도
     val lng: Double, //경도
     val date: Long? = 0, //기록 시간
-    val imgList: List<MultipartBody.Part> = emptyList()
+    val imgList: List<String> = emptyList()
 ) {
     @PrimaryKey(autoGenerate = true)
     var ID: Long = 0L //PK
 
     constructor(
         id: Long,
-        number : Int,
+        number: Int,
         address: String,
         lat: Double,
         lng: Double,
         date: Long,
-        imgeList: List<MultipartBody.Part>
-    ) : this(number, address, lat, lng, date, imgeList) {
+        imgList: List<String>
+    ) : this(number, address, lat, lng, date, imgList) {
         this.ID = id;
     }
 }

@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app.myfoottrip.Application
 import com.app.myfoottrip.data.dto.Coordinates
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.repository.TravelRepository
@@ -16,6 +15,17 @@ import kotlinx.coroutines.withContext
 private const val TAG = "TravelViewModel_싸피"
 
 class TravelViewModel : ViewModel() {
+
+//    init {
+//        viewModelScope.launch {
+//            EventBus.subscribe<Coordinates>().collect {
+//                value ->
+//                Log.d(TAG, "eventBus: $value")
+//                _recentCoor.value = (value)
+//            }
+//        }
+//    }
+
     private val travelRepository = TravelRepository()
     var selectedtravel: Travel? = null
 

@@ -78,7 +78,6 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
     } // End of onViewCreatedkakaoLogin
 
     private fun kakaoLogin() {
-
         // 카카오톡으로 로그인
         UserApiClient.instance.loginWithKakaoTalk(mContext) { token, error ->
             if (error != null) {
@@ -150,6 +149,9 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
                 // 네이버 로그인 API 호출 성공 시 유저 정보를 가져온다
                 NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
                     override fun onSuccess(result: NidProfileResponse) {
+                        val naverAccessToken = NaverIdLoginSDK.getAccessToken()
+                        Log.d(TAG, "naverAccessToken : $naverAccessToken")
+
                         name = result.profile?.name.toString()
                         email = result.profile?.email.toString()
                         phone = result.profile?.mobile.toString()
@@ -174,6 +176,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
                 //
             }
         }
+
 
         NaverIdLoginSDK.initialize(
             requireContext(),
