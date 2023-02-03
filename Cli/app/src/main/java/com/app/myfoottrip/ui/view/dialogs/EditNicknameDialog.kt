@@ -7,11 +7,14 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.DialogEditNicknameBinding
 import com.app.myfoottrip.util.DeviceSizeUtil
 
 class EditNicknameDialog() : DialogFragment() {
+
     private var _binding: DialogEditNicknameBinding? = null
     private val binding get() = _binding!!
     private lateinit var mContext: Context
@@ -42,7 +45,18 @@ class EditNicknameDialog() : DialogFragment() {
         binding.apply {
             ivCancelBtn.setOnClickListener { dismiss() } // 취소 버튼 클릭
         }
-    }
+    } // End of onViewCreated
+
+    private fun init() {
+        initUser()
+    } // End of init
+
+    // 유저정보 데이터 초기화
+    private fun initUser(){
+        binding.apply {
+            // etEditNickname.text = "${userViewModel.wholeMyData.value?.join?.nickname}" // 닉네임
+        }
+    } // End of initUser
 
     override fun onDestroyView() {
         super.onDestroyView()

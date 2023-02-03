@@ -67,6 +67,7 @@
         android:cursorVisible="true"
         android:paddingStart="5dp"
         app:met_maxCharacters="15"
+        app:met_clearButton="true"
         app:met_errorColor="@color/heart_color"
         app:met_primaryColor="@color/main"
         app:layout_constraintEnd_toEndOf="parent"

@@ -58,6 +58,15 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
                 dialog.show(activity?.supportFragmentManager!!, "EditNicknameDialog")
             }
 
+            // 아이디 변경 페이지로 이동
+            chipEditEmail.setOnClickListener {
+                findNavController().navigate(R.id.action_editAccountFragment_to_editEmailFragment)
+            }
+
+            // 비밀번호 변경 페이지로 이동
+            chipEditPassword.setOnClickListener {
+                findNavController().navigate(R.id.action_editAccountFragment_to_editPasswordFragment)
+            }
 
         }
 

@@ -100,7 +100,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_bold"
-                        android:text="개인정보 수정"
+                        android:text="내 정보"
                         android:textColor="@color/black"
                         android:textSize="24sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -112,7 +112,7 @@
                         android:id="@+id/cl_edit_nickname"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="24dp"
+                        android:layout_marginTop="30dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_edit_account_title">
@@ -124,7 +124,7 @@
                             android:fontFamily="@font/inter_semibold"
                             android:text="닉네임"
                             android:textColor="@color/black"
-                            android:textSize="21sp"
+                            android:textSize="19sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -164,7 +164,7 @@
                         android:id="@+id/cl_edit_email"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="15dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/cl_edit_nickname">
@@ -176,7 +176,7 @@
                             android:fontFamily="@font/inter_semibold"
                             android:text="아이디"
                             android:textColor="@color/black"
-                            android:textSize="21sp"
+                            android:textSize="19sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -216,7 +216,7 @@
                         android:id="@+id/cl_edit_password"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="15dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/cl_edit_email">
@@ -228,7 +228,7 @@
                             android:fontFamily="@font/inter_semibold"
                             android:text="비밀번호"
                             android:textColor="@color/black"
-                            android:textSize="21sp"
+                            android:textSize="19sp"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -280,7 +280,7 @@
                         android:fontFamily="@font/inter_bold"
                         android:text="연결된 SNS 계정"
                         android:textColor="@color/black"
-                        android:textSize="24sp"
+                        android:textSize="30sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
