@@ -1,14 +1,17 @@
 package com.app.myfoottrip.ui.view.travel
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
@@ -53,7 +56,65 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     private lateinit var mContext: Context
     private var locationClient: LocationClient? = null
 
-    private val preCoor: Coordinates? = null
+    private var preCoor: Coordinates? = null
+    private lateinit var logReceiver: LogReceiver
+
+    inner class LogReceiver() : BroadcastReceiver() {
+        var distCount = 0
+        var flag = false
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val action = intent!!.action
+            if ("test" == action) {
+                val newCoor = intent.getSerializableExtra("test") as Coordinates
+                Log.d(TAG, "onReceive: $newCoor")
+
+                if (preCoor != null) {
+                    val dist = DistanceManager.getDistance(
+                        newCoor.latitude!!,
+                        newCoor.longitude!!,
+                        preCoor!!.latitude!!,
+                        preCoor!!.longitude!!
+                    )
+                    // 이전의 좌표를 아래에 저장해서 비교함
+                    preCoor!!.latitude = newCoor.latitude
+                    preCoor!!.longitude = newCoor.longitude
+
+                    if (dist > 500) {
+                        // 가장 최근에 찍힌 좌표와 현재 나의 위치를 기준으로 500M를 벗어나면 다시 flag와 distCount를 초기화
+                        flag = false
+                        distCount = 0
+                    }
+
+                    if (dist <= 500) {
+                        Log.d(TAG, "같은 위치")
+                        Log.d(TAG, "dist calc: 오차 범위를 벗어나지 못함")
+
+                        if (flag == false) {
+                            distCount++
+                        }
+
+                        if (distCount == 4 && flag == false) {
+                            // 지도에 마커표시 하기 위해서 DB등록
+                            // 4번의 동일한 좌표가 찍히고 나면 RoomDB에 데이터 추가
+
+                            CoroutineScope(Dispatchers.IO).launch {
+                                saveTravel(newCoor.latitude!!, newCoor.longitude!!)
+                            }
+
+                            Log.d(TAG, "onReceive: 더 이상 count가 증가하지 않음 ${distCount}")
+                            // 한번 마커가 표시되면, 더 이상 마커가 찍히지 않도록 flag값을 true로 고정해놓음
+                            // 만약 오차범위를 벗어나면 그때 다시 flag를 false처리함.
+                            flag = true
+                            distCount = 0
+                        }
+                    }
+                } else {
+                    preCoor = newCoor
+                }
+            }
+        }
+    }
 
     private var serviceScope = CoroutineScope(
         SupervisorJob() + Dispatchers.IO
@@ -73,6 +134,21 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         super.onCreate(savedInstanceState)
         visitPlaceRepository = VisitPlaceRepository.get()
         locationProvider = LocationProvider(requireContext() as MainActivity)
+        logReceiver = LogReceiver()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        activity!!.registerReceiver(logReceiver, IntentFilter("test"))
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activity!!.unregisterReceiver(logReceiver)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,9 +176,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         CoroutineScope(Dispatchers.IO).launch {
             setButtonListener()
         }
-
-
-
     } // End of onViewCreated
 
     private suspend fun setButtonListener() {
@@ -249,7 +322,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         mapFragment.getMapAsync(this)
     } // End of initMap
 
-
     //기록 중인지 일시정지 중인지 화면 전환하는 코드
     private fun changeMode(type: Boolean) { // true : 진행중 false : 일시정지
         binding.apply {
@@ -275,33 +347,55 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     } // End of changeMode
 
     private fun recentCoordinatesLiveDataObserve() {
-
-
+        var distCount = 0
+        var flag = false
 
         travelActivityViewModel.recentCoor.observe(viewLifecycleOwner) {
             // 좌표에 새로운 값이 들어왔는데, 오차 범위를 벗어나는지 계산해야됨.
-            Log.d(TAG, "recentCoordinatesLiveDataObserve: 잘 동작하나요?")
-            
             if (preCoor != null) {
                 val dist = DistanceManager.getDistance(
                     it.latitude!!,
                     it.longitude!!,
-                    preCoor.latitude!!,
-                    preCoor.longitude!!
+                    preCoor!!.latitude!!,
+                    preCoor!!.longitude!!
                 )
                 // 이전의 좌표를 아래에 저장해서 비교함
-                preCoor.latitude = it.latitude
-                preCoor.longitude = it.longitude
+                preCoor!!.latitude = it.latitude
+                preCoor!!.longitude = it.longitude
 
-                // 가장 최근에 찍힌 좌표와 현재 나의 위치를 기준으로 500M를 벗어나면 데이터를 저장함
                 if (dist > 500) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        saveTravel(it.latitude!!, it.longitude!!)
-                    }
+                    // 가장 최근에 찍힌 좌표와 현재 나의 위치를 기준으로 500M를 벗어나면 다시 flag와 distCount를 초기화
+                    flag = false
+                    distCount = 0
+                }
+
+                if (dist <= 500) {
                     Log.d(TAG, "같은 위치")
                     Log.d(TAG, "dist calc: 오차 범위를 벗어나지 못함")
+
+                    if (flag == false) {
+                        distCount++
+                    }
+
+                    if (distCount == 4 && flag == false) {
+                        // 지도에 마커표시 하기 위해서 DB등록
+                        // 4번의 동일한 좌표가 찍히고 나면 RoomDB에 데이터 추가
+
+                        CoroutineScope(Dispatchers.IO).launch {
+                            saveTravel(it.latitude!!, it.longitude!!)
+                        }
+
+                        Log.d(TAG, "onReceive: 더 이상 count가 증가하지 않음 ${distCount}")
+                        // 한번 마커가 표시되면, 더 이상 마커가 찍히지 않도록 flag값을 true로 고정해놓음
+                        // 만약 오차범위를 벗어나면 그때 다시 flag를 false처리함.
+                        flag = true
+                        distCount = 0
+                    }
                 }
+            } else {
+                preCoor = it
             }
+
         }
     } // End of recentCoordinatesLiveDataObserve
 

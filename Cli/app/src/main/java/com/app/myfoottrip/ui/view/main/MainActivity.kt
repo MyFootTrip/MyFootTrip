@@ -23,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-private const val TAG = "MainActivity_마이풋트립"
+private const val TAG = "MainActivity_싸피"
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainActivity class
 
@@ -73,6 +73,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
             when (it) {
                 is NetworkResult.Success -> {
                     CoroutineScope(Dispatchers.Main).launch {
+                        Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.data}")
+                        
                         userViewModel.setWholeMyData(it.data!!)
 
                         coroutineScope {

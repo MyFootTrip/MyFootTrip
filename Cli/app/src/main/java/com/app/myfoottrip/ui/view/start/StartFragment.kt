@@ -1,18 +1,21 @@
 package com.app.myfoottrip.ui.view.start
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.databinding.FragmentStartBinding
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.ui.view.main.MainActivity
+import com.app.myfoottrip.util.NetworkResult
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -25,9 +28,6 @@ import com.navercorp.nid.profile.data.NidProfileResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 private const val TAG = "StartFragment_싸피"
 
@@ -39,6 +39,8 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
     private var name: String = ""
     private lateinit var mContext: Context
 
+    private val tokenViewModel by viewModels<TokenViewModel>()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -46,6 +48,9 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        postNaverAccessTokenResponseObserve()
+
         binding.apply {
             btnLogin.setOnClickListener {
                 showLoginFragment()
@@ -150,7 +155,13 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
                 NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
                     override fun onSuccess(result: NidProfileResponse) {
                         val naverAccessToken = NaverIdLoginSDK.getAccessToken()
-                        Log.d(TAG, "naverAccessToken : $naverAccessToken")
+
+                        Log.d(TAG, "naverAccessToken: $naverAccessToken")
+
+                        // 성공으로 AccessToken이 넘어왔을 때, 통신 시작.
+                        CoroutineScope(Dispatchers.IO).launch {
+                            tokenViewModel.postNaverAccessToken(naverAccessToken.toString())
+                        }
 
                         name = result.profile?.name.toString()
                         email = result.profile?.email.toString()
@@ -212,5 +223,34 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
     private fun showLoginFragment() {
         findNavController().navigate(R.id.action_userFragment_to_loginFragment)
     } // End of showLoginFragment
+
+    private fun postNaverAccessTokenResponseObserve() {
+        tokenViewModel.postNaverAccessTokenResponseLiveData.observe(viewLifecycleOwner) {
+
+            when (it) {
+                is NetworkResult.Success -> {
+
+                    if (it.data!!.access_token != null && it.data!!.refresh_token != null) {
+                        // 네이버 AccessToken으로 회원가입 및 로그인 성공,
+                        Application.sharedPreferencesUtil.addUserAccessToken(it.data!!.access_token.toString())
+                        Application.sharedPreferencesUtil.addUserRefreshToken(it.data!!.refresh_token.toString())
+
+                        val intent = Intent(activity, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                        startActivity(intent)
+                        activity!!.finish()
+                    }
+                }
+                is NetworkResult.Error -> {
+                    Log.d(TAG, "이메일 체크 Error: ${it.data}")
+                }
+                is NetworkResult.Loading -> {
+//                    progressbar.isVisible = true
+//                    progressbar.visibility = View.VISIBLE
+                }
+            }
+
+        }
+    } // End of postNaverAccessTokenResponseObserve
 
 } // End of StartFragment class

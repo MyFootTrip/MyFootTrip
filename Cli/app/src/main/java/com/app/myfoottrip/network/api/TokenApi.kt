@@ -2,6 +2,7 @@ package com.app.myfoottrip.network.api
 
 import com.app.myfoottrip.data.dto.Token
 import com.app.myfoottrip.data.dto.User
+import com.google.gson.JsonObject
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -18,4 +19,9 @@ interface TokenApi {
     // access_token을 헤더에 담아서 보내기
     @GET("accounts/jwtdetail/")
     suspend fun getUserDataByAccessToken(): Response<User>
+
+    // NaverLogin Token보내기
+    @POST("accounts/social_login/naver/")
+    suspend fun postNaverAccessToken(@Body token: JsonObject): Response<Token>
+
 } // End of TokenApi Interface

@@ -32,4 +32,14 @@ class TokenViewModel : ViewModel() {
             }
         }
     } // End of getUserDataByAccessToken
+
+    // ======================== 네이버 토큰 통신 ========================
+    val postNaverAccessTokenResponseLiveData: LiveData<NetworkResult<Token>>
+        get() = tokenRepository.postNaverAccessTokenResponseLiveData
+
+    suspend fun postNaverAccessToken(token: String) {
+        viewModelScope.launch {
+            tokenRepository.postNaverAccessToken(token)
+        }
+    } // End of postNaverAccessToken
 } // End of TokenViewModel class
