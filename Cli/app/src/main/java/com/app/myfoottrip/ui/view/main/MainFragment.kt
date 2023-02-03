@@ -28,15 +28,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
         mContext = context
     } // End of onAttach
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (navigationViewModel.type == 4){
-            binding.bottomNavigationView.menu.setGroupCheckable(0,true,false)
-            binding.bottomNavigationView.menu.findItem(R.id.mypageFragment).isChecked = false
-            navigationViewModel.type = 0
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -47,24 +38,33 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
             bottomNavigationView.menu.getItem(1).isEnabled = false //가운데 아이템 선택 불가능
         }
     } // End of onViewCreated
-    
+
+    override fun onResume() {
+        super.onResume()
+        if (navigationViewModel.type == 4){
+            binding.bottomNavigationView.menu.findItem(R.id.homeFragment).isChecked = true
+        }
+    }
+
     //바텀 네비게이션 설정
     private fun initNavigation() {
         binding.apply {
-            if (navigationViewModel.type == 4){
-                bottomNavigationView.menu.setGroupCheckable(0,true,false)
-                bottomNavigationView.menu.findItem(R.id.mypageFragment).isChecked = false
-                navigationViewModel.type = 0
-            }else{
-                when(navigationViewModel.type){
-                    0 -> {parentFragmentManager.beginTransaction()
+            
+            when (navigationViewModel.type) {
+                0 -> {
+                    parentFragmentManager.beginTransaction()
                         .replace(R.id.nav_bottom_fragment, HomeFragment()).commit()
-                    }
-                    1 -> {parentFragmentManager.beginTransaction()
-                        .replace(R.id.nav_bottom_fragment, MyPageFragment()).commit()}
                 }
-
+                1 -> {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.nav_bottom_fragment, MyPageFragment()).commit()
+                }
+                4 -> {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.nav_bottom_fragment, HomeFragment()).commit()
+                }
             }
+
             bottomNavigationView.setOnItemSelectedListener {
                 navigationSelected(it)
             }

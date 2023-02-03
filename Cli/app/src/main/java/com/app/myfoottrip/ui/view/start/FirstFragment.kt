@@ -31,7 +31,6 @@ class FirstFragment : BaseFragment<FragmentFirstBinding>(
     //바텀 네비게이션 설정
     private fun initNavigation() {
         binding.apply {
-            Log.d(TAG, "initNavigation: ${navigationViewModel.startPage}")
             when(navigationViewModel.startPage){
                 0 -> {parentFragmentManager.beginTransaction()
                     .replace(R.id.fragment_start, SplashFragment()).commit()}
