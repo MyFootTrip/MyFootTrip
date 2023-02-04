@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_extra_light"
                 android:padding="10dp"
-                android:text="강남역 어딘가"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -122,7 +122,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_semibold"
             android:padding="5dp"
-            android:text="서울특별시 강남구 xx동 xx아파트 304호"
+            android:text=""
             android:textColor="@color/black"
             app:layout_constraintLeft_toLeftOf="@id/card_map"
             app:layout_constraintTop_toBottomOf="@id/card_map" />
@@ -169,7 +169,7 @@
                 android:minHeight="200dp"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="20dp"
-                android:text="장소의 내용입니다."
+                android:text=""
                 android:textColor="@color/black"
                 app:layout_constraintRight_toRightOf="@id/card_map"
                 app:layout_constraintTop_toBottomOf="@id/card_map" />

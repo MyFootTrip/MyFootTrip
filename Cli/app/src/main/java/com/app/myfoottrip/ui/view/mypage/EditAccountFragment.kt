@@ -102,7 +102,8 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
             //프로필 이미지
             if (userViewModel.wholeMyData.value?.join?.profile_image.isNullOrEmpty()) {
                 editProfileImageview.setPadding(55)
-                Glide.with(this@EditAccountFragment).load(R.drawable.ic_my).fitCenter().into(editProfileImageview)cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
+                Glide.with(this@EditAccountFragment).load(R.drawable.ic_my).fitCenter().into(editProfileImageview)
+                cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
             } else {
                 Glide.with(this@EditAccountFragment)
                     .load(userViewModel.wholeMyData.value?.join?.profile_image)

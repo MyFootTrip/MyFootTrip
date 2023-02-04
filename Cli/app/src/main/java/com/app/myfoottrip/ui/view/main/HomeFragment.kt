@@ -87,18 +87,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         getData()
     }
 
-    private fun startLoading() {
-        ProgressLoadingIGB.startLoadingIGB(requireContext()) {
-            message = "Good Morning!" //  Center Message
-            srcLottieJson = R.raw.loading_walk // Tour Source JSON Lottie
-            timer = 10000                   // Time of live for progress.
-            hight = 500 // Optional
-            width = 500 // Optional
-        }
-    } // End of startLoading
-
     private fun initHomeAdapter(boardList: ArrayList<Board>) {
-
         //정렬 기준
         if(sortBy == "최신순") boardList.sortByDescending { it.writeDate }
         else boardList.sortByDescending { it.likeList.size }
@@ -366,12 +355,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     initHomeAdapter(it.data as ArrayList<Board>)
+                    binding.lottieHome.pauseAnimation()
+                    binding.lottieHome.visibility = View.INVISIBLE
                 }
                 is NetworkResult.Error -> {
                     Log.d(TAG, "게시물 조회 Error: ${it.data}")
                 }
                 is NetworkResult.Loading -> {
-                    startLoading()
+                    binding.lottieHome.visibility = View.VISIBLE
+                    binding.lottieHome.playAnimation()
                 }
             }
         }
@@ -389,12 +381,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     initHomeAdapter(it.data as ArrayList<Board>)
+                    binding.lottieHome.pauseAnimation()
+                    binding.lottieHome.visibility = View.INVISIBLE
                 }
                 is NetworkResult.Error -> {
                     Log.d(TAG, "게시물 조회 Error: ${it.data}")
                 }
                 is NetworkResult.Loading -> {
-                    startLoading()
+                    binding.lottieHome.visibility = View.VISIBLE
+                    binding.lottieHome.playAnimation()
                 }
             }
         }

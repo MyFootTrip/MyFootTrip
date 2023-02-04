@@ -3,7 +3,6 @@ package com.app.myfoottrip.ui.view.board
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.PopupMenu
@@ -94,8 +93,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
                 popupMenu.setOnMenuItemClickListener {
                     when(it.itemId){
                         R.id.menu_update -> {
-//                            updateCommentObserver(position)
-//                            updateCommentInput(commentId)
+                            findNavController().navigate(R.id.action_boardFragment_to_updateBoardFragment)
                             return@setOnMenuItemClickListener true
                         }
                         R.id.menu_delete -> {

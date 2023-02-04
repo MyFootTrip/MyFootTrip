@@ -45,6 +45,9 @@
             android:id="@+id/action_boardFragment_to_mainFragment"
             app:popUpTo="@id/mainFragment"
             app:popUpToInclusive="false"/>
+        <action
+            android:id="@+id/action_boardFragment_to_updateBoardFragment"
+            app:destination="@id/updateBoardFragment" />
     </fragment>
     <fragment
         android:id="@+id/travelSelectFragment"
@@ -152,6 +155,16 @@
         android:name="com.app.myfoottrip.ui.view.mypage.EditPasswordFragment"
         android:label="fragment_edit_password"
         tools:layout="@layout/fragment_edit_password" />
+    <fragment
+        android:id="@+id/updateBoardFragment"
+        android:name="com.app.myfoottrip.ui.view.board.UpdateBoardFragment"
+        android:label="fragment_update_board"
+        tools:layout="@layout/fragment_update_board" >
+        <action
+            android:id="@+id/action_updateBoardFragment_to_mainFragment"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
 
 
 </navigation>

@@ -44,6 +44,9 @@ class BoardViewModel : ViewModel() {
     val likeList : LiveData<NetworkResult<ArrayList<Board>>>
         get() = boardRepository.likeBoardResponseLiveData
 
+    val updateBoard : LiveData<NetworkResult<Board>>
+        get() = boardRepository.updateBoardResponseLiveData
+
     val deleteBoard : LiveData<NetworkResult<String>>
         get() = boardRepository.deleteBoardResponseLiveData
 
@@ -80,6 +83,13 @@ class BoardViewModel : ViewModel() {
     fun getBoard(boardId: Int){
         viewModelScope.launch {
             boardRepository.getBoard(boardId)
+        }
+    }
+
+    //게시물 수정
+    fun updateBoard(boardId: Int, board: Board){
+        viewModelScope.launch {
+            boardRepository.updateBoard(boardId,board)
         }
     }
 

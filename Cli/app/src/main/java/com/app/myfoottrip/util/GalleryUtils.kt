@@ -94,6 +94,7 @@ object GalleryUtils {
                         }
                     }
                     val imageRef = fbStore.child("image/$direction/${url[i]}")
+                    Log.d(TAG, "insertImage: $imageRef")
                     list.add(imageRef.putFile(imgUri[i]).await().storage.downloadUrl.await().toString())
                 }.join()
             }

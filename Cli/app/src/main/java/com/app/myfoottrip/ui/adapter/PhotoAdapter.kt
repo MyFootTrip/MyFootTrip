@@ -31,8 +31,6 @@ class PhotoAdapter(var imageList:List<Uri>) : RecyclerView.Adapter<PhotoAdapter.
             deleteBtn.setOnClickListener{
                 itemClickListner.onClick(it, layoutPosition)
             }
-
-            Log.d(TAG, "bindInfo: $imageUrl")
         }
     }
 

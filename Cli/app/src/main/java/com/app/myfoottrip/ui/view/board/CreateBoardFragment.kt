@@ -69,12 +69,9 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
 
         binding.apply {
             ivBack.setOnClickListener { findNavController().popBackStack() } //뒤로가기
-            photoAddBtn.setOnClickListener {
-                GalleryUtils.getGallery(
-                    requireContext(),
-                    imageLauncher
-                )
-            } //갤러리 이미지 불러오기 버튼
+            photoAddBtn.setOnClickListener { //갤러리 이미지 불러오기 버튼
+                GalleryUtils.getGallery(requireContext(), imageLauncher)
+            }
 
             //게시물 등록하기 버튼
             btnCreate.setOnClickListener {

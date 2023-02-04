@@ -31,6 +31,8 @@ interface BoardService {
     suspend fun getBoard(@Path("boardId") boardId: Int): Response<Board>
 
     //게시물 수정
+    @PUT("/community/board/detail/{boardId}/")
+    suspend fun updateBoard(@Path("boardId") boardId: Int, @Body board: Board): Response<Board>
 
     //게시물 삭제
     @DELETE("/community/board/detail/{boardId}/")
