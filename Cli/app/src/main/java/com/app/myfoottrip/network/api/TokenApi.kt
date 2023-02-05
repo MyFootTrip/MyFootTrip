@@ -9,7 +9,6 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface TokenApi {
-
     // refreshToken을 제출해서 accessToken을 발급받는 API
     @POST("token/refresh/")
     suspend fun refreshTokenAvailableCheck(
@@ -22,6 +21,14 @@ interface TokenApi {
 
     // NaverLogin Token보내기
     @POST("accounts/social_login/naver/")
-    suspend fun postNaverAccessToken(@Body token: JsonObject): Response<Token>
+    suspend fun postNaverLoginAccessToken(@Body token: JsonObject): Response<Token>
+
+    // Kakao Login Token 보내기
+    @POST("accounts/social_login/kakao/")
+    suspend fun postKakaoLoginAccessToken(@Body token: JsonObject): Response<Token>
+
+    // Google Login Token 보내기
+    @POST("accounts/social_login/google/")
+    suspend fun postGoogleLoignAccessToken(@Body token: JsonObject): Response<Token>
 
 } // End of TokenApi Interface

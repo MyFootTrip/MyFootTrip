@@ -33,13 +33,28 @@ class TokenViewModel : ViewModel() {
         }
     } // End of getUserDataByAccessToken
 
-    // ======================== 네이버 토큰 통신 ========================
-    val postNaverAccessTokenResponseLiveData: LiveData<NetworkResult<Token>>
-        get() = tokenRepository.postNaverAccessTokenResponseLiveData
+    // =================================== Social Login ===================================
+    val postSocialAccessTokenResponseLiveData: LiveData<NetworkResult<Token>>
+        get() = tokenRepository.postSocialLoginAccessTokenResponseLiveData
 
+    // =================================== Naver Login ===================================
     suspend fun postNaverAccessToken(token: String) {
         viewModelScope.launch {
-            tokenRepository.postNaverAccessToken(token)
+            tokenRepository.postNaverLoginAccessToken(token)
         }
     } // End of postNaverAccessToken
+
+    // =================================== Kakao Login ===================================
+    suspend fun postKakaoAccessToken(token: String) {
+        viewModelScope.launch {
+            tokenRepository.postKakaoLoginAccessToken(token)
+        }
+    } // End of postKakaoAccessToken
+
+    // =================================== Google Login ===================================
+    suspend fun postGoogleAccessToken(token: String) {
+        viewModelScope.launch {
+            tokenRepository.postGoogleLoginAccessToken(token)
+        }
+    } // End of postGoogleAccessToken
 } // End of TokenViewModel class

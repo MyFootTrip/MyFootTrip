@@ -45,16 +45,6 @@ class SharedPreferencesUtil(context: Context) {
         editor.apply()
     } // End of deleteRefreshToken
 
-    fun addUserCookie(cookies: HashSet<String>) {
-        val editor = preferences.edit()
-        editor.clear()
-        editor.apply()
-    } // End of addUserCookie
-
-    fun getUserCookie(): MutableSet<String>? {
-        return preferences.getStringSet(COOKIES_KEY_NAME, HashSet())
-    } // End of getUserCookie
-
     fun deleteUserCookie() {
         preferences.edit().remove(COOKIES_KEY_NAME).apply()
     } // End of deleteUserCookie
@@ -68,25 +58,4 @@ class SharedPreferencesUtil(context: Context) {
     fun getFcmToken(): String{
         return preferences.getString(FCM_TOKEN,"").toString()
     }
-
-    fun addLatitude(latitude: Double) {
-        val editor = preferences.edit()
-        editor.putLong(LATITUDE, latitude.toRawBits())
-        editor.apply()
-    } // End of addLatitude
-
-    fun addLongitude(longitude: Double) {
-        val editor = preferences.edit()
-        editor.putLong(LONITUDE, longitude.toRawBits())
-        editor.apply()
-    } // End of addLongitude
-
-    fun getLatitude(): Double {
-        return Double.fromBits(preferences.getLong(LATITUDE, 0L))
-    } // End of addLatitude
-
-    fun getLongitude(): Double {
-        return Double.fromBits(preferences.getLong(LONITUDE, 0L))
-    } // End of addLongitude
-
 } // End of SharedPreferencesUtil class

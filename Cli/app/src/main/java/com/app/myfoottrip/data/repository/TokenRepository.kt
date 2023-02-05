@@ -1,6 +1,5 @@
 package com.app.myfoottrip.data.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
@@ -75,34 +74,35 @@ class TokenRepository {
         }
     } // End of getUserDataByAccessToken
 
+    // =================================== Social Login ===================================
+    private val _postSocialLoginAccessTokenResponseLiveData = MutableLiveData<NetworkResult<Token>>()
+    val postSocialLoginAccessTokenResponseLiveData: LiveData<NetworkResult<Token>>
+        get() = _postSocialLoginAccessTokenResponseLiveData
 
+
+    // =================================== Naver Login ===================================
     private val _postNaverAccessTokenResponseLiveData = MutableLiveData<NetworkResult<Token>>()
     val postNaverAccessTokenResponseLiveData: LiveData<NetworkResult<Token>>
         get() = _postNaverAccessTokenResponseLiveData
 
-    // 네이버 토큰 통신
-    suspend fun postNaverAccessToken(token: String) {
+    suspend fun postNaverLoginAccessToken(token: String) {
         val param = JsonObject().apply {
             addProperty("token", token)
         }
-        val response = tokenApi.postNaverAccessToken(param)
+        val response = tokenApi.postNaverLoginAccessToken(param)
 
-        Log.d(TAG, "postNaverAccessToken: $response")
-        Log.d(TAG, "body: ${response.body()}")
-        Log.d(TAG, "message: ${response.message()}")
-
-        _postNaverAccessTokenResponseLiveData.postValue(NetworkResult.Loading())
+        _postSocialLoginAccessTokenResponseLiveData.postValue(NetworkResult.Loading())
 
         if (response.isSuccessful && response.body() != null) {
-            _postNaverAccessTokenResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+            _postSocialLoginAccessTokenResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
         } else if (response.errorBody() != null) {
-            _postNaverAccessTokenResponseLiveData.postValue(
+            _postSocialLoginAccessTokenResponseLiveData.postValue(
                 NetworkResult.Error(
                     response.errorBody()!!.string()
                 )
             )
         } else {
-            _postNaverAccessTokenResponseLiveData.postValue(
+            _postSocialLoginAccessTokenResponseLiveData.postValue(
                 NetworkResult.Error(
                     response.headers().toString()
                 )
@@ -110,5 +110,65 @@ class TokenRepository {
         }
     } // End of postNaverAccessToken
 
+    // =================================== Kakao Login ===================================
+    private val _postKakaoAccessTokenResponseLiveData = MutableLiveData<NetworkResult<Token>>()
+    val postKakaoAccessTokenResponseLiveData: LiveData<NetworkResult<Token>>
+        get() = _postKakaoAccessTokenResponseLiveData
 
+    suspend fun postKakaoLoginAccessToken(token: String) {
+        val param = JsonObject().apply {
+            addProperty("token", token)
+        }
+
+        val response = tokenApi.postKakaoLoginAccessToken(param)
+
+        _postSocialLoginAccessTokenResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _postSocialLoginAccessTokenResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _postSocialLoginAccessTokenResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _postSocialLoginAccessTokenResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
+    } // End of postKakaoAccessToken
+
+    // =================================== Google Login ===================================
+    private val _postGoogleAccessTokenResponseLiveData = MutableLiveData<NetworkResult<Token>>()
+    val postGoogleAccessTokenResponseLiveData: LiveData<NetworkResult<Token>>
+        get() = _postGoogleAccessTokenResponseLiveData
+
+    suspend fun postGoogleLoginAccessToken(token: String) {
+        val param = JsonObject().apply {
+            addProperty("token", token)
+        }
+
+        val response = tokenApi.postGoogleLoignAccessToken(param)
+
+        _postSocialLoginAccessTokenResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _postSocialLoginAccessTokenResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _postSocialLoginAccessTokenResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _postSocialLoginAccessTokenResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
+    } // End of postGoogleLoignAccessToken
 } // End of TokenRepository class

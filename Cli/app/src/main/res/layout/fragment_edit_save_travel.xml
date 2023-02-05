@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/all_constrainlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/travel_edit_save_top_constraintlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -14,67 +35,70 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-        <com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
+            <com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
                 android:id="@+id/join_back_button_customview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+            <TextView
                 android:id="@+id/tv_travel_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:paddingTop="16dp"
-                tools:text="서울"
                 android:textColor="@color/black"
                 android:textSize="24sp"
                 app:layout_constraintStart_toEndOf="@id/join_back_button_customview"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="서울" />
 
-        <TextView
+            <TextView
                 android:id="@+id/travel_date_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="2021.10.1 - 10.2"
                 android:textSize="10sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tv_travel_title"
                 app:layout_constraintTop_toBottomOf="@id/tv_travel_title"
-                tools:ignore="SmallSp" />
+                tools:ignore="SmallSp"
+                tools:text="2021.10.1 - 10.2" />
 
-        <TextView
+            <TextView
                 android:id="@+id/trave_total_time_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="총 시간 : 00시간 00분"
                 android:textColor="@color/black"
                 android:textSize="10sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:ignore="SmallSp" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                tools:ignore="SmallSp"
+                tools:text="총 시간 : 00시간 00분" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.naver.maps.map.MapView
+        <com.naver.maps.map.MapView
             android:id="@+id/map_fragment"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/travel_edit_save_recyclerview"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/travel_edit_save_top_constraintlayout" />
+            app:layout_constraintTop_toBottomOf="@+id/travel_edit_save_top_constraintlayout" />
 
-    <androidx.recyclerview.widget.RecyclerView
-            tools:listitem="@layout/list_itme_travel_edit_save"
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/travel_edit_save_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
-            app:layout_constraintBottom_toBottomOf="@id/travel_edit_save_button"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/travel_edit_save_button"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/map_fragment" />
+            app:layout_constraintTop_toBottomOf="@+id/map_fragment"
+            tools:listitem="@layout/list_itme_travel_edit_save" />
 
-    <androidx.appcompat.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/travel_edit_save_button"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
@@ -88,4 +112,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

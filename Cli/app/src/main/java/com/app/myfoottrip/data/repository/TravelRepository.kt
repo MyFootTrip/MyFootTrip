@@ -1,5 +1,6 @@
 package com.app.myfoottrip.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
@@ -25,9 +26,6 @@ class TravelRepository {
     private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Int>>()
     val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _createTravelResponseLiveData
-
-
-
 
 
     // 여행 데이터 추가
@@ -117,6 +115,10 @@ class TravelRepository {
 
     suspend fun userTravelDataUpdate(travelId: Int, updateTravelData: Travel) {
         val response = travelHeaderApi.updateTravel(travelId, updateTravelData)
+
+        Log.d(TAG, "userTravelDataUpdate: $response")
+        Log.d(TAG, "userTravelDataUpdate: ${response.body()}")
+        Log.d(TAG, "userTravelDataUpdate: ${response.message()}")
 
         // 처음은 Loading 상태로 지정
         _userTravelDataUpdateResponseLiveData.postValue(NetworkResult.Loading())

@@ -94,7 +94,7 @@
         app:layout_constraintLeft_toRightOf="@id/tv_sns"/>
     
     <com.github.nikartm.button.FitButton
-        android:id="@+id/btn_google"
+        android:id="@+id/btn_github"
         android:layout_marginTop="40dp"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
         app:fb_iconHeight="24dp"
         app:fb_iconWidth="24dp"
         android:layout_marginRight="20dp"
-        app:layout_constraintRight_toLeftOf="@id/btn_google"
+        app:layout_constraintRight_toLeftOf="@id/btn_github"
         app:layout_constraintTop_toBottomOf="@id/tv_sns" />
 
     <com.github.nikartm.button.FitButton
@@ -135,7 +135,7 @@
         app:fb_iconWidth="24dp"
         app:fb_iconColor="@color/white"
         android:layout_marginLeft="20dp"
-        app:layout_constraintLeft_toRightOf="@id/btn_google"
+        app:layout_constraintLeft_toRightOf="@id/btn_github"
         app:layout_constraintTop_toBottomOf="@id/tv_sns" />
 
     <TextView
@@ -148,7 +148,7 @@
         app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintLeft_toLeftOf="@id/cl_login"
         app:layout_constraintRight_toRightOf="@id/cl_login"
-        app:layout_constraintTop_toBottomOf="@id/btn_google" />
+        app:layout_constraintTop_toBottomOf="@id/btn_github" />
 
     <TextView
         android:id="@+id/tv_join"

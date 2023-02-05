@@ -22,7 +22,6 @@ import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentTravelLocationWriteBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
-import com.app.myfoottrip.util.LocationConstants
 import com.app.myfoottrip.util.LocationProvider
 import com.app.myfoottrip.util.TimeUtils
 import com.google.android.gms.location.LocationServices
@@ -154,7 +153,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentType = requireArguments().getInt("type")
-        recentCoordinatesLiveDataObserve()
 
         if (fragmentType == 2) {
             Log.d(TAG, "onViewCreated: 수정 작업 입니다.")
@@ -236,13 +234,41 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     private suspend fun nowLocationSave() = CoroutineScope(Dispatchers.IO).launch {
         binding.btnAddPoint.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                saveTravel(
-                    locationProvider.getLocationLatitude(),
-                    locationProvider.getLocationLongitude()
-                )
+                // 가장 최근에 찍힌 좌표가 이전의 좌표와 같을 경우, 저장을 수행하지 않음.
+
+                var recentPlace: VisitPlace? = null
+                coroutineScope {
+                    try {
+                        recentPlace = visitPlaceRepository.getMostRecentVisitPlace()
+                    } catch (exception: Exception) {
+                        Log.e(TAG, "nowLocationSave: ${exception.printStackTrace()}")
+                        Log.e(TAG, "nowLocationSave: 같은 좌표가 없거나, 테이블이 비어있습니다.")
+                    }
+                }
+
+                Log.d(TAG, "recentPlace: $recentPlace")
+
+                val nowLat = locationProvider.getLocationLatitude()
+                val nowLng = locationProvider.getLocationLongitude()
+
+                // 가장 최근의 좌표와 현재 찍은 좌표가 같을 경우 저장하지 않음
+                if (recentPlace != null && recentPlace!!.lat != nowLat && recentPlace!!.lng != nowLng) {
+                    saveTravel(
+                        nowLat,
+                        nowLng
+                    )
+                } else if (recentPlace == null) {
+                    saveTravel(
+                        nowLat,
+                        nowLng
+                    )
+                } else {
+                    withContext(Dispatchers.Main) {
+                        showToast("이전의 좌표와 동일해서 저장하지 않습니다")
+                    }
+                }
             }
         }
-
     } // End of nowLocationSaving
 
     private fun locationClientSet() {
@@ -258,9 +284,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         locationClient!!.getLocationUpdates(2000L).catch { exception ->
             exception.printStackTrace()
         }.onEach { location ->
-
             travelViewModel.setRecentCoor(Coordinates(location.latitude, location.longitude))
-
         }.launchIn(
             serviceScope
         )
@@ -288,16 +312,11 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             deffered.await()
 
             var temp: List<VisitPlace> = emptyList()
-
             val deffered2: Deferred<Int> = async {
-                Log.d(TAG, "visitPlaceRepository.getAllVisitPlace(): 시작 ")
                 temp = visitPlaceRepository.getAllVisitPlace()
-                Log.d(TAG, "visitPlaceRepository.getAllVisitPlace(): 끝 ")
                 1
             }
             deffered2.await()
-
-            Log.d(TAG, "temp: ${temp} ")
 
             binding.fabStop.isClickable = true
             binding.btnAddPoint.isClickable = true
@@ -346,59 +365,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         }
     } // End of changeMode
 
-    private fun recentCoordinatesLiveDataObserve() {
-        var distCount = 0
-        var flag = false
-
-        travelActivityViewModel.recentCoor.observe(viewLifecycleOwner) {
-            // 좌표에 새로운 값이 들어왔는데, 오차 범위를 벗어나는지 계산해야됨.
-            if (preCoor != null) {
-                val dist = DistanceManager.getDistance(
-                    it.latitude!!,
-                    it.longitude!!,
-                    preCoor!!.latitude!!,
-                    preCoor!!.longitude!!
-                )
-                // 이전의 좌표를 아래에 저장해서 비교함
-                preCoor!!.latitude = it.latitude
-                preCoor!!.longitude = it.longitude
-
-                if (dist > 500) {
-                    // 가장 최근에 찍힌 좌표와 현재 나의 위치를 기준으로 500M를 벗어나면 다시 flag와 distCount를 초기화
-                    flag = false
-                    distCount = 0
-                }
-
-                if (dist <= 500) {
-                    Log.d(TAG, "같은 위치")
-                    Log.d(TAG, "dist calc: 오차 범위를 벗어나지 못함")
-
-                    if (flag == false) {
-                        distCount++
-                    }
-
-                    if (distCount == 4 && flag == false) {
-                        // 지도에 마커표시 하기 위해서 DB등록
-                        // 4번의 동일한 좌표가 찍히고 나면 RoomDB에 데이터 추가
-
-                        CoroutineScope(Dispatchers.IO).launch {
-                            saveTravel(it.latitude!!, it.longitude!!)
-                        }
-
-                        Log.d(TAG, "onReceive: 더 이상 count가 증가하지 않음 ${distCount}")
-                        // 한번 마커가 표시되면, 더 이상 마커가 찍히지 않도록 flag값을 true로 고정해놓음
-                        // 만약 오차범위를 벗어나면 그때 다시 flag를 false처리함.
-                        flag = true
-                        distCount = 0
-                    }
-                }
-            } else {
-                preCoor = it
-            }
-
-        }
-    } // End of recentCoordinatesLiveDataObserve
-
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
@@ -421,7 +387,10 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
     override fun onDestroy() {
         super.onDestroy()
-        LocationConstants.serviceUnBind(requireContext())
+        val mainActivity = requireActivity() as MainActivity
+        CoroutineScope(Dispatchers.IO).launch {
+            mainActivity.stopLocationBackground()
+        }
     } // End of onDestroy
 
     override fun onLowMemory() {

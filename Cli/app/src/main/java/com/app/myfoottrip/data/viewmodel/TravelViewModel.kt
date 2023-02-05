@@ -48,25 +48,13 @@ class TravelViewModel : ViewModel() {
     val travelUserData: LiveData<NetworkResult<ArrayList<Travel>>>
         get() = travelRepository.travelListResponseLiveData
 
-    // 여정 생성 response값 LiveData
-    val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
-        get() = travelRepository.createTravelResponseLiveData
+
 
 
     // 여행정보를 새로만드는지, 기존의 데이터를 불러오는 뷰인지 구분하기 위한 LiveData
     private val _userTravelDataNewOrUpdateCheck = MutableLiveData<Boolean?>(null)
     val userTravelDataNewOrUpdateCheck: MutableLiveData<Boolean?>
         get() = _userTravelDataNewOrUpdateCheck
-
-    // 기존의 여행 정보를 불러와서 저장함
-    private val _userTravelData = MutableLiveData<Travel>()
-    val userTravelData: LiveData<Travel>
-        get() = _userTravelData
-
-    // 기존의 여행 데이터를 가져오는 response 값
-    val getUserTravelDataResponseLiveData: LiveData<NetworkResult<Travel>>
-        get() = travelRepository.getUserTravelDataResponseLiveData
-
 
     fun setCreateTravelResponseLiveData() {
         travelRepository.setCreateTravelResponseLiveData()
@@ -81,28 +69,37 @@ class TravelViewModel : ViewModel() {
         }
     } // End of getUserTravel
 
-    //여정 추가
-    fun createTravel(travel: Travel) {
-        viewModelScope.launch {
-            travelRepository.createTravel(travel)
-        }
-    } // End of makeTravel
-
     fun setUserTravelDataNewOrUpdateCheck(flag: Boolean?) {
         userTravelDataNewOrUpdateCheck.value = flag
     } // End of setUserTravelDataNewOrUpdateCheck
 
-    fun setGetUserTravelData(travelData: Travel) {
-        _userTravelData.value = travelData
-    } // End of setGetUserTravelData
 
-    //여정 조회
+
+
+    // ======================== 유저 여행 데이터 조회 ========================
+    // 기존의 여행 데이터를 가져오는 response 값
+    val getUserTravelDataResponseLiveData: LiveData<NetworkResult<Travel>>
+        get() = travelRepository.getUserTravelDataResponseLiveData
+    
+    // 유저의 여행 데이터 조회
     fun getUserTravelData(travelId: Int) {
         viewModelScope.launch {
             travelRepository.getUserTravelData(travelId)
         }
     } // End of getUserTravelData
 
+    // ======================== 유저 여행 데이터 추가 ========================
+    // 유저 여행 데이터 추가 response값 LiveData
+    val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
+        get() = travelRepository.createTravelResponseLiveData
+
+    fun createTravel(travel: Travel) {
+        viewModelScope.launch {
+            travelRepository.createTravel(travel)
+        }
+    } // End of createTravel
+
+    // ======================== 유저 여행 데이터 수정 ========================
     // 여행 데이터 수정 response값 LiveData
     val userTravelDataUpdateResponseLiveData: LiveData<NetworkResult<Travel>>
         get() = travelRepository.userTravelDataUpdateResponseLiveData

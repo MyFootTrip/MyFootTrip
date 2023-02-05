@@ -13,7 +13,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 
-private const val TAG = "싸피"
+private const val TAG = "UserRepository_싸피"
 
 class UserRepository {
     private val userApi = Application.retrofit.create(UserApi::class.java)

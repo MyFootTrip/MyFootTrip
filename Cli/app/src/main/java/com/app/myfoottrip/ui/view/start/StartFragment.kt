@@ -49,7 +49,11 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        postNaverAccessTokenResponseObserve()
+//        postNaverLoginAccessTokenResponseObserve()
+//        postKakaoLoginAccessTokenResponseObserve()
+//        postGoogleLoginAccessTokenResponseObserve()
+        postSocialLoginAccessTokenResponseObserve()
+
 
         binding.apply {
             btnLogin.setOnClickListener {
@@ -75,24 +79,15 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
             kakaoLogin()
         }
 
-        // 구글 로그인 버튼 클릭 이벤트
-        binding.btnGoogle.setOnClickListener {
+        // 깃허브 로그인 버튼 클릭 이벤트
+        binding.btnGithub.setOnClickListener {
 
         }
 
     } // End of onViewCreatedkakaoLogin
 
     private fun kakaoLogin() {
-        // 카카오톡으로 로그인
-        UserApiClient.instance.loginWithKakaoTalk(mContext) { token, error ->
-            if (error != null) {
-                Log.e(TAG, "로그인 실패", error)
-            } else if (token != null) {
-//                Log.i(TAG, "로그인 성공 ${token.accessToken}")
-//                Log.d(TAG, "kakaoLogin: ${token.idToken}")
-                kakaoLoginGetUserData()
-            }
-        }
+        Log.d(TAG, "kakaoLogin: 카카오 로그인 버튼 클릭됨")
 
         // 카카오계정으로 로그인 공통 callback 구성
         // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
@@ -120,6 +115,9 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
                     UserApiClient.instance.loginWithKakaoAccount(mContext, callback = callback)
                 } else if (token != null) {
                     Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+//                    val intent = Intent(mContext, MainActivity::class.java)
+//                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+//                    activity!!.finish()
                 }
             }
         } else {
@@ -224,8 +222,9 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
         findNavController().navigate(R.id.action_userFragment_to_loginFragment)
     } // End of showLoginFragment
 
-    private fun postNaverAccessTokenResponseObserve() {
-        tokenViewModel.postNaverAccessTokenResponseLiveData.observe(viewLifecycleOwner) {
+    // =================================== Social Login ===================================
+    private fun postSocialLoginAccessTokenResponseObserve() {
+        tokenViewModel.postSocialAccessTokenResponseLiveData.observe(viewLifecycleOwner) {
 
             when (it) {
                 is NetworkResult.Success -> {
@@ -249,8 +248,6 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
 //                    progressbar.visibility = View.VISIBLE
                 }
             }
-
         }
-    } // End of postNaverAccessTokenResponseObserve
-
+    } // End of postNaverLoginAccessTokenResponseObserve
 } // End of StartFragment class

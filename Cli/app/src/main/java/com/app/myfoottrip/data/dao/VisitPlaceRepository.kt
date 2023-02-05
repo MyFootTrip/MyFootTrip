@@ -1,7 +1,6 @@
 package com.app.myfoottrip.data.dao
 
 import android.content.Context
-import androidx.lifecycle.LiveData
 import androidx.room.Room
 import androidx.room.withTransaction
 import com.app.myfoottrip.data.dto.VisitPlace
@@ -27,6 +26,10 @@ class VisitPlaceRepository private constructor(context: Context) {
         return visitPlaceDao.getVisitPlace(id)
     } // End of getVisitPlaces
 
+    suspend fun getMostRecentVisitPlace(): VisitPlace? {
+        return visitPlaceDao.getMostRecentVisitPlace()
+    } // End of getMostRecentVisitPlace
+
     suspend fun insertVisitPlace(dto: VisitPlace): Long = database.withTransaction {
         visitPlaceDao.insertVisitPlace(dto)
     } // End of insertVisitPlace
@@ -45,9 +48,6 @@ class VisitPlaceRepository private constructor(context: Context) {
 
     // 싱글톤을 위한 구현
     companion object {
-        // INSTANCE가 null일 때, get()을 바로 호출할 경우, 에러가 발생할 수 있음
-        // 그러므로 먼저 get()을 호출할 것을 대비해서 lateinit을 사용하지 않고
-        // ? = null을 사용함.
         private var INSTANCE: VisitPlaceRepository? = null
 
         // initialize를 통해서 객체를 불러옴.

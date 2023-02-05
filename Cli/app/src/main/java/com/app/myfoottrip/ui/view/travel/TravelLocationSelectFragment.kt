@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContentProviderCompat.*
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -33,7 +32,6 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.coroutines.*
-import java.text.SimpleDateFormat
 
 private const val TAG = "TravelLocationSelectFragment_싸피"
 
@@ -102,7 +100,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
             getUserTravelData()
             // 기존의 수정해야 할 유저데이터를 가져오고 나서, UI가 보여야됨
-
         } else {
             // Adapter 초기화
             initAdapter()
@@ -264,9 +261,13 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             when (it) {
                 is NetworkResult.Success -> {
                     travelActivityViewModel.setGetUserTravelData(it.data!!)
+
+                    Log.d(TAG, "getUserTravelDataResponseLiveDataObserve: 데이터 잘 가져와 지나?")
+                    Log.d(TAG, "getUserTravelDataResponseLiveDataObserve: ${it.data}")
+                    Log.d(TAG, "getUserTravelDataResponseLiveDataObserve: ${travelActivityViewModel.userTravelData.value}")
+
                     locationList = ArrayList()
                     selectedList = ArrayList()
-
 
                     // 수정해야할 데이터를 RoomDB에 저장.
                     CoroutineScope(Dispatchers.IO).launch {
@@ -298,8 +299,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                             isClickable = true
                         }
                     }
-
-
                 }
                 is NetworkResult.Error -> {
                     Log.d(TAG, "유저 데이터 가져오기 실패")
@@ -310,6 +309,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             }
         }
     } // End of getUserTravelDataResponseLiveDataObserve
+
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
