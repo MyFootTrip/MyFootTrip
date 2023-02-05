@@ -54,7 +54,8 @@ class LocationService : Service() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        locationClient.getLocationUpdates(1000L * 60L * 3L).catch { exception ->
+        // 15분마다 측정
+        locationClient.getLocationUpdates(1000L * 60L * 15L).catch { exception ->
             exception.printStackTrace()
         }.onEach { location ->
             val lat = location.latitude.toString()

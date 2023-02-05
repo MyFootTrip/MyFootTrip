@@ -17,7 +17,7 @@ typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
 abstract class BaseFragment<B : ViewBinding>(
     private val bind: (View) -> B,
     @LayoutRes layoutResId: Int
-) : Fragment(layoutResId) {
+) : Fragment(layoutResId) { // End of BaseFragment class
     private var _binding: B? = null
     val binding get() = _binding ?: throw IllegalStateException("binding fail")
 
@@ -64,4 +64,4 @@ abstract class BaseFragment<B : ViewBinding>(
     } // End of showToast
 
     enum class ToastType { ERROR, SUCCESS, INFO, WARNING, BASIC, CUSTOM }
-} // End of BaseFragment class
+}
