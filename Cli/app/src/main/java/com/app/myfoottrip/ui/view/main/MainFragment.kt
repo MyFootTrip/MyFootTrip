@@ -74,7 +74,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
 
             addButton.setOnClickListener { //여정 기록 -> 여정 선택 화면
                 val bundle = bundleOf("type" to 0)
-                mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort).dismiss()
+                if (mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort) != null){
+                    mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort).dismiss()
+                }
                 findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment, bundle)
             }
         }
@@ -93,7 +95,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
                 R.id.mypageFragment -> {
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.nav_bottom_fragment, MyPageFragment()).commit()
-                    mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort).dismiss()
+                    if (mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort) != null){
+                        mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort).dismiss()
+                    }
                     true
                 }
             }
