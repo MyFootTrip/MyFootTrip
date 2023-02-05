@@ -1,14 +1,41 @@
 package com.app.myfoottrip.data.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.app.myfoottrip.data.dto.Coordinates
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.repository.TravelRepository
+import com.app.myfoottrip.ui.view.travel.EventBus
 import com.app.myfoottrip.util.NetworkResult
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
 
+
+private const val TAG = "TravelActivityViewModel_싸피"
 class TravelActivityViewModel : ViewModel() {
     private val travelRepository = TravelRepository()
+
+    // 가장 최근에 찍힌 좌표값
+    private val _recentCoor = MutableLiveData<Coordinates>()
+    val recentCoor: LiveData<Coordinates>
+        get() = _recentCoor
+
+    fun setRecentCoor(newCoordinates: Coordinates) {
+        _recentCoor.postValue(newCoordinates)
+    } // End of setRecentCoor
+
+    init {
+        viewModelScope.launch {
+            EventBus.subscribe<Coordinates>().collect {
+                    value ->
+                Log.d(TAG, "eventBus: $value")
+                _recentCoor.postValue(value)
+            }
+        }
+    }
 
     // 선택된 지역 리스트
     private val _locationList = ArrayList<String>(emptyList())
@@ -45,5 +72,4 @@ class TravelActivityViewModel : ViewModel() {
     fun setGetUserTravelData(travelData: Travel) {
         _userTravelData.value = travelData
     } // End of setGetUserTravelData
-
 } // End of TravelActivityViewModel

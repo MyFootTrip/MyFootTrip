@@ -6,13 +6,13 @@ import okhttp3.MultipartBody
 
 class PlaceImageListConverters {
     @TypeConverter
-    fun listToJson(value: List<MultipartBody.Part>?): String? {
+    fun listToJson(value: List<String>?): String? {
         return Gson().toJson(value)
     }
 
     @TypeConverter
-    fun jsonToList(value: String): List<MultipartBody.Part>? {
-        return Gson().fromJson(value, Array<MultipartBody.Part>::class.java)?.toList()
+    fun jsonToList(value: String): List<String>? {
+        return Gson().fromJson(value, Array<String>::class.java)?.toList()
     }
 
 } // End of PlaceImageListConverters

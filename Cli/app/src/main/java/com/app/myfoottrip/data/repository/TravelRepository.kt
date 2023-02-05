@@ -1,5 +1,6 @@
 package com.app.myfoottrip.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
@@ -25,12 +26,6 @@ class TravelRepository {
     private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Int>>()
     val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _createTravelResponseLiveData
-
-
-    // 유저 여행 데이터 조회
-    private val _getUserTravelDataResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
-    val getUserTravelDataResponseLiveData: LiveData<NetworkResult<Travel>>
-        get() = _getUserTravelDataResponseLiveData
 
 
     // 여행 데이터 추가
@@ -84,7 +79,11 @@ class TravelRepository {
         }
     } // End of getUserTravel
 
-    //여정 조회
+    // ======================== 유저 여행 데이터 조회 ========================
+    private val _getUserTravelDataResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
+    val getUserTravelDataResponseLiveData: LiveData<NetworkResult<Travel>>
+        get() = _getUserTravelDataResponseLiveData
+
     suspend fun getUserTravelData(travelId: Int) {
         val response = travelHeaderApi.getTravel(travelId)
 
@@ -109,13 +108,17 @@ class TravelRepository {
     } // End of getTravel
 
 
-    // 여행 데이터 수정 response값 LiveData
+    // ======================== 유저 여행 데이터 수정 ========================
     private val _userTravelDataUpdateResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
     val userTravelDataUpdateResponseLiveData: LiveData<NetworkResult<Travel>>
         get() = _userTravelDataUpdateResponseLiveData
 
     suspend fun userTravelDataUpdate(travelId: Int, updateTravelData: Travel) {
         val response = travelHeaderApi.updateTravel(travelId, updateTravelData)
+
+        Log.d(TAG, "userTravelDataUpdate: $response")
+        Log.d(TAG, "userTravelDataUpdate: ${response.body()}")
+        Log.d(TAG, "userTravelDataUpdate: ${response.message()}")
 
         // 처음은 Loading 상태로 지정
         _userTravelDataUpdateResponseLiveData.postValue(NetworkResult.Loading())

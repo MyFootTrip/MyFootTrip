@@ -31,6 +31,7 @@ class UserViewModel : ViewModel() {
         }
     } // End of userLogin
 
+    // =============================== 사용자 전체 데이터 ===============================
     fun setWholeMyData(myData: User) {
         _wholeMyData.value = myData
     } // End of setWholeMyData

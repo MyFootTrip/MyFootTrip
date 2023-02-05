@@ -205,9 +205,8 @@ class JoinAgeFragment : Fragment() {
         fcmViewModel.addFcmToken.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
-                    val intent = Intent(activity, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                    startActivity(intent)
+                    val intent = Intent(mContext, MainActivity::class.java)
+                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                     activity!!.finish()
                 }
                 is NetworkResult.Error -> {

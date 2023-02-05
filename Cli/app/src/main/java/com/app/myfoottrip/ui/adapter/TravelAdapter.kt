@@ -1,5 +1,6 @@
 package com.app.myfoottrip.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -42,10 +43,11 @@ class TravelAdapter(
             val startDateFormat = SimpleDateFormat("yyyy-MM.dd", Locale("ko", "KR"))
             val endDateFormat = SimpleDateFormat("MM.dd", Locale("ko", "KR"))
 
-            val startDateString = startDateFormat.format(travelList[0].startDate!!)
-            val endDateString = endDateFormat.format(travelList[0].endDate!!)
-            // 시작 날짜와 끝날짜를 연결시켜서 넣어야함
-            binding.tvTravelDate.text = "${startDateString} - ${endDateString}"
+            Log.d(TAG, "travelList: $travelList")
+
+            val startDateString = startDateFormat.format(travelList[position].startDate!!)
+            val endDateString = endDateFormat.format(travelList[position].endDate!!)
+            binding.tvTravelDate.text = "$startDateString - $endDateString"
 
             binding.apply {
                 if (type == 1) { //여정 선택
@@ -56,8 +58,7 @@ class TravelAdapter(
 
                 chipTravelSelect.isChecked = (selected == position) //선택은 하나만 하도록
 
-                // 이미지가 없을 경우 기본이지미로 대체됨.
-                if (travelList[0].placeList?.get(0)?.placeImgList?.size == 0) {
+                if (travelList.isNotEmpty() && travelList[0].placeList?.get(0)?.placeImgList?.size == 0) {
                     Glide.with(itemView)
                         .load(R.drawable.place_default_img)
                         .centerCrop()
@@ -68,7 +69,6 @@ class TravelAdapter(
                         .centerCrop()
                         .into(ivTravel)
                 }
-
 
                 tvTravelName.text = travelDto.location!!.joinToString(", ")
 

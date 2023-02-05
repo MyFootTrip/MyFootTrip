@@ -73,23 +73,6 @@ object LocationConstants {
         }
     }
 
-//    fun getLocationPermission(callback : ()->Unit){//위치 권한 확인
-//        TedPermission.create().setPermissionListener(object : PermissionListener {
-//            //권한 허용
-//            override fun onPermissionGranted() {
-//                callback()
-//            }
-//
-//            override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
-//                Log.d(TAG, "권한 요청 거부됨======================= ")
-//            }
-//        }).setDeniedMessage("위치 권한이 필요합니다.")
-//            .setPermissions(
-//                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-//                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-//            .check()
-//    }
-
     fun stopLocation(){
         //locationService?.stopLocationService()
     }

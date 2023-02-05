@@ -27,6 +27,10 @@ class TokenViewModel : ViewModel() {
     val deleteRefreshTokenResponseLiveData: LiveData<NetworkResult<String>>
         get() = tokenRepository.deleteRefreshTokenResponseLiveData
 
+    // =================================== Social Login ===================================
+    val postSocialAccessTokenResponseLiveData: LiveData<NetworkResult<Token>>
+        get() = tokenRepository.postSocialLoginAccessTokenResponseLiveData
+
     suspend fun getAccessTokenByRefreshToken(refreshToken: Token) {
         tokenRepository.getAccessTokenByRefreshToken(refreshToken)
     } // End of getAccessTokenByRefreshToken
@@ -50,4 +54,24 @@ class TokenViewModel : ViewModel() {
             tokenRepository.deleteRefreshToken(token)
         }
     }
+    // =================================== Naver Login ===================================
+    suspend fun postNaverAccessToken(token: String) {
+        viewModelScope.launch {
+            tokenRepository.postNaverLoginAccessToken(token)
+        }
+    } // End of postNaverAccessToken
+
+    // =================================== Kakao Login ===================================
+    suspend fun postKakaoAccessToken(token: String) {
+        viewModelScope.launch {
+            tokenRepository.postKakaoLoginAccessToken(token)
+        }
+    } // End of postKakaoAccessToken
+
+    // =================================== Google Login ===================================
+    suspend fun postGoogleAccessToken(token: String) {
+        viewModelScope.launch {
+            tokenRepository.postGoogleLoginAccessToken(token)
+        }
+    } // End of postGoogleAccessToken
 } // End of TokenViewModel class

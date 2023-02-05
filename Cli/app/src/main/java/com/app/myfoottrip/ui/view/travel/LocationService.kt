@@ -6,14 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
+import com.app.myfoottrip.data.dto.Coordinates
 import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -57,15 +54,22 @@ class LocationService : Service() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        locationClient.getLocationUpdates(1000L * 60L * 5L).catch { exception ->
+        locationClient.getLocationUpdates(1000L * 60L * 3L).catch { exception ->
             exception.printStackTrace()
         }.onEach { location ->
-            // 소수점 3자리 까지만 가져옴
-            val lat = location.latitude.toString().takeLast(3)
-            val lon = location.longitude.toString().takeLast(3)
+            val lat = location.latitude.toString()
+            val lon = location.longitude.toString()
             val updateNotification = notification.setContentText(
                 "위치를 측정 중.. $lat , $lon"
             )
+
+            val intent = Intent("test")
+            intent.putExtra("test", Coordinates(location.latitude, location.longitude))
+            this.sendBroadcast(intent)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                EventBus.post(Coordinates(location.latitude, location.longitude))
+            }
 
             notificationManager.notify(1, updateNotification.build())
         }
