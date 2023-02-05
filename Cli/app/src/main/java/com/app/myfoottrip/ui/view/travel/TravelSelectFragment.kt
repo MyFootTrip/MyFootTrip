@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
@@ -147,16 +148,8 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             binding.btnSave.visibility = View.VISIBLE
             binding.btnSave.setText(R.string.plz_travel_select_button_text)
             binding.btnSave.isEnabled = false
-            binding.btnSave.setTextColor(
-                ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(), R.color.main
-                    )
-                )
-            )
-
-            binding.btnSave.isClickable = false
-            binding.btnSave.isEnabled = false
+            binding.btnSave.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+            binding.btnSave.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.gray_bright))
         }
     } // End of initCustomView
 
@@ -245,19 +238,15 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                     binding.btnSave.isClickable = false
                     binding.btnSave.isEnabled = false
                 }
-                binding.btnSave.setTextColor(
-                    ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(), R.color.gray_bright
-                        )
-                    )
-                )
+                binding.btnSave.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_bright))
             } else { //선택
                 setSelected(position)
                 settingView(true)
                 if (type == 2) {
                     binding.btnSave.isClickable = true
                     binding.btnSave.isEnabled = true
+                } else {
+
                 }
             }
         }
@@ -269,10 +258,11 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                 0 -> {
                     // 기존의 여행 데이터 수정
                     travelViewModel.setUserTravelDataNewOrUpdateCheck(false)
-                    binding.btnSave.text = "선택 완료"
+                    binding.btnSave.setText("선택 완료")
                 }
                 2 -> {
-                    binding.btnSave.text = "작성 하기"
+                    binding.btnSave.setText("작성 하기")
+                    binding.btnSave.gravity = Gravity.CENTER
                 }
             }
         } else {
