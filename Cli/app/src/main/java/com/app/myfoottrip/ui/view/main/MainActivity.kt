@@ -104,8 +104,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
+    }
 
-        TODO("Not yet implemented")
+    override fun onDestroy() {
+        super.onDestroy()
+        stopLocationBackground()
     }
 
 

@@ -1,8 +1,6 @@
 package com.app.myfoottrip.ui.view.travel
 
 import android.content.Context
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -34,7 +32,6 @@ import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.*
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -55,7 +52,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     lateinit var visitPlaceRepository: VisitPlaceRepository
 
     private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
-    private var userVisitPlaceDataList: List<Place> = emptyList()
+    private var userVisitPlaceDataList: LinkedList<Place> = LinkedList()
     private var userTravelData: Travel? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var travelEditSaveItemAdapter: TravelEditSaveItemAdapter
@@ -101,7 +98,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         // RoomDB에 데이터를 가져오고나서, Travel타입으로 변환한 후 UI로 뿌리는 작업을 진행한다.
         val dataJob = CoroutineScope(Dispatchers.IO).launch {
             val defferedGetData: Deferred<Int> = async {
-                userVisitPlaceDataList = getSqlLiteAllData()
+                userVisitPlaceDataList = getSqlLiteAllData() as LinkedList<Place>
                 1
             }
 
@@ -156,7 +153,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         // 선택된 지역들을 쉼표로 연결해서 텍스트로 만듬
         binding.tvTravelTitle.text = userTravelData?.location?.joinToString(", ")
 
-
         val startDateFormat = SimpleDateFormat("YYYY.MM.dd", Locale("ko", "KR"))
         val endDateFormat = SimpleDateFormat("MM.dd", Locale("ko", "KR"))
         val startDateString = startDateFormat.format(userTravelData!!.startDate!!)
@@ -177,7 +173,11 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             TravelEditSaveItemAdapter.ItemClickListener {
             override fun onEditButtonClick(position: Int, placeData: Place) {
                 // 리사이클러뷰 포지션에 해당하는 수정 버튼을 눌렀을 때 이벤트
-                showToast("${position + 1}의 아이템을 선택함")
+                showToast("${position + 1}의 아이템을 삭제함")
+
+                // position의 선택된 Item의 객체의 값을 가지고옴.
+                userVisitPlaceDataList.removeAt(position)
+                recyclerView.adapter!!.notifyDataSetChanged()
             }
         })
     } // End of setUI
@@ -235,8 +235,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         }
     } // End of updateTravel
 
-    private suspend fun getSqlLiteAllData(): List<Place> {
-        val placeList: MutableList<Place> = ArrayList()
+    private suspend fun getSqlLiteAllData(): LinkedList<Place> {
+        val placeList: LinkedList<Place> = LinkedList()
 
         val job = CoroutineScope(Dispatchers.IO).async {
             val allVisitPlaceList = visitPlaceRepository.getAllVisitPlace()
@@ -247,28 +247,13 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             for (i in 0 until size) {
                 val temp = allVisitPlaceList[i]
 
-                var address: String? = null
-                val job = CoroutineScope(Dispatchers.IO).launch {
-                    val getAdd = getAddressByCoordinates(temp.lat, temp.lng)
-                    if (getAdd != null) {
-                        address = getAddressByCoordinates(temp.lat, temp.lng)!!.getAddressLine(0)
-                    }
-                }
-
-                job.join()
-
-                // 없는 주소는 List에서 생성하지 않고 빈 주소로 넣음
-                if (address == null) {
-                    address = "찾을 수 없는 주소입니다 수정 작업에서 등록해주세요!"
-                }
-
                 placeList.add(
                     Place(
                         null, "", temp.date?.let { Date(it) }, "", // 일단 처음에는 메모 빈 값
                         ArrayList(), // 일단 빈 이미지를 넣어야됨
                         temp.lat, // 좌표
                         temp.lng, // 좌표
-                        address
+                        temp.address
                     )
                 )
             }
@@ -364,8 +349,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                     )
                     Log.d(TAG, "userTravelDataUpdateResponseLiveData Error: ${it.data}")
                     Log.d(TAG, "userTravelDataUpdateResponseLiveData Error: ${it.message}")
-
-
                 }
 
                 is NetworkResult.Loading -> {
@@ -376,32 +359,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             }
         }
     } // End of updateTravelResponseObserve
-
-    private fun getAddressByCoordinates(latitude: Double, longitude: Double): Address? {
-        val geocoder = Geocoder(mContext, Locale.KOREA)
-
-        val addresses: List<Address>?
-
-        addresses = try {
-            geocoder.getFromLocation(latitude, longitude, 7)
-        } catch (ioException: IOException) {
-            binding.root.showSnackBarMessage("지오코더 서비스 사용불가")
-            ioException.printStackTrace()
-            return null
-        } catch (illegalArgumentException: java.lang.IllegalArgumentException) {
-            illegalArgumentException.printStackTrace()
-            binding.root.showSnackBarMessage("잘못된 위도 경도 입니다.")
-            return null
-        }
-
-        if (addresses == null || addresses.isEmpty()) {
-            binding.root.showSnackBarMessage("주소가 발견되지 않았습니다.")
-            return null
-        }
-
-        val address: Address = addresses[0]
-        return address
-    } // End of getAddressByCoordinates
 
     override fun onStart() {
         super.onStart()
