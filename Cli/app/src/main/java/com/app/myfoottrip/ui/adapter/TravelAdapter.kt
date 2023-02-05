@@ -23,7 +23,6 @@ class TravelAdapter(
     //클릭리스너 선언
     private lateinit var itemClickListner: ItemClickListener
 
-
     fun getSelected(): Int {
         return selected
     }

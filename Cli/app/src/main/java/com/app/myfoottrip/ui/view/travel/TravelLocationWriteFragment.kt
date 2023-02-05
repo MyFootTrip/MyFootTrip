@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,6 +26,7 @@ import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.LocationProvider
 import com.app.myfoottrip.util.TimeUtils
+import com.app.myfoottrip.util.showSnackBarMessage
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
@@ -34,6 +37,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.io.IOException
+import java.util.*
 
 private const val TAG = "TravelLocationWriteFragment_싸피"
 
@@ -98,7 +103,26 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                             // 4번의 동일한 좌표가 찍히고 나면 RoomDB에 데이터 추가
 
                             CoroutineScope(Dispatchers.IO).launch {
-                                saveTravel(newCoor.latitude!!, newCoor.longitude!!)
+                                var address: String? = null
+                                val job = CoroutineScope(Dispatchers.IO).launch {
+                                    val getAdd = getAddressByCoordinates(
+                                        newCoor.latitude!!, newCoor.longitude!!
+                                    )
+                                    if (getAdd != null) {
+                                        address = getAddressByCoordinates(
+                                            newCoor.latitude!!, newCoor.longitude!!
+                                        )!!.getAddressLine(0)
+                                    }
+                                }
+
+                                job.join()
+
+                                // 없는 주소는 List에서 생성하지 않고 빈 주소로 넣음
+                                if (address == null) {
+                                    address = "정확한 주소를 찾지 못했습니다 수정 작업에서 등록해주세요!"
+                                }
+
+                                saveTravel(newCoor.latitude!!, newCoor.longitude!!, address!!)
                             }
 
                             Log.d(TAG, "onReceive: 더 이상 count가 증가하지 않음 ${distCount}")
@@ -137,9 +161,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         activity!!.registerReceiver(logReceiver, IntentFilter("test"))
         return super.onCreateView(inflater, container, savedInstanceState)
@@ -236,6 +258,24 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             CoroutineScope(Dispatchers.IO).launch {
                 // 가장 최근에 찍힌 좌표가 이전의 좌표와 같을 경우, 저장을 수행하지 않음.
 
+                val nowLat = locationProvider.getLocationLatitude()
+                val nowLng = locationProvider.getLocationLongitude()
+
+                var address: String? = null
+                val job = CoroutineScope(Dispatchers.Default).launch {
+                    val getAdd = getAddressByCoordinates(nowLat, nowLng)
+                    if (getAdd != null) {
+                        address = getAdd.getAddressLine(0)
+                    }
+                }
+
+                job.join()
+
+                // 없는 주소는 List에서 생성하지 않고 빈 주소로 넣음
+                if (address.isNullOrEmpty()) {
+                    address = "정확한 주소를 찾지 못했습니다 수정 작업에서 등록해주세요!"
+                }
+
                 var recentPlace: VisitPlace? = null
                 coroutineScope {
                     try {
@@ -246,21 +286,19 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                     }
                 }
 
-                Log.d(TAG, "recentPlace: $recentPlace")
 
-                val nowLat = locationProvider.getLocationLatitude()
-                val nowLng = locationProvider.getLocationLongitude()
-
-                // 가장 최근의 좌표와 현재 찍은 좌표가 같을 경우 저장하지 않음
-                if (recentPlace != null && recentPlace!!.lat != nowLat && recentPlace!!.lng != nowLng) {
+                if (nowLat == 0.0 || nowLng == 0.0) {
+                    // 제대로된 좌표가 들어오지 않을 경우, 저장하지 않음
+                    val v: View = requireView()
+                    v.showSnackBarMessage("정확한 좌표를 찾고있습니다! 다시 저장해주세요!")
+                } else if (recentPlace != null && recentPlace!!.lat != nowLat && recentPlace!!.lng != nowLng) {
+                    // 가장 최근의 좌표와 현재 찍은 좌표가 같을 경우 저장하지 않음
                     saveTravel(
-                        nowLat,
-                        nowLng
+                        nowLat, nowLng, address!!
                     )
                 } else if (recentPlace == null) {
                     saveTravel(
-                        nowLat,
-                        nowLng
+                        nowLat, nowLng, address!!
                     )
                 } else {
                     withContext(Dispatchers.Main) {
@@ -270,6 +308,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             }
         }
     } // End of nowLocationSaving
+
 
     private fun locationClientSet() {
         serviceScope = CoroutineScope(
@@ -290,17 +329,12 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         )
     }
 
-    private suspend fun saveTravel(lat: Double, lon: Double) {
+    private suspend fun saveTravel(lat: Double, lon: Double, address: String) {
         binding.fabStop.isClickable = false
         binding.btnAddPoint.isClickable = false
 
         val temp = VisitPlace(
-            0,
-            "",
-            lat,
-            lon,
-            System.currentTimeMillis(),
-            emptyList()
+            0, address, lat, lon, System.currentTimeMillis(), emptyList()
         )
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -365,6 +399,32 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         }
     } // End of changeMode
 
+    private suspend fun getAddressByCoordinates(latitude: Double, longitude: Double): Address? {
+        val geocoder = Geocoder(mContext, Locale.KOREA)
+
+        val addresses: List<Address>?
+
+        addresses = try {
+            geocoder.getFromLocation(latitude, longitude, 7)
+        } catch (ioException: IOException) {
+            binding.root.showSnackBarMessage("지오코더 서비스 사용불가")
+            ioException.printStackTrace()
+            return null
+        } catch (illegalArgumentException: java.lang.IllegalArgumentException) {
+            illegalArgumentException.printStackTrace()
+            binding.root.showSnackBarMessage("잘못된 위도 경도 입니다.")
+            return null
+        }
+
+        if (addresses == null || addresses.isEmpty()) {
+            binding.root.showSnackBarMessage("주소가 발견되지 않았습니다.")
+            return null
+        }
+
+        val address: Address = addresses[0]
+        return address
+    } // End of getAddressByCoordinates
+
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
@@ -392,6 +452,14 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             mainActivity.stopLocationBackground()
         }
     } // End of onDestroy
+
+    override fun onDetach() {
+        super.onDetach()
+        val mainActivity = requireActivity() as MainActivity
+        CoroutineScope(Dispatchers.IO).launch {
+            mainActivity.stopLocationBackground()
+        }
+    }
 
     override fun onLowMemory() {
         super.onLowMemory()
