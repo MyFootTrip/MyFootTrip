@@ -30,11 +30,11 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_light"
                 android:gravity="center_vertical"
-                android:paddingHorizontal="10dp"
-                android:paddingTop="5dp"
-                android:text="#지역"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="4dp"
+                android:text=""
                 android:textColor="@color/black"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/iv_image" />
 
@@ -44,13 +44,12 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_light"
                 android:gravity="center_vertical"
-                android:paddingHorizontal="10dp"
-                android:paddingTop="5dp"
-                android:text="#테마여행"
-                android:textColor="@color/black"
-                android:textSize="10sp"
+                android:text=""
+                android:layout_marginLeft="2dp"
+                android:textColor="@color/main"
+                android:textSize="12sp"
                 app:layout_constraintLeft_toRightOf="@id/tv_location"
-                app:layout_constraintTop_toBottomOf="@id/iv_image" />
+                app:layout_constraintTop_toTopOf="@id/tv_location" />
 
             <TextView
                 android:id="@+id/tv_title"
@@ -58,11 +57,12 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_medium"
                 android:paddingHorizontal="10dp"
-                android:paddingVertical="5dp"
-                android:text="여행 제목"
+                android:text=""
+                android:gravity="center_vertical"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:layout_constraintTop_toBottomOf="@id/tv_location" />
+                app:layout_constraintTop_toBottomOf="@id/tv_theme"
+                app:layout_constraintBottom_toTopOf="@id/cv_profileLayout"/>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cv_profileLayout"
@@ -90,7 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:fontFamily="@font/inter_medium"
-                android:text="회원 닉네임"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@id/cv_profileLayout"
@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
                 android:fontFamily="@font/inter_medium"
-                android:text="3"
+                android:text="0"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -126,7 +126,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:fontFamily="@font/inter_medium"
-                android:text="10"
+                android:text="0"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"

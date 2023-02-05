@@ -70,7 +70,7 @@ class BoardRepository {
 
     //게시물 삽입
     suspend fun createBoard(board: Board){
-        var response = boardService.writeBoard(board)
+        var response = headerBoardService.writeBoard(board)
 
         if (response.isSuccessful && response.body() != null) {
             _createResponseLiveData.postValue(NetworkResult.Success(response.body()!!))

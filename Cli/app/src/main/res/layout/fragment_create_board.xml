@@ -132,7 +132,7 @@
                 app:strokeWidth="1dp">
 
                 <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/et_content"
+                    android:id="@+id/et_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_regular"
@@ -170,6 +170,7 @@
                 app:strokeWidth="1dp">
 
                 <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/et_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_regular"
@@ -221,6 +222,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:chipSpacingHorizontal="10dp"
+                    app:singleSelection="true"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_app_name">
 
@@ -302,7 +304,7 @@
                     android:id="@+id/cg_category2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
+                    app:singleSelection="true"
                     app:chipSpacingHorizontal="10dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_app_name">

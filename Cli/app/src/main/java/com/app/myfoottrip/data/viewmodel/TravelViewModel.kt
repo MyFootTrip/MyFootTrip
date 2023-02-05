@@ -34,6 +34,8 @@ class TravelViewModel : ViewModel() {
     val recentCoor: LiveData<Coordinates>
         get() = _recentCoor
 
+    var travelList : ArrayList<Travel> = arrayListOf()
+
     fun setRecentCoor(newCoordinates: Coordinates) {
         _recentCoor.postValue(newCoordinates)
     } // End of setRecentCoor
@@ -47,8 +49,6 @@ class TravelViewModel : ViewModel() {
     //유저별 여정 조회 값
     val travelUserData: LiveData<NetworkResult<ArrayList<Travel>>>
         get() = travelRepository.travelListResponseLiveData
-
-
 
 
     // 여행정보를 새로만드는지, 기존의 데이터를 불러오는 뷰인지 구분하기 위한 LiveData

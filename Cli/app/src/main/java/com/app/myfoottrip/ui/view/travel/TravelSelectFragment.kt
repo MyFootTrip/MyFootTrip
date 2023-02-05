@@ -30,7 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private const val TAG = "TravelSelectFragment_싸피"
+private const val TAG = "TravelSelectFragment_마이풋트립"
 
 class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     FragmentTravelSelectBinding::bind, R.layout.fragment_travel_select
@@ -79,6 +79,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         initAdapter()
 
         binding.ivBack.setOnClickListener {
+            navigationViewModel.type = 0
             findNavController().popBackStack()
         }
 
@@ -148,7 +149,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             binding.btnSave.visibility = View.VISIBLE
             binding.btnSave.setText(R.string.plz_travel_select_button_text)
             binding.btnSave.isEnabled = false
-            binding.btnSave.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             binding.btnSave.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.gray_bright))
         }
     } // End of initCustomView
@@ -176,9 +176,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         // 여행 생성인지, 기존의 데이터를 불러와서 수정을 하는건지. 구분해야됨.
 
         binding.apply {
-            ivBack.setOnClickListener {
-//                findNavController().popBackStack()
-            }
             btnSave.setOnClickListener {
                 when (type) {
                     0 -> {
@@ -188,7 +185,11 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                         )
                     }
                     2 -> {
-                        findNavController().navigate(R.id.action_travelSelectFragment_to_createBoardFragment)
+                        val data = bundleOf(
+                            "travelId" to boardList[travelAdapter.getSelected()].travelId
+                        )
+                        findNavController().navigate(R.id.action_travelSelectFragment_to_createBoardFragment,data)
+
                     }
                 }
             }
@@ -234,20 +235,9 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             if (position == lastPos) { //선택 해제
                 setSelected(-1)
                 settingView(false)
-                if (type == 2) {
-                    binding.btnSave.isClickable = false
-                    binding.btnSave.isEnabled = false
-                }
-                binding.btnSave.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_bright))
             } else { //선택
                 setSelected(position)
                 settingView(true)
-                if (type == 2) {
-                    binding.btnSave.isClickable = true
-                    binding.btnSave.isEnabled = true
-                } else {
-
-                }
             }
         }
     } // End of changeSelected
@@ -261,8 +251,10 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                     binding.btnSave.setText("선택 완료")
                 }
                 2 -> {
-                    binding.btnSave.setText("작성 하기")
-                    binding.btnSave.gravity = Gravity.CENTER
+                    binding.btnSave.setText("게시글  작성하기")
+                    binding.btnSave.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.main))
+                    binding.btnSave.isClickable = true
+                    binding.btnSave.isEnabled = true
                 }
             }
         } else {
@@ -276,6 +268,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                 }
                 2 -> {
                     binding.btnSave.setText(R.string.plz_travel_select_button_text)
+                    binding.btnSave.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.gray_bright))
                     binding.btnSave.isClickable = false
                     binding.btnSave.isEnabled = false
                 }

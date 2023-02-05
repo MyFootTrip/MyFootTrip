@@ -132,7 +132,16 @@
         android:id="@+id/createBoardFragment"
         android:name="com.app.myfoottrip.ui.view.board.CreateBoardFragment"
         android:label="fragment_create_board"
-        tools:layout="@layout/fragment_create_board" />
+        tools:layout="@layout/fragment_create_board" >
+        <action
+            android:id="@+id/action_createBoardFragment_to_mainFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
     <fragment
         android:id="@+id/editSaveTravelFragment"
         android:name="com.app.myfoottrip.ui.view.travel.EditSaveTravelFragment"
