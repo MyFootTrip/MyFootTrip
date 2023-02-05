@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
@@ -20,10 +21,12 @@ import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentBoardBinding
 import com.app.myfoottrip.ui.adapter.PlaceAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.ui.view.dialogs.AlertDialog
 import com.app.myfoottrip.ui.view.dialogs.PlaceBottomDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.TimeUtils
+import com.app.myfoottrip.util.showSnackBarMessage
 import com.bumptech.glide.Glide
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
@@ -97,8 +100,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
                             return@setOnMenuItemClickListener true
                         }
                         R.id.menu_delete -> {
-                            deleteBoardObserver()
-                            deleteBoard()
+                            showDialog()
                             return@setOnMenuItemClickListener true
                         }else ->{
                         return@setOnMenuItemClickListener true
@@ -292,6 +294,22 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         placeBottom.show(parentFragmentManager, placeBottom.mTag)
     }
 
+    //게시물 삭제 다이얼로그 생성
+    private fun showDialog() {
+        val dialog = AlertDialog(requireActivity() as AppCompatActivity)
+
+        dialog.setOnOKClickedListener {
+            binding.apply {
+                deleteBoardObserver()
+                deleteBoard()
+            }
+        }
+
+        dialog.setOnCancelClickedListener { }
+
+        dialog.show("게시물 수정", "게시물을 수정하시겠습니까?")
+    }
+
     //게시물 데이터 받아오기
     private fun getBoard() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -328,6 +346,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
                 is NetworkResult.Success -> {
                     navigationViewModel.type = 4
                     findNavController().navigate(R.id.action_boardFragment_to_mainFragment)
+                    binding.root.showSnackBarMessage("게시물이 삭제되었습니다.")
                 }
                 is NetworkResult.Error -> {
                 }

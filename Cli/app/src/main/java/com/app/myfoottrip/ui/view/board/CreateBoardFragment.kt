@@ -85,7 +85,7 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
                         val urlList: ArrayList<String> = List(imageList.size) { i ->
                             "IMAGE_${board.boardId}_${i}.png"
                         } as ArrayList<String>
-                        board.imageList = GalleryUtils.insertImage(urlList, imageList, 0)
+                        board.imageList = GalleryUtils.insertImage(urlList, imageList, 0, board.boardId)
                         board.content = etContent.text.toString()
                     }
                     createBoard(board)

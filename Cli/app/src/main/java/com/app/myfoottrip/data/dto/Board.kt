@@ -9,7 +9,7 @@ data class Board @JvmOverloads constructor(
     val nickname : String,
     val profileImg : String, //프로필 이미지
     var writeDate : Date, //작성 날짜
-    val theme : String, //여행 테마(복수선택 가능)
+    var theme : String, //여행 테마
     var title : String,
     var content: String,
     var imageList : ArrayList<String>,

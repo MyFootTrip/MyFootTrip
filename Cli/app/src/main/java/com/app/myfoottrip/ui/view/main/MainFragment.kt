@@ -13,6 +13,7 @@ import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMainBinding
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.skydoves.powerspinner.PowerSpinnerView
 
 private const val TAG = "MainFragment_마이풋트립"
 
@@ -23,9 +24,11 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
 
     private lateinit var mContext: Context
+    private lateinit var mainActivity: MainActivity
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+        mainActivity = context as MainActivity
     } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,9 +74,8 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
 
             addButton.setOnClickListener { //여정 기록 -> 여정 선택 화면
                 val bundle = bundleOf("type" to 0)
-                findNavController().navigate(
-                    R.id.action_mainFragment_to_travelSelectFragment, bundle
-                )
+                mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort).dismiss()
+                findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment, bundle)
             }
         }
     }
@@ -91,6 +93,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
                 R.id.mypageFragment -> {
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.nav_bottom_fragment, MyPageFragment()).commit()
+                    mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort).dismiss()
                     true
                 }
             }

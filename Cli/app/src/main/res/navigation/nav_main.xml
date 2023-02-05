@@ -12,24 +12,45 @@
         android:label="MainFragmentDirection">
         <action
             android:id="@+id/action_mainFragment_to_boardFragment"
-            app:destination="@id/boardFragment" />
+            app:destination="@id/boardFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim" />
         <action
             android:id="@+id/action_mainFragment_to_travelSelectFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/travelSelectFragment" />
         <action
-            android:id="@+id/action_mainFragment_to_createBoardFragment"
-            app:destination="@id/createBoardFragment" />
-        <action
             android:id="@+id/action_mainFragment_to_myTravelFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/myTravelFragment" />
         <action
             android:id="@+id/action_mainFragment_to_editAccountFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/editAccountFragment" />
         <action
             android:id="@+id/action_mainFragment_to_myLikeFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/myLikeFragment" />
         <action
             android:id="@+id/action_mainFragment_to_myWriteFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/myWriteFragment" />
 
     </fragment>
@@ -40,13 +61,25 @@
         tools:layout="@layout/fragment_board">
         <action
             android:id="@+id/action_boardFragment_to_commentFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/commentFragment" />
         <action
             android:id="@+id/action_boardFragment_to_mainFragment"
             app:popUpTo="@id/mainFragment"
-            app:popUpToInclusive="false"/>
+            app:enterAnim="@anim/none_anim"
+            app:exitAnim="@anim/exit_vertical_anim"
+            app:popEnterAnim="@anim/none_anim"
+            app:popExitAnim="@anim/exit_vertical_anim"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_boardFragment_to_updateBoardFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/updateBoardFragment" />
     </fragment>
     <fragment
@@ -59,6 +92,10 @@
             app:destination="@id/travelLocationSelectFragment" />
         <action
             android:id="@+id/action_travelSelectFragment_to_createBoardFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/createBoardFragment" />
     </fragment>
     <fragment
@@ -109,12 +146,20 @@
         android:id="@+id/editAccountFragment"
         android:name="com.app.myfoottrip.ui.view.mypage.EditAccountFragment"
         android:label="fragment_edit_account"
-        tools:layout="@layout/fragment_edit_account" >
+        tools:layout="@layout/fragment_edit_account">
         <action
             android:id="@+id/action_editAccountFragment_to_editEmailFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/editEmailFragment" />
         <action
             android:id="@+id/action_editAccountFragment_to_editPasswordFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/editPasswordFragment" />
     </fragment>
 
@@ -122,7 +167,7 @@
         android:id="@+id/myTravelFragment"
         android:name="com.app.myfoottrip.ui.view.mypage.MyTravelFragment"
         android:label="fragment_my_travel"
-        tools:layout="@layout/fragment_my_travel" >
+        tools:layout="@layout/fragment_my_travel">
         <action
             android:id="@+id/action_myTravelFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
@@ -131,18 +176,26 @@
         android:id="@+id/myLikeFragment"
         android:name="com.app.myfoottrip.ui.view.mypage.MyLikeFragment"
         android:label="fragment_my_like"
-        tools:layout="@layout/fragment_my_like" >
+        tools:layout="@layout/fragment_my_like">
         <action
             android:id="@+id/action_myLikeFragment_to_boardFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/boardFragment" />
     </fragment>
     <fragment
         android:id="@+id/myWriteFragment"
         android:name="com.app.myfoottrip.ui.view.mypage.MyWriteFragment"
         android:label="fragment_my_write"
-        tools:layout="@layout/fragment_my_write" >
+        tools:layout="@layout/fragment_my_write">
         <action
             android:id="@+id/action_myWriteFragment_to_boardFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
             app:destination="@id/boardFragment" />
     </fragment>
     <fragment
@@ -159,9 +212,13 @@
         android:id="@+id/updateBoardFragment"
         android:name="com.app.myfoottrip.ui.view.board.UpdateBoardFragment"
         android:label="fragment_update_board"
-        tools:layout="@layout/fragment_update_board" >
+        tools:layout="@layout/fragment_update_board">
         <action
             android:id="@+id/action_updateBoardFragment_to_mainFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
             app:popUpTo="@id/mainFragment"
             app:popUpToInclusive="false" />
     </fragment>

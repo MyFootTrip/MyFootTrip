@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
@@ -20,15 +21,19 @@ import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentEditAccountBinding
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.ui.view.dialogs.AlertDialog
 import com.app.myfoottrip.ui.view.dialogs.EditNicknameDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.ui.view.start.StartActivity
+import com.app.myfoottrip.util.GalleryUtils
 import com.app.myfoottrip.util.NetworkResult
+import com.app.myfoottrip.util.showSnackBarMessage
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG = "EditAccountFragment_마이풋트립"
 
@@ -75,19 +80,17 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
 
             //로그아웃
             tvLogout.setOnClickListener {
-                deleteRefreshTokenObserver()
-                deleteRefreshToken()
+                showDialog()
+            }
 
-                // 아이디 변경 페이지로 이동
-                chipEditEmail.setOnClickListener {
-                    findNavController().navigate(R.id.action_editAccountFragment_to_editEmailFragment)
-                }
+            // 아이디 변경 페이지로 이동
+            chipEditEmail.setOnClickListener {
+                findNavController().navigate(R.id.action_editAccountFragment_to_editEmailFragment)
+            }
 
-                // 비밀번호 변경 페이지로 이동
-                chipEditPassword.setOnClickListener {
-                    findNavController().navigate(R.id.action_editAccountFragment_to_editPasswordFragment)
-                }
-
+            // 비밀번호 변경 페이지로 이동
+            chipEditPassword.setOnClickListener {
+                findNavController().navigate(R.id.action_editAccountFragment_to_editPasswordFragment)
             }
         }
     } // End of onViewCreated
@@ -133,6 +136,22 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
         callback.remove()
     } // End of onDetach
 
+    //로그아웃 다이얼로그 생성
+    private fun showDialog() {
+        val dialog = AlertDialog(requireActivity() as AppCompatActivity)
+
+        dialog.setOnOKClickedListener {
+            binding.apply {
+                deleteRefreshTokenObserver()
+                deleteRefreshToken()
+            }
+        }
+
+        dialog.setOnCancelClickedListener { }
+
+        dialog.show("로그아웃", "로그아웃 하시겠습니까?")
+    }
+
     //refresh 토큰 삭제하기
     private fun deleteRefreshToken() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -171,6 +190,7 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
                     Application.sharedPreferencesUtil.deleteAccessToken()
                     Application.sharedPreferencesUtil.deleteRefreshToken()
                     startActivity(intent)
+                    binding.root.showSnackBarMessage("로그아웃 하셨습니다.")
                     activity!!.finish()
                 }
                 is NetworkResult.Error -> {
