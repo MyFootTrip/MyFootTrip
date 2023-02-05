@@ -1,9 +1,11 @@
 package com.app.myfoottrip.ui.view.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -11,6 +13,7 @@ import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Email
 import com.app.myfoottrip.data.viewmodel.FcmViewModel
+import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentLoginBinding
 import com.app.myfoottrip.ui.base.BaseFragment
@@ -28,12 +31,27 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(
     private val userViewModel by activityViewModels<UserViewModel>()
     private val fcmViewModel by activityViewModels<FcmViewModel>()
 
+    private lateinit var callback: OnBackPressedCallback
+    private val navigationViewModel by activityViewModels<NavigationViewModel>()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigationViewModel.startPage = 1
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
             //뒤로가기
             btnBack.setOnClickListener {
+                navigationViewModel.startPage = 1
                 findNavController().popBackStack()
             }
         }
@@ -48,6 +66,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(
 
         userLoginResponseObserve()
     } // End of onViewCreated
+
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
+    } // End of onDetach
 
     private fun checkLoginValid(): Boolean {
         if (binding.etEmail.text!!.isEmpty()) {

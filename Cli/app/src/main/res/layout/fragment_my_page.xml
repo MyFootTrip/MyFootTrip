@@ -89,7 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_bold"
-                android:text="짱구님"
+                android:text=""
                 android:textColor="@color/white"
                 android:textSize="23sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -167,7 +167,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="12dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="4개"
+                    android:text="0개"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/iv_my_travel_image"
                     app:layout_constraintTop_toBottomOf="@id/tv_my_travel" />
@@ -208,6 +208,7 @@
             app:layout_constraintTop_toBottomOf="@+id/iv_one_side_rounded_shape">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_write"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="10dp"
@@ -242,7 +243,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="12dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="4개"
+                    android:text="0개"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/iv_i_wrote_image"
                     app:layout_constraintTop_toBottomOf="@+id/tv_i_wrote" />
@@ -316,7 +317,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="12dp"
                     android:fontFamily="@font/inter_regular"
-                    android:text="4개"
+                    android:text="0개"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/iv_i_liked_image"
                     app:layout_constraintTop_toBottomOf="@+id/tv_i_liked" />

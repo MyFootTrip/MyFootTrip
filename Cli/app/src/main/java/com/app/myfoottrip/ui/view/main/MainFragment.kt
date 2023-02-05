@@ -2,6 +2,7 @@ package com.app.myfoottrip.ui.view.main
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.core.os.bundleOf
@@ -12,6 +13,7 @@ import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMainBinding
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.skydoves.powerspinner.PowerSpinnerView
 
 private const val TAG = "MainFragment_마이풋트립"
 
@@ -22,16 +24,12 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
 
     private lateinit var mContext: Context
+    private lateinit var mainActivity: MainActivity
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+        mainActivity = context as MainActivity
     } // End of onAttach
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    private val userViewModel by activityViewModels<UserViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,25 +41,43 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
             bottomNavigationView.menu.getItem(1).isEnabled = false //가운데 아이템 선택 불가능
         }
     } // End of onViewCreated
-    
+
+    override fun onResume() {
+        super.onResume()
+        if (navigationViewModel.type == 4){
+            binding.bottomNavigationView.menu.findItem(R.id.homeFragment).isChecked = true
+        }
+    }
+
     //바텀 네비게이션 설정
     private fun initNavigation() {
         binding.apply {
-            when(navigationViewModel.type){
-                0 -> {parentFragmentManager.beginTransaction()
-                    .replace(R.id.nav_bottom_fragment, HomeFragment()).commit()}
-                1 -> {parentFragmentManager.beginTransaction()
-                    .replace(R.id.nav_bottom_fragment, MyPageFragment()).commit()}
+            
+            when (navigationViewModel.type) {
+                0 -> {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.nav_bottom_fragment, HomeFragment()).commit()
+                }
+                1 -> {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.nav_bottom_fragment, MyPageFragment()).commit()
+                }
+                4 -> {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.nav_bottom_fragment, HomeFragment()).commit()
+                }
             }
 
             bottomNavigationView.setOnItemSelectedListener {
                 navigationSelected(it)
             }
+
             addButton.setOnClickListener { //여정 기록 -> 여정 선택 화면
                 val bundle = bundleOf("type" to 0)
-                findNavController().navigate(
-                    R.id.action_mainFragment_to_travelSelectFragment, bundle
-                )
+                if (mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort) != null){
+                    mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort).dismiss()
+                }
+                findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment, bundle)
             }
         }
     }
@@ -79,6 +95,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
                 R.id.mypageFragment -> {
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.nav_bottom_fragment, MyPageFragment()).commit()
+                    if (mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort) != null){
+                        mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort).dismiss()
+                    }
                     true
                 }
             }

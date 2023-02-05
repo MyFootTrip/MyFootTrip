@@ -29,6 +29,14 @@ class TokenRepository {
     val getUserDataByAccessTokenResponseLiveData: LiveData<NetworkResult<User>>
         get() = _getUserDataByAccessTokenResponseLiveData
 
+    private val _getUserDataResponseLiveData = MutableLiveData<NetworkResult<User>>()
+    val getUserDataResponseLiveData: LiveData<NetworkResult<User>>
+        get() = _getUserDataResponseLiveData
+
+    private val _deleteRefreshTokenResponseLiveData = MutableLiveData<NetworkResult<String>>()
+    val deleteRefreshTokenResponseLiveData: LiveData<NetworkResult<String>>
+        get() = _deleteRefreshTokenResponseLiveData
+
     suspend fun getAccessTokenByRefreshToken(refreshToken: Token) {
         val response = tokenApi.refreshTokenAvailableCheck(refreshToken)
 
@@ -73,6 +81,36 @@ class TokenRepository {
             )
         }
     } // End of getUserDataByAccessToken
+
+    suspend fun getUserData() {
+        val response = headerTokenApi.getUserDataByAccessToken()
+
+        _getUserDataResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _getUserDataResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _getUserDataResponseLiveData.postValue(
+                NetworkResult.Error(response.errorBody()!!.string()))
+        } else {
+            _getUserDataResponseLiveData.postValue(
+                NetworkResult.Error(response.headers().toString()))
+        }
+
+    } // End of getUserDataByAccessToken
+
+    // refreshToken 삭제
+    suspend fun deleteRefreshToken(token: String){
+        var response = headerTokenApi.deleteRefreshToken(token)
+
+        if (response.isSuccessful && response.body() != null) {
+            _deleteRefreshTokenResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _deleteRefreshTokenResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
+        } else {
+            _deleteRefreshTokenResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
+    }
 
     // =================================== Social Login ===================================
     private val _postSocialLoginAccessTokenResponseLiveData = MutableLiveData<NetworkResult<Token>>()
@@ -172,3 +210,5 @@ class TokenRepository {
         }
     } // End of postGoogleLoignAccessToken
 } // End of TokenRepository class
+
+

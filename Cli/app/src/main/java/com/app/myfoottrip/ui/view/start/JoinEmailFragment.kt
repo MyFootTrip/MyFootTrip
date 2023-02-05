@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -21,6 +22,7 @@ import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Email
 import com.app.myfoottrip.data.viewmodel.JoinViewModel
+import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentJoinEmailBinding
 import com.app.myfoottrip.util.NetworkResult
 import com.google.android.material.textfield.TextInputEditText
@@ -48,14 +50,12 @@ class JoinEmailFragment : Fragment() {
     private lateinit var progressbar: ProgressBar
     private lateinit var emailConfirmButton: AppCompatButton
 
+
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
     } // End of onAttach
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    } // End of onCreate
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -73,7 +73,6 @@ class JoinEmailFragment : Fragment() {
 
         joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
             .setOnClickListener {
-                Log.d(TAG, "joinBackButtonCustomView : onClick")
                 findNavController().popBackStack()
             }
 

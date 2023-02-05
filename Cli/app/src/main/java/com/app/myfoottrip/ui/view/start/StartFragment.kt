@@ -70,7 +70,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
         // 회원가입 텍스트 클릭시 회원가입 페이지로 이동
         binding.tvJoin.setOnClickListener {
             Navigation.findNavController(binding.tvJoin)
-                .navigate(R.id.action_startFragment_to_emailJoinFragment)
+                .navigate(R.id.action_firstFragment_to_serviceClauseFragment)
         }
 
 
@@ -219,7 +219,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
     }
 
     private fun showLoginFragment() {
-        findNavController().navigate(R.id.action_userFragment_to_loginFragment)
+        findNavController().navigate(R.id.action_firstFragment_to_loginFragment)
     } // End of showLoginFragment
 
     // =================================== Social Login ===================================

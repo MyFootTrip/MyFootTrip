@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.view.board.UpdateBoardFragment">
+
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_back"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/gray_700" />
+
+    <TextView
+        android:id="@+id/tv_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:fontFamily="@font/inter_bold"
+        android:padding="10dp"
+        android:text="게시물 수정"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_back"
+        app:layout_constraintLeft_toRightOf="@id/iv_back"
+        app:layout_constraintTop_toTopOf="@id/iv_back" />
+
+    <View
+        android:id="@+id/base_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="10dp"
+        android:background="@color/gray_60"
+        app:layout_constraintTop_toBottomOf="@id/tv_header" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toTopOf="@id/btn_update"
+        app:layout_constraintTop_toBottomOf="@id/base_line">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_camera_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/inter_semibold"
+                android:padding="5dp"
+                android:text="사진"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_camera_header_optional"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(선택)"
+                android:textColor="@color/gray_80"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_camera_header"
+                app:layout_constraintLeft_toRightOf="@id/tv_camera_header"
+                app:layout_constraintTop_toTopOf="@id/tv_camera_header" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/photo_add_btn"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_camera_header_optional"
+                app:strokeColor="@color/gray_bright"
+                app:strokeWidth="1dp">
+
+                <ImageView
+                    android:id="@+id/iv_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_plus"
+                    app:tint="@color/main" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_camera_header_optional"
+                app:spanCount="3"
+                tools:itemCount="6"
+                tools:listitem="@layout/list_item_photo" />
+
+            <TextView
+                android:id="@+id/tv_title_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/inter_semibold"
+                android:padding="5dp"
+                android:text="제목"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_photo" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_title_header"
+                app:strokeColor="@color/gray_80"
+                app:strokeWidth="1dp">
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/et_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_regular"
+                    android:hint=""
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:met_hideUnderline="true" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_content_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/inter_semibold"
+                android:padding="5dp"
+                android:text="내용"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_title" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_content_header"
+                app:strokeColor="@color/gray_80"
+                app:strokeWidth="1dp">
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/et_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_regular"
+                    android:gravity="start"
+                    android:hint=""
+                    android:minHeight="100dp"
+                    android:padding="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:met_hideUnderline="true" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_theme_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/inter_semibold"
+                android:padding="5dp"
+                android:text="테마"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_content" />
+
+            <TextView
+                android:id="@+id/tv_theme_header_optional"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(선택)"
+                android:textColor="@color/gray_80"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_theme_header"
+                app:layout_constraintLeft_toRightOf="@id/tv_theme_header"
+                app:layout_constraintTop_toTopOf="@id/tv_theme_header" />
+
+            <LinearLayout
+                android:id="@+id/linear_chip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/tv_theme_header_optional">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cg_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:chipSpacingHorizontal="10dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_app_name"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_single"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="혼자"
+                        android:textColor="@color/select_category_text"
+                        android:textSize="14sp"
+                        app:chipBackgroundColor="@color/select_category_background"
+                        app:chipCornerRadius="20dp"
+                        app:chipEndPadding="10dp"
+                        app:chipStartPadding="10dp"
+                        app:chipStrokeColor="@color/select_category_text"
+                        app:chipStrokeWidth="1dp"
+                        app:rippleColor="@null" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_friend"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="친구와"
+                        android:textColor="@color/select_category_text"
+                        android:textSize="14sp"
+                        app:chipBackgroundColor="@color/select_category_background"
+                        app:chipEndPadding="10dp"
+                        app:chipStartPadding="10dp"
+                        app:chipStrokeColor="@color/select_category_text"
+                        app:chipStrokeWidth="1dp"
+                        app:rippleColor="@null" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_couple"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="연인과"
+                        android:textColor="@color/select_category_text"
+                        android:textSize="14sp"
+                        app:chipBackgroundColor="@color/select_category_background"
+                        app:chipEndPadding="10dp"
+                        app:chipStartPadding="10dp"
+                        app:chipStrokeColor="@color/select_category_text"
+                        app:chipStrokeWidth="1dp"
+                        app:rippleColor="@null" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_spouse"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="배우자와"
+                        android:textColor="@color/select_category_text"
+                        android:textSize="14sp"
+                        app:chipBackgroundColor="@color/select_category_background"
+                        app:chipCornerRadius="20dp"
+                        app:chipEndPadding="10dp"
+                        app:chipStartPadding="10dp"
+                        app:chipStrokeColor="@color/select_category_text"
+                        app:chipStrokeWidth="1dp"
+                        app:rippleColor="@null" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_chip2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/linear_chip">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cg_category2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:chipSpacingHorizontal="10dp"
+
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_app_name"
+                    app:singleSelection="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_kid"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="아이와"
+                        android:textColor="@color/select_category_text"
+                        android:textSize="14sp"
+                        app:chipBackgroundColor="@color/select_category_background"
+                        app:chipEndPadding="10dp"
+                        app:chipStartPadding="10dp"
+                        app:chipStrokeColor="@color/select_category_text"
+                        app:chipStrokeWidth="1dp"
+                        app:rippleColor="@null" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_parent"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="부모님과"
+                        android:textColor="@color/select_category_text"
+                        android:textSize="14sp"
+                        app:chipBackgroundColor="@color/select_category_background"
+                        app:chipEndPadding="10dp"
+                        app:chipStartPadding="10dp"
+                        app:chipStrokeColor="@color/select_category_text"
+                        app:chipStrokeWidth="1dp"
+                        app:rippleColor="@null" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_etc"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="기타"
+                        android:textColor="@color/select_category_text"
+                        android:textSize="14sp"
+                        app:chipBackgroundColor="@color/select_category_background"
+                        app:chipEndPadding="10dp"
+                        app:chipStartPadding="10dp"
+                        app:chipStrokeColor="@color/select_category_text"
+                        app:chipStrokeWidth="1dp"
+                        app:rippleColor="@null" />
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <com.github.nikartm.button.FitButton
+        android:id="@+id/btn_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:paddingVertical="14dp"
+        app:fb_backgroundColor="@color/main"
+        app:fb_cornerRadius="20dp"
+        app:fb_fontFamilyRes="@font/inter_regular"
+        app:fb_text="수정하기"
+        app:fb_textColor="@color/white"
+        app:fb_textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

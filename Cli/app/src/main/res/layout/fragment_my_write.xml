@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.view.mypage.MyWriteFragment">
 
     <ImageView
         android:id="@+id/iv_back"
@@ -17,11 +18,11 @@
         app:tint="@color/gray_700" />
 
     <TextView
-        android:id="@+id/tv_my_like_title"
+        android:id="@+id/tv_my_write_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="내가 좋아하는 여정"
+        android:text="내가 작성한 게시물"
         android:textSize="20sp"
         android:fontFamily="@font/inter_bold"
         android:textColor="@color/black"
@@ -37,10 +38,10 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="10dp"
         android:background="@color/gray_bright"
-        app:layout_constraintTop_toBottomOf="@id/tv_my_like_title" />
+        app:layout_constraintTop_toBottomOf="@id/tv_my_write_title" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_myPage_like"
+        android:id="@+id/rv_myPage_write"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/gray_bright"
@@ -51,6 +52,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/base_line"
         tools:listitem="@layout/list_item_mypage_like" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

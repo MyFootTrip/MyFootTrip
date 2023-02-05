@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 private const val TAG = "PhotoAdapter_마이풋트립"
 class PhotoAdapter(var imageList:List<Uri>) : RecyclerView.Adapter<PhotoAdapter.PhotoHolder>(){
@@ -22,17 +23,13 @@ class PhotoAdapter(var imageList:List<Uri>) : RecyclerView.Adapter<PhotoAdapter.
         fun bindInfo(imageUrl : Uri){
 
             if (imageUrl != checkUri){
-                Glide.with(itemView)
-                    .load(imageUrl)
-                    .centerCrop()
-                    .into(image)
+                Glide.with(itemView).load(imageUrl).skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop().into(image)
             }
 
             deleteBtn.setOnClickListener{
                 itemClickListner.onClick(it, layoutPosition)
             }
-
-            Log.d(TAG, "bindInfo: $imageUrl")
         }
     }
 

@@ -21,6 +21,16 @@ class TokenViewModel : ViewModel() {
     val getUserDataByAccessTokenResponseLiveData: LiveData<NetworkResult<User>>
         get() = tokenRepository.getUserDataByAccessTokenResponseLiveData
 
+    val getUserResponseLiveData: LiveData<NetworkResult<User>>
+        get() = tokenRepository.getUserDataResponseLiveData
+
+    val deleteRefreshTokenResponseLiveData: LiveData<NetworkResult<String>>
+        get() = tokenRepository.deleteRefreshTokenResponseLiveData
+
+    // =================================== Social Login ===================================
+    val postSocialAccessTokenResponseLiveData: LiveData<NetworkResult<Token>>
+        get() = tokenRepository.postSocialLoginAccessTokenResponseLiveData
+
     suspend fun getAccessTokenByRefreshToken(refreshToken: Token) {
         tokenRepository.getAccessTokenByRefreshToken(refreshToken)
     } // End of getAccessTokenByRefreshToken
@@ -33,10 +43,17 @@ class TokenViewModel : ViewModel() {
         }
     } // End of getUserDataByAccessToken
 
-    // =================================== Social Login ===================================
-    val postSocialAccessTokenResponseLiveData: LiveData<NetworkResult<Token>>
-        get() = tokenRepository.postSocialLoginAccessTokenResponseLiveData
+    fun getUserData() {
+        viewModelScope.launch {
+            tokenRepository.getUserData()
+        }
+    } // End of getUserDataByAccessToken
 
+    fun deleteRefreshToken(token: String){
+        viewModelScope.launch {
+            tokenRepository.deleteRefreshToken(token)
+        }
+    }
     // =================================== Naver Login ===================================
     suspend fun postNaverAccessToken(token: String) {
         viewModelScope.launch {

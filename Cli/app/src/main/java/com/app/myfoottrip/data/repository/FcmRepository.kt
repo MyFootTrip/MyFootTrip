@@ -14,6 +14,10 @@ class FcmRepository {
     val addTokenResponseLiveData: LiveData<NetworkResult<String>>
         get() = _addTokenResponseLiveData
 
+    private val _deleteTokenResponseLiveData = MutableLiveData<NetworkResult<String>>()
+    val deleteTokenResponseLiveData: LiveData<NetworkResult<String>>
+        get() = _deleteTokenResponseLiveData
+
     //토큰 저장
     suspend fun addFcmToken(token: String){
         var response = headerFcmService.addFcmToken(token)
@@ -24,6 +28,19 @@ class FcmRepository {
             _addTokenResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
         } else {
             _addTokenResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
+    }
+
+    //토큰 삭제
+    suspend fun deleteFcmToken(token: String){
+        var response = headerFcmService.deleteFcmToken(token)
+
+        if (response.isSuccessful && response.body() != null) {
+            _deleteTokenResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _deleteTokenResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
+        } else {
+            _deleteTokenResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
         }
     }
 }

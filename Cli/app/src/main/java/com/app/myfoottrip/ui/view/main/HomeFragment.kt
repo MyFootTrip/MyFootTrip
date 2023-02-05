@@ -18,14 +18,11 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
-import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentHomeBinding
-import com.app.myfoottrip.network.fcm.MyFireBaseMessagingService
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
 import com.app.myfoottrip.ui.adapter.HomeAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.NetworkResult
-import com.forms.sti.progresslitieigb.ProgressLoadingIGB
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,8 +44,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private var filter: Filter = Filter(arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
     var detector: GestureDetector? = null
 
-    private val userViewModel by activityViewModels<UserViewModel>()
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -56,7 +51,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         /** DynamicLink 수신확인 */
         initDynamicLink()
@@ -66,6 +60,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         //게시물 작성 페이지로 이동
         binding.ivWrite.setOnClickListener {
             val bundle = bundleOf("type" to 2)
+            binding.spinnerSort.dismiss()
             findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment, bundle)
         }
 
@@ -90,18 +85,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         getData()
     }
 
-    private fun startLoading() {
-        ProgressLoadingIGB.startLoadingIGB(requireContext()) {
-            message = "Good Morning!" //  Center Message
-            srcLottieJson = R.raw.loading_walk // Tour Source JSON Lottie
-            timer = 10000                   // Time of live for progress.
-            hight = 500 // Optional
-            width = 500 // Optional
-        }
-    } // End of startLoading
-
     private fun initHomeAdapter(boardList: ArrayList<Board>) {
-
         //정렬 기준
         if(sortBy == "최신순") boardList.sortByDescending { it.writeDate }
         else boardList.sortByDescending { it.likeList.size }
@@ -111,6 +95,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         homeAdatper.setItemClickListener(object : HomeAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, boardId: Int) {
                 boardViewModel.boardId = boardId
+                binding.spinnerSort.dismiss()
                 findNavController().navigate(R.id.action_mainFragment_to_boardFragment)
             }
         })
@@ -171,23 +156,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         textSize = 12.0f
                         isCloseIconVisible = true
                         closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
-                        closeIconTint = ColorStateList.valueOf(
-                            ContextCompat.getColor(
-                                requireContext(), R.color.white
-                            )
-                        )
-                        chipBackgroundColor = ColorStateList.valueOf(
-                            ContextCompat.getColor(
-                                requireContext(), R.color.main
-                            )
-                        )
-                        setTextColor(
-                            ColorStateList.valueOf(
-                                ContextCompat.getColor(
-                                    requireContext(), R.color.white
-                                )
-                            )
-                        )
+                        closeIconTint = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                        chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
+                        setTextColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
                         setOnCloseIconClickListener {
                             binding.cgDetail.removeView(this)
                             selectedDetailList.remove(category)
@@ -274,6 +245,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
     } // End of initSpinnerSort
 
+
+
     //스크롤 감지
     private fun detectScroll() {
         detector = GestureDetector(requireContext(), object : GestureDetector.OnGestureListener {
@@ -318,7 +291,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.root.setOnTouchListener { _, event ->
             detector!!.onTouchEvent(event)
         }
-
         val onScrollListener = object : RecyclerView.OnScrollListener() {
             override fun onScrolled(@NonNull recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -328,6 +300,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 binding.cgCategory.clearCheck()
+                binding.spinnerSort.dismiss()
             }
         }
 
@@ -369,12 +342,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     initHomeAdapter(it.data as ArrayList<Board>)
+                    binding.lottieHome.pauseAnimation()
+                    binding.lottieHome.visibility = View.INVISIBLE
                 }
                 is NetworkResult.Error -> {
                     Log.d(TAG, "게시물 조회 Error: ${it.data}")
                 }
                 is NetworkResult.Loading -> {
-                    startLoading()
                 }
             }
         }
@@ -392,12 +366,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     initHomeAdapter(it.data as ArrayList<Board>)
+                    binding.lottieHome.pauseAnimation()
+                    binding.lottieHome.visibility = View.INVISIBLE
                 }
                 is NetworkResult.Error -> {
                     Log.d(TAG, "게시물 조회 Error: ${it.data}")
                 }
                 is NetworkResult.Loading -> {
-                    startLoading()
                 }
             }
         }
@@ -414,6 +389,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 //            binding.tvToken.text = dataStr
             Log.d(TAG, "initDynamicLink: $dataStr")
         }
+    }
+
+    fun dismissSpinner(){
+        binding.spinnerSort.dismiss()
     }
 
     companion object {

@@ -3,9 +3,10 @@ package com.app.myfoottrip.ui.view.board
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
@@ -20,10 +21,12 @@ import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentBoardBinding
 import com.app.myfoottrip.ui.adapter.PlaceAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.ui.view.dialogs.AlertDialog
 import com.app.myfoottrip.ui.view.dialogs.PlaceBottomDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.TimeUtils
+import com.app.myfoottrip.util.showSnackBarMessage
 import com.bumptech.glide.Glide
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
@@ -58,7 +61,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         mainActivity = context as MainActivity
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                navigationViewModel.type = 0
+                if (navigationViewModel.type == 3) navigationViewModel.type = 1
+                else navigationViewModel.type = 0
                 findNavController().popBackStack()
             }
         }
@@ -71,11 +75,38 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         init()
 
         binding.apply {
-            ivBack.setOnClickListener { findNavController().popBackStack()} //뒤로가기
+            ivBack.setOnClickListener { //뒤로가기
+                if (navigationViewModel.type == 3) navigationViewModel.type = 1
+                else navigationViewModel.type = 0
+                findNavController().popBackStack()
+            }
             ivComment.setOnClickListener { findNavController().navigate(R.id.action_boardFragment_to_commentFragment)} //댓글 페이지로 이동
             lottieLike.setOnClickListener {
                 getLikeObserver()
                 getLike()
+            }
+
+            //게시글 edit 버튼 클릭 시
+            ivEdit.setOnClickListener {
+                var popupMenu = PopupMenu(requireContext(),binding.ivEdit)
+
+                mainActivity.menuInflater.inflate(R.menu.comment_menu,popupMenu.menu)
+
+                popupMenu.show()
+                popupMenu.setOnMenuItemClickListener {
+                    when(it.itemId){
+                        R.id.menu_update -> {
+                            findNavController().navigate(R.id.action_boardFragment_to_updateBoardFragment)
+                            return@setOnMenuItemClickListener true
+                        }
+                        R.id.menu_delete -> {
+                            showDialog()
+                            return@setOnMenuItemClickListener true
+                        }else ->{
+                        return@setOnMenuItemClickListener true
+                    }
+                    }
+                }
             }
         }
 
@@ -95,6 +126,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     private fun initData(board: Board){
         binding.apply {
             // --------------- 게시글 윗쪽 부분 데이터---------------------------
+            if(board.userId == userViewModel.wholeMyData.value?.uid) ivEdit.visibility = View.VISIBLE
             initViewPager(board) //이미지 슬라이더
             tvLocation.text = convertToString(board.travel!!.location!! as ArrayList<String>) //여행 지역
             tvTheme.text = "#${board.theme}" //여행 테마
@@ -262,6 +294,22 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         placeBottom.show(parentFragmentManager, placeBottom.mTag)
     }
 
+    //게시물 삭제 다이얼로그 생성
+    private fun showDialog() {
+        val dialog = AlertDialog(requireActivity() as AppCompatActivity)
+
+        dialog.setOnOKClickedListener {
+            binding.apply {
+                deleteBoardObserver()
+                deleteBoard()
+            }
+        }
+
+        dialog.setOnCancelClickedListener { }
+
+        dialog.show("게시물 수정", "게시물을 수정하시겠습니까?")
+    }
+
     //게시물 데이터 받아오기
     private fun getBoard() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -274,7 +322,31 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     initData(it.data!!)
+                    boardViewModel.boardId = it.data!!.boardId
                     initMapScroll()
+                }
+                is NetworkResult.Error -> {
+                }
+                is NetworkResult.Loading -> {
+                }
+            }
+        }
+    }
+
+    //게시물 삭제
+    private fun deleteBoard() {
+        CoroutineScope(Dispatchers.IO).launch {
+            boardViewModel.deleteBoard(boardViewModel.boardId)
+        }
+    }
+
+    private fun deleteBoardObserver() {
+        boardViewModel.deleteBoard.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    navigationViewModel.type = 4
+                    findNavController().navigate(R.id.action_boardFragment_to_mainFragment)
+                    binding.root.showSnackBarMessage("게시물이 삭제되었습니다.")
                 }
                 is NetworkResult.Error -> {
                 }

@@ -77,25 +77,35 @@ object GalleryUtils {
         return Uri.parse(path)
     }
 
-    suspend fun insertImage(url : ArrayList<String>, imgUri : ArrayList<Uri>,type : Int) : ArrayList<String>{ //TODO : 실패했을 경우 처리
+    suspend fun insertImage(url : ArrayList<String>, imgUri : ArrayList<Uri>,type : Int,boardId: Int) : ArrayList<String>{ //TODO : 실패했을 경우 처리
         return withContext(Dispatchers.IO){
             val list = arrayListOf<String>()
             for(i in 0 until url.size){
-                //보드타입인지 프로필타입인지 지정
-                CoroutineScope(Dispatchers.IO).launch {
-                    Log.d(TAG, "이미지 저장 성공~~~~~~~~~~$i\n image : ${url[i]}")
-                    var direction = ""
-                    when(type){
-                        0 ->{
-                            direction = "board"
+                //서버 이미지이면 안 변경해줘도 됨
+                if (imgUri[i].toString().startsWith("https")) {
+                    list.add(imgUri[i].toString())
+                }else{
+                    //보드타입인지 프로필타입인지 지정
+                    CoroutineScope(Dispatchers.IO).launch {
+                        Log.d(TAG, "이미지 저장 성공~~~~~~~~~~$i\n image : ${url[i]}")
+                        var direction = ""
+                        when(type){
+                            0 ->{
+                                direction = "board"
+                            }
+                            1 ->{
+                                direction = "profile"
+                            }
                         }
-                        1 ->{
-                            direction = "profile"
+                        if(type == 0) {
+                            val imageRef = fbStore.child("image/$direction/${boardId}/${url[i]}")
+                            list.add(imageRef.putFile(imgUri[i]).await().storage.downloadUrl.await().toString())
+                        } else {
+                            val imageRef = fbStore.child("image/$direction/${url[i]}")
+                            list.add(imageRef.putFile(imgUri[i]).await().storage.downloadUrl.await().toString())
                         }
-                    }
-                    val imageRef = fbStore.child("image/$direction/${url[i]}")
-                    list.add(imageRef.putFile(imgUri[i]).await().storage.downloadUrl.await().toString())
-                }.join()
+                    }.join()
+                }
             }
             list
         }
