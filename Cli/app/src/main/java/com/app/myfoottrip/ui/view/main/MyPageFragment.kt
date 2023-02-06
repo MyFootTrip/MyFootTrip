@@ -27,6 +27,7 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
 ) {
 
     private val tokenViewModel by activityViewModels<TokenViewModel>()
+    private val userViewModel by activityViewModels<UserViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,34 +54,36 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        init()
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        binding.ivILikedImage.setMaxProgress(0.6f) //좋아요 애니메이션 세팅
+//        getUserMyData()
+//    }
 
     private fun init(){
         binding.ivILikedImage.setMaxProgress(0.6f) //좋아요 애니메이션 세팅
         getAccessTokenByRefreshTokenResponseLiveDataObserver()
         getUserMyData()
+        initUser()
     }
 
 
     //유저정보 데이터 초기화
-    private fun initUser(user: User){
+    private fun initUser(){
         binding.apply {
             //프로필 이미지
-            if (user.join.profile_image.isNullOrEmpty()){
+            if (userViewModel.wholeMyData.value?.join?.profile_image.isNullOrEmpty()){
                 ivProfile.setPadding(30)
                 Glide.with(this@MyPageFragment).load(R.drawable.ic_my).fitCenter().into(ivProfile)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white)))
             }else {
-                Glide.with(this@MyPageFragment).load(user.join.profile_image).skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE).thumbnail(Glide.with(this@MyPageFragment).load(R.drawable.loading_image).centerCrop()).centerCrop().into(ivProfile)
+                Glide.with(this@MyPageFragment).load(userViewModel.wholeMyData.value?.join?.profile_image).skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE).thumbnail(Glide.with(this@MyPageFragment).load(R.drawable.loading_image).centerCrop()).centerCrop().into(ivProfile)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white)))
             }
-            textView.text = "${user.join.nickname}님" //닉네임
-            tvMyTravelCnt.text = "${user.travel.size}개" //현재 작성하고 있는 여정의 수
-            tvIWroteCnt.text = "${user.writeBoard.size}개" //내가 작성한 게시글 수
-            tvILikedCnt.text = "${user.myLikeBoard.size}개" //좋아요 한 게시글 수
+            textView.text = "${userViewModel.wholeMyData.value?.join?.nickname}님" //닉네임
+            tvMyTravelCnt.text = "${userViewModel.wholeMyData.value?.travel?.size}개" //현재 작성하고 있는 여정의 수
+            tvIWroteCnt.text = "${userViewModel.wholeMyData.value?.writeBoard?.size}개" //내가 작성한 게시글 수
+            tvILikedCnt.text = "${userViewModel.wholeMyData.value?.myLikeBoard?.size}개" //좋아요 한 게시글 수
         }
     }
 
@@ -94,8 +97,8 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
         tokenViewModel.getUserResponseLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
-                        initUser(it.data!!)
-//                        userViewModel.setWholeMyData(it.data!!)
+                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: gdgdgd")
+                    userViewModel.setWholeMyData(it.data!!)
                 }
                 is NetworkResult.Error -> {
                     // AccessToken을 통해서 유저 정보를 가져오기 실패했는지 파악해야됨.

@@ -1,6 +1,7 @@
 package com.app.myfoottrip.ui.view.dialogs;
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
@@ -10,6 +11,7 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.rengwuxian.materialedittext.MaterialEditText
 
+private const val TAG = "EditNicknameDialog_마이풋트립"
 class EditNicknameDialog(private val listener: OnClickListener) :
     DialogFragment(),
     View.OnClickListener {
@@ -36,7 +38,7 @@ class EditNicknameDialog(private val listener: OnClickListener) :
 
         ivCancelBtn.setOnClickListener{ dismiss() }
         btnSave.setOnClickListener(this)
-
+        Log.d(TAG, "다이얼로그 유저 데이터:${userViewModel.wholeMyData.value?.join} ")
         // 현재 유저 닉네임 가져오기
         etEditNickname.setText("${userViewModel.wholeMyData.value?.join?.nickname}")
 

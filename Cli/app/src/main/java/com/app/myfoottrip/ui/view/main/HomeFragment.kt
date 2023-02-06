@@ -188,8 +188,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 }
             }
         })
-
-
         binding.rvCategory.apply {
             adapter = categoryAdapter
         }
@@ -241,7 +239,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             spinnerSort.setOnSpinnerItemSelectedListener<String> { oldIndex, oldItem, newIndex, newItem ->
                 sortBy = newItem //현재 정렬기준 갱신
                 getData()
-                getBoardListObserver()
             }
         }
     } // End of initSpinnerSort
@@ -325,7 +322,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
             //데이터 요청
             getData()
-            getBoardListObserver()
             binding.swipeLayout.isRefreshing = false
         }
     }
@@ -339,7 +335,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private fun getBoardListObserver() {
         // viewModel에서 전체 게시글 데이터 LiveData 옵저버 적용
+        Log.d(TAG, "getBoardListObserver: ------------------1")
         boardViewModel.boardList.observe(viewLifecycleOwner) {
+            Log.d(TAG, "getBoardListObserver: ----------------2")
             when (it) {
                 is NetworkResult.Success -> {
                     initHomeAdapter(it.data as ArrayList<Board>)

@@ -118,7 +118,6 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
     // 유저정보 데이터 초기화
     private fun initUser(join: Join) {
         binding.apply {
-            Log.d(TAG, "initUser: $join")
             //프로필 이미지
             if (join.profile_image.isNullOrEmpty()) {
                 editProfileImageview.setPadding(55)
@@ -253,7 +252,6 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
                     userViewModel.wholeUpdateUserData.age = join.age
                     userViewModel.wholeUpdateUserData.email = join.email
                     userViewModel.wholeUpdateUserData.password = join.password
-
                 }
                 is NetworkResult.Error -> {
                     // AccessToken을 통해서 유저 정보를 가져오기 실패했는지 파악해야됨.
@@ -282,6 +280,8 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
                     // refreshToken & accessToken
                     // savedInstance 저장하기
                     initUser(it.data!!)
+                    binding.root.showSnackBarMessage("닉네임 수정이 완료되었습니다.")
+                    userViewModel.wholeMyData.value?.join = it.data!!
                     dialog.dismiss()
                 }
                 is NetworkResult.Error -> {
@@ -291,26 +291,4 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
             }
         }
     }
-
-//    private fun updateUserResponseLiveDataObserver(dialog: EditNicknameDialog) {
-//        userViewModel.updateUserResponseLiveData.observe(viewLifecycleOwner) {
-//            when (it) {
-//                is NetworkResult.Success -> {
-//                    initUser(it.data!!)
-//                    binding.root.showSnackBarMessage("닉네임 수정이 완료되었습니다.")
-//                    dialog.dismiss()
-//                }
-//                is NetworkResult.Error -> {
-//                    // AccessToken을 통해서 유저 정보를 가져오기 실패했는지 파악해야됨.
-//                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 토큰 만료됨")
-//                    // RefreshToken을 통해서 AccessToken을 재발급
-//                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.data}")
-//                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.message}")
-//                }
-//                is NetworkResult.Loading -> {
-//                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 로딩 중입니다")
-//                }
-//            }
-//        }
-//    }
 }
