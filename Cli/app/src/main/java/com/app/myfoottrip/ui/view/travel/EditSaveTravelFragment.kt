@@ -1,6 +1,7 @@
 package com.app.myfoottrip.ui.view.travel
 
 import android.content.Context
+import android.hardware.Camera
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -21,19 +22,24 @@ import com.app.myfoottrip.databinding.FragmentEditSaveTravelBinding
 import com.app.myfoottrip.ui.adapter.TravelEditSaveItemAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
+import com.app.myfoottrip.util.LocationProvider
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.PathOverlay
+import com.naver.maps.map.overlay.PolylineOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 private const val TAG = "EditSaveTravelFragment_싸피"
@@ -131,7 +137,30 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
         markers.forEach { marker ->
             marker.map = naverMap
+            //marker.isFlat = true
+            marker.isIconPerspectiveEnabled = true
         }
+
+        val size = userVisitPlaceDataList.size
+        if (size >= 2) {
+            val polyline = PolylineOverlay()
+            val tempList: MutableList<LatLng> = ArrayList()
+            for (i in 0 until size) {
+                tempList.add(
+                    LatLng(
+                        userVisitPlaceDataList[i].latitude!!,
+                        userVisitPlaceDataList[i].longitude!!
+                    )
+                )
+            }
+
+            polyline.setPattern(10, 5)
+            polyline.coords = tempList
+            polyline.map = naverMap
+        }
+
+        Log.d(TAG, "setMapInMark: $userVisitPlaceDataList")
+        Log.d(TAG, "setMapInMark: $size")
     }.onJoin // End of setMapInMark
 
     private fun changeToTravelDto() {
@@ -389,7 +418,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     override fun onDestroy() {
         super.onDestroy()
         mapView.onDestroy()
-
     }
 
     override fun onLowMemory() {
@@ -401,6 +429,14 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         this.naverMap = naverMap
         naverMap.locationSource = locationSource
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
+
+        val cameraPosition = CameraPosition(
+            LatLng(0.0, 0.0),
+            16.0, // 줌 레벨
+            20.0,
+            180.0
+        )
+        naverMap.cameraPosition
 
         setMapInMark()
     } // End of onMapReady

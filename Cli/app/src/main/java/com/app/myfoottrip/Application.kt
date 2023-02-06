@@ -22,7 +22,6 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "Application_싸피"
-
 class Application : Application() {
 
     override fun onCreate() {
