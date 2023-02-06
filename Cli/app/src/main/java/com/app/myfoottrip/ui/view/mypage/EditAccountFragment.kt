@@ -65,6 +65,8 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initObserver()
+
         init()
 
         binding.apply {
@@ -104,15 +106,15 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
         }
     } // End of onViewCreated
 
-    override fun onResume() {
-        super.onResume()
-        init()
-    }
-
     private fun init() {
-        getAccessTokenByRefreshTokenResponseLiveDataObserver()
         getUserMyData()
     } // End of init
+
+    private fun initObserver(){
+        getAccessTokenByRefreshTokenResponseLiveDataObserver()
+        deleteFcmTokenObserver()
+        deleteRefreshTokenObserver()
+    }
 
 
     // 유저정보 데이터 초기화
@@ -124,16 +126,8 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
                 Glide.with(this@EditAccountFragment).load(R.drawable.ic_my).fitCenter().into(editProfileImageview)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
             } else {
-                Glide.with(this@EditAccountFragment)
-                    .load(join.profile_image)
-                    .skipMemoryCache(true).diskCacheStrategy(
-                        DiskCacheStrategy.NONE
-                    ).thumbnail(
-                        Glide.with(this@EditAccountFragment).load(R.drawable.loading_image)
-                            .centerCrop()
-                    ).centerCrop().into(editProfileImageview)
-                cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
-                )
+                Glide.with(this@EditAccountFragment).load(join.profile_image).skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE).thumbnail(Glide.with(this@EditAccountFragment).load(R.drawable.loading_image).centerCrop()).centerCrop().into(editProfileImageview)
+                cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
             }
             tvMyNickname.text = join.nickname // 닉네임
             tvMyEmail.text = join.email // 아이디
@@ -150,7 +144,6 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
                     dialog.etEditNickname.error = "닉네임을 입력해 주세요."
                 }else{
                     userViewModel.wholeMyData.value?.join?.profile_image = null
-//                    userViewModel.wholeMyData.value?.join?.nickname = nickname
                     userViewModel.wholeUpdateUserData.nickname = nickname
                     updateUserResponseLiveDataObserver(dialog)
                     updateUser()
@@ -163,8 +156,6 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
 
     } // End of editNickname
 
-    // private fun editNicknameObserver()
-
     override fun onDetach() {
         super.onDetach()
         callback.remove()
@@ -176,7 +167,6 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
 
         dialog.setOnOKClickedListener {
             binding.apply {
-                deleteRefreshTokenObserver()
                 deleteRefreshToken()
             }
         }
@@ -197,7 +187,6 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
         tokenViewModel.deleteRefreshTokenResponseLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
-                    deleteFcmTokenObserver()
                     deleteFcmToken()
                 }
                 is NetworkResult.Error -> {

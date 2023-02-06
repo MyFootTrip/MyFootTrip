@@ -1,6 +1,5 @@
 package com.app.myfoottrip.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +8,7 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.databinding.ListItemTravelBinding
 import com.bumptech.glide.Glide
+import com.google.android.material.chip.Chip
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,6 +40,8 @@ class TravelAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bindInfo(position: Int, travelDto: Travel) {
 
+            val chip = binding.chipTravelSelect
+            chip.isChecked = position == selected
             val startDateFormat = SimpleDateFormat("yyyy-MM.dd", Locale("ko", "KR"))
             val endDateFormat = SimpleDateFormat("MM.dd", Locale("ko", "KR"))
             val startDateString = startDateFormat.format(travelList[position].startDate!!)
@@ -53,6 +55,11 @@ class TravelAdapter(
                 } else { //여정 삭제
                     chipTravelSelect.text = "선택"
                     chipTravelDelete.visibility = View.VISIBLE
+                }
+
+                //게시글 생성 페이지에서는 삭제버튼 없애기
+                if (type == 2){
+                    binding.chipTravelDelete.visibility = View.GONE
                 }
 
                 chipTravelSelect.isChecked = (selected == position) //선택은 하나만 하도록
@@ -76,6 +83,8 @@ class TravelAdapter(
                 }
                 chipTravelSelect.setOnClickListener {
                     itemClickListner.onChipClick(type, position, travelDto)
+                    selected = position
+                    notifyItemRangeChanged(0,travelList.size)
                 }
 
                 chipTravelDelete.setOnClickListener {
@@ -107,4 +116,6 @@ class TravelAdapter(
     }
 
     override fun getItemCount(): Int = travelList.size
+
+
 } // End of TravelAdapter class

@@ -317,7 +317,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
         dialog.setOnCancelClickedListener { }
 
-        dialog.show("게시물 수정", "게시물을 수정하시겠습니까?")
+        dialog.show("게시물 삭제", "게시물을 삭제하시겠습니까?")
     }
 
     //게시물 데이터 받아오기

@@ -1,6 +1,7 @@
 package com.app.myfoottrip.ui.view.travel
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -147,8 +148,8 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             binding.btnSave.visibility = View.GONE
         } else {
             //게시글
+            binding.btnSave.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.gray_400))
             binding.tvTravelTitle.setText(R.string.select_travel_title)
-            binding.btnSave.visibility = View.VISIBLE
             binding.btnSave.setText(R.string.plz_travel_select_button_text)
             binding.btnSave.isEnabled = false
         }
@@ -157,7 +158,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     private fun initAdapter() {
         travelAdapter = TravelAdapter(type)
         binding.rvTravel.adapter = travelAdapter
-
+        binding.rvTravel.itemAnimator = null
         travelAdapter.setItemClickListener(object : TravelAdapter.ItemClickListener {
             override fun onAllClick(position: Int, travelDto: Travel) {
                 //TODO : 여정 확인 페이지로 이동
@@ -272,16 +273,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             if (position == lastPos) { //선택 해제
                 setSelected(-1)
                 settingView(false)
-                if (type == 2) {
-                    binding.btnSave.isClickable = false
-                    binding.btnSave.isEnabled = false
-                }
-                binding.btnSave.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.gray_bright
-                    )
-                )
             } else { //선택
                 setSelected(position)
                 settingView(true)
@@ -298,8 +289,8 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                     binding.btnSave.setText("선택 완료")
                 }
                 2 -> {
+                    binding.btnSave.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.main))
                     binding.btnSave.setText("게시글  작성하기")
-                    binding.btnSave.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.main))
                     binding.btnSave.isClickable = true
                     binding.btnSave.isEnabled = true
                 }
@@ -315,7 +306,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                 }
                 2 -> {
                     binding.btnSave.setText(R.string.plz_travel_select_button_text)
-                    binding.btnSave.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.gray_bright))
+                    binding.btnSave.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.gray_400))
                     binding.btnSave.isClickable = false
                     binding.btnSave.isEnabled = false
                 }

@@ -15,7 +15,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.databinding.FragmentHomeBinding
@@ -56,6 +55,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         /** DynamicLink 수신확인 */
         initDynamicLink()
 
+        initObserver()
+
         init()
 
         //게시물 작성 페이지로 이동
@@ -71,27 +72,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 //        }
     } // End of onViewCreated
 
-    override fun onResume() {
-        super.onResume()
-        init()
-    }
-
     private fun init() {
-        getBoardListObserver()
+        getData()
         initSpinnerSort()
         initChips()
         detectScroll()
         touchLayout()
         setUpSwipeRefresh()
-        getData()
     }
 
-    private fun initHomeAdapter(boardList: ArrayList<Board>) {
-        //정렬 기준
-        if(sortBy == "최신순") boardList.sortByDescending { it.writeDate }
-        else boardList.sortByDescending { it.likeList.size }
+    private fun initObserver(){
+        getBoardListObserver()
+        getFilteredBoardListObserver()
+    }
 
-        homeAdatper = HomeAdapter(boardList)
+
+    private fun initHomeAdapter() {
+        //정렬 기준
+        if(sortBy == "최신순") boardViewModel.boardList.value?.data!!.sortByDescending { it.writeDate }
+        else boardViewModel.boardList.value?.data!!.sortByDescending { it.likeList.size }
+
+        homeAdatper = HomeAdapter(boardViewModel.boardList.value?.data!!)
 
         homeAdatper.setItemClickListener(object : HomeAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, boardId: Int) {
@@ -165,26 +166,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             selectedDetailList.remove(category)
 
                             //필터에서 해당 필터유형 삭제
-                            if (filter.themeList.isNotEmpty() && filter.themeList.contains(category)) filter.themeList.remove(
-                                category
-                            )
-                            else if (filter.regionList.isNotEmpty() && filter.regionList.contains(
-                                    category
-                                )
-                            ) filter.regionList.remove(category)
-                            else if (filter.periodList.isNotEmpty() && filter.periodList.contains(
-                                    category
-                                )
-                            ) filter.periodList.remove(category)
-                            else if (filter.ageList.isNotEmpty() && filter.ageList.contains(category)) filter.ageList.remove(
-                                category
-                            )
+                            if (filter.themeList.isNotEmpty() && filter.themeList.contains(category)) filter.themeList.remove(category)
+                            else if (filter.regionList.isNotEmpty() && filter.regionList.contains(category)) filter.regionList.remove(category)
+                            else if (filter.periodList.isNotEmpty() && filter.periodList.contains(category)) filter.periodList.remove(category)
+                            else if (filter.ageList.isNotEmpty() && filter.ageList.contains(category)) filter.ageList.remove(category)
                             getFilterdData(filter)
-                            getFilteredBoardListObserver()
                         }
                     })
                     getFilterdData(filter)
-                    getFilteredBoardListObserver()
                 }
             }
         })
@@ -321,7 +310,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             selectedDetailList.clear()
 
             //데이터 요청
-            getData()
             binding.swipeLayout.isRefreshing = false
         }
     }
@@ -335,12 +323,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private fun getBoardListObserver() {
         // viewModel에서 전체 게시글 데이터 LiveData 옵저버 적용
-        Log.d(TAG, "getBoardListObserver: ------------------1")
         boardViewModel.boardList.observe(viewLifecycleOwner) {
-            Log.d(TAG, "getBoardListObserver: ----------------2")
             when (it) {
                 is NetworkResult.Success -> {
-                    initHomeAdapter(it.data as ArrayList<Board>)
+                    boardViewModel.boardList.value?.data = it.data!!
+                    initHomeAdapter()
                     binding.lottieHome.pauseAnimation()
                     binding.lottieHome.visibility = View.INVISIBLE
                     binding.tvPlanCount.text = CommonUtils.makeComma(it.data!!.size)
@@ -365,7 +352,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         boardViewModel.boardList.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
-                    initHomeAdapter(it.data as ArrayList<Board>)
+                    boardViewModel.boardList.value?.data = it.data!!
+                    initHomeAdapter()
                     binding.lottieHome.pauseAnimation()
                     binding.lottieHome.visibility = View.INVISIBLE
                 }

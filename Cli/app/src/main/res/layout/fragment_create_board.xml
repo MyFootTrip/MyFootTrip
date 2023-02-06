@@ -383,16 +383,16 @@
         android:id="@+id/btn_create"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
+        android:layout_marginHorizontal="40dp"
         android:layout_marginBottom="20dp"
         android:gravity="center"
-        android:paddingVertical="14dp"
+        android:paddingVertical="12dp"
         app:fb_backgroundColor="@color/main"
         app:fb_cornerRadius="20dp"
         app:fb_fontFamilyRes="@font/inter_regular"
         app:fb_text="등록하기"
         app:fb_textColor="@color/white"
-        app:fb_textSize="18sp"
+        app:fb_textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 
