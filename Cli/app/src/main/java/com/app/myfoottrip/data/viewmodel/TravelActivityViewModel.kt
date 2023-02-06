@@ -69,7 +69,7 @@ class TravelActivityViewModel : ViewModel() {
         userTravelDataNewOrUpdateCheck.value = flag
     } // End of setUserTravelDataNewOrUpdateCheck
 
-    fun setGetUserTravelData(travelData: Travel) {
+    fun setUserTravelData(travelData: Travel) {
         _userTravelData.value = travelData
     } // End of setGetUserTravelData
 } // End of TravelActivityViewModel

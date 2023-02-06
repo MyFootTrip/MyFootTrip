@@ -423,7 +423,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         }
     } // End of changeMode
 
-    private suspend fun getAddressByCoordinates(latitude: Double, longitude: Double): Address? {
+    private fun getAddressByCoordinates(latitude: Double, longitude: Double): Address? {
         val geocoder = Geocoder(mContext, Locale.KOREA)
 
         val addresses: List<Address>?
@@ -483,7 +483,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         CoroutineScope(Dispatchers.IO).launch {
             mainActivity.stopLocationBackground()
         }
-    }
+    } // End of onDetach
 
     override fun onLowMemory() {
         super.onLowMemory()
@@ -506,7 +506,5 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             )
         ).animate(CameraAnimation.Fly, 1000)
         naverMap.moveCamera(cameraUpdate)
-
-
     } // End of onMapReady
 } // End of TravelLocationWriteFragment class

@@ -65,7 +65,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         super.onViewCreated(view, savedInstanceState)
         //type 받는 코드
         type = requireArguments().getInt("type")
-
+        travelViewModel.setUserTravelDataNewOrUpdateCheck(null)
         userTravelDataObserver()
         userTraveLDataDeleteObserve()
 
@@ -88,6 +88,8 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
     private fun buttonSetTextObserve() {
         travelViewModel.userTravelDataNewOrUpdateCheck.observe(viewLifecycleOwner) {
+            Log.d(TAG, "buttonSetTextObserve: 이거 왜 동작함?")
+
             if (it == null) {
                 // Nothing
                 bundle = bundleOf(
@@ -131,7 +133,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         super.onDetach()
         callback.remove()
     }
-
 
     private fun initCustomView() {
         if (type == 0) {
