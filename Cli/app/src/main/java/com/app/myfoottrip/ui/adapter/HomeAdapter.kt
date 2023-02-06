@@ -30,9 +30,16 @@ class HomeAdapter(var boardList:List<Board>) : RecyclerView.Adapter<HomeAdapter.
         fun bindInfo(board : Board){
             binding.apply {
                 //게시물 사진
-                Glide.with(itemView)
-                    .load(board.imageList[0]).thumbnail(Glide.with(itemView).load(R.drawable.loading_image).centerCrop()).centerCrop()
-                    .into(ivImage)
+                if (board.imageList.isNullOrEmpty()){
+                    Glide.with(itemView)
+                        .load(R.drawable.default_image).thumbnail(Glide.with(itemView).load(R.drawable.loading_image).centerCrop()).centerCrop()
+                        .into(ivImage)
+                }else{
+                    Glide.with(itemView)
+                        .load(board.imageList[0]).thumbnail(Glide.with(itemView).load(R.drawable.loading_image).centerCrop()).centerCrop()
+                        .into(ivImage)
+                }
+
 
                 //이미지 적용 (Glide 라이브러리 사용)
                 val options = RequestOptions().skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)

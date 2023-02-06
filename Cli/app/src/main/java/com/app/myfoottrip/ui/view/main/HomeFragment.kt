@@ -22,6 +22,7 @@ import com.app.myfoottrip.databinding.FragmentHomeBinding
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
 import com.app.myfoottrip.ui.adapter.HomeAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.util.CommonUtils
 import com.app.myfoottrip.util.NetworkResult
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
@@ -344,6 +345,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     initHomeAdapter(it.data as ArrayList<Board>)
                     binding.lottieHome.pauseAnimation()
                     binding.lottieHome.visibility = View.INVISIBLE
+                    binding.tvPlanCount.text = CommonUtils.makeComma(it.data!!.size)
                 }
                 is NetworkResult.Error -> {
                     Log.d(TAG, "게시물 조회 Error: ${it.data}")
@@ -397,7 +399,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     companion object {
         val THEME_LIST = arrayOf("혼자", "친구와", "연인과", "배우자와", "아이와", "부모님과", "기타")
-        val LOCATION_LIST = arrayOf("서울", "경기", "강원", "부산", "경북·대구", "전남·광주", "제주", "충남·대전", "경남", "충북", "경남", "전북", "인천")
+        val LOCATION_LIST = arrayOf("서울", "경기", "강원", "부산", "경북·대구", "전남·광주", "제주", "충남·대전", "경남", "충북", "전북", "인천")
         val PERIOD_LIST = arrayOf("당일 치기", "1박 2일", "2박 3일", "3박 4일", "4박 5일+")
         val AGE_LIST = arrayOf("10대", "20대", "30대", "40대", "50대", "60대 이상")
     }

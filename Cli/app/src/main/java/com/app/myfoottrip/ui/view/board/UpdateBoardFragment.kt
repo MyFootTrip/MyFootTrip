@@ -198,7 +198,16 @@ class UpdateBoardFragment : BaseFragment<FragmentUpdateBoardBinding>(
         val dialog = AlertDialog(requireActivity() as AppCompatActivity)
 
         dialog.setOnOKClickedListener {
+
             binding.apply {
+
+                //로딩창 구현
+                mainActivity.runOnUiThread {
+                    binding.root.isClickable = false
+                    scrollUpdateBoard.visibility = View.INVISIBLE
+                    lottieUpdateBoard.visibility = View.VISIBLE
+                    lottieUpdateBoard.playAnimation()
+                }
 
                 imageList.removeAt(0) //더미데이터 지우기
                 boardViewModel.board.value?.data?.imageList?.clear()

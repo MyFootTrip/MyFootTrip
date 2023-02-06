@@ -177,15 +177,25 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
             carouselImage.registerLifecycle(viewLifecycleOwner)
             carouselImage.imagePlaceholder = ContextCompat.getDrawable(requireContext(),R.raw.loading_image)
-
-            val list = mutableListOf<CarouselItem>().let {
-                it.apply {
-                    for (image in board.imageList){
-                        add(CarouselItem(imageUrl = image))
+            //게시물 사진
+            if (board.imageList.isNullOrEmpty()){
+                val list = mutableListOf<CarouselItem>().let {
+                    it.apply {
+                            add(CarouselItem(R.drawable.default_image))
                     }
                 }
+                carouselImage.setData(list)
+            }else{
+                val list = mutableListOf<CarouselItem>().let {
+                    it.apply {
+                        for (image in board.imageList){
+                            add(CarouselItem(imageUrl = image))
+                        }
+                    }
+                }
+                carouselImage.setData(list)
             }
-            carouselImage.setData(list)
+
         }
     }
 

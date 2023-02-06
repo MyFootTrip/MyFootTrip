@@ -40,6 +40,10 @@ class UserRepository {
     val userLoginReponseLiveData: LiveData<NetworkResult<Token>>
         get() = _userLoginReponseLiveData
 
+    private val _userUpdateReponseLiveData = MutableLiveData<NetworkResult<Join>>()
+    val userUpdateReponseLiveData: LiveData<NetworkResult<Join>>
+        get() = _userUpdateReponseLiveData
+
     // 이메일 중복 체크
     suspend fun checkUsedEmailId(emailId: Email) {
 
@@ -89,14 +93,8 @@ class UserRepository {
     } // End of checkEmailValidateText
 
     // 유저 회원가입
-    suspend fun userJoin(
-        userProfileImgFile: MultipartBody.Part?,
-        userJoinData: HashMap<String, RequestBody>
-    ) {
-        val response = userApi.userJoin(
-            userProfileImgFile,
-            userJoinData
-        )
+    suspend fun userJoin(userProfileImgFile: MultipartBody.Part?, userJoinData: HashMap<String, RequestBody>) {
+        val response = userApi.userJoin(userProfileImgFile, userJoinData)
 
         _userJoinResponseLiveData.postValue(NetworkResult.Loading())
 
@@ -116,6 +114,22 @@ class UserRepository {
             )
         }
     } // End of joinUser
+
+    // 유저 정보 수정
+    suspend fun updateUser(userProfileImgFile: MultipartBody.Part?, userJoinData: HashMap<String, RequestBody>){
+        var response = headerUserApi.updateUser(userProfileImgFile, userJoinData)
+
+        // 처음은 Loading 상태로 지정
+        _userUpdateReponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _userUpdateReponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _userUpdateReponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
+        } else {
+            _userUpdateReponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
+    }
 
     // 유저 로그인
     suspend fun userLogin(
@@ -138,11 +152,9 @@ class UserRepository {
                 )
             )
         } else {
-            _userLoginReponseLiveData.postValue(
-                NetworkResult.Error(
-                    response.headers().toString()
-                )
-            )
+            _userLoginReponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
         }
     } // End of userLogin
+
+
 } // End of UserRepository

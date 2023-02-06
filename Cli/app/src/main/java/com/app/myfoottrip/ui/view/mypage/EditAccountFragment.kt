@@ -4,16 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Nickname
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.dto.Join
 import com.app.myfoottrip.data.viewmodel.FcmViewModel
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.data.viewmodel.TokenViewModel
@@ -22,22 +24,24 @@ import com.app.myfoottrip.databinding.FragmentEditAccountBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.dialogs.AlertDialog
 import com.app.myfoottrip.ui.view.dialogs.EditNicknameDialog
+import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.ui.view.start.StartActivity
-import com.app.myfoottrip.util.GalleryUtils
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
+import com.app.myfoottrip.util.showToastMessage
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 private const val TAG = "EditAccountFragment_마이풋트립"
 
 class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
     FragmentEditAccountBinding::bind, R.layout.fragment_edit_account
 ) {
+
+    private lateinit var mainActivity: MainActivity
 
     private val userViewModel by activityViewModels<UserViewModel>()
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
@@ -48,6 +52,7 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        mainActivity = context as MainActivity
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 navigationViewModel.type = 1
@@ -71,10 +76,6 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
 
             // 닉네임 변경 다이얼로그 나오기
             chipEditAccount.setOnClickListener { editNicknameInput() }
-//            chipEditAccount.setOnClickListener {
-//                val dialog = EditNicknameDialog()
-//                dialog.show(activity?.supportFragmentManager!!, "EditNicknameDialog")
-//            }
 
             // 아이디 변경 페이지로 이동
             chipEditEmail.setOnClickListener {
@@ -103,39 +104,40 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
         }
     } // End of onViewCreated
 
+    override fun onResume() {
+        super.onResume()
+        init()
+    }
+
     private fun init() {
-        initUser()
+        getAccessTokenByRefreshTokenResponseLiveDataObserver()
+        getUserMyData()
     } // End of init
 
+
     // 유저정보 데이터 초기화
-    private fun initUser() {
+    private fun initUser(join: Join) {
         binding.apply {
+            Log.d(TAG, "initUser: $join")
             //프로필 이미지
-            if (userViewModel.wholeMyData.value?.join?.profile_image.isNullOrEmpty()) {
+            if (join.profile_image.isNullOrEmpty()) {
                 editProfileImageview.setPadding(55)
                 Glide.with(this@EditAccountFragment).load(R.drawable.ic_my).fitCenter().into(editProfileImageview)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
             } else {
                 Glide.with(this@EditAccountFragment)
-                    .load(userViewModel.wholeMyData.value?.join?.profile_image)
+                    .load(join.profile_image)
                     .skipMemoryCache(true).diskCacheStrategy(
                         DiskCacheStrategy.NONE
                     ).thumbnail(
                         Glide.with(this@EditAccountFragment).load(R.drawable.loading_image)
                             .centerCrop()
                     ).centerCrop().into(editProfileImageview)
-                cvProfileLayout.setCardBackgroundColor(
-                    ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
-                        )
-                    )
+                cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
                 )
             }
-
-            tvMyNickname.text = "${userViewModel.wholeMyData.value?.join?.nickname}" // 닉네임
-            tvMyEmail.text = "${userViewModel.wholeMyData.value?.join?.email}" // 아이디
+            tvMyNickname.text = join.nickname // 닉네임
+            tvMyEmail.text = join.email // 아이디
         }
     } // End of initUser
 
@@ -144,12 +146,22 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
         val editDialog = EditNicknameDialog(object : EditNicknameDialog.OnClickListener {
             override fun onClick(dialog: EditNicknameDialog) {
                 // val user = userViewModel.wholeMyData.value
-                // val nickname = dialog.etEditNickname.text.toString()
-                dialog.dismiss()
+                 val nickname = dialog.etEditNickname.text.toString()
+                if (nickname.isEmpty()){
+                    dialog.etEditNickname.error = "닉네임을 입력해 주세요."
+                }else{
+                    userViewModel.wholeMyData.value?.join?.profile_image = null
+//                    userViewModel.wholeMyData.value?.join?.nickname = nickname
+                    userViewModel.wholeUpdateUserData.nickname = nickname
+                    updateUserResponseLiveDataObserver(dialog)
+                    updateUser()
+                }
+
             }
         })
 
         editDialog.show(parentFragmentManager, editDialog.mTag)
+
     } // End of editNickname
 
     // private fun editNicknameObserver()
@@ -223,4 +235,82 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
             }
         }
     }
+
+    private fun getUserMyData() {
+        CoroutineScope(Dispatchers.IO).launch {
+            tokenViewModel.getUserData()
+        }
+    } // End of getUserMyData
+
+    private fun getAccessTokenByRefreshTokenResponseLiveDataObserver() {
+        tokenViewModel.getUserResponseLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    initUser(it.data!!.join)
+                    val join = it.data!!.join
+                    userViewModel.wholeUpdateUserData.username = join.username
+                    userViewModel.wholeUpdateUserData.nickname = join.nickname
+                    userViewModel.wholeUpdateUserData.age = join.age
+                    userViewModel.wholeUpdateUserData.email = join.email
+                    userViewModel.wholeUpdateUserData.password = join.password
+
+                }
+                is NetworkResult.Error -> {
+                    // AccessToken을 통해서 유저 정보를 가져오기 실패했는지 파악해야됨.
+                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 토큰 만료됨")
+                    // RefreshToken을 통해서 AccessToken을 재발급
+                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.data}")
+                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.message}")
+                }
+                is NetworkResult.Loading -> {
+                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 로딩 중입니다")
+                }
+            }
+        }
+    } // End of getAccessTokenByRefreshTokenResponseLiveDataObserver
+
+    private fun updateUser() {
+        CoroutineScope(Dispatchers.IO).launch {
+            userViewModel.userUpdate()
+        }
+    } // End of getUserMyData
+
+    private fun updateUserResponseLiveDataObserver(dialog: EditNicknameDialog) {
+        userViewModel.updateUserResponseLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    // refreshToken & accessToken
+                    // savedInstance 저장하기
+                    initUser(it.data!!)
+                    dialog.dismiss()
+                }
+                is NetworkResult.Error -> {
+                }
+                is NetworkResult.Loading -> {
+                }
+            }
+        }
+    }
+
+//    private fun updateUserResponseLiveDataObserver(dialog: EditNicknameDialog) {
+//        userViewModel.updateUserResponseLiveData.observe(viewLifecycleOwner) {
+//            when (it) {
+//                is NetworkResult.Success -> {
+//                    initUser(it.data!!)
+//                    binding.root.showSnackBarMessage("닉네임 수정이 완료되었습니다.")
+//                    dialog.dismiss()
+//                }
+//                is NetworkResult.Error -> {
+//                    // AccessToken을 통해서 유저 정보를 가져오기 실패했는지 파악해야됨.
+//                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 토큰 만료됨")
+//                    // RefreshToken을 통해서 AccessToken을 재발급
+//                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.data}")
+//                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.message}")
+//                }
+//                is NetworkResult.Loading -> {
+//                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 로딩 중입니다")
+//                }
+//            }
+//        }
+//    }
 }

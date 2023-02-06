@@ -6,7 +6,7 @@ constructor(
     var password: String = "",
     var username: String = "",
     var nickname: String = "",
-    var profile_image: String = "",
+    var profile_image: String? = "",
     var age: String = "", //연령대
     val kakao: String? = null, //카카오 이메일
     val naver: String? = null, //네이버 이메일

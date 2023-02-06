@@ -17,11 +17,16 @@ class LikeBoardAdapter(var boardList:List<Board>) : RecyclerView.Adapter<LikeBoa
         
         fun bindInfo(board : Board){
             binding.apply {
-
                 //게시물 사진
-                Glide.with(itemView)
-                    .load(board.imageList[0]).thumbnail(Glide.with(itemView).load(R.drawable.loading_image).centerCrop()).centerCrop()
-                    .into(ivImage)
+                if (board.imageList.isNullOrEmpty()){
+                    Glide.with(itemView)
+                        .load(R.drawable.default_image).thumbnail(Glide.with(itemView).load(R.drawable.loading_image).centerCrop()).centerCrop()
+                        .into(ivImage)
+                }else{
+                    Glide.with(itemView)
+                        .load(board.imageList[0]).thumbnail(Glide.with(itemView).load(R.drawable.loading_image).centerCrop()).centerCrop()
+                        .into(ivImage)
+                }
 
                 tvTheme.text = "#${board.theme}"
                 tvLocation.text = convertToString(board.travel!!.location!! as ArrayList<String>) //여행 지역

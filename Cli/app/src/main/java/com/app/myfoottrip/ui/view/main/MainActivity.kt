@@ -14,6 +14,7 @@ import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.ActivityMainBinding
 import com.app.myfoottrip.ui.view.travel.LocationService
 import com.app.myfoottrip.util.NetworkResult
+import com.google.android.material.snackbar.Snackbar
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import kotlinx.coroutines.CoroutineScope
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
     private val userViewModel: UserViewModel by viewModels()
     private val tokenViewModel: TokenViewModel by viewModels()
     lateinit var naverMap: NaverMap
+
+    private var backKeyPressedTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +56,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
         )
 
     } // End of onCreate
+
+//    override fun onBackPressed() {
+//        val snackbar = Snackbar
+//            .make(binding.navMainFragment, "뒤로 버튼을 한번 더 누르시면 종료됩니다.", Snackbar.LENGTH_SHORT)
+//            .setAction("닫기") {}
+//
+//        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+//            backKeyPressedTime = System.currentTimeMillis()
+//            snackbar.show()
+//            return
+//        }
+//        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+//            finish()
+//        }
+//    }
 
     private fun setBinding() {
         binding = ActivityMainBinding.inflate(layoutInflater)

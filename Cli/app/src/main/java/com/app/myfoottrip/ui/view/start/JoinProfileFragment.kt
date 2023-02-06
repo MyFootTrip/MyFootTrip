@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -126,6 +127,7 @@ class JoinProfileFragment : Fragment() {
             val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
             val body = MultipartBody.Part.createFormData("profileImg", file.name, requestFile)
             joinViewModel.setUserImageUriToMultipart(body)
+            Log.d(TAG, "userProfileImageObserver: $")
         }
     } // End of userProfileImageObserver
 

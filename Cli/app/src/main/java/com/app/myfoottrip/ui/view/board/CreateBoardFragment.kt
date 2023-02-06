@@ -10,7 +10,6 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -19,8 +18,6 @@ import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
-import com.app.myfoottrip.data.viewmodel.TravelViewModel
-import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentCreateBoardBinding
 import com.app.myfoottrip.ui.adapter.PhotoAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
@@ -29,13 +26,12 @@ import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.GalleryUtils
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
-import com.google.android.datatransport.runtime.firebase.transport.LogEventDropped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
-import kotlin.collections.ArrayList
+
 
 private const val TAG = "CreateBoardFragment_마이풋트립"
 
@@ -97,7 +93,11 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
 
             //게시물 등록하기 버튼
             btnCreate.setOnClickListener {
-                showDialog()
+                if (cgCategory.checkedChipId == -1 && cgCategory2.checkedChipId == -1){
+                    binding.root.showSnackBarMessage("테마를 선택해주세요!")
+                }else{
+                    showDialog()
+                }
             }
         }
     }
@@ -180,6 +180,15 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
 
         dialog.setOnOKClickedListener {
             binding.apply {
+
+                //로딩창 구현
+                mainActivity.runOnUiThread {
+                    binding.root.isClickable = false
+                    scrollCreateBoard.visibility = View.INVISIBLE
+                    lottieCreateBoard.visibility = View.VISIBLE
+                    lottieCreateBoard.playAnimation()
+                }
+
                 val board = Board(1, 1, "테스트계정", "string", Date(System.currentTimeMillis()), "혼자놀기", "임시제목입니다", "임시 내용입니다.", arrayListOf(), Travel(travelId,
                     arrayListOf(), Date(System.currentTimeMillis()),
                     Date(System.currentTimeMillis()),
@@ -195,6 +204,7 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
                         board.content = etContent.text.toString()
                         board.theme = currentTheme
                     }
+
                     createBoard(board)
 
                     CoroutineScope(Dispatchers.Main).launch {
