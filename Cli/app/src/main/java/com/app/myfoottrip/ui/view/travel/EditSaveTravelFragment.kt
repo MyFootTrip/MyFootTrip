@@ -1,7 +1,6 @@
 package com.app.myfoottrip.ui.view.travel
 
 import android.content.Context
-import android.hardware.Camera
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -22,24 +21,17 @@ import com.app.myfoottrip.databinding.FragmentEditSaveTravelBinding
 import com.app.myfoottrip.ui.adapter.TravelEditSaveItemAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
-import com.app.myfoottrip.util.LocationProvider
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraPosition
-import com.naver.maps.map.LocationTrackingMode
-import com.naver.maps.map.MapView
-import com.naver.maps.map.NaverMap
-import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
-import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.overlay.PolylineOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 private const val TAG = "EditSaveTravelFragment_싸피"
@@ -124,6 +116,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 buttonEvents()
                 binding.progressBar.visibility = View.GONE
                 binding.allConstrainlayout.visibility = View.VISIBLE
+                binding.progressBarText.visibility = View.GONE
             }
         }
 
@@ -241,12 +234,21 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
             if (fragmentType == 2) {
                 CoroutineScope(Dispatchers.IO).launch {
+                    withContext(Dispatchers.Main) {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.allConstrainlayout.visibility = View.GONE
+                        binding.progressBarText.visibility = View.VISIBLE
+                    }
                     updateTravel()
                 }
             } else {
                 CoroutineScope(Dispatchers.IO).launch {
-
                     Log.d(TAG, "저장할 데이터 : ${userTravelData!!}")
+                    withContext(Dispatchers.Main) {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.allConstrainlayout.visibility = View.GONE
+                        binding.progressBarText.visibility = View.VISIBLE
+                    }
                     createTravel()
                 }
             }

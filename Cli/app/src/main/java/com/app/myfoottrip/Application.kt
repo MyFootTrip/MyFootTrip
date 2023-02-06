@@ -5,13 +5,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.util.SharedPreferencesUtil
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.kakao.sdk.common.KakaoSdk
-import com.kakao.sdk.common.util.Utility
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -22,10 +20,15 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "Application_싸피"
+
 class Application : Application() {
 
     override fun onCreate() {
         super.onCreate()
+//        val keyHash = Utility.getKeyHash(this)
+//        Log.d(TAG, keyHash)
+
+
         sharedPreferencesUtil = SharedPreferencesUtil(applicationContext)
         initRetrofit(AppInterceptor())
         initKakao()
@@ -85,7 +88,6 @@ class Application : Application() {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(headerOkHttpClient)
             .build()
-
     } // End of initRetrofit
 
     inner class AppInterceptor : Interceptor {
@@ -105,8 +107,10 @@ class Application : Application() {
     companion object {
         lateinit var retrofit: Retrofit
         lateinit var headerRetrofit: Retrofit
-        // const val SERVER_URL ="https://i8d103.p.ssafy.io/"    // TODO : AWS Hosting + URL 변경 //54.248.64.154
-        const val SERVER_URL = "http://i8d103.p.ssafy.io:7777/"
+
+        const val SERVER_URL =
+            "https://i8d103.p.ssafy.io/"    // TODO : AWS Hosting + URL 변경 //54.248.64.154
+        //const val SERVER_URL = "http://i8d103.p.ssafy.io:7777/"
 
         const val IMG_URL = "http://54.248.64.154"
         lateinit var sharedPreferencesUtil: SharedPreferencesUtil

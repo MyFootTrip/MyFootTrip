@@ -4,7 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Context.*
+import android.content.Context.LOCATION_SERVICE
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -93,13 +93,10 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "onViewCreated: ")
-
         selectedList = ArrayList()
         // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
         fragmentType = requireArguments().getInt("type")
 
-        // 다시 null 값으로 초기화
         getUserTravelDataResponseLiveDataObserve()
 
         binding.fabStart.apply {
@@ -112,11 +109,18 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             selectedTravelId = requireArguments().getInt("travelId")
             Log.d(TAG, "onViewCreated: 수정 작업 입니다.")
 
-            getUserTravelData()
+            Log.d(TAG, "onViewCreated: 여기임?1")
+            if (travelViewModel.getUserTravelDataResponseLiveData.value == null) {
+                Log.d(TAG, "onViewCreated: 여기임?2")
+                getUserTravelData()
+            }
+
             // 기존의 수정해야 할 유저데이터를 가져오고 나서, UI가 보여야됨
         } else {
+            // 새로운 Travel을 생성할 때
             // Adapter 초기화
             initAdapter()
+            Log.d(TAG, "onViewCreated: 여기 돌음?")
 
             // EventListener 초기화
             initListener()
@@ -187,10 +191,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     private fun startLocationRecording() {
         binding.fabStart.setOnClickListener {
             travelActivityViewModel.setLocationList(selectedList as ArrayList<String>)
-//            val mainActivity = requireActivity() as MainActivity
-//            CoroutineScope(Dispatchers.IO).launch {
-//                mainActivity.startLocationBackground()
-//            }
+            Log.d(TAG, "startLocationRecording: $selectedList")
 
             mContext.showToastMessage("위치 기록을 시작합니다.")
 
@@ -222,7 +223,10 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
 
     private fun setChipListener(position: Int) {
-        selectedList.add(locationList[position])
+        if (!selectedList.contains(locationList[position])) {
+            selectedList.add(locationList[position])
+        }
+        Log.d(TAG, "setChipListener: $selectedList")
 
         binding.cgDetail.addView(Chip(requireContext()).apply {
             chipCornerRadius = 10.0f
@@ -270,12 +274,13 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     } // End of getUserTravelData
 
     private fun getUserTravelDataResponseLiveDataObserve() {
+        Log.d(TAG, "getUserTravelDataResponseLiveDataObserve: 옵저버 밖")
         travelViewModel.getUserTravelDataResponseLiveData.observe(viewLifecycleOwner) {
+            Log.d(TAG, "getUserTravelDataResponseLiveDataObserve: 옵저버 안")
             when (it) {
                 is NetworkResult.Success -> {
                     travelActivityViewModel.setUserTravelData(it.data!!)
                     locationList = ArrayList()
-                    selectedList = ArrayList()
 
                     // 수정해야할 데이터를 RoomDB에 저장.
                     CoroutineScope(Dispatchers.IO).launch {
@@ -283,17 +288,18 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                             saveRoomDB()
                             1
                         }
-
                         deffered.await()
                     }
 
+                    selectedList = ArrayList()
                     selectedList.addAll(travelActivityViewModel.userTravelData.value!!.location)
-                    Log.d(TAG, "selectedList: $selectedList")
+                    Log.d(TAG, "수정 작업 observer selectedList: $selectedList")
 
                     // Adapter 초기화
                     initAdapter()
                     // EventListener 초기화
                     initListener()
+
                     if (selectedList.isNotEmpty()) {
                         for (i in 0 until selectedList.size) {
                             val idx = locationList.indexOf(selectedList[i])
