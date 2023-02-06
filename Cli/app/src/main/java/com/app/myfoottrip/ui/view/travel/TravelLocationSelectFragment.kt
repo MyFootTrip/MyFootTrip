@@ -140,7 +140,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             )
             visitPlaceRepository.insertVisitPlace(temp)
         }
-
     } // End of saveRoomDB
 
     private fun categoryAdapterEventListener() {
