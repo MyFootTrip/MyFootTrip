@@ -2,6 +2,7 @@ package com.app.myfoottrip.ui.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
@@ -41,9 +42,6 @@ class TravelAdapter(
 
             val startDateFormat = SimpleDateFormat("yyyy-MM.dd", Locale("ko", "KR"))
             val endDateFormat = SimpleDateFormat("MM.dd", Locale("ko", "KR"))
-
-            Log.d(TAG, "travelList: $travelList")
-
             val startDateString = startDateFormat.format(travelList[position].startDate!!)
             val endDateString = endDateFormat.format(travelList[position].endDate!!)
             binding.tvTravelDate.text = "$startDateString - $endDateString"
@@ -51,8 +49,10 @@ class TravelAdapter(
             binding.apply {
                 if (type == 1) { //여정 선택
                     chipTravelSelect.text = "삭제"
+                    chipTravelDelete.visibility = View.GONE
                 } else { //여정 삭제
                     chipTravelSelect.text = "선택"
+                    chipTravelDelete.visibility = View.VISIBLE
                 }
 
                 chipTravelSelect.isChecked = (selected == position) //선택은 하나만 하도록
@@ -77,6 +77,10 @@ class TravelAdapter(
                 chipTravelSelect.setOnClickListener {
                     itemClickListner.onChipClick(type, position, travelDto)
                 }
+
+                chipTravelDelete.setOnClickListener {
+                    itemClickListner.onDeleteChipClick(position, travelDto)
+                }
             }
         }
     } // End of TravelHolder inner class
@@ -84,6 +88,7 @@ class TravelAdapter(
     interface ItemClickListener {
         fun onAllClick(position: Int, travelDto: Travel) //전체 클릭한 경우
         fun onChipClick(type: Int, position: Int, travelDto: Travel) //chip만 클릭한 경우
+        fun onDeleteChipClick(position: Int, travelDto: Travel) // 삭제 버튼을 클릭했을 때,
     } // End of ItemClickListener
 
     //클릭리스너 등록 매소드

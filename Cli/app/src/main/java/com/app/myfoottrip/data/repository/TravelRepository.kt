@@ -22,33 +22,6 @@ class TravelRepository {
     val travelListResponseLiveData: LiveData<NetworkResult<ArrayList<Travel>>>
         get() = _travelListResponseLiveData
 
-    // 여행 추가
-    private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Int>>()
-    val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
-        get() = _createTravelResponseLiveData
-
-
-    // 여행 데이터 추가
-    suspend fun createTravel(travel: Travel) {
-        val response = travelHeaderApi.createTravel(travel)
-        _createTravelResponseLiveData.postValue(NetworkResult.Loading())
-
-        if (response.isSuccessful) {
-            _createTravelResponseLiveData.postValue(NetworkResult.Success(response.code()))
-        } else if (response.errorBody() != null) {
-            _createTravelResponseLiveData.postValue(
-                NetworkResult.Error(
-                    response.errorBody()!!.string()
-                )
-            )
-        } else {
-            _createTravelResponseLiveData.postValue(
-                NetworkResult.Error(
-                    response.headers().toString()
-                )
-            )
-        }
-    } // End of createTravel
 
     fun setCreateTravelResponseLiveData() {
         _createTravelResponseLiveData.postValue(null)
@@ -107,6 +80,32 @@ class TravelRepository {
         }
     } // End of getTravel
 
+    // ======================== 유저 여행 데이터 생성 ========================
+    private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Int>>()
+    val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
+        get() = _createTravelResponseLiveData
+
+    suspend fun createTravel(travel: Travel) {
+        val response = travelHeaderApi.createTravel(travel)
+        _createTravelResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful) {
+            _createTravelResponseLiveData.postValue(NetworkResult.Success(response.code()))
+        } else if (response.errorBody() != null) {
+            _createTravelResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _createTravelResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
+    } // End of createTravel
+
 
     // ======================== 유저 여행 데이터 수정 ========================
     private val _userTravelDataUpdateResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
@@ -139,5 +138,37 @@ class TravelRepository {
             )
         }
     } // End of userTravelDataUpdate
+
+    // ======================== 유저 여행 데이터 삭제 ========================
+    private val _userTravelDataDeleteResponseLiveData = MutableLiveData<NetworkResult<Int>>()
+    val userTravelDataDeleteResponseLiveData: LiveData<NetworkResult<Int>>
+        get() = _userTravelDataDeleteResponseLiveData
+
+    suspend fun userTravelDataDelete(travelId: Int) {
+        val response = travelHeaderApi.deleteTravel(travelId)
+
+        Log.d(TAG, "userTravelDataDelete: $response")
+        Log.d(TAG, "userTravelDataDelete: ${response.body()}")
+        Log.d(TAG, "userTravelDataDelete: ${response.message()}")
+
+        // 처음은 Loading 상태로 지정
+        _userTravelDataDeleteResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful) {
+            _userTravelDataDeleteResponseLiveData.postValue(NetworkResult.Success(response.code()))
+        } else if (response.errorBody() != null) {
+            _userTravelDataDeleteResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _userTravelDataDeleteResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
+    } // End of userTravelDataDelete
 
 } // End of TravelRepository class

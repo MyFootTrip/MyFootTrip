@@ -62,7 +62,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
 
             btnNaver.setOnClickListener {
                 //현재 토큰을 가지고 있다면 삭제함
-                deleteNaverToken()
+                //deleteNaverToken()
                 naverLogin()
             }
         }
@@ -95,7 +95,9 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
             if (error != null) {
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
             } else if (token != null) {
-                Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
+                CoroutineScope(Dispatchers.IO).launch {
+                    tokenViewModel.postKakaoAccessToken(token.accessToken)
+                }
             }
         }
 
@@ -114,7 +116,10 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
                     // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인 시도
                     UserApiClient.instance.loginWithKakaoAccount(mContext, callback = callback)
                 } else if (token != null) {
-                    Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        tokenViewModel.postKakaoAccessToken(token.accessToken)
+                    }
+
 //                    val intent = Intent(mContext, MainActivity::class.java)
 //                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 //                    activity!!.finish()

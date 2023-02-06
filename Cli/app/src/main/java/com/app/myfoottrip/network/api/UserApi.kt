@@ -42,7 +42,4 @@ interface UserApi {
         @Body userLoginData: JsonObject
     ): Response<Token>
 
-
-
-
 }// End of UserApi Interface

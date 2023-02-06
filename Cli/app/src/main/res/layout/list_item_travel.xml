@@ -28,26 +28,26 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        tools:text=""
-        android:textSize="16sp"
-        android:padding="2dp"
         android:fontFamily="@font/inter_semibold"
+        android:padding="2dp"
         android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_travel_date"
         app:layout_constraintLeft_toRightOf="@+id/cv_travel_img"
         app:layout_constraintRight_toLeftOf="@id/chip_travel_select"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="" />
 
     <TextView
         android:id="@+id/tv_travel_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="2dp"
-        tools:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@+id/tv_travel_name"
-        app:layout_constraintTop_toBottomOf="@+id/tv_travel_name" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_travel_name"
+        tools:text="" />
 
 
     <com.google.android.material.chip.Chip
@@ -59,6 +59,28 @@
         android:text="선택"
         android:textColor="@color/select_category_text"
         android:textSize="14sp"
+        app:chipBackgroundColor="@color/select_category_background"
+        app:chipEndPadding="10dp"
+        app:chipStartPadding="10dp"
+        app:chipStrokeColor="@color/select_category_text"
+        app:chipStrokeWidth="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/chip_travel_delete"
+        app:layout_constraintTop_toTopOf="parent"
+        app:rippleColor="@null" />
+
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_travel_delete"
+        style="@style/Widget.MaterialComponents.Chip.Choice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        tools:text="삭제"
+        android:text="삭제"
+        android:textColor="@color/select_category_text"
+        android:textSize="14sp"
+        android:visibility="gone"
         app:chipBackgroundColor="@color/select_category_background"
         app:chipEndPadding="10dp"
         app:chipStartPadding="10dp"

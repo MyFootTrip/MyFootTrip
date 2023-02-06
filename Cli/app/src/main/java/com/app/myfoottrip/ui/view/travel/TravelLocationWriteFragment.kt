@@ -28,10 +28,8 @@ import com.app.myfoottrip.util.LocationProvider
 import com.app.myfoottrip.util.TimeUtils
 import com.app.myfoottrip.util.showSnackBarMessage
 import com.google.android.gms.location.LocationServices
-import com.naver.maps.map.LocationTrackingMode
-import com.naver.maps.map.MapFragment
-import com.naver.maps.map.NaverMap
-import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
@@ -158,6 +156,8 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         visitPlaceRepository = VisitPlaceRepository.get()
         locationProvider = LocationProvider(requireContext() as MainActivity)
         logReceiver = LogReceiver()
+
+
     }
 
     override fun onCreateView(
@@ -238,17 +238,40 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     private fun stopLocationRecordingAndSave() {
         // 저장 버튼 클릭시 이벤트
         binding.fabStop.setOnClickListener {
-            showToast("성공적으로 저장했습니다.", ToastType.SUCCESS)
+            // 저장할 데이터가 있는지 우선적으로 파악해야됨.
 
-            // 서비스 중지
-            val mainActivity = requireActivity() as MainActivity
-            mainActivity.stopLocationBackground()
+            var temp: List<VisitPlace> = emptyList()
+            CoroutineScope(Dispatchers.IO).launch {
+                val deffered2: Deferred<Int> = async {
+                    temp = visitPlaceRepository.getAllVisitPlace()
+                    1
+                }
 
-            val bundle = bundleOf("type" to fragmentType)
+                deffered2.await()
 
-            // 수정하는 페이지로 이동
-            Navigation.findNavController(binding.fabStop)
-                .navigate(R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment, bundle)
+                if (temp.isEmpty()) {
+                    //  저장할 내용이 없으므로 다음페이지로 넘어갈 수 없음.
+                    requireView().showSnackBarMessage("아직 저장된 좌표가 없어요! 좌표를 추가해주세요")
+                    return@launch
+                }
+
+                withContext(Dispatchers.Main) {
+                    // 서비스 중지
+                    val mainActivity = requireActivity() as MainActivity
+                    mainActivity.stopLocationBackground()
+
+                    showToast("성공적으로 저장했습니다.", ToastType.SUCCESS)
+
+                    val bundle = bundleOf("type" to fragmentType)
+
+                    // 수정하는 페이지로 이동
+                    Navigation.findNavController(binding.fabStop)
+                        .navigate(
+                            R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment,
+                            bundle
+                        )
+                }
+            }
         }
     } // End of stopLocationRecordingAndSaving
 
@@ -330,6 +353,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     }
 
     private suspend fun saveTravel(lat: Double, lon: Double, address: String) {
+        // 좌표가 저장되는 동안에는 버튼이 눌리지 않도록 설정
         binding.fabStop.isClickable = false
         binding.btnAddPoint.isClickable = false
 
@@ -399,7 +423,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         }
     } // End of changeMode
 
-    private suspend fun getAddressByCoordinates(latitude: Double, longitude: Double): Address? {
+    private fun getAddressByCoordinates(latitude: Double, longitude: Double): Address? {
         val geocoder = Geocoder(mContext, Locale.KOREA)
 
         val addresses: List<Address>?
@@ -459,7 +483,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         CoroutineScope(Dispatchers.IO).launch {
             mainActivity.stopLocationBackground()
         }
-    }
+    } // End of onDetach
 
     override fun onLowMemory() {
         super.onLowMemory()
@@ -475,5 +499,12 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
         locationSource = FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
         naverMap.locationSource = locationSource
+
+        val cameraUpdate = CameraUpdate.scrollTo(
+            LatLng(
+                locationProvider.getLocationLatitude(), locationProvider.getLocationLongitude()
+            )
+        ).animate(CameraAnimation.Fly, 1000)
+        naverMap.moveCamera(cameraUpdate)
     } // End of onMapReady
 } // End of TravelLocationWriteFragment class

@@ -20,4 +20,9 @@ interface TravelApi {
     // 여정 수정
     @PUT("/community/travel/detail/{travelId}/")
     suspend fun updateTravel(@Path("travelId") travelId: Int, @Body travel: Travel): Response<Travel>
+
+    // 여정 삭제
+    @DELETE("/community/travel/detail/{travelId}/")
+    suspend fun deleteTravel(@Path("travelId") travelId: Int) : Response<Void>
+
 } // End of TravelApi Interface

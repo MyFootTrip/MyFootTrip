@@ -1,7 +1,6 @@
 package com.app.myfoottrip.ui.view.travel
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -10,14 +9,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Travel
-
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.data.viewmodel.TravelActivityViewModel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
@@ -26,9 +23,11 @@ import com.app.myfoottrip.databinding.FragmentTravelSelectBinding
 import com.app.myfoottrip.ui.adapter.TravelAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.NetworkResult
+import com.app.myfoottrip.util.showSnackBarMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG = "TravelSelectFragment_마이풋트립"
 
@@ -66,15 +65,17 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         super.onViewCreated(view, savedInstanceState)
         //type 받는 코드
         type = requireArguments().getInt("type")
-
         travelViewModel.setUserTravelDataNewOrUpdateCheck(null)
         userTravelDataObserver()
+        userTraveLDataDeleteObserve()
 
         initCustomView()
 
         setListener()
 
-        setData()
+        CoroutineScope(Dispatchers.Default).launch {
+            setData()
+        }
 
         initAdapter()
 
@@ -88,6 +89,8 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
     private fun buttonSetTextObserve() {
         travelViewModel.userTravelDataNewOrUpdateCheck.observe(viewLifecycleOwner) {
+            Log.d(TAG, "buttonSetTextObserve: 이거 왜 동작함?")
+
             if (it == null) {
                 // Nothing
                 bundle = bundleOf(
@@ -132,7 +135,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         callback.remove()
     }
 
-    
     private fun initCustomView() {
         if (type == 0) {
             //여행 선택 페이지
@@ -149,7 +151,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             binding.btnSave.visibility = View.VISIBLE
             binding.btnSave.setText(R.string.plz_travel_select_button_text)
             binding.btnSave.isEnabled = false
-            binding.btnSave.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.gray_bright))
         }
     } // End of initCustomView
 
@@ -167,6 +168,19 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                     changeSelected(position)
                 } else { //여정 삭제
                     //TODO : 여정 삭제 dialog
+                }
+            }
+
+            override fun onDeleteChipClick(position: Int, travelDto: Travel) {
+                // 선택된 포지션의 값을 가져와서 해당 값을 제거해야됨
+                // 서버에 삭제 요청을 보내야 함.
+                CoroutineScope(Dispatchers.IO).launch {
+                    travelViewModel.userTravelDataDelete(boardList[position].travelId!!)
+
+                    // 삭제를 마치고 나면 data를 다시 갱신해야함
+                    withContext(Dispatchers.Default) {
+                        setData()
+                    }
                 }
             }
         })
@@ -223,7 +237,30 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         }
     } // End of userTravelDataObserver
 
-    private fun setData() {
+    private fun userTraveLDataDeleteObserve() {
+        travelViewModel.userTravelDataDeleteResponseLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    if (it.data == 204) {
+                        requireView().showSnackBarMessage("해당 데이터가 삭제 되었습니다")
+                        travelAdapter.notifyDataSetChanged()
+                    }
+                }
+
+                is NetworkResult.Error -> {
+                    requireView().showSnackBarMessage("유저 여행 데이터 삭제 오류 발생")
+                    Log.d(TAG, "createTravelResponseLiveData Error: ${it.data}")
+                    Log.d(TAG, "createTravelResponseLiveData Error: ${it.message}")
+                }
+
+                is NetworkResult.Loading -> {
+                    Log.d(TAG, "createTravelResponseLiveData Loading")
+                }
+            }
+        }
+    } // End of userTraveLDataDeleteObserve
+
+    private suspend fun setData() {
         CoroutineScope(Dispatchers.IO).launch {
             userViewModel.wholeMyData.value?.uid?.let { travelViewModel.getUserTravel(it) }
         }
@@ -235,6 +272,16 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             if (position == lastPos) { //선택 해제
                 setSelected(-1)
                 settingView(false)
+                if (type == 2) {
+                    binding.btnSave.isClickable = false
+                    binding.btnSave.isEnabled = false
+                }
+                binding.btnSave.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.gray_bright
+                    )
+                )
             } else { //선택
                 setSelected(position)
                 settingView(true)
