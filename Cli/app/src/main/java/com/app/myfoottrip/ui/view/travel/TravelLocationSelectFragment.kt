@@ -122,7 +122,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             initListener()
         }
     } // End of onViewCreated
-    
+
     private fun saveRoomDB() = CoroutineScope(Dispatchers.IO).launch {
         val size = travelActivityViewModel.userTravelData.value!!.placeList!!.size
         for (i in 0 until size) {
@@ -150,7 +150,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                 isClickable = true
             }
         }
-
 
         // categoryAdapter에서 아이템 클릭했을 경우 이벤트처리
         categoryAdapter.setItemClickListener(object : CategoryAdatper.ItemClickListener {
@@ -288,8 +287,8 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                         deffered.await()
                     }
 
-                    selectedList.clear()
                     selectedList.addAll(travelActivityViewModel.userTravelData.value!!.location)
+                    Log.d(TAG, "selectedList: $selectedList")
 
                     // Adapter 초기화
                     initAdapter()
@@ -311,7 +310,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             }
         }
     } // End of getUserTravelDataResponseLiveDataObserve
-
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
@@ -419,7 +417,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                     isRunTimePermissionsGranted()
                 } else {
                     requireView().showSnackBarMessage("위치 서비스를 사용할 수 없습니다.")
-                    //onDetach()
+                    findNavController().popBackStack()
                 }
             }
         }
@@ -444,7 +442,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             setNegativeButton("취소", DialogInterface.OnClickListener { dialog, id ->
                 dialog.cancel()
                 context.showToastMessage("기기에서 위치서비스를 설정 후 사용해주세요")
-                //onDetach()
+                findNavController().popBackStack()
             })
             create().show() // 다이얼로그 생성
         }

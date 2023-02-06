@@ -1,5 +1,6 @@
 package com.app.myfoottrip.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
@@ -62,6 +63,7 @@ class TokenRepository {
     // AccessToken 헤더를 사용해서 유저 정보가져오기
     suspend fun getUserDataByAccessToken() {
         val response = headerTokenApi.getUserDataByAccessToken()
+        Log.d(TAG, "getUserDataByAccessToken: $response")
 
         _getUserDataByAccessTokenResponseLiveData.postValue(NetworkResult.Loading())
 

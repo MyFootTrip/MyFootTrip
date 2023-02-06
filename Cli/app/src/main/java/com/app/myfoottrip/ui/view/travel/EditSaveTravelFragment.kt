@@ -65,6 +65,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
 
+    private lateinit var view2: View
+    private var savedInstanceState: Bundle? = null
+
     // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
     private var fragmentType = 0
 
@@ -81,6 +84,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentType = requireArguments().getInt("type")
+
+        view2 = view
+        this.savedInstanceState = savedInstanceState
 
         if (fragmentType == 2) {
             Log.d(TAG, "onViewCreated: 수정 작업니다.")
@@ -187,7 +193,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         val startDateString = startDateFormat.format(userTravelData!!.startDate!!)
         val endDateString = endDateFormat.format(userTravelData!!.endDate!!)
         binding.travelDateTv.text = "$startDateString - $endDateString"
-
         binding.traveTotalTimeTv.text = "총 시간 : ${totalTimeCalc()} "
 
         recyclerView = binding.travelEditSaveRecyclerview
@@ -198,18 +203,26 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
         }
 
+        adapterEvent()
+    } // End of setUI
+
+    private fun adapterEvent() {
         travelEditSaveItemAdapter.setItemClickListener(object :
             TravelEditSaveItemAdapter.ItemClickListener {
             override fun onEditButtonClick(position: Int, placeData: Place) {
                 // 리사이클러뷰 포지션에 해당하는 수정 버튼을 눌렀을 때 이벤트
-                showToast("${position + 1}의 아이템을 삭제함")
 
                 // position의 선택된 Item의 객체의 값을 가지고옴.
                 userVisitPlaceDataList.removeAt(position)
                 recyclerView.adapter!!.notifyDataSetChanged()
+
+                // 데이터 전체를 새로 UI를 호출함
+                CoroutineScope(Dispatchers.Main).launch {
+                    setUI()
+                }
             }
         })
-    } // End of setUI
+    } // End of adapterEvent
 
     private fun initRecyclerViewAdapter() {
         travelEditSaveItemAdapter = TravelEditSaveItemAdapter(mContext, userTravelData?.placeList!!)
@@ -433,10 +446,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         val cameraPosition = CameraPosition(
             LatLng(0.0, 0.0),
             16.0, // 줌 레벨
-            20.0,
+            40.0,
             180.0
         )
-        naverMap.cameraPosition
+        naverMap.cameraPosition = cameraPosition
 
         setMapInMark()
     } // End of onMapReady
