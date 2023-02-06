@@ -155,7 +155,8 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:rippleColor="@null" />
+                            app:rippleColor="@null"
+                            android:visibility="invisible"/>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -207,7 +208,8 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:rippleColor="@null" />
+                            app:rippleColor="@null"
+                            android:visibility="invisible"/>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -259,7 +261,8 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:rippleColor="@null" />
+                            app:rippleColor="@null"
+                            android:visibility="invisible"/>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

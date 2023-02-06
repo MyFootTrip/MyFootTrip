@@ -1,5 +1,6 @@
 package com.app.myfoottrip.data.viewmodel
 
+import android.provider.ContactsContract.CommonDataKinds.Nickname
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,4 +36,13 @@ class UserViewModel : ViewModel() {
     fun setWholeMyData(myData: User) {
         _wholeMyData.value = myData
     } // End of setWholeMyData
+
+    // 유저 닉네임 수정
+//    fun editNickname(nickname: String){
+//        viewModelScope.launch {
+//            userRepository.userEdit(nickname)
+//        }
+//    }
+
+
 } // End of UserViewModel class

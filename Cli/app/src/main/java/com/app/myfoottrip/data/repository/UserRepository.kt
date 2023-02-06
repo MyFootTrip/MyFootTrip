@@ -40,7 +40,6 @@ class UserRepository {
     val userLoginReponseLiveData: LiveData<NetworkResult<Token>>
         get() = _userLoginReponseLiveData
 
-
     // 이메일 중복 체크
     suspend fun checkUsedEmailId(emailId: Email) {
 
