@@ -23,8 +23,7 @@
                 app:exitAnim="@anim/exit_left_anim"
                 app:popEnterAnim="@anim/enter_left_anim"
                 app:popExitAnim="@anim/exit_right_anim"
-                app:destination="@id/travelSelectFragment"
-                app:popUpToInclusive="true" />
+                app:destination="@id/travelSelectFragment" />
         <action
                 android:id="@+id/action_mainFragment_to_myTravelFragment"
                 app:enterAnim="@anim/enter_right_anim"
@@ -73,8 +72,7 @@
                 app:enterAnim="@anim/none_anim"
                 app:exitAnim="@anim/exit_vertical_anim"
                 app:popEnterAnim="@anim/none_anim"
-                app:popExitAnim="@anim/exit_vertical_anim"
-                app:popUpToInclusive="false" />
+                app:popExitAnim="@anim/exit_vertical_anim"/>
         <action
                 android:id="@+id/action_boardFragment_to_updateBoardFragment"
                 app:enterAnim="@anim/enter_right_anim"
@@ -82,7 +80,7 @@
                 app:popEnterAnim="@anim/enter_left_anim"
                 app:popExitAnim="@anim/exit_right_anim"
                 app:destination="@id/updateBoardFragment" />
-    </fragment>
+    </fragment> <!-- TODO : 체크-->
     <fragment
             android:id="@+id/travelSelectFragment"
             android:name="com.app.myfoottrip.ui.view.travel.TravelSelectFragment"
@@ -116,12 +114,9 @@
                 android:id="@+id/action_travelLocationWriteFragment_to_editSaveTravelFragment"
                 app:destination="@id/editSaveTravelFragment"
                 app:enterAnim="@anim/enter_anim"
-
                 app:exitAnim="@anim/exit_anim"
                 app:popEnterAnim="@anim/enter_anim"
-                app:popExitAnim="@anim/exit_anim"
-                app:popUpTo="@id/nav_main"
-                app:popUpToInclusive="true" />
+                app:popExitAnim="@anim/exit_anim" /> <!-- TODO : 체크-->
     </fragment>
     <fragment
             android:id="@+id/commentFragment"
@@ -138,12 +133,12 @@
             android:name="com.app.myfoottrip.ui.view.travel.EditSaveTravelFragment"
             android:label="EditSaveTravelFragment">
         <action
-                android:id="@+id/action_editSaveTravelFragment_to_travelSelectFragment"
-                app:destination="@id/travelSelectFragment"
+                android:id="@+id/action_editSaveTravelFragment_pop"
+                app:popUpTo="@id/travelSelectFragment"
                 app:enterAnim="@anim/enter_anim"
                 app:exitAnim="@anim/exit_anim"
                 app:popEnterAnim="@anim/enter_anim"
-                app:popExitAnim="@anim/exit_anim" />
+                app:popExitAnim="@anim/exit_anim"/>
     </fragment>
 
     <fragment
@@ -223,9 +218,8 @@
                 app:exitAnim="@android:anim/fade_out"
                 app:popEnterAnim="@android:anim/fade_in"
                 app:popExitAnim="@android:anim/fade_out"
-                app:popUpTo="@id/mainFragment"
-                app:popUpToInclusive="false" />
-    </fragment>
+                app:popUpTo="@id/mainFragment"/>
+    </fragment> <!-- TODO : 체크-->
 
 
 </navigation>

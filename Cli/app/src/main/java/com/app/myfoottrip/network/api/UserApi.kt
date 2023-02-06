@@ -35,5 +35,4 @@ interface UserApi {
     suspend fun userLogin(
         @Body userLoginData: JsonObject
     ): Response<Token>
-
 } // End of UserApi Interface

@@ -282,7 +282,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                                     // 다시 여행 선택페이지로 이동
                                     val bundle = bundleOf("type" to 0)
                                     findNavController().navigate(
-                                        R.id.action_editSaveTravelFragment_to_travelSelectFragment,
+                                        R.id.action_editSaveTravelFragment_pop,
                                         bundle
                                     )
                                 }
@@ -327,7 +327,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                                     // 다시 여행 선택페이지로 이동
                                     val bundle = bundleOf("type" to 0)
                                     findNavController().navigate(
-                                        R.id.action_editSaveTravelFragment_to_travelSelectFragment,
+                                        R.id.action_editSaveTravelFragment_pop,
                                         bundle
                                     )
                                 }
@@ -345,7 +345,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                     // 다시 여행 선택페이지로 이동
                     val bundle = bundleOf("type" to 0)
                     findNavController().navigate(
-                        R.id.action_editSaveTravelFragment_to_travelSelectFragment,
+                        R.id.action_editSaveTravelFragment_pop,
                         bundle
                     )
                     Log.d(TAG, "userTravelDataUpdateResponseLiveData Error: ${it.data}")
