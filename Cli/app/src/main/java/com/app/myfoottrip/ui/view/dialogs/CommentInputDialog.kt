@@ -2,6 +2,7 @@ package com.app.myfoottrip.ui.view.dialogs
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
@@ -13,7 +14,8 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rengwuxian.materialedittext.MaterialEditText
 
-class CommentInputDialog(private val listener: OnClickListener,private val user: User) :
+private const val TAG = "CommentInputDialog_마이풋트립"
+class CommentInputDialog(private val listener: OnClickListener,private val user: User, private val message: String) :
     BottomSheetDialogFragment(),
     View.OnClickListener {
 
@@ -44,6 +46,10 @@ class CommentInputDialog(private val listener: OnClickListener,private val user:
         profileImg = view.findViewById(R.id.iv_profile)
         profileBg = view.findViewById(R.id.cv_profileLayout)
         sendBtn.setOnClickListener(this)
+
+        if (message.isNotEmpty()){
+            commentMsg.setText(message)
+        }
 
         //프로필 이미지
         if (user.join.profile_image.isNullOrEmpty()){

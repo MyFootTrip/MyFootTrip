@@ -104,7 +104,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
                     when(it.itemId){
                         R.id.menu_update -> {
                             updateCommentObserver(position)
-                            updateCommentInput(commentId)
+                            updateCommentInput(commentId,commentList[position])
                             return@setOnMenuItemClickListener true
                         }
                         R.id.menu_delete -> {
@@ -136,13 +136,13 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
                 writeComment(comment)
                 dialog.dismiss()
             }
-        },userViewModel.wholeMyData.value!!)
+        },userViewModel.wholeMyData.value!!,"")
 
         inputDialog.show(parentFragmentManager, inputDialog.mTag)
     }
 
     //댓글 수정 입력창 생성
-    private fun updateCommentInput(commentId: Int){
+    private fun updateCommentInput(commentId: Int,commentOrigin: Comment){
         val updateDialog = CommentInputDialog(object : CommentInputDialog.OnClickListener {
             override fun onClick(dialog: CommentInputDialog) {
                 val user = userViewModel.wholeMyData.value
@@ -150,9 +150,9 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
                 updateComment(comment)
                 dialog.dismiss()
             }
-        },userViewModel.wholeMyData.value!!)
+        },userViewModel.wholeMyData.value!!,commentOrigin.content)
 
-        updateDialog.show(parentFragmentManager, updateDialog.mTag)
+        updateDialog.show(parentFragmentManager,updateDialog.mTag)
     }
 
     //게시물 데이터 받아오기
