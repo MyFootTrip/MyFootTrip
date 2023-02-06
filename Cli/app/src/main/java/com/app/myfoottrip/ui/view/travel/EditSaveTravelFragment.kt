@@ -203,6 +203,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 }
             } else {
                 CoroutineScope(Dispatchers.IO).launch {
+
+                    Log.d(TAG, "저장할 데이터 : ${userTravelData!!}")
                     createTravel()
                 }
             }
@@ -223,7 +225,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     } // End of createTravel
 
     private suspend fun updateTravel() {
-        Log.d(TAG, "수정 되는 데이터 내용 : ${userTravelData!!} ")
         // 변환된 Travel데이터를 서버에 저장 (수정)
         CoroutineScope(Dispatchers.IO).launch {
             userTravelData?.let {

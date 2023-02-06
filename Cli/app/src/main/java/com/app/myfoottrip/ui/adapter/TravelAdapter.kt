@@ -42,14 +42,10 @@ class TravelAdapter(
 
             val startDateFormat = SimpleDateFormat("yyyy-MM.dd", Locale("ko", "KR"))
             val endDateFormat = SimpleDateFormat("MM.dd", Locale("ko", "KR"))
-
-            Log.d(TAG, "travelList: $travelList")
-
             val startDateString = startDateFormat.format(travelList[position].startDate!!)
             val endDateString = endDateFormat.format(travelList[position].endDate!!)
             binding.tvTravelDate.text = "$startDateString - $endDateString"
 
-            Log.d(TAG, "bindInfo type: $type")
             binding.apply {
                 if (type == 1) { //여정 선택
                     chipTravelSelect.text = "삭제"

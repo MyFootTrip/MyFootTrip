@@ -1,89 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" /> <!-- gps 위치 권한 허용 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- 갤러리 권한 추가 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
+            android:name="android.hardware.camera"
+            android:required="false" />
 
     <application
-        android:name=".Application"
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.MyFootTrip"
-        android:usesCleartextTraffic="true"
-        tools:targetApi="31">
+            android:name=".Application"
+            android:allowBackup="true"
+            android:dataExtractionRules="@xml/data_extraction_rules"
+            android:fullBackupContent="@xml/backup_rules"
+            android:hardwareAccelerated="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:requestLegacyExternalStorage="true"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/Theme.MyFootTrip"
+            android:usesCleartextTraffic="true"
+            tools:targetApi="31">
 
         <service
-            android:name=".ui.view.travel.LocationService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="location" />
+                android:name=".ui.view.travel.LocationService"
+                android:enabled="true"
+                android:exported="true"
+                android:foregroundServiceType="location" />
 
         <service
-            android:name=".network.fcm.MyFireBaseMessagingService"
-            android:exported="true">
+                android:name=".network.fcm.MyFireBaseMessagingService"
+                android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
         <activity
-            android:name=".ui.view.main.MainActivity"
-            android:exported="true">
+                android:name=".ui.view.main.MainActivity"
+                android:exported="true">
             <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
+                    android:name="android.app.lib_name"
+                    android:value="" />
         </activity>
         <activity
-            android:name=".ui.view.start.StartActivity"
-            android:exported="true">
+                android:name=".ui.view.start.StartActivity"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Github 인증 후 앱으로 돌아올 callback 넣어주기 -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="github-auth"
-                    android:scheme="${G"/>
-            </intent-filter>
-
             <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
+                    android:name="android.app.lib_name"
+                    android:value="" />
         </activity>
 
         <meta-data
-            android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="@string/MAP_CLIENT_ID" /> <!-- 카카오 로그인 -->
+                android:name="com.naver.maps.map.CLIENT_ID"
+                android:value="@string/MAP_CLIENT_ID" />
         <activity
-            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
-            android:exported="true">
+                android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+                android:exported="true"
+                android:launchMode="singleTask"
+                >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -91,8 +81,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="oauth"
-                    android:scheme="${KAKAO_APP_KEY}" />
+                        android:host="oauth"
+                        android:scheme="kakao${KAKAO_APP_KEY}" />
             </intent-filter>
         </activity>
     </application>
