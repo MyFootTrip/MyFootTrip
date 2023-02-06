@@ -30,6 +30,9 @@ class EditEmailFragment : BaseFragment<FragmentEditEmailBinding>(
             // 뒤로가기
             ivCancelBtn.setOnClickListener {findNavController().popBackStack()}
 
+            // 현재 이메일 가져오기
+            etEditEmail.setText("${userViewModel.wholeMyData.value?.join?.email}")
+
             // 저장 다이얼로그 나오기
             btnSave.setOnClickListener {
                 val dialog = EditSaveDialog()

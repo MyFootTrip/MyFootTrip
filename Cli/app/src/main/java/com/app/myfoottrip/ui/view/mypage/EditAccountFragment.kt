@@ -4,13 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
+import android.provider.ContactsContract.CommonDataKinds.Nickname
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
@@ -21,7 +20,6 @@ import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentEditAccountBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.dialogs.EditNicknameDialog
-import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.ui.view.start.StartActivity
 import com.app.myfoottrip.util.NetworkResult
 import com.bumptech.glide.Glide
@@ -67,26 +65,26 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
             }
 
             // 닉네임 변경 다이얼로그 나오기
-            chipEditAccount.setOnClickListener {
-                val dialog = EditNicknameDialog()
-                dialog.show(activity?.supportFragmentManager!!, "EditNicknameDialog")
+            chipEditAccount.setOnClickListener { editNicknameInput() }
+//            chipEditAccount.setOnClickListener {
+//                val dialog = EditNicknameDialog()
+//                dialog.show(activity?.supportFragmentManager!!, "EditNicknameDialog")
+//            }
+
+            // 아이디 변경 페이지로 이동
+            chipEditEmail.setOnClickListener {
+                findNavController().navigate(R.id.action_editAccountFragment_to_editEmailFragment)
             }
 
+            // 비밀번호 변경 페이지로 이동
+            chipEditPassword.setOnClickListener {
+                findNavController().navigate(R.id.action_editAccountFragment_to_editPasswordFragment)
+            }
 
             //로그아웃
             tvLogout.setOnClickListener {
                 deleteRefreshTokenObserver()
                 deleteRefreshToken()
-
-                // 아이디 변경 페이지로 이동
-                chipEditEmail.setOnClickListener {
-                    findNavController().navigate(R.id.action_editAccountFragment_to_editEmailFragment)
-                }
-
-                // 비밀번호 변경 페이지로 이동
-                chipEditPassword.setOnClickListener {
-                    findNavController().navigate(R.id.action_editAccountFragment_to_editPasswordFragment)
-                }
 
             }
         }
@@ -127,6 +125,21 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
             tvMyEmail.text = "${userViewModel.wholeMyData.value?.join?.email}" // 아이디
         }
     } // End of initUser
+
+    // 닉네임 변경 다이얼로그 생성
+    private fun editNicknameInput() {
+        val editDialog = EditNicknameDialog(object : EditNicknameDialog.OnClickListener {
+            override fun onClick(dialog: EditNicknameDialog) {
+                // val user = userViewModel.wholeMyData.value
+                // val nickname = dialog.etEditNickname.text.toString()
+                dialog.dismiss()
+            }
+        })
+
+        editDialog.show(parentFragmentManager, editDialog.mTag)
+    } // End of editNickname
+
+    // private fun editNicknameObserver()
 
     override fun onDetach() {
         super.onDetach()

@@ -8,70 +8,59 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.*
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.dto.User
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.DialogEditNicknameBinding
+import com.app.myfoottrip.ui.view.start.StartActivity
 import com.app.myfoottrip.util.DeviceSizeUtil
+import com.rengwuxian.materialedittext.MaterialEditText
 
-class EditNicknameDialog() : DialogFragment() {
+class EditNicknameDialog(private val listener: OnClickListener) :
+    DialogFragment(),
+    View.OnClickListener {
+
+    lateinit var btnSave: AppCompatButton
+    lateinit var etEditNickname: MaterialEditText
+    lateinit var ivCancelBtn: ImageView
 
     private val userViewModel by activityViewModels<UserViewModel>()
-    private var _binding: DialogEditNicknameBinding? = null
-    private val binding get() = _binding!!
-    private lateinit var mContext: Context
-    private lateinit var size: Point
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mContext = context
-    } // End of onAttach
+    val mTag = "닉네임 변경 다이얼로그"
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        _binding = DialogEditNicknameBinding.inflate(inflater, container, false)
+        super.onCreateView(inflater, container, savedInstanceState)
 
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
-        size = DeviceSizeUtil.deviceSizeCheck(mContext)
+        val view: View = inflater.inflate(R.layout.dialog_edit_nickname, container, false)
 
-        return binding.root
+        // 뷰 연결
+        btnSave = view.findViewById(R.id.btn_save)!!
+        etEditNickname = view.findViewById(R.id.et_edit_nickname)
+        ivCancelBtn = view.findViewById(R.id.iv_cancel_btn)
+
+        ivCancelBtn.setOnClickListener{ dismiss() }
+        btnSave.setOnClickListener(this)
+
+        // 현재 유저 닉네임 가져오기
+        etEditNickname.setText("${userViewModel.wholeMyData.value?.join?.nickname}")
+
+        return view
     } // End of onCreateView
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    interface OnClickListener {
+        fun onClick(dialog: EditNicknameDialog)
+    }
 
-        // 갑자기 빨간 불 떠서 다시 수정 각~~~
-        binding.apply {
-            // 취소 버튼 클릭
-            //ivCancelBtn.setOnClickListener { dismiss() }
-
-            // 현재 유저 닉네임 가져오기
-            //etEditNickname.setText("${userViewModel.wholeMyData.value?.join?.nickname}")
-
-            // 변경된 유져 닉네임 저장
-
-        }
-    } // End of onViewCreated
-
-    private fun init() {
-        initUser()
-    } // End of init
-
-    // 유저정보 데이터 초기화
-    private fun initUser(){
-        binding.apply {
-        }
-    } // End of initUser
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    } // End of onDestroyView
+    override fun onClick(p0: View?) {
+        listener.onClick(this)
+    }
 
 } // End of EditNicknameDialog
