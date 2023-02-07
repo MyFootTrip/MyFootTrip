@@ -50,6 +50,8 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initObserver()
+
         init()
 
         binding.apply {
@@ -60,8 +62,12 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
 
     private fun init(){
         initProfileImg()
-        getBoardObserver()
         getBoard()
+    }
+
+    private fun initObserver(){
+        getBoardObserver()
+        writeCommentObserver()
     }
 
     // 프로필 이미지 불러오기
@@ -87,11 +93,11 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
 
 
     //댓글 리사이클러 뷰 생성
-    private fun initCommentAdapter(commentList: ArrayList<Comment>){
+    private fun initCommentAdapter(){
 
-        commentList.sortByDescending {it.writeDate}
+        boardViewModel.board.value?.data!!.commentList.sortByDescending {it.writeDate}
 
-        commentAdapter = CommentAdapter(commentList,userViewModel.wholeMyData.value!!.uid)
+        commentAdapter = CommentAdapter(boardViewModel.board.value?.data!!.commentList,userViewModel.wholeMyData.value!!.uid)
 
         commentAdapter.setItemClickListener(object : CommentAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, commentId: Int) {
@@ -104,7 +110,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
                     when(it.itemId){
                         R.id.menu_update -> {
                             updateCommentObserver(position)
-                            updateCommentInput(commentId,commentList[position])
+                            updateCommentInput(commentId,boardViewModel.board.value?.data!!.commentList[position])
                             return@setOnMenuItemClickListener true
                         }
                         R.id.menu_delete -> {
@@ -132,7 +138,6 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
                 val user = userViewModel.wholeMyData.value
                 val message = "${user?.join?.nickname}님이 ${boardViewModel.board.value?.data?.title}에 댓글이 달렸습니다!\uD83D\uDCAC"
                 val comment = Comment(-1, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()),message)
-                writeCommentObserver()
                 writeComment(comment)
                 dialog.dismiss()
             }
@@ -166,8 +171,9 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         boardViewModel.board.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
+                    boardViewModel.board.value?.data = it.data!!
                     initCommentExist(it.data!!)
-                    initCommentAdapter(it.data!!.commentList)
+                    initCommentAdapter()
                 }
                 is NetworkResult.Error -> {
                 }
@@ -188,8 +194,9 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         commentViewModel.createBoard.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
+                    boardViewModel.board.value?.data = it.data!!
                     initCommentExist(it.data!!)
-                    initCommentAdapter(it.data!!.commentList)
+                    initCommentAdapter()
                     commentAdapter.notifyItemInserted(0)
                     binding.rvComment.scrollToPosition(0)
                     binding.root.showSnackBarMessage("댓글이 등록되었습니다.")
@@ -214,8 +221,9 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         commentViewModel.updateBoard.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
+                    boardViewModel.board.value?.data = it.data!!
                     initCommentExist(it.data!!)
-                    initCommentAdapter(it.data!!.commentList)
+                    initCommentAdapter()
                     commentAdapter.notifyItemChanged(position)
                     binding.root.showSnackBarMessage("댓글이 수정되었습니다.")
                 }
@@ -238,8 +246,9 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         commentViewModel.deleteBoard.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
+                    boardViewModel.board.value?.data = it.data!!
                     initCommentExist(it.data!!)
-                    initCommentAdapter(it.data!!.commentList)
+                    initCommentAdapter()
                     commentAdapter.notifyItemRemoved(position)
                     binding.root.showSnackBarMessage("댓글이 삭제되었습니다.")
                 }

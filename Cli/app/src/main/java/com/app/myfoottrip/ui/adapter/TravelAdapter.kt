@@ -1,5 +1,6 @@
 package com.app.myfoottrip.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ private const val TAG = "TravelAdapter_싸피"
 class TravelAdapter(
     private val type: Int = 1
 ) : RecyclerView.Adapter<TravelAdapter.TravelHolder>() {
+    private var beforeSelected: Int = -1
     private var selected: Int = -1
     private var travelList: List<Travel> = emptyList()
 
@@ -40,8 +42,9 @@ class TravelAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bindInfo(position: Int, travelDto: Travel) {
 
-            val chip = binding.chipTravelSelect
-            chip.isChecked = position == selected
+//            val chip = binding.chipTravelSelect
+//            chip.isChecked = position == selected
+
             val startDateFormat = SimpleDateFormat("yyyy-MM.dd", Locale("ko", "KR"))
             val endDateFormat = SimpleDateFormat("MM.dd", Locale("ko", "KR"))
             val startDateString = startDateFormat.format(travelList[position].startDate!!)
@@ -81,9 +84,16 @@ class TravelAdapter(
                 clTravelItem.setOnClickListener {
                     itemClickListner.onAllClick(position, travelDto)
                 }
+
                 chipTravelSelect.setOnClickListener {
                     itemClickListner.onChipClick(type, position, travelDto)
-                    selected = position
+                    if (beforeSelected == position){
+                        selected = -1
+                        beforeSelected = -1
+                    }else{
+                        selected = position
+                        beforeSelected = position
+                    }
                     notifyItemRangeChanged(0,travelList.size)
                 }
 

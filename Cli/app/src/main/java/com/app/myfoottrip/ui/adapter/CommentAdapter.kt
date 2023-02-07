@@ -25,7 +25,7 @@ class CommentAdapter(var commentList:List<Comment>,val userId : Int) : RecyclerV
                 //프로필 이미지
                 if (comment.profileImg.isNullOrEmpty()){
                     ivProfile.setPadding(10)
-                    Glide.with(itemView).asBitmap().load(R.drawable.ic_my).fitCenter().into(ivProfile)
+                    Glide.with(itemView).load(R.drawable.ic_my).fitCenter().into(ivProfile)
                     ivProfile .imageTintList = ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.white))
                     cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(itemView.context,R.color.main)))
                 }else {
