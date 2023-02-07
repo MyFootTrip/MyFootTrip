@@ -5,11 +5,13 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.util.SharedPreferencesUtil
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.kakao.sdk.common.KakaoSdk
+import com.kakao.sdk.common.util.Utility
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -25,9 +27,8 @@ class Application : Application() {
 
     override fun onCreate() {
         super.onCreate()
-//        val keyHash = Utility.getKeyHash(this)
-//        Log.d(TAG, keyHash)
-
+        val keyHash = Utility.getKeyHash(this)
+        Log.d(TAG, keyHash)
 
         sharedPreferencesUtil = SharedPreferencesUtil(applicationContext)
         initRetrofit(AppInterceptor())

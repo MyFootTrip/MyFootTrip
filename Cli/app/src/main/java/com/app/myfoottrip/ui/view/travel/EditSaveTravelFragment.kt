@@ -211,6 +211,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
                 // 데이터 전체를 새로 UI를 호출함
                 CoroutineScope(Dispatchers.Main).launch {
+                    onMapReady(naverMap)
                     setUI()
                 }
             }
@@ -449,7 +450,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             LatLng(0.0, 0.0),
             16.0, // 줌 레벨
             40.0,
-            180.0
+            0.0
         )
         naverMap.cameraPosition = cameraPosition
 
