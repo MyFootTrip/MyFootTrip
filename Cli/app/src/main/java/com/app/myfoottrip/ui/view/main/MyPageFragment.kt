@@ -136,5 +136,4 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
             }
         }
     } // End of getAccessTokenByRefreshTokenResponseLiveDataObserver
-
 }

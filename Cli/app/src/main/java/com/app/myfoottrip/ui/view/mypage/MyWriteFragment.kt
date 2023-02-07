@@ -106,6 +106,8 @@ class MyWriteFragment : BaseFragment<FragmentMyWriteBinding>(
             when(it){
                 is NetworkResult.Success -> {
                     initWriteBoardAdapter(it.data as ArrayList<Board>)
+                    if(it.data.isNullOrEmpty()) binding.tvWriteExist.visibility = View.VISIBLE
+                    else binding.tvWriteExist.visibility = View.INVISIBLE
                 }
                 is NetworkResult.Error -> {
                 }

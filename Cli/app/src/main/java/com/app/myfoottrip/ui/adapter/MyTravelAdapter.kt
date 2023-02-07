@@ -47,7 +47,7 @@ class MyTravelAdapter() : RecyclerView.Adapter<MyTravelAdapter.MyTravelHolder>()
                         .into(ivImage)
                 }
 
-                tvTravelName.text = travelDto.location!!.joinToString(", ")
+                tvTravelContent.text = travelDto.location!!.joinToString(", ")
 
                 chipTravelDelete.setOnClickListener {
                     itemClickListner.onDeleteChipClick(position, travelDto)

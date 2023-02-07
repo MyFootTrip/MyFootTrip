@@ -16,10 +16,20 @@ class AlarmViewModel: ViewModel() {
     val alarmList: LiveData<NetworkResult<ArrayList<Alarm>>>
         get() = alarmRepository.alarmListResponseLiveData
 
+    val alarmDeleteResponseLiveData: LiveData<NetworkResult<Int>>
+        get() = alarmRepository.alarmDeleteResponseLiveData
+
     // 게시물 전체 조회
     fun getAlarmList() {
         viewModelScope.launch {
             alarmRepository.getAlarmList()
+        }
+    }
+
+    // 알림 데이터 삭제
+    suspend fun alarmDelete(notificationId: Int) {
+        viewModelScope.launch {
+            alarmRepository.alarmDelete(notificationId)
         }
     }
 }

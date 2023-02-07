@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
@@ -15,6 +16,7 @@ import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Comment
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.data.viewmodel.CommentViewModel
+import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentCommentBinding
 import com.app.myfoottrip.ui.adapter.CommentAdapter
@@ -44,9 +46,17 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
     private lateinit var commentAdapter: CommentAdapter
     private var isWrite = false
 
+    private lateinit var callback: OnBackPressedCallback
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,6 +71,11 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
             clComment.setOnClickListener { initCommentInput() }
         }
     }
+
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
+    } // End of onDetach
 
     private fun init(){
         initProfileImg()

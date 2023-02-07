@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="20dp">
+    android:layout_marginTop="10dp">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="100dp"
         android:layout_marginHorizontal="20dp"
         app:cardCornerRadius="10dp"
         app:strokeColor="@color/white"
@@ -21,64 +21,68 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_image"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginLeft="10dp"
                 app:cardCornerRadius="80dp"
+                app:cardElevation="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/iv_image"
+                    android:id="@+id/iv_profile"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
-                android:id="@+id/tv_travel_name"
+                android:id="@+id/tv_alarm_content"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:fontFamily="@font/inter_semibold"
                 android:padding="2dp"
+                android:layout_marginRight="10dp"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toTopOf="@+id/tv_travel_date"
+                app:layout_constraintBottom_toTopOf="@+id/tv_alarm_date"
                 app:layout_constraintLeft_toRightOf="@+id/cv_image"
-                app:layout_constraintRight_toLeftOf="@id/chip_travel_delete"
+                app:layout_constraintRight_toLeftOf="@id/cv_delete"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed"
                 android:text="서울,제주" />
 
             <TextView
-                android:id="@+id/tv_travel_date"
+                android:id="@+id/tv_alarm_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
                 android:text="2020"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="@+id/tv_travel_name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_travel_name" />
+                app:layout_constraintLeft_toLeftOf="@+id/tv_alarm_content"
+                app:layout_constraintTop_toBottomOf="@+id/tv_alarm_content" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_travel_delete"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="삭제"
-                android:textColor="@color/select_category_text"
-                android:textSize="14sp"
-                app:chipBackgroundColor="@color/select_category_background"
-                app:chipEndPadding="10dp"
-                app:chipStartPadding="10dp"
-                app:chipStrokeColor="@color/select_category_text"
-                app:chipStrokeWidth="1dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:padding="10dp"
+                app:cardBackgroundColor="@color/gray_bright"
+                app:cardCornerRadius="20dp"
+                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:rippleColor="@null" />
+                app:strokeWidth="0dp">
+
+                <ImageView
+                    android:id="@+id/iv_delete"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_cancel" />
+
+            </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,5 +1,6 @@
 package com.app.myfoottrip.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
@@ -19,9 +20,9 @@ class AlarmRepository{
     val alarmListResponseLiveData: LiveData<NetworkResult<ArrayList<Alarm>>>
         get() = _alarmListResponseLiveData
 
-//    private val _deleteBoardResponseLiveData = MutableLiveData<NetworkResult<String>>()
-//    val deleteBoardResponseLiveData: LiveData<NetworkResult<String>>
-//        get() = _deleteBoardResponseLiveData
+    private val _alarmDeleteResponseLiveData = MutableLiveData<NetworkResult<Int>>()
+    val alarmDeleteResponseLiveData: LiveData<NetworkResult<Int>>
+        get() = _alarmDeleteResponseLiveData
 
     // 전체 게시물 조회
     suspend fun getAlarmList(){
@@ -39,20 +40,31 @@ class AlarmRepository{
         }
     }
 
-//    //게시물 삭제
-//    suspend fun deleteBoard(boardId: Int){
-//        var response = headerBoardService.deleteBoard(boardId)
-//
-//        // 처음은 Loading 상태로 지정
-//        _deleteBoardResponseLiveData.postValue(NetworkResult.Loading())
-//
-//        if (response.isSuccessful && response.body() != null) {
-//            _deleteBoardResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
-//        } else if (response.errorBody() != null) {
-//            _deleteBoardResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
-//        } else {
-//            _deleteBoardResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
-//        }
-//    }
+    suspend fun alarmDelete(notificationId: Int) {
+        val response = headerAlarmService.deleteAlarm(notificationId)
+
+        Log.d(TAG, "userTravelDataDelete: $response")
+        Log.d(TAG, "userTravelDataDelete: ${response.body()}")
+        Log.d(TAG, "userTravelDataDelete: ${response.message()}")
+
+        // 처음은 Loading 상태로 지정
+        _alarmDeleteResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful) {
+            _alarmDeleteResponseLiveData.postValue(NetworkResult.Success(response.code()))
+        } else if (response.errorBody() != null) {
+            _alarmDeleteResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _alarmDeleteResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
+        }
+    } // End of userTravelDataDelete
 
 } // End of AlarmRepository.kt

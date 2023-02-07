@@ -88,14 +88,23 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
         binding.apply {
             ivBack.setOnClickListener { findNavController().popBackStack() } //뒤로가기
             photoAddBtn.setOnClickListener { //갤러리 이미지 불러오기 버튼
-                GalleryUtils.getGallery(requireContext(), imageLauncher)
+                if (imageList.size <= 5){
+                    GalleryUtils.getGallery(requireContext(), imageLauncher)
+                }else{
+                    binding.root.showSnackBarMessage("이미지는 총 5장만 등록 가능합니다!")
+                }
             }
 
             //게시물 등록하기 버튼
             btnCreate.setOnClickListener {
                 if (cgCategory.checkedChipId == -1 && cgCategory2.checkedChipId == -1){
                     binding.root.showSnackBarMessage("테마를 선택해주세요!")
-                }else{
+                }else if(etTitle.text.isNullOrEmpty()){
+                    binding.root.showSnackBarMessage("제목을 입력해주세요!")
+                }else if(etContent.text.isNullOrEmpty()){
+                    binding.root.showSnackBarMessage("내용을 입력해주세요!")
+                }
+                else{
                     showDialog()
                 }
             }

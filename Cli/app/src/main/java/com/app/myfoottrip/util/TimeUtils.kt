@@ -1,8 +1,6 @@
 package com.app.myfoottrip.util
 
-import android.content.Context
-import android.widget.Toast
-import java.text.DecimalFormat
+import java.text.ParsePosition
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -72,6 +70,17 @@ object TimeUtils {
         return dateFormat.format(date)
     }
 
+    fun changeDateToString(date: Date): String{
+        val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return dateFormatter.format(date)
+    }
+
+    fun getFormattedLong(date: String): Long {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val currentDay = dateFormat.parse(date, ParsePosition(0))
+        return currentDay.time
+    }
+
     private fun getNowTime(): Long {
         return System.currentTimeMillis()
     } // End of nowTimeAsLong
@@ -83,5 +92,6 @@ object TimeUtils {
 
         return sdf.parse(tmp).time
     } // End of getNowTimeAsDateType
+
 
 }

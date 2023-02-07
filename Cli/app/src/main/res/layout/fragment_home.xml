@@ -9,11 +9,11 @@
         android:id="@+id/swipeLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:swipeRefreshLayoutProgressSpinnerBackgroundColor="@color/main"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:swipeRefreshLayoutProgressSpinnerBackgroundColor="@color/main">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -142,8 +142,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@color/gray_bright"
-                android:visibility="gone"
                 android:overScrollMode="never"
+                android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/scrollview_chip"
                 app:spanCount="2"
@@ -206,6 +206,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
+                android:focusableInTouchMode="false"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="center"
                 android:hint="최신순"
@@ -213,7 +214,6 @@
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:textSize="14.5sp"
-                android:focusableInTouchMode="false"
                 app:layout_constraintBottom_toBottomOf="@id/tv_plan_header"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tv_plan_header"
@@ -230,19 +230,33 @@
 
             </com.skydoves.powerspinner.PowerSpinnerView>
 
+            <TextView
+                android:id="@+id/tv_no_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_semibold"
+                android:text="등록된 게시물이 없어요 ㅠㅠ"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/rv_home"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/rv_home" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_home"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="vertical"
                 android:overScrollMode="never"
+                android:paddingBottom="20dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_plan_header"
                 app:layout_constraintVertical_bias="0.0"
                 tools:layout_editor_absoluteX="0dp"
-                tools:listitem="@layout/list_item_home"
-                android:paddingBottom="20dp"/>
+                tools:listitem="@layout/list_item_home" />
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/lottie_home"
@@ -250,20 +264,17 @@
                 android:layout_height="80dp"
                 android:scaleX="2"
                 android:scaleY="2"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/rv_home"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
-                app:lottie_rawRes="@raw/loading_board"/>
+                app:lottie_rawRes="@raw/loading_board" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

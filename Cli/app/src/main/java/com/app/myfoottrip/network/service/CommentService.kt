@@ -18,5 +18,4 @@ interface CommentService {
     //댓글 삭제
     @DELETE("community/board/detail/{boardId}/comment/{commentId}/")
     suspend fun deleteComment(@Path("boardId") boardId: Int, @Path("commentId") commentId: Int) : Response<Board>
-
 }

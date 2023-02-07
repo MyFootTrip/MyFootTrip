@@ -127,6 +127,7 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
 
     private fun initAdapter() {
         myTravelAdapter = MyTravelAdapter()
+
         binding.rvTravel.adapter = myTravelAdapter
         binding.rvTravel.itemAnimator = null
         myTravelAdapter.setItemClickListener(object : MyTravelAdapter.ItemClickListener {
@@ -164,7 +165,8 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
                     if (it.data != null) {
                         boardList = ArrayList()
                         boardList.addAll(it.data!!)
-
+                        if(boardList.isNullOrEmpty()) binding.tvTravelExist.visibility = View.VISIBLE
+                        else binding.tvTravelExist.visibility = View.INVISIBLE
                         myTravelAdapter.setList(boardList)
                         myTravelAdapter.notifyDataSetChanged()
                     }
@@ -190,8 +192,6 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
 
                 is NetworkResult.Error -> {
                     requireView().showSnackBarMessage("유저 여행 데이터 삭제 오류 발생")
-                    Log.d(TAG, "createTravelResponseLiveData Error: ${it.data}")
-                    Log.d(TAG, "createTravelResponseLiveData Error: ${it.message}")
                 }
 
                 is NetworkResult.Loading -> {

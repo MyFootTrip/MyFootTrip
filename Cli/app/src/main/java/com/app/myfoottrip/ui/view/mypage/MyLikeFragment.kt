@@ -104,6 +104,8 @@ class MyLikeFragment : BaseFragment<FragmentMyLikeBinding>(
             when(it){
                 is NetworkResult.Success -> {
                     initLikeBoardAdapter(it.data as ArrayList<Board>)
+                    if(it.data.isNullOrEmpty()) binding.tvLikeExist.visibility = View.VISIBLE
+                    else binding.tvLikeExist.visibility = View.INVISIBLE
                 }
                 is NetworkResult.Error -> {
                 }

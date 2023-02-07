@@ -55,7 +55,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         mainActivity = context as MainActivity
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if(System.currentTimeMillis() - waitTime >=1500 ) {
+                if (System.currentTimeMillis() - waitTime >= 1500) {
                     waitTime = System.currentTimeMillis()
                     binding.root.showSnackBarMessage("\"뒤로가기 버튼을 한번 더 누르시면 종료됩니다.\"")
                 } else {
@@ -94,7 +94,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         setUpSwipeRefresh()
     }
 
-    private fun initObserver(){
+    private fun initObserver() {
         getBoardListObserver()
         getFilteredBoardListObserver()
     }
@@ -102,7 +102,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private fun initHomeAdapter() {
         //정렬 기준
-        if(sortBy == "최신순") boardViewModel.boardList.value?.data!!.sortByDescending { it.writeDate }
+        if (boardViewModel.boardList.value?.data!!.isNullOrEmpty()) {
+            binding.tvNoData.visibility = View.VISIBLE
+        } else {
+            binding.tvNoData.visibility = View.INVISIBLE
+        }
+        if (sortBy == "최신순") boardViewModel.boardList.value?.data!!.sortByDescending { it.writeDate }
         else boardViewModel.boardList.value?.data!!.sortByDescending { it.likeList.size }
 
         homeAdatper = HomeAdapter(boardViewModel.boardList.value?.data!!)
@@ -114,6 +119,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 findNavController().navigate(R.id.action_mainFragment_to_boardFragment)
             }
         })
+
 
         binding.rvHome.apply {
             adapter = homeAdatper
@@ -171,18 +177,45 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                         textSize = 12.0f
                         isCloseIconVisible = true
                         closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
-                        closeIconTint = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
-                        chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
-                        setTextColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
+                        closeIconTint = ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.white
+                            )
+                        )
+                        chipBackgroundColor = ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.main
+                            )
+                        )
+                        setTextColor(
+                            ColorStateList.valueOf(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.white
+                                )
+                            )
+                        )
                         setOnCloseIconClickListener {
                             binding.cgDetail.removeView(this)
                             selectedDetailList.remove(category)
 
                             //필터에서 해당 필터유형 삭제
-                            if (filter.themeList.isNotEmpty() && filter.themeList.contains(category)) filter.themeList.remove(category)
-                            else if (filter.regionList.isNotEmpty() && filter.regionList.contains(category)) filter.regionList.remove(category)
-                            else if (filter.periodList.isNotEmpty() && filter.periodList.contains(category)) filter.periodList.remove(category)
-                            else if (filter.ageList.isNotEmpty() && filter.ageList.contains(category)) filter.ageList.remove(category)
+                            if (filter.themeList.isNotEmpty() && filter.themeList.contains(category)) filter.themeList.remove(
+                                category
+                            )
+                            else if (filter.regionList.isNotEmpty() && filter.regionList.contains(
+                                    category
+                                )
+                            ) filter.regionList.remove(category)
+                            else if (filter.periodList.isNotEmpty() && filter.periodList.contains(
+                                    category
+                                )
+                            ) filter.periodList.remove(category)
+                            else if (filter.ageList.isNotEmpty() && filter.ageList.contains(category)) filter.ageList.remove(
+                                category
+                            )
                             getFilterdData(filter)
                         }
                     })
@@ -244,7 +277,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             }
         }
     } // End of initSpinnerSort
-
 
 
     //스크롤 감지
@@ -392,13 +424,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
     }
 
-    fun dismissSpinner(){
+    fun dismissSpinner() {
         binding.spinnerSort.dismiss()
     }
 
     companion object {
         val THEME_LIST = arrayOf("혼자", "친구와", "연인과", "배우자와", "아이와", "부모님과", "기타")
-        val LOCATION_LIST = arrayOf("서울", "경기", "강원", "부산", "경북·대구", "전남·광주", "제주", "충남·대전", "경남", "충북", "전북", "인천")
+        val LOCATION_LIST =
+            arrayOf("서울", "경기", "강원", "부산", "경북·대구", "전남·광주", "제주", "충남·대전", "경남", "충북", "전북", "인천")
         val PERIOD_LIST = arrayOf("당일 치기", "1박 2일", "2박 3일", "3박 4일", "4박 5일+")
         val AGE_LIST = arrayOf("10대", "20대", "30대", "40대", "50대", "60대 이상")
     }
