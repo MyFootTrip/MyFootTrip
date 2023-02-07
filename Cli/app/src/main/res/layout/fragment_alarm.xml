@@ -54,6 +54,19 @@
         app:layout_constraintTop_toBottomOf="@id/base_line"
         tools:listitem="@layout/list_item_alarm" />
 
+    <TextView
+        android:id="@+id/tv_alarm_exist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_bold"
+        android:gravity="center"
+        android:text="받은 알림이 없어요 ㅠㅠ"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

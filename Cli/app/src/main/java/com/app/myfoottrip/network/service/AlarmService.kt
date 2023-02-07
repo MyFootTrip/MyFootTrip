@@ -11,6 +11,6 @@ interface AlarmService {
     suspend fun getAlarmList() : Response<ArrayList<Alarm>>
 
     //알림 메세지 삭제
-    @DELETE("/community/notification/{notificationId}")
+    @DELETE("/community/notification/{notificationId}/")
     suspend fun deleteAlarm(@Path("notificationId") notificationId:Int): Response<Void>
 }
