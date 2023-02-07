@@ -23,7 +23,6 @@ import com.app.myfoottrip.databinding.FragmentEditSaveTravelBinding
 import com.app.myfoottrip.ui.adapter.TravelEditSaveItemAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.dialogs.EditCustomDialog
-import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
@@ -115,7 +114,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         // RoomDB에 데이터를 가져오고나서, Travel타입으로 변환한 후 UI로 뿌리는 작업을 진행한다.
         val dataJob = CoroutineScope(Dispatchers.IO).launch {
             val defferedGetData: Deferred<Int> = async {
-                userVisitPlaceDataList = getSqlLiteAllData() as LinkedList<Place>
+                userVisitPlaceDataList = getSqlLiteAllData()
                 1
             }
 
@@ -123,7 +122,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             changeToTravelDto()
 
             Log.d(TAG, "getData: $userVisitPlaceDataList")
-
             withContext(Dispatchers.Main) {
                 setUI()
                 buttonEvents()
