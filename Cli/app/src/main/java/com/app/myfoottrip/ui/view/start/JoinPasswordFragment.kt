@@ -18,8 +18,7 @@ import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinPasswordBinding
 import com.google.android.material.textfield.TextInputEditText
 
-
-private const val TAG = "싸피"
+private const val TAG = "JoinPasswordFragment_싸피"
 
 class JoinPhoneNumberFragment : Fragment() {
     private lateinit var mContext: Context
@@ -34,15 +33,10 @@ class JoinPhoneNumberFragment : Fragment() {
     private lateinit var pwOrigin: TextInputEditText
     private lateinit var firstPasswordInformMessageTv: TextView
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
     } // End of onAttach
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    } // End of onCreate
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?

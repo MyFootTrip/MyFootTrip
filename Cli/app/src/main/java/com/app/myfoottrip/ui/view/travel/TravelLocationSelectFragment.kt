@@ -57,7 +57,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var categoryAdapter: CategoryAdatper
     private var locationList: MutableList<String> = ArrayList() //지역 리스트
-    private var selectedList: MutableList<String> = ArrayList() //선택된 리스트
+    private var selectedList: MutableList<String> = MutableList(4) { "" } //선택된 리스트
 
     private var mapFragment: MapFragment = MapFragment()
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
@@ -259,7 +259,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     } // End of setChipListener
 
     // ========================================================= 유저 데이터 가져오기 =========================================================
-
     private fun getUserTravelData() {
         CoroutineScope(Dispatchers.IO).launch {
             travelViewModel.getUserTravelData(selectedTravelId)
