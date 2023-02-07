@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -24,7 +23,6 @@ import com.app.myfoottrip.ui.adapter.HomeAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.CommonUtils
 import com.app.myfoottrip.util.NetworkResult
-import com.app.myfoottrip.util.showSnackBarMessage
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,22 +46,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     var waitTime = 0L
     private lateinit var mainActivity: MainActivity
-    private lateinit var callback: OnBackPressedCallback
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-        callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (System.currentTimeMillis() - waitTime >= 1500) {
-                    waitTime = System.currentTimeMillis()
-                    binding.root.showSnackBarMessage("\"뒤로가기 버튼을 한번 더 누르시면 종료됩니다.\"")
-                } else {
-                    mainActivity.finish() // 액티비티 종료
-                }
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

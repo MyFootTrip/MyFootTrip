@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -34,21 +33,15 @@ class AlarmFragment : BaseFragment<FragmentAlarmBinding>(
 
     private val userViewModel by activityViewModels<UserViewModel>()
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
-    private lateinit var callback: OnBackPressedCallback
 
     private val alarmViewModel by activityViewModels<AlarmViewModel>()
     private lateinit var alarmAdapter: AlarmAdapter
 
+    private var isDelete = false
+    private var deletePosition = -1
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-        callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navigationViewModel.type = 1
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,7 +61,6 @@ class AlarmFragment : BaseFragment<FragmentAlarmBinding>(
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
     } // End of onDetach
 
     private fun init(){
@@ -89,7 +81,8 @@ class AlarmFragment : BaseFragment<FragmentAlarmBinding>(
 
                 CoroutineScope(Dispatchers.IO).launch {
                     alarmDelete(alarm.notificationId)
-
+                    isDelete = true
+                    deletePosition = position
                     // 삭제를 마치고 나면 data를 다시 갱신해야함
                     withContext(Dispatchers.Default) {
                         getAlarmList()
@@ -117,6 +110,8 @@ class AlarmFragment : BaseFragment<FragmentAlarmBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     alarmViewModel.alarmList.value?.data = it.data!!
+                    if(it.data!!.isNullOrEmpty()) binding.tvAlarmExist.visibility = View.VISIBLE
+                    else binding.tvAlarmExist.visibility = View.INVISIBLE
                     initAlarmAdapter()
                 }
                 is NetworkResult.Error -> {
@@ -138,8 +133,12 @@ class AlarmFragment : BaseFragment<FragmentAlarmBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data == 204) {
-                        requireView().showSnackBarMessage("해당 알림이 삭제되었습니다.")
-                        alarmAdapter.notifyDataSetChanged()
+                        if (isDelete) {
+                            requireView().showSnackBarMessage("해당 알림이 삭제되었습니다.")
+                            alarmViewModel.alarmList.value?.data!!.removeAt(deletePosition)
+                        }
+                        alarmAdapter.notifyItemRemoved(deletePosition)
+                        initAlarmAdapter()
                     }
                 }
 

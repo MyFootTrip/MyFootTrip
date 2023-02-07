@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -12,9 +13,9 @@ import androidx.navigation.fragment.NavHostFragment
 import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.ActivityMainBinding
+import com.app.myfoottrip.ui.view.dialogs.EditCustomDialog
 import com.app.myfoottrip.ui.view.travel.LocationService
 import com.app.myfoottrip.util.NetworkResult
-import com.app.myfoottrip.util.OnBackPressedListener
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import kotlinx.coroutines.CoroutineScope
@@ -55,7 +56,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 
     } // End of onCreate
 
-
     private fun setBinding() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -73,10 +73,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
             when (it) {
                 is NetworkResult.Success -> {
                     CoroutineScope(Dispatchers.Main).launch {
-                        Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.data}")
-                        
                         userViewModel.setWholeMyData(it.data!!)
-                        Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: $it")
 
                         coroutineScope {
                             if (it.data != null) {
@@ -90,11 +87,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
                     // AccessToken을 통해서 유저 정보를 가져오기 실패했는지 파악해야됨.
                     Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 토큰 만료됨")
                     // RefreshToken을 통해서 AccessToken을 재발급
-                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.data}")
-                    Log.d(
-                        TAG,
-                        "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.message}"
-                    )
                 }
 
                 is NetworkResult.Loading -> {
@@ -113,7 +105,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
         super.onDestroy()
         stopLocationBackground()
     }
-
 
     fun startLocationBackground() {
         Intent(applicationContext, LocationService::class.java).apply {
@@ -142,4 +133,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 //
 //
 //    } // End of moveFragment
+
+    private lateinit var dialog: EditCustomDialog
+//    fun showServiceDialog() {
+//        val editCustomDialog: View = layoutInflater.inflate(R.layout.edit_custom_dialog, null)
+//        val dlg : EditCustomDialog = editCustomDialog(this, editCustomDialog, tagName)
+//        dlg.show(supportFragmentManager, "editCustomDialog")
+//    } // End of showDialog
 }

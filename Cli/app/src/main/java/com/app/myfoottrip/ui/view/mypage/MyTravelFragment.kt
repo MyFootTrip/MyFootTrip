@@ -1,25 +1,14 @@
 package com.app.myfoottrip.ui.view.mypage
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
-import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.data.viewmodel.TravelActivityViewModel
@@ -27,30 +16,24 @@ import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMyTravelBinding
 import com.app.myfoottrip.ui.adapter.MyTravelAdapter
-import com.app.myfoottrip.ui.adapter.TravelAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
-import com.app.myfoottrip.ui.view.mypage.MyTravelFragment
-import com.app.myfoottrip.util.GalleryUtils
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
-import kotlin.collections.ArrayList
 
 private const val TAG = "MyTravelFragment_마이풋트립"
 
 class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
     FragmentMyTravelBinding::bind, R.layout.fragment_my_travel
-){
+) {
 
     private lateinit var mainActivity: MainActivity
 
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
-    private lateinit var callback: OnBackPressedCallback
 
     // ViewModel
     private val travelViewModel by viewModels<TravelViewModel>()
@@ -67,14 +50,6 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
         super.onAttach(context)
 
         mainActivity = context as MainActivity
-
-        callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navigationViewModel.type = 1
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this@MyTravelFragment, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -114,10 +89,9 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
     }
 
-    private fun init(){
+    private fun init() {
         CoroutineScope(Dispatchers.Default).launch {
             setData()
         }
@@ -152,7 +126,7 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
         })
     } // End of initAdapter
 
-    private fun initObserver(){
+    private fun initObserver() {
         userTravelDataObserver()
         userTraveLDataDeleteObserve()
     }
@@ -165,7 +139,8 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
                     if (it.data != null) {
                         boardList = ArrayList()
                         boardList.addAll(it.data!!)
-                        if(boardList.isNullOrEmpty()) binding.tvTravelExist.visibility = View.VISIBLE
+                        if (boardList.isNullOrEmpty()) binding.tvTravelExist.visibility =
+                            View.VISIBLE
                         else binding.tvTravelExist.visibility = View.INVISIBLE
                         myTravelAdapter.setList(boardList)
                         myTravelAdapter.notifyDataSetChanged()

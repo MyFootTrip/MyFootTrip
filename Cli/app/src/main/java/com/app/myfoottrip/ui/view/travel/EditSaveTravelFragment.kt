@@ -4,8 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.os.bundleOf
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -20,6 +22,7 @@ import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentEditSaveTravelBinding
 import com.app.myfoottrip.ui.adapter.TravelEditSaveItemAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.ui.view.dialogs.EditCustomDialog
 import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
@@ -62,10 +65,18 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
     // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
     private var fragmentType = 0
+    private lateinit var listener: EditCustomDialog.ItemClickListener
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+
+        try {
+            listener = parentFragment as EditCustomDialog.ItemClickListener
+        } catch (E: java.lang.ClassCastException) {
+            (context.toString() + "must implement NoticeDialogListener")
+        }
+
     } // End of onAttach
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +94,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         if (fragmentType == 2) {
             Log.d(TAG, "onViewCreated: 수정 작업니다.")
             updateTravelResponseObserve()
+            userTraveLDataDeleteObserve()
         }
 
         mapView = binding.mapFragment
@@ -102,7 +114,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         // RoomDB에 데이터를 가져오고나서, Travel타입으로 변환한 후 UI로 뿌리는 작업을 진행한다.
         val dataJob = CoroutineScope(Dispatchers.IO).launch {
             val defferedGetData: Deferred<Int> = async {
-                userVisitPlaceDataList = getSqlLiteAllData() as LinkedList<Place>
+                userVisitPlaceDataList = getSqlLiteAllData()
                 1
             }
 
@@ -110,7 +122,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             changeToTravelDto()
 
             Log.d(TAG, "getData: $userVisitPlaceDataList")
-
             withContext(Dispatchers.Main) {
                 setUI()
                 buttonEvents()
@@ -205,18 +216,59 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             override fun onEditButtonClick(position: Int, placeData: Place) {
                 // 리사이클러뷰 포지션에 해당하는 수정 버튼을 눌렀을 때 이벤트
 
-                // position의 선택된 Item의 객체의 값을 가지고옴.
-                userVisitPlaceDataList.removeAt(position)
-                recyclerView.adapter!!.notifyDataSetChanged()
+                if (fragmentType == 2 && userVisitPlaceDataList.size == 1) {
+                    val editDialog = EditCustomDialog("수정 작업의 경우 데이터가 없을 경우 해당 데이터가 삭제됩니다. 진행하시나요?")
+                    editDialog.show(
+                        (activity as AppCompatActivity).supportFragmentManager,
+                        "editDialog"
+                    )
 
-                // 데이터 전체를 새로 UI를 호출함
-                CoroutineScope(Dispatchers.Main).launch {
-                    onMapReady(naverMap)
-                    setUI()
+                    editDialog.setItemClickListener(object : EditCustomDialog.ItemClickListener {
+                        override fun onFinishClicked(dialog: DialogFragment) {
+                            // 데이터 전체를 새로 UI를 호출함
+                            CoroutineScope(Dispatchers.Main).launch {
+                                userVisitPlaceDataList.removeAt(position)
+                                editDialog.dismiss()
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    travelDataDelete()
+                                }
+                            }
+                        }
+
+                        override fun onCancelClicked(dialog: DialogFragment) {
+                            editDialog.dismiss()
+                        }
+                    })
+                    return
                 }
+
+                val editDialog = EditCustomDialog("해당 위치를 삭제하시겠습니까?")
+                editDialog.show(
+                    (activity as AppCompatActivity).supportFragmentManager,
+                    "editDialog"
+                )
+
+                editDialog.setItemClickListener(object : EditCustomDialog.ItemClickListener {
+                    override fun onFinishClicked(dialog: DialogFragment) {
+                        // 데이터 전체를 새로 UI를 호출함
+                        CoroutineScope(Dispatchers.Main).launch {
+                            userVisitPlaceDataList.removeAt(position)
+                            recyclerView.adapter!!.notifyDataSetChanged()
+                            editDialog.dismiss()
+//                            onMapReady(naverMap)
+//                            setUI()
+                        }
+                    }
+
+                    override fun onCancelClicked(dialog: DialogFragment) {
+                        editDialog.dismiss()
+                    }
+                })
+
             }
         })
     } // End of adapterEvent
+
 
     private fun initRecyclerViewAdapter() {
         travelEditSaveItemAdapter = TravelEditSaveItemAdapter(mContext, userTravelData?.placeList!!)
@@ -232,7 +284,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     private fun buttonEvents() = CoroutineScope(Dispatchers.IO).launch {
         // 저장 버튼 눌렀을 때 이벤트
         binding.travelEditSaveButton.setOnClickListener {
-
             if (fragmentType == 2) {
                 CoroutineScope(Dispatchers.IO).launch {
                     withContext(Dispatchers.Main) {
@@ -258,28 +309,53 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         joinBackButtonCustomView = binding.joinBackButtonCustomview
         joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
             .setOnClickListener {
+
                 findNavController().popBackStack()
             }
     } // End of buttonEvents
 
-    private fun createTravel() {
-        CoroutineScope(Dispatchers.IO).launch {
-            // 변환된 Travel데이터를 서버에 저장
-            userTravelData?.let { travelViewModel.createTravel(it) }
+
+    // ============================================== 유저 데이터 생성 ==============================================
+    private suspend fun createTravel() {
+        withContext(Dispatchers.Main) {
+            if (userVisitPlaceDataList.isEmpty()) {
+                requireView().showSnackBarMessage("저장된 좌표가 없으므로 여행 데이터가 저장되지 않았습니다")
+                moveResultFragment()
+            }
+        }
+
+        if (userVisitPlaceDataList.isNotEmpty()) {
+            CoroutineScope(Dispatchers.IO).launch {
+                // 변환된 Travel데이터를 서버에 저장
+                userTravelData?.let { travelViewModel.createTravel(it) }
+            }
         }
     } // End of createTravel
 
+    // ============================================== 유저 데이터 수정 ==============================================
     private suspend fun updateTravel() {
-        // 변환된 Travel데이터를 서버에 저장 (수정)
-        CoroutineScope(Dispatchers.IO).launch {
-            userTravelData?.let {
-                travelViewModel.userTravelDataUpdate(
-                    travelActivityViewModel.userTravelData.value!!.travelId!!,
-                    it
-                )
+        // 수정 작업에서는 마지막 하나를 선택했을 때는 알림창을 띄움
+        // (마지막 하나가 삭제되면 Travel자체가 삭제된다는 메시지)
+        // 그리고 확인을 누르면 삭제 요청을 보내고 Travel자체가 삭제됨.
+
+        if (userVisitPlaceDataList.size > 1) {
+            // 변환된 Travel데이터를 서버에 저장 (수정)
+            CoroutineScope(Dispatchers.IO).launch {
+                userTravelData?.let {
+                    travelViewModel.userTravelDataUpdate(
+                        travelActivityViewModel.userTravelData.value!!.travelId!!,
+                        it
+                    )
+                }
             }
         }
     } // End of updateTravel
+
+    private suspend fun travelDataDelete() {
+        CoroutineScope(Dispatchers.IO).launch {
+            travelViewModel.userTravelDataDelete(travelActivityViewModel.userTravelData.value!!.travelId!!)
+        }
+    } // End of travelDataDelete
 
     private suspend fun getSqlLiteAllData(): LinkedList<Place> {
         val placeList: LinkedList<Place> = LinkedList()
@@ -312,7 +388,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     } // End of getSqlLiteAllData
 
     private fun createTravelResponseObserve() {
-        travelViewModel.createTravelResponseLiveData.observe(viewLifecycleOwner) {
+        travelViewModel.createTravelResponseLiveData.observe(this.viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data == 201) {
@@ -323,13 +399,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                             // DB를 비우고 빠져나가기
                             coroutineScope {
                                 withContext(Dispatchers.Main) {
-
                                     // 다시 여행 선택페이지로 이동
-                                    val bundle = bundleOf("type" to 0)
-                                    findNavController().navigate(
-                                        R.id.action_editSaveTravelFragment_pop,
-                                        bundle
-                                    )
+                                    moveResultFragment()
                                 }
                             }
 
@@ -354,7 +425,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     } // End of createTravelResponseObserve
 
     private fun updateTravelResponseObserve() {
-        travelViewModel.userTravelDataUpdateResponseLiveData.observe(viewLifecycleOwner) {
+        travelViewModel.userTravelDataUpdateResponseLiveData.observe(this.viewLifecycleOwner) {
             binding.allConstrainlayout.visibility = View.VISIBLE
             binding.progressBar.visibility = View.GONE
 
@@ -368,13 +439,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                             // DB를 비우고 빠져나가기
                             coroutineScope {
                                 withContext(Dispatchers.Main) {
-
-                                    // 다시 여행 선택페이지로 이동
-                                    val bundle = bundleOf("type" to 0)
-                                    findNavController().navigate(
-                                        R.id.action_editSaveTravelFragment_pop,
-                                        bundle
-                                    )
+                                    moveResultFragment()
                                 }
                             }
 
@@ -405,6 +470,38 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             }
         }
     } // End of updateTravelResponseObserve
+
+    private fun userTraveLDataDeleteObserve() {
+        travelViewModel.userTravelDataDeleteResponseLiveData.observe(this.viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    if (it.data == 204) {
+                        moveResultFragment()
+                    }
+                }
+
+                is NetworkResult.Error -> {
+                    requireView().showSnackBarMessage("유저 여행 데이터 삭제 오류 발생")
+                    Log.d(TAG, "createTravelResponseLiveData Error: ${it.data}")
+                    Log.d(TAG, "createTravelResponseLiveData Error: ${it.message}")
+                }
+
+                is NetworkResult.Loading -> {
+                    Log.d(TAG, "createTravelResponseLiveData Loading")
+                }
+            }
+        }
+    } // End of userTraveLDataDeleteObserve
+
+    //생성하는 파트이면 좌표가 없을 때 저장이 되지 않음
+    private fun moveResultFragment() {
+        // 다시 여행 선택페이지로 이동
+        val bundle = bundleOf("type" to 0)
+        findNavController().navigate(
+            R.id.action_editSaveTravelFragment_pop,
+            bundle
+        )
+    } // End of moveResultFragment
 
     override fun onStart() {
         super.onStart()

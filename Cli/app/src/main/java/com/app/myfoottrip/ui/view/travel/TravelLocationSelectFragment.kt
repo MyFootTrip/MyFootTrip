@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
@@ -57,7 +58,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var categoryAdapter: CategoryAdatper
     private var locationList: MutableList<String> = ArrayList() //지역 리스트
-    private var selectedList: MutableList<String> = ArrayList() //선택된 리스트
+    private var selectedList: MutableList<String> = MutableList(4) { "" } //선택된 리스트
 
     private var mapFragment: MapFragment = MapFragment()
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
@@ -81,6 +82,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         Log.d(TAG, "onCreate: ")
         visitPlaceRepository = VisitPlaceRepository.get()
         checkAllPermission()
+        // setupOnbackPressed()
     } // End of onCreate
 
 
@@ -93,11 +95,43 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.visibility = View.VISIBLE
+        binding.allConstrainlayout.visibility = View.GONE
+
         selectedList = ArrayList()
         // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
         fragmentType = requireArguments().getInt("type")
-
         getUserTravelDataResponseLiveDataObserve()
+
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val temp = visitPlaceRepository.getAllVisitPlace()
+//            Log.d(TAG, "setupOnbackPressed: $temp")
+//        }
+
+        // 남아있는 데이터 확인
+        var temp: List<VisitPlace> = emptyList()
+        CoroutineScope(Dispatchers.IO).launch {
+            val removeDeffred: Deferred<Int> = async {
+                val mainActivity = requireActivity() as MainActivity
+                mainActivity.stopLocationBackground()
+                try {
+                    visitPlaceRepository.deleteAllVisitPlace()
+                } catch (exception: Exception) {
+                    Log.d(TAG, "onResume: DB에 비울 값이 없습니다.")
+                }
+                1
+            }
+            removeDeffred.await()
+
+
+            val getDeffered: Deferred<Int> = async {
+                temp = visitPlaceRepository.getAllVisitPlace()
+                1
+            }
+            getDeffered.await()
+        }
+
+        Log.d(TAG, "getData 결과임: $temp")
 
         binding.fabStart.apply {
             backgroundTintList =
@@ -105,13 +139,12 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             isEnabled = false
         }
 
+        // 수정 작업일 때
         if (fragmentType == 2) {
+            // travelId 가져와서 기존의 데이터 가져오기.
             selectedTravelId = requireArguments().getInt("travelId")
-            Log.d(TAG, "onViewCreated: 수정 작업 입니다.")
 
-            Log.d(TAG, "onViewCreated: 여기임?1")
             if (travelViewModel.getUserTravelDataResponseLiveData.value == null) {
-                Log.d(TAG, "onViewCreated: 여기임?2")
                 getUserTravelData()
             }
 
@@ -125,6 +158,9 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             // EventListener 초기화
             initListener()
         }
+
+        binding.progressBar.visibility = View.GONE
+        binding.allConstrainlayout.visibility = View.VISIBLE
     } // End of onViewCreated
 
     private fun saveRoomDB() = CoroutineScope(Dispatchers.IO).launch {
@@ -191,8 +227,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     private fun startLocationRecording() {
         binding.fabStart.setOnClickListener {
             travelActivityViewModel.setLocationList(selectedList as ArrayList<String>)
-            Log.d(TAG, "startLocationRecording: $selectedList")
-
             mContext.showToastMessage("위치 기록을 시작합니다.")
 
             val bundle = bundleOf(
@@ -226,7 +260,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         if (!selectedList.contains(locationList[position])) {
             selectedList.add(locationList[position])
         }
-        Log.d(TAG, "setChipListener: $selectedList")
 
         binding.cgDetail.addView(Chip(requireContext()).apply {
             chipCornerRadius = 10.0f
@@ -251,22 +284,11 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                 binding.cgDetail.removeView(this)
                 // element를 기준으로 삭제
                 selectedList.remove(locationList[position])
-
-//                if (selectedList.isEmpty()) {
-//                    binding.tvLocationHint.visibility = View.VISIBLE
-//                    binding.fabStart.apply {
-//                        backgroundTintList =
-//                            AppCompatResources.getColorStateList(requireContext(), R.color.gray_500)
-//                        isEnabled = false
-//                        isClickable = false
-//                    }
-//                }
             }
         })
     } // End of setChipListener
 
     // ========================================================= 유저 데이터 가져오기 =========================================================
-
     private fun getUserTravelData() {
         CoroutineScope(Dispatchers.IO).launch {
             travelViewModel.getUserTravelData(selectedTravelId)
@@ -275,7 +297,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
     private fun getUserTravelDataResponseLiveDataObserve() {
         Log.d(TAG, "getUserTravelDataResponseLiveDataObserve: 옵저버 밖")
-        travelViewModel.getUserTravelDataResponseLiveData.observe(viewLifecycleOwner) {
+        travelViewModel.getUserTravelDataResponseLiveData.observe(this.viewLifecycleOwner) {
             Log.d(TAG, "getUserTravelDataResponseLiveDataObserve: 옵저버 안")
             when (it) {
                 is NetworkResult.Success -> {
@@ -387,18 +409,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         binding.mapFragment.onLowMemory()
     }
 
-    private companion object {
-        const val LOCATION_PERMISSION_REQUEST_CODE = 1000
-
-        // 권한 목록
-        val REQUIRED_PERMISSIONS = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-
-        // 런타임 권한 요청시 필요한 요청 코드
-        const val PERMISSION_REQUEST_CODE = 100
-    }
 
     // 위치 서비스 요청 시 필요한 런처
     lateinit var getGPSPermissionLauncher: ActivityResultLauncher<Intent>
@@ -484,6 +494,45 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                 PERMISSION_REQUEST_CODE
             )
         }
-
     } // End of isRunTimePermissionsGranted
+
+    private fun setupOnbackPressed() {
+        Log.d(TAG, "setupOnbackPressed : 밖임 ")
+        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isEnabled) {
+                    Log.d(TAG, "setupOnbackPressed: 안임 ")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val mainActivity = requireActivity() as MainActivity
+                        mainActivity.stopLocationBackground()
+
+                        try {
+                            visitPlaceRepository.deleteAllVisitPlace()
+                        } catch (exception: Exception) {
+                            Log.d(TAG, "onResume: DB에 비울 값이 없습니다.")
+                        }
+
+                        val temp = visitPlaceRepository.getAllVisitPlace()
+                        Log.d(TAG, "setupOnbackPressed: $temp")
+                    }
+
+                    isEnabled = false
+                    requireActivity().onBackPressed()
+                }
+            }
+        })
+    } // End of setupOnbackPressed
+
+    private companion object {
+        const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+
+        // 권한 목록
+        val REQUIRED_PERMISSIONS = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+
+        // 런타임 권한 요청시 필요한 요청 코드
+        const val PERMISSION_REQUEST_CODE = 100
+    }
 } // End of TravelLocationSelectFragment class

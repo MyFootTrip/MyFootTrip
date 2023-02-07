@@ -6,10 +6,8 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -28,7 +26,6 @@ import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.ui.view.start.StartActivity
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
-import com.app.myfoottrip.util.showToastMessage
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.CoroutineScope
@@ -45,7 +42,6 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
 
     private val userViewModel by activityViewModels<UserViewModel>()
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
-    private lateinit var callback: OnBackPressedCallback
 
     private val fcmViewModel by activityViewModels<FcmViewModel>()
     private val tokenViewModel by activityViewModels<TokenViewModel>()
@@ -53,13 +49,6 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-        callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navigationViewModel.type = 1
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -158,7 +147,6 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
     } // End of onDetach
 
     //로그아웃 다이얼로그 생성

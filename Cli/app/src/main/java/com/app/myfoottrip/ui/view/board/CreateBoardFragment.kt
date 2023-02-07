@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
@@ -48,7 +47,6 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
     private var currentTheme = ""
     private var travelId = -1
 
-    private lateinit var callback: OnBackPressedCallback
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
 
     //-----
@@ -70,12 +68,6 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-        callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,23 +80,22 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
         binding.apply {
             ivBack.setOnClickListener { findNavController().popBackStack() } //뒤로가기
             photoAddBtn.setOnClickListener { //갤러리 이미지 불러오기 버튼
-                if (imageList.size <= 5){
+                if (imageList.size <= 5) {
                     GalleryUtils.getGallery(requireContext(), imageLauncher)
-                }else{
+                } else {
                     binding.root.showSnackBarMessage("이미지는 총 5장만 등록 가능합니다!")
                 }
             }
 
             //게시물 등록하기 버튼
             btnCreate.setOnClickListener {
-                if (cgCategory.checkedChipId == -1 && cgCategory2.checkedChipId == -1){
+                if (cgCategory.checkedChipId == -1 && cgCategory2.checkedChipId == -1) {
                     binding.root.showSnackBarMessage("테마를 선택해주세요!")
-                }else if(etTitle.text.isNullOrEmpty()){
+                } else if (etTitle.text.isNullOrEmpty()) {
                     binding.root.showSnackBarMessage("제목을 입력해주세요!")
-                }else if(etContent.text.isNullOrEmpty()){
+                } else if (etContent.text.isNullOrEmpty()) {
                     binding.root.showSnackBarMessage("내용을 입력해주세요!")
-                }
-                else{
+                } else {
                     showDialog()
                 }
             }
@@ -113,11 +104,11 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
     }
 
     private fun init() {
-        val uri = Uri.parse("https://images.velog.io/images/ccmmss98/post/4de24da3-70a1-4a57-8df8-7d8bd8ef2b70/saffy.png")
+        val uri =
+            Uri.parse("https://images.velog.io/images/ccmmss98/post/4de24da3-70a1-4a57-8df8-7d8bd8ef2b70/saffy.png")
         imageList.add(uri)
         initChips()
         initPhotoAdapter()
@@ -142,15 +133,15 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
     }
 
     //테마 클릭 세팅
-    private fun initChips(){
+    private fun initChips() {
         binding.apply {
             cgCategory.setOnCheckedChangeListener { group, checkedId ->
-                when(checkedId){
+                when (checkedId) {
                     R.id.chip_single -> {
                         currentTheme = "혼자"
                         cgCategory2.clearCheck()
                     }
-                    R.id.chip_friend ->{
+                    R.id.chip_friend -> {
                         currentTheme = "친구와"
                         cgCategory2.clearCheck()
                     }
@@ -165,7 +156,7 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
                 }
             }
             cgCategory2.setOnCheckedChangeListener { group, checkedId ->
-                when(checkedId){
+                when (checkedId) {
                     R.id.chip_kid -> {
                         currentTheme = "아이와"
                         cgCategory.clearCheck()
@@ -198,17 +189,33 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
                     lottieCreateBoard.playAnimation()
                 }
 
-                val board = Board(1, 1, "테스트계정", "string", Date(System.currentTimeMillis()), "혼자놀기", "임시제목입니다", "임시 내용입니다.", arrayListOf(), Travel(travelId,
-                    arrayListOf(), Date(System.currentTimeMillis()),
+                val board = Board(
+                    1,
+                    1,
+                    "테스트계정",
+                    "string",
                     Date(System.currentTimeMillis()),
-                    arrayListOf()), arrayListOf(), arrayListOf())
+                    "혼자놀기",
+                    "임시제목입니다",
+                    "임시 내용입니다.",
+                    arrayListOf(),
+                    Travel(
+                        travelId,
+                        arrayListOf(), Date(System.currentTimeMillis()),
+                        Date(System.currentTimeMillis()),
+                        arrayListOf()
+                    ),
+                    arrayListOf(),
+                    arrayListOf()
+                )
                 imageList.removeAt(0)
                 CoroutineScope(Dispatchers.IO).launch {
                     withContext(Dispatchers.IO) {
                         val urlList: ArrayList<String> = List(imageList.size) { i ->
                             "IMAGE_${board.boardId}_${i}.png"
                         } as ArrayList<String>
-                        board.imageList = GalleryUtils.insertImage(urlList, imageList, 0, board.boardId)
+                        board.imageList =
+                            GalleryUtils.insertImage(urlList, imageList, 0, board.boardId)
                         board.title = etTitle.text.toString()
                         board.content = etContent.text.toString()
                         board.theme = currentTheme

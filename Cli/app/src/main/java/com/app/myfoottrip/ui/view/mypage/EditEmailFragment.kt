@@ -1,19 +1,13 @@
 package com.app.myfoottrip.ui.view.mypage
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.UserViewModel
-import com.app.myfoottrip.databinding.FragmentEditAccountBinding
 import com.app.myfoottrip.databinding.FragmentEditEmailBinding
 import com.app.myfoottrip.ui.base.BaseFragment
-import com.app.myfoottrip.ui.view.dialogs.EditNicknameDialog
 import com.app.myfoottrip.ui.view.dialogs.EditSaveDialog
 
 private const val TAG = "EditEmailFragment_마이풋트립"
@@ -28,7 +22,7 @@ class EditEmailFragment : BaseFragment<FragmentEditEmailBinding>(
 
         binding.apply {
             // 뒤로가기
-            ivCancelBtn.setOnClickListener {findNavController().popBackStack()}
+            ivCancelBtn.setOnClickListener { findNavController().popBackStack() }
 
             // 현재 이메일 가져오기
             etEditEmail.setText("${userViewModel.wholeMyData.value?.join?.email}")

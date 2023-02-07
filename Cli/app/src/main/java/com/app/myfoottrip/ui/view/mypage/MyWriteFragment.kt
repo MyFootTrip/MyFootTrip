@@ -2,11 +2,7 @@ package com.app.myfoottrip.ui.view.mypage
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -31,7 +27,6 @@ class MyWriteFragment : BaseFragment<FragmentMyWriteBinding>(
 
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
     private val boardViewModel by activityViewModels<BoardViewModel>()
-    private lateinit var callback: OnBackPressedCallback
 
     private lateinit var likeBoardAdapter: LikeBoardAdapter
 
@@ -39,14 +34,6 @@ class MyWriteFragment : BaseFragment<FragmentMyWriteBinding>(
         super.onAttach(context)
 
         mainActivity = context as MainActivity
-
-        callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navigationViewModel.type = 1
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this@MyWriteFragment, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,10 +53,9 @@ class MyWriteFragment : BaseFragment<FragmentMyWriteBinding>(
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
     }
 
-    private fun init(){
+    private fun init() {
         getWriteBoardListObserver()
         getWriteBoardList()
     }
@@ -95,18 +81,18 @@ class MyWriteFragment : BaseFragment<FragmentMyWriteBinding>(
     }
 
     //좋아요한 게시물 리스트 조회
-    private fun getWriteBoardList(){
+    private fun getWriteBoardList() {
         CoroutineScope(Dispatchers.IO).launch {
             boardViewModel.getWriteBoardList()
         }
     }
 
-    private fun getWriteBoardListObserver(){
-        boardViewModel.writeList.observe(viewLifecycleOwner){
-            when(it){
+    private fun getWriteBoardListObserver() {
+        boardViewModel.writeList.observe(viewLifecycleOwner) {
+            when (it) {
                 is NetworkResult.Success -> {
                     initWriteBoardAdapter(it.data as ArrayList<Board>)
-                    if(it.data.isNullOrEmpty()) binding.tvWriteExist.visibility = View.VISIBLE
+                    if (it.data.isNullOrEmpty()) binding.tvWriteExist.visibility = View.VISIBLE
                     else binding.tvWriteExist.visibility = View.INVISIBLE
                 }
                 is NetworkResult.Error -> {

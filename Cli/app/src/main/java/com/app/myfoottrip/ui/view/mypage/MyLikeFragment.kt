@@ -3,7 +3,6 @@ package com.app.myfoottrip.ui.view.mypage
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val TAG = "MyLikeFragment_마이풋트립"
+
 class MyLikeFragment : BaseFragment<FragmentMyLikeBinding>(
     FragmentMyLikeBinding::bind, R.layout.fragment_my_like
 ) {
@@ -29,22 +29,12 @@ class MyLikeFragment : BaseFragment<FragmentMyLikeBinding>(
 
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
     private val boardViewModel by activityViewModels<BoardViewModel>()
-    private lateinit var callback: OnBackPressedCallback
 
     private lateinit var likeBoardAdapter: LikeBoardAdapter
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
         mainActivity = context as MainActivity
-
-        callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navigationViewModel.type = 1
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this@MyLikeFragment, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,10 +54,9 @@ class MyLikeFragment : BaseFragment<FragmentMyLikeBinding>(
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
     }
 
-    private fun init(){
+    private fun init() {
         getLikeBoardListObserver()
         getLikeBoardList()
     }
@@ -93,18 +82,18 @@ class MyLikeFragment : BaseFragment<FragmentMyLikeBinding>(
     }
 
     //좋아요한 게시물 리스트 조회
-    private fun getLikeBoardList(){
+    private fun getLikeBoardList() {
         CoroutineScope(Dispatchers.IO).launch {
             boardViewModel.getLikeBoardList()
         }
     }
 
-    private fun getLikeBoardListObserver(){
-        boardViewModel.likeList.observe(viewLifecycleOwner){
-            when(it){
+    private fun getLikeBoardListObserver() {
+        boardViewModel.likeList.observe(viewLifecycleOwner) {
+            when (it) {
                 is NetworkResult.Success -> {
                     initLikeBoardAdapter(it.data as ArrayList<Board>)
-                    if(it.data.isNullOrEmpty()) binding.tvLikeExist.visibility = View.VISIBLE
+                    if (it.data.isNullOrEmpty()) binding.tvLikeExist.visibility = View.VISIBLE
                     else binding.tvLikeExist.visibility = View.INVISIBLE
                 }
                 is NetworkResult.Error -> {
