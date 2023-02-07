@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
@@ -64,7 +65,6 @@ class JoinPhoneNumberFragment : Fragment() {
         // 커스텀 뷰 2번으로 설정해서 비밀번호 화면이 보이도록 설정
         customViewLayout.setView(2)
 
-
         customViewLayout.findViewById<AppCompatButton>(R.id.emailConfirmButton).setOnClickListener {
             // 인증 버튼을 눌러서 인증번호 보내는 요청이 successful이 되면 밑에 인증번호를 적는 화면이 보이게 됨
             // joinViewModel.phoneNumberUseValidation()
@@ -85,13 +85,12 @@ class JoinPhoneNumberFragment : Fragment() {
             }
         }
 
-        passwordConfirm.setOnFocusChangeListener { v, hasFocus ->
-            if (!hasFocus) {
-                joinViewModel.setPwLiveData(
-                    pwOrigin.text.toString(),
-                    passwordConfirm.text.toString()
-                )
-            }
+        // 비밀번호를 입력하면 상태가 변화하면서 체크
+        passwordConfirm.addTextChangedListener {
+            joinViewModel.setPwLiveData(
+                pwOrigin.text.toString(),
+                passwordConfirm.text.toString()
+            )
         }
 
         passwordEqualCheckObserver()

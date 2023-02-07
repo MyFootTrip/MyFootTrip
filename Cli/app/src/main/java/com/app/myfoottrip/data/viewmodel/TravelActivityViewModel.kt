@@ -19,20 +19,20 @@ class TravelActivityViewModel : ViewModel() {
     private val travelRepository = TravelRepository()
 
     // 가장 최근에 찍힌 좌표값
-    private val _recentCoor = MutableLiveData<Coordinates>()
-    val recentCoor: LiveData<Coordinates>
-        get() = _recentCoor
-
-    fun setRecentCoor(newCoordinates: Coordinates) {
-        _recentCoor.postValue(newCoordinates)
-    } // End of setRecentCoor
+//    private val _recentCoor = MutableLiveData<Coordinates>()
+//    val recentCoor: LiveData<Coordinates>
+//        get() = _recentCoor
+//
+//    fun setRecentCoor(newCoordinates: Coordinates) {
+//        _recentCoor.postValue(newCoordinates)
+//    } // End of setRecentCoor
 
     init {
         viewModelScope.launch {
             EventBus.subscribe<Coordinates>().collect {
                     value ->
                 Log.d(TAG, "eventBus: $value")
-                _recentCoor.postValue(value)
+                // _recentCoor.postValue(value)
             }
         }
     }

@@ -67,7 +67,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
         initUser()
     }
 
-
     //유저정보 데이터 초기화
     private fun initUser(){
         binding.apply {
@@ -97,15 +96,12 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
         tokenViewModel.getUserResponseLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
-                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: gdgdgd")
                     userViewModel.setWholeMyData(it.data!!)
                 }
                 is NetworkResult.Error -> {
                     // AccessToken을 통해서 유저 정보를 가져오기 실패했는지 파악해야됨.
                     Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 토큰 만료됨")
                     // RefreshToken을 통해서 AccessToken을 재발급
-                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.data}")
-                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.message}")
                 }
                 is NetworkResult.Loading -> {
                     Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 로딩 중입니다")

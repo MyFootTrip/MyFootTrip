@@ -218,7 +218,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             override fun onEditButtonClick(position: Int, placeData: Place) {
                 // 리사이클러뷰 포지션에 해당하는 수정 버튼을 눌렀을 때 이벤트
 
-
                 if (fragmentType == 2 && userVisitPlaceDataList.size == 1) {
                     val editDialog = EditCustomDialog("수정 작업의 경우 데이터가 없을 경우 해당 데이터가 삭제됩니다. 진행하시나요?")
                     editDialog.show(
@@ -312,6 +311,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         joinBackButtonCustomView = binding.joinBackButtonCustomview
         joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
             .setOnClickListener {
+
                 findNavController().popBackStack()
             }
     } // End of buttonEvents
@@ -390,7 +390,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     } // End of getSqlLiteAllData
 
     private fun createTravelResponseObserve() {
-        travelViewModel.createTravelResponseLiveData.observe(viewLifecycleOwner) {
+        travelViewModel.createTravelResponseLiveData.observe(this.viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data == 201) {
@@ -427,7 +427,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     } // End of createTravelResponseObserve
 
     private fun updateTravelResponseObserve() {
-        travelViewModel.userTravelDataUpdateResponseLiveData.observe(viewLifecycleOwner) {
+        travelViewModel.userTravelDataUpdateResponseLiveData.observe(this.viewLifecycleOwner) {
             binding.allConstrainlayout.visibility = View.VISIBLE
             binding.progressBar.visibility = View.GONE
 
@@ -474,7 +474,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     } // End of updateTravelResponseObserve
 
     private fun userTraveLDataDeleteObserve() {
-        travelViewModel.userTravelDataDeleteResponseLiveData.observe(viewLifecycleOwner) {
+        travelViewModel.userTravelDataDeleteResponseLiveData.observe(this.viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data == 204) {

@@ -95,10 +95,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
             when (it) {
                 is NetworkResult.Success -> {
                     CoroutineScope(Dispatchers.Main).launch {
-                        Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.data}")
-                        
                         userViewModel.setWholeMyData(it.data!!)
-                        Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: $it")
 
                         coroutineScope {
                             if (it.data != null) {
@@ -112,11 +109,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
                     // AccessToken을 통해서 유저 정보를 가져오기 실패했는지 파악해야됨.
                     Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: 토큰 만료됨")
                     // RefreshToken을 통해서 AccessToken을 재발급
-                    Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.data}")
-                    Log.d(
-                        TAG,
-                        "getAccessTokenByRefreshTokenResponseLiveDataObserver: ${it.message}"
-                    )
                 }
 
                 is NetworkResult.Loading -> {
