@@ -11,10 +11,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Coordinates
@@ -42,7 +45,8 @@ private const val TAG = "TravelLocationWriteFragment_싸피"
 
 class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBinding>(
     FragmentTravelLocationWriteBinding::bind, R.layout.fragment_travel_location_write
-), OnMapReadyCallback {
+), OnMapReadyCallback,
+    MainActivity.onBackPressedListener { // End of TravelLocationWriteFragment class
     // ViewModel
     private val travelViewModel by viewModels<TravelViewModel>()
 
@@ -54,10 +58,11 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
     private lateinit var locationSource: FusedLocationSource
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
+
     private lateinit var visitPlaceRepository: VisitPlaceRepository
     private lateinit var mContext: Context
-    private var locationClient: LocationClient? = null
 
+    private var locationClient: LocationClient? = null
     private var preCoor: Coordinates? = null
     private lateinit var logReceiver: LogReceiver
 
@@ -156,25 +161,35 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         visitPlaceRepository = VisitPlaceRepository.get()
         locationProvider = LocationProvider(requireContext() as MainActivity)
         logReceiver = LogReceiver()
-
-
-    }
+    } // End of onCreate
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         activity!!.registerReceiver(logReceiver, IntentFilter("test"))
         return super.onCreateView(inflater, container, savedInstanceState)
-    }
+    } // End of onCreateView
 
     override fun onDestroyView() {
         super.onDestroyView()
         activity!!.unregisterReceiver(logReceiver)
-    }
+    } // End of onDestroyView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentType = requireArguments().getInt("type")
+
+        // 남아있는 데이터 확인
+        var temp: List<VisitPlace> = emptyList()
+        CoroutineScope(Dispatchers.IO).launch {
+            val deffered2: Deferred<Int> = async {
+                temp = visitPlaceRepository.getAllVisitPlace()
+                1
+            }
+            deffered2.await()
+        }
+        Log.d(TAG, "onViewCreated: $temp")
+
 
         if (fragmentType == 2) {
             Log.d(TAG, "onViewCreated: 수정 작업 입니다.")
@@ -309,11 +324,11 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                     }
                 }
 
+                Log.d(TAG, "recentPlace: $recentPlace")
 
                 if (nowLat == 0.0 || nowLng == 0.0) {
                     // 제대로된 좌표가 들어오지 않을 경우, 저장하지 않음
-                    val v: View = requireView()
-                    v.showSnackBarMessage("정확한 좌표를 찾고있습니다! 다시 저장해주세요!")
+                    requireView().showSnackBarMessage("정확한 좌표를 찾고있습니다! 다시 저장해주세요!")
                 } else if (recentPlace != null && recentPlace!!.lat != nowLat && recentPlace!!.lng != nowLng) {
                     // 가장 최근의 좌표와 현재 찍은 좌표가 같을 경우 저장하지 않음
                     saveTravel(
@@ -506,4 +521,23 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         ).animate(CameraAnimation.Fly, 1000)
         naverMap.moveCamera(cameraUpdate)
     } // End of onMapReady
-} // End of TravelLocationWriteFragment class
+
+    override fun onBackPressed() {
+        // 위치 기록을 중지하고
+        val mainActivity = requireActivity() as MainActivity
+        CoroutineScope(Dispatchers.IO).launch {
+            mainActivity.stopLocationBackground()
+        }
+
+        // LiteSql 비우기
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                visitPlaceRepository.deleteAllVisitPlace()
+            } catch (exception: Exception) {
+                Log.d(TAG, "onResume: DB에 비울 값이 없습니다.")
+            }
+        }
+
+        findNavController().popBackStack()
+    } // End of onBackPressed
+} // End of TravelLocationWrite class
