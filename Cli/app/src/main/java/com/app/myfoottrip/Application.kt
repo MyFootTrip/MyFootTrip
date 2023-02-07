@@ -27,8 +27,8 @@ class Application : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val keyHash = Utility.getKeyHash(this)
-        Log.d(TAG, keyHash)
+//        val keyHash = Utility.getKeyHash(this)
+//        Log.d(TAG, keyHash)
 
         sharedPreferencesUtil = SharedPreferencesUtil(applicationContext)
         initRetrofit(AppInterceptor())

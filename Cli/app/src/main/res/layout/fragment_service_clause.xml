@@ -82,6 +82,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- 만 14세 이상 동의 -->
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/second_clause_layout"
                 android:layout_width="match_parent"
@@ -116,6 +117,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- 서비스 이용약관 동의-->
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/third_clause_layout"
                 android:layout_width="match_parent"
@@ -162,6 +164,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!--개인정보 처리방침 동의-->
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/fourth_clause_layout"
                 android:layout_width="match_parent"
@@ -207,6 +210,52 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!--위치정보 이용약관 동의-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fifth_clause_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fourth_clause_layout">
+
+            <CheckBox
+                android:id="@+id/fifth_checkbox"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/custom_checkbox"
+                android:button="@null"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/fifth_clause_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginStart="14dp"
+                android:text="@string/fifth_clause_text"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/fifth_checkbox"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/fifth_service_clause_detail_text_button"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginStart="14dp"
+                android:text="@string/service_clause_detail_button_text"
+                android:textColor="@color/gray_400"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/join_next_button"
                 android:layout_width="280dp"
@@ -221,7 +270,7 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/fourth_clause_layout" />
+                app:layout_constraintTop_toBottomOf="@+id/fifth_clause_layout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
