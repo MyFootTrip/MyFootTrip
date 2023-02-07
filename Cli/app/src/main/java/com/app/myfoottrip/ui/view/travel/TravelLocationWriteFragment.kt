@@ -11,10 +11,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Coordinates
@@ -42,7 +45,7 @@ private const val TAG = "TravelLocationWriteFragment_싸피"
 
 class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBinding>(
     FragmentTravelLocationWriteBinding::bind, R.layout.fragment_travel_location_write
-), OnMapReadyCallback {
+), OnMapReadyCallback, MainActivity.onBackPressedListener { // End of TravelLocationWriteFragment class
     // ViewModel
     private val travelViewModel by viewModels<TravelViewModel>()
 
@@ -506,4 +509,23 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         ).animate(CameraAnimation.Fly, 1000)
         naverMap.moveCamera(cameraUpdate)
     } // End of onMapReady
-} // End of TravelLocationWriteFragment class
+
+    override fun onBackPressed() {
+        // 위치 기록을 중지하고
+        val mainActivity = requireActivity() as MainActivity
+        CoroutineScope(Dispatchers.IO).launch {
+            mainActivity.stopLocationBackground()
+        }
+
+        // LiteSql 비우기
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                visitPlaceRepository.deleteAllVisitPlace()
+            } catch (exception: Exception) {
+                Log.d(TAG, "onResume: DB에 비울 값이 없습니다.")
+            }
+        }
+
+        findNavController().popBackStack()
+    } // End of onBackPressed
+} // End of TravelLocationWrite class

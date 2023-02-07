@@ -148,7 +148,8 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             binding.btnSave.visibility = View.GONE
         } else {
             //게시글
-            binding.btnSave.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.gray_400))
+            binding.btnSave.backgroundTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.gray_400))
             binding.tvTravelTitle.setText(R.string.select_travel_title)
             binding.btnSave.setText(R.string.plz_travel_select_button_text)
             binding.btnSave.isEnabled = false
@@ -203,7 +204,10 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                         val data = bundleOf(
                             "travelId" to boardList[travelAdapter.getSelected()].travelId
                         )
-                        findNavController().navigate(R.id.action_travelSelectFragment_to_createBoardFragment,data)
+                        findNavController().navigate(
+                            R.id.action_travelSelectFragment_to_createBoardFragment,
+                            data
+                        )
 
                     }
                 }
@@ -289,7 +293,12 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                     binding.btnSave.setText("선택 완료")
                 }
                 2 -> {
-                    binding.btnSave.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.main))
+                    binding.btnSave.backgroundTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.main
+                        )
+                    )
                     binding.btnSave.setText("게시글  작성하기")
                     binding.btnSave.isClickable = true
                     binding.btnSave.isEnabled = true
@@ -306,7 +315,12 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                 }
                 2 -> {
                     binding.btnSave.setText(R.string.plz_travel_select_button_text)
-                    binding.btnSave.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.gray_400))
+                    binding.btnSave.backgroundTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.gray_400
+                        )
+                    )
                     binding.btnSave.isClickable = false
                     binding.btnSave.isEnabled = false
                 }

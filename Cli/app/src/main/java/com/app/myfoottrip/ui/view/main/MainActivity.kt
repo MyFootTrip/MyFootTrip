@@ -4,15 +4,19 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.ActivityMainBinding
+import com.app.myfoottrip.ui.view.dialogs.EditCustomDialog
+import com.app.myfoottrip.ui.view.dialogs.ServiceClauseCustomDialog
 import com.app.myfoottrip.ui.view.travel.LocationService
 import com.app.myfoottrip.util.NetworkResult
 import com.google.android.material.snackbar.Snackbar
@@ -58,20 +62,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 
     } // End of onCreate
 
-//    override fun onBackPressed() {
-//        val snackbar = Snackbar
-//            .make(binding.navMainFragment, "뒤로 버튼을 한번 더 누르시면 종료됩니다.", Snackbar.LENGTH_SHORT)
-//            .setAction("닫기") {}
-//
-//        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
-//            backKeyPressedTime = System.currentTimeMillis()
-//            snackbar.show()
-//            return
-//        }
-//        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
-//            finish()
-//        }
-//    }
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        val fragmentList = supportFragmentManager.fragments
+        for (fragment in fragmentList) {
+            if (fragment is onBackPressedListener) {
+                (fragment as onBackPressedListener).onBackPressed()
+                return
+            }
+        }
+    } // End of onBackPressed
+
+    interface onBackPressedListener {
+        fun onBackPressed()
+    }
 
     private fun setBinding() {
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -159,4 +164,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 //
 //
 //    } // End of moveFragment
+
+    private lateinit var dialog: EditCustomDialog
+//    fun showServiceDialog() {
+//        val editCustomDialog: View = layoutInflater.inflate(R.layout.edit_custom_dialog, null)
+//        val dlg : EditCustomDialog = editCustomDialog(this, editCustomDialog, tagName)
+//        dlg.show(supportFragmentManager, "editCustomDialog")
+//    } // End of showDialog
 }
