@@ -7,15 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentServiceClauseBinding
+import com.app.myfoottrip.ui.view.dialogs.ServiceClauseCustomDialog
 
 
 private const val TAG = "ServiceClauseFragment_싸피"
@@ -59,6 +62,7 @@ class ServiceClauseFragment : Fragment() {
         // 동의 여부에 따른 버튼 상태 변화
         checkStateByButtonStateObserver()
 
+
         /*
             모두 동의가 클릭되면 전체 상태에 체크되어야 함
             전체 동의가 활성화되고, 비활성화 됨에 따라 아래의 3가지 항목들도 체크 상태가 변해야함
@@ -67,14 +71,26 @@ class ServiceClauseFragment : Fragment() {
 
         binding.thirdServiceClauseDetailTextButton.setOnClickListener {
             // 약관 동의 다이얼로그 나오기
-            val mainAct = requireActivity() as StartActivity
-            mainAct.showServiceDialog()
+            val serviceDialog = ServiceClauseCustomDialog("1")
+            serviceDialog.show(
+                (activity as AppCompatActivity).supportFragmentManager, "serviceDialog"
+            )
         }
 
         binding.fourthServiceClauseDetailTextButton.setOnClickListener {
             // 약관 동의 다이얼로그 나오기
-            val mainAct = requireActivity() as StartActivity
-            mainAct.showServiceDialog()
+            val serviceDialog = ServiceClauseCustomDialog("2")
+            serviceDialog.show(
+                (activity as AppCompatActivity).supportFragmentManager, "serviceDialog"
+            )
+        }
+
+        binding.fifthServiceClauseDetailTextButton.setOnClickListener {
+            // 약관 동의 다이얼로그 나오기
+            val serviceDialog = ServiceClauseCustomDialog("3")
+            serviceDialog.show(
+                (activity as AppCompatActivity).supportFragmentManager, "serviceDialog"
+            )
         }
 
         // 다음 버튼 클릭시 프레그먼트 전환
@@ -99,12 +115,12 @@ class ServiceClauseFragment : Fragment() {
 
     private fun checkStateByButtonStateObserver() {
         joinViewModel.isAllCheckedCount.observe(viewLifecycleOwner) {
-            if (joinViewModel.isAllCheckedCount.value == 3) {
+            if (joinViewModel.isAllCheckedCount.value == 4) {
                 binding.joinNextButton.isClickable = true
                 binding.joinNextButton.isEnabled = true
             }
 
-            if (joinViewModel.isAllCheckedCount.value != 3) {
+            if (joinViewModel.isAllCheckedCount.value != 4) {
                 binding.joinNextButton.isClickable = false
                 binding.joinNextButton.isEnabled = false
             }
@@ -128,8 +144,12 @@ class ServiceClauseFragment : Fragment() {
             binding.fourthCheckbox.isChecked = !binding.fourthCheckbox.isChecked
         }
 
+        binding.fifthClauseTv.setOnClickListener {
+            binding.fifthCheckbox.isChecked = !binding.fifthCheckbox.isChecked
+        }
 
-        if (!binding.firstCheckbox.isChecked && binding.secondCheckbox.isChecked && binding.thirdCheckbox.isChecked && binding.fourthCheckbox.isChecked) {
+
+        if (!binding.firstCheckbox.isChecked && binding.secondCheckbox.isChecked && binding.thirdCheckbox.isChecked && binding.fourthCheckbox.isChecked && binding.fifthCheckbox.isChecked) {
             binding.firstCheckbox.isChecked = true
         }
 
@@ -139,12 +159,14 @@ class ServiceClauseFragment : Fragment() {
                 binding.secondCheckbox.isChecked = true
                 binding.thirdCheckbox.isChecked = true
                 binding.fourthCheckbox.isChecked = true
+                binding.fifthCheckbox.isChecked = true
             }
 
             if (!isChecked && binding.secondCheckbox.isChecked && binding.thirdCheckbox.isChecked && binding.fourthCheckbox.isChecked) {
                 binding.secondCheckbox.isChecked = false
                 binding.thirdCheckbox.isChecked = false
                 binding.fourthCheckbox.isChecked = false
+                binding.fifthCheckbox.isChecked = false
             }
 
             allCheckCounting()
@@ -157,7 +179,7 @@ class ServiceClauseFragment : Fragment() {
                 binding.firstCheckbox.isChecked = false
             }
 
-            if (!binding.firstCheckbox.isChecked && binding.thirdCheckbox.isChecked && binding.fourthCheckbox.isChecked && isChecked) {
+            if (!binding.firstCheckbox.isChecked && binding.thirdCheckbox.isChecked && binding.fourthCheckbox.isChecked && binding.fifthCheckbox.isChecked && isChecked) {
                 binding.firstCheckbox.isChecked = true
             }
 
@@ -170,7 +192,7 @@ class ServiceClauseFragment : Fragment() {
                 binding.firstCheckbox.isChecked = false
             }
 
-            if (!binding.firstCheckbox.isChecked && binding.secondCheckbox.isChecked && binding.fourthCheckbox.isChecked && isChecked) {
+            if (!binding.firstCheckbox.isChecked && binding.secondCheckbox.isChecked && binding.fourthCheckbox.isChecked && binding.fifthCheckbox.isChecked && isChecked) {
                 binding.firstCheckbox.isChecked = true
             }
 
@@ -184,7 +206,20 @@ class ServiceClauseFragment : Fragment() {
                 binding.firstCheckbox.isChecked = false
             }
 
-            if (!binding.firstCheckbox.isChecked && binding.secondCheckbox.isChecked && binding.thirdCheckbox.isChecked && isChecked) {
+            if (!binding.firstCheckbox.isChecked && binding.secondCheckbox.isChecked && binding.thirdCheckbox.isChecked && binding.fifthCheckbox.isChecked && isChecked) {
+                binding.firstCheckbox.isChecked = true
+            }
+
+            allCheckCounting()
+        }
+
+        // 5번째 항목 체크 버튼
+        binding.fifthCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (binding.firstCheckbox.isChecked && !isChecked) {
+                binding.firstCheckbox.isChecked = false
+            }
+
+            if (!binding.firstCheckbox.isChecked && binding.secondCheckbox.isChecked && binding.thirdCheckbox.isChecked && binding.fourthCheckbox.isChecked && isChecked) {
                 binding.firstCheckbox.isChecked = true
             }
 
@@ -205,6 +240,10 @@ class ServiceClauseFragment : Fragment() {
         }
 
         if (binding.thirdCheckbox.isChecked) {
+            count++
+        }
+
+        if (binding.fourthCheckbox.isChecked) {
             count++
         }
 

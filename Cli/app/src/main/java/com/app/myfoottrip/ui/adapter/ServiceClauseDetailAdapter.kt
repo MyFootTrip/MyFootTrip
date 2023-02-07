@@ -4,7 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.ServiceClauseText
 import com.app.myfoottrip.databinding.ListItemServiceClauseBinding
 
@@ -16,8 +18,7 @@ class ServiceClauseDetailAdapter(val context: Context, private val list: List<Se
 
     inner class ServiceClauseTextHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindInfo(data: ServiceClauseText) {
-            binding.serviceClauseSubTitleTv.text = data.title
-            binding.serviceClauseContentTv.text = data.content
+
         }
     } // End of ServiceClauseTextHolder inner class
 
@@ -28,6 +29,13 @@ class ServiceClauseDetailAdapter(val context: Context, private val list: List<Se
 
     override fun onBindViewHolder(holder: ServiceClauseTextHolder, position: Int) {
         holder.bindInfo(list[position])
+
+//        binding.serviceClauseSubTitleTv.text = list[position].title.toString()
+//        binding.serviceClauseContentTv.text = list[position].content
+
+        holder.itemView.findViewById<TextView>(R.id.service_clause_sub_title_tv).text = list[position].title.toString()
+        holder.itemView.findViewById<TextView>(R.id.service_clause_content_tv).text = list[position].content.toString()
+
     }
 
     override fun getItemCount() = list.size

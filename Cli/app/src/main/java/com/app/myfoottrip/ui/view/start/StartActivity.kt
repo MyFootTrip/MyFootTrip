@@ -35,8 +35,4 @@ class StartActivity : AppCompatActivity() {
         setContentView(binding.root)
     } // End of setBinding
 
-    fun showServiceDialog() {
-        dialog = ServiceClauseCustomDialog()
-        dialog.show(supportFragmentManager, "serviceClauseCustomDialog")
-    } // End of showDialog
 } // End of StartActivity class

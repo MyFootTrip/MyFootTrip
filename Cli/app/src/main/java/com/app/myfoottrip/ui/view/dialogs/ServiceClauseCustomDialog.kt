@@ -13,9 +13,11 @@ import com.app.myfoottrip.databinding.DialogServiceClauseBinding
 import com.app.myfoottrip.ui.adapter.ServiceClauseDetailAdapter
 import com.app.myfoottrip.ui.view.start.StartActivity
 import com.app.myfoottrip.util.DeviceSizeUtil
+import com.app.myfoottrip.util.allLocationBasedServicePolicyList
+import com.app.myfoottrip.util.allPrivacyPolicyList
 import com.app.myfoottrip.util.allServiceClauseList
 
-class ServiceClauseCustomDialog() : DialogFragment() {
+class ServiceClauseCustomDialog(val typeString: String) : DialogFragment() {
     private var _binding: DialogServiceClauseBinding? = null
     private val binding get() = _binding!!
     private lateinit var serviceClauseDetailAdapter: ServiceClauseDetailAdapter
@@ -66,7 +68,17 @@ class ServiceClauseCustomDialog() : DialogFragment() {
     } // End of onResume
 
     private fun initDialog() {
-        serviceClauseDetailAdapter = ServiceClauseDetailAdapter(mContext, allServiceClauseList)
+        if (typeString == "1") {
+            serviceClauseDetailAdapter = ServiceClauseDetailAdapter(mContext, allServiceClauseList)
+        }
+
+        if (typeString == "2") {
+            serviceClauseDetailAdapter = ServiceClauseDetailAdapter(mContext, allPrivacyPolicyList)
+        }
+
+        if(typeString == "3"){
+            serviceClauseDetailAdapter = ServiceClauseDetailAdapter(mContext, allLocationBasedServicePolicyList)
+        }
     } // End of initData
 
     override fun onDestroyView() {

@@ -11,7 +11,8 @@
     <string name="first_clause_text">네, 모두 동의합니다.</string>
     <string name="second_clause_text">(필수) 만 14세 이상입니다.</string>
     <string name="third_clause_text">(필수) 서비스 이용약관에 동의</string>
-    <string name="fourth_clause_text">(필수) 개인정보 수집이용에 동의</string>
+    <string name="fourth_clause_text">(필수) 개인정보 처리방침에 동의</string>
+    <string name="fifth_clause_text">(필수) 위치정보 이용약관에 동의</string>
     <string name="service_clause_detail_button_text">보기</string>
     <string name="join_age_fragment_title">연령을 선택해주세요</string>
     <string name="join_age_fragment_subtitle">편리한 여행을 도와드릴게요😎</string>
