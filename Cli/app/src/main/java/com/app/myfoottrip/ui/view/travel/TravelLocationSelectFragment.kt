@@ -17,7 +17,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
@@ -139,12 +138,13 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             isEnabled = false
         }
 
-        // 수정 작업일 때
         if (fragmentType == 2) {
-            // travelId 가져와서 기존의 데이터 가져오기.
             selectedTravelId = requireArguments().getInt("travelId")
+            Log.d(TAG, "onViewCreated: 수정 작업 입니다.")
 
+            Log.d(TAG, "onViewCreated: 여기임?1")
             if (travelViewModel.getUserTravelDataResponseLiveData.value == null) {
+                Log.d(TAG, "onViewCreated: 여기임?2")
                 getUserTravelData()
             }
 
@@ -227,6 +227,8 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     private fun startLocationRecording() {
         binding.fabStart.setOnClickListener {
             travelActivityViewModel.setLocationList(selectedList as ArrayList<String>)
+            Log.d(TAG, "startLocationRecording: $selectedList")
+
             mContext.showToastMessage("위치 기록을 시작합니다.")
 
             val bundle = bundleOf(
@@ -260,6 +262,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         if (!selectedList.contains(locationList[position])) {
             selectedList.add(locationList[position])
         }
+        Log.d(TAG, "setChipListener: $selectedList")
 
         binding.cgDetail.addView(Chip(requireContext()).apply {
             chipCornerRadius = 10.0f
@@ -494,6 +497,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                 PERMISSION_REQUEST_CODE
             )
         }
+
     } // End of isRunTimePermissionsGranted
 
     private fun setupOnbackPressed() {

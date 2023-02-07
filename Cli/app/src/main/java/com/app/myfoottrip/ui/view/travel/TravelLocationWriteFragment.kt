@@ -58,8 +58,8 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
     private lateinit var visitPlaceRepository: VisitPlaceRepository
     private lateinit var mContext: Context
-
     private var locationClient: LocationClient? = null
+
     private var preCoor: Coordinates? = null
     private lateinit var logReceiver: LogReceiver
 
