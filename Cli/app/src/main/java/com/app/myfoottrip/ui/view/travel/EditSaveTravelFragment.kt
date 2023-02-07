@@ -1,7 +1,6 @@
 package com.app.myfoottrip.ui.view.travel
 
 import android.content.Context
-import android.hardware.Camera
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -22,24 +21,17 @@ import com.app.myfoottrip.databinding.FragmentEditSaveTravelBinding
 import com.app.myfoottrip.ui.adapter.TravelEditSaveItemAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
-import com.app.myfoottrip.util.LocationProvider
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraPosition
-import com.naver.maps.map.LocationTrackingMode
-import com.naver.maps.map.MapView
-import com.naver.maps.map.NaverMap
-import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
-import com.naver.maps.map.overlay.PathOverlay
 import com.naver.maps.map.overlay.PolylineOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 private const val TAG = "EditSaveTravelFragment_싸피"
@@ -65,6 +57,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
 
+    private lateinit var view2: View
+    private var savedInstanceState: Bundle? = null
+
     // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
     private var fragmentType = 0
 
@@ -81,6 +76,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentType = requireArguments().getInt("type")
+
+        view2 = view
+        this.savedInstanceState = savedInstanceState
 
         if (fragmentType == 2) {
             Log.d(TAG, "onViewCreated: 수정 작업니다.")
@@ -118,6 +116,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 buttonEvents()
                 binding.progressBar.visibility = View.GONE
                 binding.allConstrainlayout.visibility = View.VISIBLE
+                binding.progressBarText.visibility = View.GONE
             }
         }
 
@@ -187,7 +186,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         val startDateString = startDateFormat.format(userTravelData!!.startDate!!)
         val endDateString = endDateFormat.format(userTravelData!!.endDate!!)
         binding.travelDateTv.text = "$startDateString - $endDateString"
-
         binding.traveTotalTimeTv.text = "총 시간 : ${totalTimeCalc()} "
 
         recyclerView = binding.travelEditSaveRecyclerview
@@ -198,18 +196,27 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
         }
 
+        adapterEvent()
+    } // End of setUI
+
+    private fun adapterEvent() {
         travelEditSaveItemAdapter.setItemClickListener(object :
             TravelEditSaveItemAdapter.ItemClickListener {
             override fun onEditButtonClick(position: Int, placeData: Place) {
                 // 리사이클러뷰 포지션에 해당하는 수정 버튼을 눌렀을 때 이벤트
-                showToast("${position + 1}의 아이템을 삭제함")
 
                 // position의 선택된 Item의 객체의 값을 가지고옴.
                 userVisitPlaceDataList.removeAt(position)
                 recyclerView.adapter!!.notifyDataSetChanged()
+
+                // 데이터 전체를 새로 UI를 호출함
+                CoroutineScope(Dispatchers.Main).launch {
+                    onMapReady(naverMap)
+                    setUI()
+                }
             }
         })
-    } // End of setUI
+    } // End of adapterEvent
 
     private fun initRecyclerViewAdapter() {
         travelEditSaveItemAdapter = TravelEditSaveItemAdapter(mContext, userTravelData?.placeList!!)
@@ -228,12 +235,21 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
             if (fragmentType == 2) {
                 CoroutineScope(Dispatchers.IO).launch {
+                    withContext(Dispatchers.Main) {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.allConstrainlayout.visibility = View.GONE
+                        binding.progressBarText.visibility = View.VISIBLE
+                    }
                     updateTravel()
                 }
             } else {
                 CoroutineScope(Dispatchers.IO).launch {
-
                     Log.d(TAG, "저장할 데이터 : ${userTravelData!!}")
+                    withContext(Dispatchers.Main) {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.allConstrainlayout.visibility = View.GONE
+                        binding.progressBarText.visibility = View.VISIBLE
+                    }
                     createTravel()
                 }
             }
@@ -433,10 +449,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         val cameraPosition = CameraPosition(
             LatLng(0.0, 0.0),
             16.0, // 줌 레벨
-            20.0,
-            180.0
+            40.0,
+            0.0
         )
-        naverMap.cameraPosition
+        naverMap.cameraPosition = cameraPosition
 
         setMapInMark()
     } // End of onMapReady

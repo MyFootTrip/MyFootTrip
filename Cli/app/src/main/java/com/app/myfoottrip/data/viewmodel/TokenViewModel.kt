@@ -28,7 +28,6 @@ class TokenViewModel : ViewModel() {
         get() = tokenRepository.deleteRefreshTokenResponseLiveData
 
 
-
     suspend fun getAccessTokenByRefreshToken(refreshToken: Token) {
         tokenRepository.getAccessTokenByRefreshToken(refreshToken)
     } // End of getAccessTokenByRefreshToken

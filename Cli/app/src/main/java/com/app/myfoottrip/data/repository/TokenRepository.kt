@@ -91,29 +91,40 @@ class TokenRepository {
             _getUserDataResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
         } else if (response.errorBody() != null) {
             _getUserDataResponseLiveData.postValue(
-                NetworkResult.Error(response.errorBody()!!.string()))
+                NetworkResult.Error(response.errorBody()!!.string())
+            )
         } else {
             _getUserDataResponseLiveData.postValue(
-                NetworkResult.Error(response.headers().toString()))
+                NetworkResult.Error(response.headers().toString())
+            )
         }
 
     } // End of getUserDataByAccessToken
 
     // refreshToken 삭제
-    suspend fun deleteRefreshToken(token: String){
+    suspend fun deleteRefreshToken(token: String) {
         var response = headerTokenApi.deleteRefreshToken(token)
 
         if (response.isSuccessful && response.body() != null) {
             _deleteRefreshTokenResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
         } else if (response.errorBody() != null) {
-            _deleteRefreshTokenResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
+            _deleteRefreshTokenResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
         } else {
-            _deleteRefreshTokenResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+            _deleteRefreshTokenResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.headers().toString()
+                )
+            )
         }
     }
 
     // =================================== Social Login ===================================
-    private val _postSocialLoginAccessTokenResponseLiveData = MutableLiveData<NetworkResult<Token>>()
+    private val _postSocialLoginAccessTokenResponseLiveData =
+        MutableLiveData<NetworkResult<Token>>()
     val postSocialLoginAccessTokenResponseLiveData: LiveData<NetworkResult<Token>>
         get() = _postSocialLoginAccessTokenResponseLiveData
 
@@ -157,8 +168,13 @@ class TokenRepository {
         val param = JsonObject().apply {
             addProperty("token", token)
         }
+        Log.d(TAG, "postKakaoLoginAccessToken: ${param}")
 
-        val response = tokenApi.postKakaoLoginAccessToken(param)
+        val response = tokenApi.postKakaoLoginAccessToken(token)
+        Log.d(TAG, "postKakaoLoginAccessToken: ${response}")
+        Log.d(TAG, "postKakaoLoginAccessToken: ${response.body()}")
+        Log.d(TAG, "postKakaoLoginAccessToken: ${response.message()}")
+        Log.d(TAG, "postKakaoLoginAccessToken: ${response.errorBody()}")
 
         _postSocialLoginAccessTokenResponseLiveData.postValue(NetworkResult.Loading())
 

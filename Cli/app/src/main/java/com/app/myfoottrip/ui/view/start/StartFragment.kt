@@ -95,6 +95,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
             if (error != null) {
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
             } else if (token != null) {
+                Log.d(TAG, "kakaoLogin: $token")
                 CoroutineScope(Dispatchers.IO).launch {
                     tokenViewModel.postKakaoAccessToken(token.accessToken)
                 }
@@ -120,9 +121,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
                         tokenViewModel.postKakaoAccessToken(token.accessToken)
                     }
 
-//                    val intent = Intent(mContext, MainActivity::class.java)
-//                    startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-//                    activity!!.finish()
+
                 }
             }
         } else {

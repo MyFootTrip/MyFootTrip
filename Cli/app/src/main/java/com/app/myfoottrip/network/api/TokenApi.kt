@@ -30,7 +30,8 @@ interface TokenApi {
 
     // Kakao Login Token 보내기
     @POST("accounts/social_login/kakao/")
-    suspend fun postKakaoLoginAccessToken(@Body token: JsonObject): Response<Token>
+    @FormUrlEncoded
+    suspend fun postKakaoLoginAccessToken(@Field("token") token : String): Response<Token>
 
     // Google Login Token 보내기
     @POST("accounts/social_login/google/")

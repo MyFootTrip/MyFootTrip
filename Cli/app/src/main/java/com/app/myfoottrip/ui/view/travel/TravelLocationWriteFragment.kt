@@ -492,7 +492,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
-
         val uiSetting = naverMap.uiSettings
         uiSetting.isLocationButtonEnabled = true
 
