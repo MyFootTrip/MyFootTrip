@@ -68,6 +68,10 @@ class AlarmAdapter(var alarmList:ArrayList<Alarm>) : RecyclerView.Adapter<AlarmA
 
     override fun getItemCount(): Int = alarmList.size
 
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
+
     fun formatTimeString(regTime: Long): String? {
         val curTime = System.currentTimeMillis()
         var diffTime = (curTime - regTime) / 1000
