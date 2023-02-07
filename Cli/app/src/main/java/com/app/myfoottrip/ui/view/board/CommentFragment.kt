@@ -23,6 +23,7 @@ import com.app.myfoottrip.ui.view.dialogs.CommentInputDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
+import com.app.myfoottrip.util.showToastMessage
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,6 +42,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
     private val commentViewModel by activityViewModels<CommentViewModel>()
 
     private lateinit var commentAdapter: CommentAdapter
+    private var isWrite = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -139,6 +141,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
                 val message = "${user?.join?.nickname}님이 ${boardViewModel.board.value?.data?.title}에 댓글이 달렸습니다!\uD83D\uDCAC"
                 val comment = Comment(-1, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()),message)
                 writeComment(comment)
+                isWrite = true
                 dialog.dismiss()
             }
         },userViewModel.wholeMyData.value!!,"")
@@ -199,7 +202,9 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
                     initCommentAdapter()
                     commentAdapter.notifyItemInserted(0)
                     binding.rvComment.scrollToPosition(0)
-                    binding.root.showSnackBarMessage("댓글이 등록되었습니다.")
+                    if (isWrite){
+                        binding.root.showSnackBarMessage("댓글이 등록되었습니다.")
+                    }
                 }
                 is NetworkResult.Error -> {
                     Log.d(TAG, "writeCommentObserver: 통신에러")

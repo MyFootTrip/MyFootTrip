@@ -42,7 +42,6 @@
         android:layout_marginTop="2dp"
         android:layout_marginRight="20dp"
         android:src="@drawable/ic_alarm"
-        android:visibility="invisible"
         app:layout_constraintLeft_toRightOf="@+id/tv_my_page_title"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_my_page_title" />

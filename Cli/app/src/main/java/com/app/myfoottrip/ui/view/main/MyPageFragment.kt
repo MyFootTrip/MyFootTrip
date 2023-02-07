@@ -1,9 +1,11 @@
 package com.app.myfoottrip.ui.view.main
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
@@ -16,6 +18,8 @@ import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMyPageBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.NetworkResult
+import com.app.myfoottrip.util.showSnackBarMessage
+import com.app.myfoottrip.util.showToastMessage
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.*
@@ -29,8 +33,30 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
     private val tokenViewModel by activityViewModels<TokenViewModel>()
     private val userViewModel by activityViewModels<UserViewModel>()
 
+    var waitTime = 0L
+    private lateinit var mainActivity: MainActivity
+    private lateinit var callback: OnBackPressedCallback
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mainActivity = context as MainActivity
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if(System.currentTimeMillis() - waitTime >=1500 ) {
+                    waitTime = System.currentTimeMillis()
+                    binding.root.showSnackBarMessage("뒤로가기 버튼을 한번 더 누르시면 종료됩니다.")
+                } else {
+                    mainActivity.finish() // 액티비티 종료
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        getAccessTokenByRefreshTokenResponseLiveDataObserver()
 
         init()
 
@@ -51,20 +77,16 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
             clMoveLike.setOnClickListener {
                 findNavController().navigate(R.id.action_mainFragment_to_myLikeFragment)
             }
+            //알림 페이지로 이동
+            ivAlarm.setOnClickListener {
+                findNavController().navigate(R.id.action_mainFragment_to_alarmFragment)
+            }
         }
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        binding.ivILikedImage.setMaxProgress(0.6f) //좋아요 애니메이션 세팅
-//        getUserMyData()
-//    }
-
     private fun init(){
         binding.ivILikedImage.setMaxProgress(0.6f) //좋아요 애니메이션 세팅
-        getAccessTokenByRefreshTokenResponseLiveDataObserver()
         getUserMyData()
-        initUser()
     }
 
 
@@ -99,6 +121,7 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
                 is NetworkResult.Success -> {
                     Log.d(TAG, "getAccessTokenByRefreshTokenResponseLiveDataObserver: gdgdgd")
                     userViewModel.setWholeMyData(it.data!!)
+                    initUser()
                 }
                 is NetworkResult.Error -> {
                     // AccessToken을 통해서 유저 정보를 가져오기 실패했는지 파악해야됨.

@@ -52,6 +52,13 @@
                 app:popEnterAnim="@anim/enter_left_anim"
                 app:popExitAnim="@anim/exit_right_anim"
                 app:destination="@id/myWriteFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_alarmFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"
+            app:destination="@id/alarmFragment" />
 
     </fragment>
     <fragment
@@ -227,7 +234,12 @@
                 app:popEnterAnim="@android:anim/fade_in"
                 app:popExitAnim="@android:anim/fade_out"
                 app:popUpTo="@id/mainFragment"/>
-    </fragment> <!-- TODO : 체크-->
+    </fragment>
+    <fragment
+        android:id="@+id/alarmFragment"
+        android:name="com.app.myfoottrip.ui.view.mypage.AlarmFragment"
+        android:label="fragment_alarm"
+        tools:layout="@layout/fragment_alarm" /> <!-- TODO : 체크-->
 
 
 </navigation>

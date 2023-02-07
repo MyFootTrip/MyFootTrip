@@ -3,6 +3,7 @@ package com.app.myfoottrip.ui.view.board
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -72,6 +73,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initObserver()
+
         init()
 
         binding.apply {
@@ -82,7 +85,6 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
             }
             ivComment.setOnClickListener { findNavController().navigate(R.id.action_boardFragment_to_commentFragment)} //댓글 페이지로 이동
             lottieLike.setOnClickListener {
-                getLikeObserver()
                 getLike()
             }
 
@@ -118,45 +120,52 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     }
 
     private fun init(){
-        getBoardObserver()
+        binding.svBoard.visibility = View.INVISIBLE
+        binding.lottieLike.progress = 0f
         getBoard()
     }
 
+    private fun initObserver(){
+        getBoardObserver()
+        getLikeObserver()
+    }
+
     // Board 객체에 담겨있는 데이터값 화면에 갱신
-    private fun initData(board: Board){
+    private fun initData(){
         binding.apply {
             // --------------- 게시글 윗쪽 부분 데이터---------------------------
-            if(board.userId == userViewModel.wholeMyData.value?.uid) ivEdit.visibility = View.VISIBLE
-            initViewPager(board) //이미지 슬라이더
-            tvLocation.text = convertToString(board.travel!!.location!! as ArrayList<String>) //여행 지역
-            tvTheme.text = "#${board.theme}" //여행 테마
+            if(boardViewModel.board.value?.data!!.userId == userViewModel.wholeMyData.value?.uid) ivEdit.visibility = View.VISIBLE
+            initViewPager(boardViewModel.board.value?.data!!) //이미지 슬라이더
+            tvLocation.text = convertToString(boardViewModel.board.value?.data!!.travel!!.location!! as ArrayList<String>) //여행 지역
+            tvTheme.text = "#${boardViewModel.board.value?.data!!.theme}" //여행 테마
             //여행기간
-            tvTravelDate.text = TimeUtils.getDateString(board.travel.startDate!!) +" ~ "+ TimeUtils.getDateString(board.travel.endDate!!)
-            tvTitle.text = board.title //제목
+            tvTravelDate.text = TimeUtils.getDateString(boardViewModel.board.value?.data!!.travel?.startDate!!) +" ~ "+ TimeUtils.getDateString(boardViewModel.board.value?.data!!.travel?.endDate!!)
+            tvTitle.text = boardViewModel.board.value?.data!!.title //제목
             //프로필 이미지
-            if (board.profileImg.isNullOrEmpty()){
+            if (boardViewModel.board.value?.data!!.profileImg.isNullOrEmpty()){
                 ivProfile.setPadding(10)
                 Glide.with(this@BoardFragment).load(R.drawable.ic_my).fitCenter().into(ivProfile)
                 ivProfile.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white))
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.main)))
             }else {
-                Glide.with(this@BoardFragment).load(board.profileImg).centerCrop().into(ivProfile)
+                Glide.with(this@BoardFragment).load(boardViewModel.board.value?.data!!.profileImg).centerCrop().into(ivProfile)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white)))
             }
-            tvNickname.text = board.nickname //닉네임
-            tvWriteDate.text = TimeUtils.getDateString(board.writeDate)  //작성일자
+            tvNickname.text = boardViewModel.board.value?.data!!.nickname //닉네임
+            tvWriteDate.text = TimeUtils.getDateString(boardViewModel.board.value?.data!!.writeDate)  //작성일자
 
             // -------- 글 후기 부터 밑에 쪽 데이터 -------------
-            tvContent.text = board.content
-            initPlaceAdapter(board)
-            tvLikeCount.text = board.likeList.size.toString()
-            tvCommentCount.text = board.commentList.size.toString()
+            tvContent.text = boardViewModel.board.value?.data!!.content
+            initPlaceAdapter(boardViewModel.board.value?.data!!)
+            tvLikeCount.text = boardViewModel.board.value?.data!!.likeList.size.toString()
+            tvCommentCount.text = boardViewModel.board.value?.data!!.commentList.size.toString()
 
             //좋아요한 게시물인지 체크
             if (boardViewModel.board.value?.data?.likeList!!.contains(userViewModel.wholeMyData.value?.uid)){ //좋아요한 게시물일 때
                 lottieLike.progress = 100f
             }else{
                 lottieLike.progress = 0f
+                lottieLike.pauseAnimation()
             }
         }
     }
@@ -292,6 +301,9 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         naverMap.minZoom = 1.0
         naverMap.maxZoom = 18.0
 
+        binding.svBoard.visibility = View.VISIBLE
+        binding.lottieBoard.pauseAnimation()
+        binding.lottieBoard.visibility = View.INVISIBLE
     }
 
     // 장소 바텀시트 다이얼로그 생성
@@ -331,7 +343,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         boardViewModel.board.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
-                    initData(it.data!!)
+                    boardViewModel.board.value?.data = it.data!!
+                    initData()
                     boardViewModel.boardId = it.data!!.boardId
                     initMapScroll()
                 }

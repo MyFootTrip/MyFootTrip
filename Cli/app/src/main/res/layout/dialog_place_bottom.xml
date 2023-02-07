@@ -12,6 +12,7 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="10dp"
         app:autoPlay="true"
+        android:visibility="gone"
         app:autoPlayDelay="5000"
         app:infiniteCarousel="true"
         app:layout_constraintTop_toTopOf="parent"
@@ -28,6 +29,7 @@
         android:layout_height="1dp"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="10dp"
+        android:visibility="gone"
         android:background="@color/gray_80"
         app:layout_constraintTop_toBottomOf="@id/carousel_image" />
 

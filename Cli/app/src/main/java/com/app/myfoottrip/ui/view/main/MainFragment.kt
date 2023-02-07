@@ -2,7 +2,6 @@ package com.app.myfoottrip.ui.view.main
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.core.os.bundleOf
@@ -10,21 +9,25 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
-import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMainBinding
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.util.OnBackPressedListener
+import com.app.myfoottrip.util.showSnackBarMessage
 import com.skydoves.powerspinner.PowerSpinnerView
 
 private const val TAG = "MainFragment_마이풋트립"
 
 class MainFragment : BaseFragment<FragmentMainBinding>(
     FragmentMainBinding::bind, R.layout.fragment_main
-) {
+) { // End of MainFragment class
 
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
 
     private lateinit var mContext: Context
     private lateinit var mainActivity: MainActivity
+
+    var backKeyPressedTime: Long = 0
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -104,5 +107,4 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
             return false
         }
     }
-
-} // End of MainFragment class
+}

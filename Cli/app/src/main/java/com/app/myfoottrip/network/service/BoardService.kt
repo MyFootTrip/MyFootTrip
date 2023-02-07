@@ -46,4 +46,6 @@ interface BoardService {
     @GET("/community/board/user/like/")
     suspend fun getLikeBoardList() : Response<ArrayList<Board>>
 
+
+
 }

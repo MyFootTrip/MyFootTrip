@@ -214,7 +214,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cv_content" />
 
-            <TextView
+           <!-- <TextView
                 android:id="@+id/tv_theme_header_optional"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -223,15 +223,14 @@
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@id/tv_theme_header"
                 app:layout_constraintLeft_toRightOf="@id/tv_theme_header"
-                app:layout_constraintTop_toTopOf="@id/tv_theme_header" />
+                app:layout_constraintTop_toTopOf="@id/tv_theme_header" />-->
 
             <LinearLayout
                 android:id="@+id/linear_chip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/tv_theme_header_optional">
+                app:layout_constraintTop_toBottomOf="@id/tv_theme_header">
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/cg_category"

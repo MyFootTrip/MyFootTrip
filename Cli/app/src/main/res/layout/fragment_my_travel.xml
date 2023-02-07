@@ -22,26 +22,37 @@
         android:id="@+id/tv_my_travel_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:padding="10dp"
+        android:text="나의 여정"
+        android:textSize="20sp"
+        android:fontFamily="@font/inter_bold"
         android:textColor="@color/black"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_back"
-        app:layout_constraintStart_toEndOf="@+id/iv_back"
-        app:layout_constraintTop_toTopOf="@+id/iv_back"
-        android:text="나의 여정" />
+        app:layout_constraintLeft_toRightOf="@id/iv_back"
+        android:layout_marginLeft="10dp"
+        app:layout_constraintTop_toTopOf="@id/iv_back"
+        app:layout_constraintBottom_toBottomOf="@id/iv_back" />
 
-<!--    <androidx.recyclerview.widget.RecyclerView-->
-<!--        android:id="@+id/rv_my_travel"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:orientation="vertical"-->
-<!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/tv_my_travel_title"-->
-<!--        tools:listitem="@layout/list_item_travel" />-->
+    <View
+        android:id="@+id/base_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/gray_bright"
+        app:layout_constraintTop_toBottomOf="@id/tv_my_travel_title" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_travel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/gray_bright"
+        android:orientation="vertical"
+        android:overScrollMode="never"
+        android:paddingBottom="20dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/base_line"
+        tools:listitem="@layout/list_item_my_travel" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

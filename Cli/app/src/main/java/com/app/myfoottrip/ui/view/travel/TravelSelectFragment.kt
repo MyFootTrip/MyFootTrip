@@ -243,7 +243,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data == 204) {
-                        requireView().showSnackBarMessage("해당 데이터가 삭제 되었습니다")
+                        requireView().showSnackBarMessage("해당 여정이 삭제되었습니다")
                         travelAdapter.notifyDataSetChanged()
                     }
                 }
