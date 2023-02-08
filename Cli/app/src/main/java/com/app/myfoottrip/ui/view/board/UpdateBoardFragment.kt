@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
@@ -36,7 +35,6 @@ class UpdateBoardFragment : BaseFragment<FragmentUpdateBoardBinding>(
 ) {
     private lateinit var mainActivity: MainActivity
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
-    private lateinit var callback: OnBackPressedCallback
 
     private val boardViewModel by activityViewModels<BoardViewModel>()
     private lateinit var photoAdapter: PhotoAdapter
@@ -63,12 +61,6 @@ class UpdateBoardFragment : BaseFragment<FragmentUpdateBoardBinding>(
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-        callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,7 +95,6 @@ class UpdateBoardFragment : BaseFragment<FragmentUpdateBoardBinding>(
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
     }
 
     private fun init() {

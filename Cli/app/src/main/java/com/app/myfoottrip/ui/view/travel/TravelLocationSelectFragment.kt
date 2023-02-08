@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
@@ -81,6 +82,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         Log.d(TAG, "onCreate: ")
         visitPlaceRepository = VisitPlaceRepository.get()
         checkAllPermission()
+        // setupOnbackPressed()
     } // End of onCreate
 
 
@@ -93,6 +95,9 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.progressBar.visibility = View.VISIBLE
+        binding.allConstrainlayout.visibility = View.GONE
+
         selectedList = ArrayList()
         // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
         fragmentType = requireArguments().getInt("type")
@@ -101,12 +106,27 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         // 남아있는 데이터 확인
         var temp: List<VisitPlace> = emptyList()
         CoroutineScope(Dispatchers.IO).launch {
-            val deffered2: Deferred<Int> = async {
+            val removeDeffred: Deferred<Int> = async {
+                val mainActivity = requireActivity() as MainActivity
+                mainActivity.stopLocationBackground()
+                try {
+                    visitPlaceRepository.deleteAllVisitPlace()
+                } catch (exception: Exception) {
+                    Log.d(TAG, "onResume: DB에 비울 값이 없습니다.")
+                }
+                1
+            }
+            removeDeffred.await()
+
+
+            val getDeffered: Deferred<Int> = async {
                 temp = visitPlaceRepository.getAllVisitPlace()
                 1
             }
-            deffered2.await()
+            getDeffered.await()
         }
+
+        Log.d(TAG, "getData 결과임: $temp")
 
         binding.fabStart.apply {
             backgroundTintList =
@@ -131,6 +151,9 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             // EventListener 초기화
             initListener()
         }
+
+        binding.progressBar.visibility = View.GONE
+        binding.allConstrainlayout.visibility = View.VISIBLE
     } // End of onViewCreated
 
     private fun saveRoomDB() = CoroutineScope(Dispatchers.IO).launch {

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +30,7 @@ import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import kotlinx.coroutines.*
 
-private const val TAG = "TravelSelectFragment_마이풋트립"
+private const val TAG = "TravelSelectFragment_싸피"
 
 class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     FragmentTravelSelectBinding::bind, R.layout.fragment_travel_select
@@ -50,6 +49,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     private var boardList = ArrayList<Travel>()
 
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
+
     private lateinit var callback: OnBackPressedCallback
 
     override fun onAttach(context: Context) {
@@ -77,7 +77,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                 exception.printStackTrace()
             }
         }
-
 
         // 남아있는 데이터 확인
         var temp: List<VisitPlace> = emptyList()
@@ -191,7 +190,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
             // Travel 데이터 삭제
             override fun onDeleteChipClick(position: Int, travelDto: Travel) {
-
                 val editDialog = EditCustomDialog("해당 데이터를 삭제하시겠습니까?")
                 editDialog.show(
                     (activity as AppCompatActivity).supportFragmentManager, "editDialog"

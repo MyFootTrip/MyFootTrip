@@ -11,13 +11,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Coordinates
@@ -45,8 +42,8 @@ private const val TAG = "TravelLocationWriteFragment_싸피"
 
 class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBinding>(
     FragmentTravelLocationWriteBinding::bind, R.layout.fragment_travel_location_write
-), OnMapReadyCallback,
-    MainActivity.onBackPressedListener { // End of TravelLocationWriteFragment class
+), OnMapReadyCallback { // End of TravelLocationWrite class
+    // End of TravelLocationWriteFragment class
     // ViewModel
     private val travelViewModel by viewModels<TravelViewModel>()
 
@@ -61,8 +58,8 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
     private lateinit var visitPlaceRepository: VisitPlaceRepository
     private lateinit var mContext: Context
-
     private var locationClient: LocationClient? = null
+
     private var preCoor: Coordinates? = null
     private lateinit var logReceiver: LogReceiver
 
@@ -170,10 +167,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         return super.onCreateView(inflater, container, savedInstanceState)
     } // End of onCreateView
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        activity!!.unregisterReceiver(logReceiver)
-    } // End of onDestroyView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -182,35 +175,47 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         // 남아있는 데이터 확인
         var temp: List<VisitPlace> = emptyList()
         CoroutineScope(Dispatchers.IO).launch {
+            withContext(Dispatchers.Main) {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.allConstrainlayout.visibility = View.GONE
+            }
+
+
             val deffered2: Deferred<Int> = async {
                 temp = visitPlaceRepository.getAllVisitPlace()
                 1
             }
             deffered2.await()
-        }
-        Log.d(TAG, "onViewCreated: $temp")
 
+            if (fragmentType == 2) {
+                Log.d(TAG, "onViewCreated: 수정 작업 입니다.")
+                Log.d(TAG, "가져온 데이터 : ${travelActivityViewModel.userTravelData.value}")
 
-        if (fragmentType == 2) {
-            Log.d(TAG, "onViewCreated: 수정 작업 입니다.")
-            Log.d(TAG, "가져온 데이터 : ${travelActivityViewModel.userTravelData.value}")
-
-            // 가져온 데이터가 제대로 확인되면, RoomDB에 저장된 값 가져오기
-            CoroutineScope(Dispatchers.IO).launch {
+                // 가져온 데이터가 제대로 확인되면, RoomDB에 저장된 값 가져오기
+//                CoroutineScope(Dispatchers.IO).launch {
                 getUserTravelData = visitPlaceRepository.getAllVisitPlace()
+//                }
+            }
+
+            withContext(Dispatchers.Main) {
+                changeMode(true)
+                initMap()
+            }
+
+            // 처음 시작 하자마자 좌표를 바로 들고옴
+            locationClientSet()
+
+            binding.tvStartTime.text = TimeUtils.getDateTimeString(System.currentTimeMillis())
+            // CoroutineScope(Dispatchers.IO).launch {
+            setButtonListener()
+            // }
+
+            withContext(Dispatchers.Main) {
+                binding.progressBar.visibility = View.GONE
+                binding.allConstrainlayout.visibility = View.VISIBLE
             }
         }
-
-        changeMode(true)
-        initMap()
-
-        // 처음 시작 하자마자 좌표를 바로 들고옴
-        locationClientSet()
-
-        binding.tvStartTime.text = TimeUtils.getDateTimeString(System.currentTimeMillis())
-        CoroutineScope(Dispatchers.IO).launch {
-            setButtonListener()
-        }
+        Log.d(TAG, "onViewCreated: $temp")
     } // End of onViewCreated
 
     private suspend fun setButtonListener() {
@@ -224,7 +229,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                     mainActivity.stopLocationBackground()
                 }
                 showToast("위치 기록을 중지합니다", ToastType.SUCCESS)
-
                 serviceScope.cancel()
             }
 
@@ -464,6 +468,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         return address
     } // End of getAddressByCoordinates
 
+
     override fun onStart() {
         super.onStart()
         binding.mapView.onStart()
@@ -491,6 +496,11 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             mainActivity.stopLocationBackground()
         }
     } // End of onDestroy
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activity!!.unregisterReceiver(logReceiver)
+    } // End of onDestroyView
 
     override fun onDetach() {
         super.onDetach()
@@ -521,23 +531,4 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         ).animate(CameraAnimation.Fly, 1000)
         naverMap.moveCamera(cameraUpdate)
     } // End of onMapReady
-
-    override fun onBackPressed() {
-        // 위치 기록을 중지하고
-        val mainActivity = requireActivity() as MainActivity
-        CoroutineScope(Dispatchers.IO).launch {
-            mainActivity.stopLocationBackground()
-        }
-
-        // LiteSql 비우기
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                visitPlaceRepository.deleteAllVisitPlace()
-            } catch (exception: Exception) {
-                Log.d(TAG, "onResume: DB에 비울 값이 없습니다.")
-            }
-        }
-
-        findNavController().popBackStack()
-    } // End of onBackPressed
-} // End of TravelLocationWrite class
+} // End of

@@ -1,0 +1,259 @@
+[33mcommit bd6cedad6b8e06e8501c0cb49cfaed6674639e07[m[33m ([m[1;36mHEAD -> [m[1;32myoung_branch[m[33m, [m[1;31morigin/young_branch[m[33m, [m[1;31morigin/sooyun95[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Merge: 5b3b0c9 8b30bc5
+Author: su6378 <josooyeon11@naver.com>
+Date:   Tue Feb 7 21:59:12 2023 +0900
+
+    Conflict complete
+
+[33mcommit 8b30bc55207389d0da6b9888341ee6a85b44e1dc[m
+Author: bigyoung8375 <bigyoung8375@naver.com>
+Date:   Tue Feb 7 21:55:20 2023 +0900
+
+    2023-02-07 21:55 git commit push
+
+[33mcommit 5b3b0c9f282bdae90be7835d6bdb1c20d5a5f71d[m[33m ([m[1;32msooyun95[m[33m)[m
+Author: su6378 <josooyeon11@naver.com>
+Date:   Tue Feb 7 21:55:01 2023 +0900
+
+    [Feature] 알렘 페이지 메세지 삭제 완료
+
+[33mcommit af786d1161de06e2a7430387638f7e41947b8e69[m
+Merge: 01afa10 7960691
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Tue Feb 7 17:53:29 2023 +0900
+
+    Merge branch 'yerin' into sooyun95
+
+[33mcommit 2cbde86c86de771b74834584b896b05082ba2ce4[m
+Author: bigyoung8375@naver.com <bigyoung8375@naver.com>
+Date:   Tue Feb 7 17:52:49 2023 +0900
+
+    2023-02-07 17:52 Travel Update git commit push
+
+[33mcommit 79606917370a154ed244a2348c6b46a3cf2068a6[m[33m ([m[1;31morigin/yerin[m[33m, [m[1;32myerin[m[33m)[m
+Author: yyyrin <qsc130@gmail.com>
+Date:   Tue Feb 7 17:52:13 2023 +0900
+
+    커밋을 위한 커밋
+
+[33mcommit 01afa1000a842631b0cd653626fefd21bfcb77be[m
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Tue Feb 7 17:52:09 2023 +0900
+
+    [Feature] 알림페이지 완료
+
+[33mcommit bed476cf3f452d69dfd9cbb5a74a5cce505ea860[m
+Author: bigyoung8375@naver.com <bigyoung8375@naver.com>
+Date:   Tue Feb 7 17:37:56 2023 +0900
+
+    2023-02-07 17:36 Travel Update git commit push
+
+[33mcommit 4dc1510cc0d5b7c0716226b0291bf97cc655d523[m
+Author: bigyoung8375@naver.com <bigyoung8375@naver.com>
+Date:   Tue Feb 7 14:35:56 2023 +0900
+
+    2023-02-07 14:35 Travel Update git commit push
+
+[33mcommit e0a92af9429cf8909db1d4c715d9cdc06ec3e136[m
+Merge: 28a356f d3c34a6
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Tue Feb 7 14:31:23 2023 +0900
+
+    Conflict complete
+
+[33mcommit 28a356f56de893271732018be4ba637594f58e90[m
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Tue Feb 7 14:29:33 2023 +0900
+
+    [Feature] QA 모두 완료
+
+[33mcommit d3c34a6fa0741bcc6ff12fa14143517bd366fc32[m
+Author: yyyrin <qsc130@gmail.com>
+Date:   Tue Feb 7 14:29:33 2023 +0900
+
+    이용약관 다이얼로그 완료
+
+[33mcommit 7b8e76454428edf852b7752af282bcd3cc7c85a6[m
+Merge: 69be2e5 10a0cdc
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Tue Feb 7 09:19:51 2023 +0900
+
+    Conflict complete
+
+[33mcommit 69be2e5b6eb7909c7ca909642c74e1a5c62e1c69[m
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Tue Feb 7 09:18:07 2023 +0900
+
+    [Feature] QA 수정
+
+[33mcommit 10a0cdc2c883be2442a0b5a94aad8304070d6a83[m
+Author: bigyoung8375@naver.com <bigyoung8375@naver.com>
+Date:   Tue Feb 7 09:17:06 2023 +0900
+
+    2023-02-07 09:16 Travel Update git commit push
+
+[33mcommit aaaeb10a73e30785c4900709a83e79bd00fa77d7[m
+Author: bigyoung8375 <bigyoung8375@naver.com>
+Date:   Tue Feb 7 00:14:47 2023 +0900
+
+    2023-02-07 00:14 git commit push User Travel Update
+
+[33mcommit 9c4c173057af554f577ba923b5beb2e674577df7[m
+Author: su6378 <josooyeon11@naver.com>
+Date:   Mon Feb 6 22:36:55 2023 +0900
+
+    [Feature] QA 오류 수정 완료
+
+[33mcommit b200bec6c7da21f3879af3875cb653df17dd8e94[m
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Mon Feb 6 18:01:19 2023 +0900
+
+    QA 수정 적용
+
+[33mcommit f0faf1c3e851566ee0c8c3e496b002a6f01e4933[m
+Author: bigyoung8375@naver.com <bigyoung8375@naver.com>
+Date:   Mon Feb 6 17:55:54 2023 +0900
+
+    2023-02-06 17:55 Travel Update git commit push
+
+[33mcommit 530b826f62b72768bcc01276e72fa6466aaec24c[m
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Mon Feb 6 16:16:05 2023 +0900
+
+    최종본 푸쉬
+
+[33mcommit 0da7b16f2d3c7b97671c0f385adcd035eb3440dd[m
+Merge: 6288e2c 13686ce
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Mon Feb 6 15:58:17 2023 +0900
+
+    Conflicts complete
+
+[33mcommit 6288e2c6b3603486a6f87b227b688f69856f1712[m
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Mon Feb 6 15:40:07 2023 +0900
+
+    QA 수정
+
+[33mcommit 13686ce49f835ade83fe052b6abcbef4109f482a[m
+Author: bigyoung8375@naver.com <bigyoung8375@naver.com>
+Date:   Mon Feb 6 15:39:32 2023 +0900
+
+    2023-02-06 15:39 Travel Update git commit push
+
+[33mcommit ad10d87767f93142d708ee461cf215ba339eb93b[m
+Author: bigyoung8375@naver.com <bigyoung8375@naver.com>
+Date:   Mon Feb 6 14:07:58 2023 +0900
+
+    2023-02-06 14:07 Travel Update git commit push
+
+[33mcommit 80a6d9eeed9f14711ed5b988d1596570cb6341a0[m
+Author: bigyoung8375@naver.com <bigyoung8375@naver.com>
+Date:   Mon Feb 6 13:28:07 2023 +0900
+
+    2023-02-06 13:27 Travel Update git commit push
+
+[33mcommit 672d244bed99b9ecefd4c9f979ada81c19e21c5b[m
+Author: bigyoung8375@naver.com <bigyoung8375@naver.com>
+Date:   Mon Feb 6 13:25:32 2023 +0900
+
+    2023-02-06 13:25 Travel Update git commit push
+
+[33mcommit 8d3b28339ee464dcdd9c9c8294a19a0c31d07056[m
+Author: bigyoung8375@naver.com <bigyoung8375@naver.com>
+Date:   Mon Feb 6 11:10:12 2023 +0900
+
+    2023-02-06 11:09 Travel Update git commit push
+
+[33mcommit adf424809cb858750a9edea2373396bbf47037e6[m
+Merge: 67f8768 4b08fe9
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Mon Feb 6 09:57:39 2023 +0900
+
+    Conflict complete
+
+[33mcommit 67f8768e242d5537794b6dd0ae110f9188b092c3[m
+Author: SooYun Jo <josooyeon11@naver.com>
+Date:   Mon Feb 6 09:55:35 2023 +0900
+
+    [Feature] 댓글 생성 페이지  기능 수정
+
+[33mcommit 4b08fe97864a8d67ca6d682806f3ae010b5f0009[m
+Author: yyyrin <qsc130@gmail.com>
+Date:   Mon Feb 6 09:52:10 2023 +0900
+
+    닉네임 수정 작업 파트 invisible 및 주석처리
+
+[33mcommit c9de549693de3795871c89719dd5dbe6e1d6e736[m
+Author: bigyoung8375 <bigyoung8375@naver.com>
+Date:   Mon Feb 6 00:09:34 2023 +0900
+
+    2023-02-06 00:09 git commit push User Travel Update
+
+[33mcommit 860ade2dcd0ffcc988eb257c32f651e8eafda0f2[m
+Author: su6378 <josooyeon11@naver.com>
+Date:   Sun Feb 5 23:07:18 2023 +0900
+
+    [Feature] 게시글 작성 기능 완료
+
+[33mcommit 752358ffe2a9bafe402e425c0c61ccf905da28af[m
+Merge: 42c8710 304a529
+Author: bigyoung8375 <bigyoung8375@naver.com>
+Date:   Sun Feb 5 18:49:22 2023 +0900
+
+    Merge branch 'sooyun95' into young_branch
+
+[33mcommit 304a529e2268654334611cd0242ca8cc3816c2f7[m
+Merge: e4515ad 42c8710
+Author: su6378 <josooyeon11@naver.com>
+Date:   Sun Feb 5 18:48:12 2023 +0900
+
+    Merge branch 'young_branch' into sooyun95
+
+[33mcommit e4515add7b35a64d41970feb9b0b0c9de99a0de5[m
+Author: su6378 <josooyeon11@naver.com>
+Date:   Sun Feb 5 18:43:48 2023 +0900
+
+    [Design] 여행 선택 페이지 수정
+
+[33mcommit 42c8710b274531924bd766afeab70bf811b6652c[m
+Author: bigyoung8375 <bigyoung8375@naver.com>
+Date:   Sun Feb 5 18:43:06 2023 +0900
+
+    2023-02-05 18:42 git commit push User Travel Update
+
+[33mcommit 4cc5d11a27811b853a80bff385174beeba71fbb3[m
+Merge: 5bcfd19 f7a2af0
+Author: bigyoung8375 <bigyoung8375@naver.com>
+Date:   Sun Feb 5 16:55:19 2023 +0900
+
+    Merge branch 'main' into young_branch
+
+[33mcommit f7a2af092205b74824976b2fa6b70057de1cc10c[m
+Merge: adf7bd8 5bcfd19
+Author: su6378 <josooyeon11@naver.com>
+Date:   Sun Feb 5 16:51:53 2023 +0900
+
+    Conflict complete
+
+[33mcommit 5bcfd1962398c188a1778edd781c55442f01e37b[m
+Author: bigyoung8375 <bigyoung8375@naver.com>
+Date:   Sun Feb 5 16:36:55 2023 +0900
+
+    2023-02-05 16:36 git commit push User Travel Update
+
+[33mcommit adf7bd8555848ee1cf68d213e70bdebe7856611d[m
+Author: su6378 <josooyeon11@naver.com>
+Date:   Sun Feb 5 16:28:20 2023 +0900
+
+    [Feature] 바텀네비게이션 오류 수정
+
+[33mcommit cb898dda8dd0cd1a8d9e8a215abc736db33c2679[m
+Author: su6378 <josooyeon11@naver.com>
+Date:   Sun Feb 5 15:03:03 2023 +0900
+
+    [Feautre] 게시글 수정 완료, 화면 전환 완료
+    [Design] 로딩 애니메이션 구현, 페이지 전환 시 애니메이션 적용
+
+[33mcommit 7506b6b2fc8cabbfc248dc43a11a74e325b320f8[m
+Author: su6378 <josoo

@@ -56,22 +56,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback { // End of MainAct
 
     } // End of onCreate
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-
-        val fragmentList = supportFragmentManager.fragments
-        for (fragment in fragmentList) {
-            if (fragment is onBackPressedListener) {
-                (fragment as onBackPressedListener).onBackPressed()
-                return
-            }
-        }
-    } // End of onBackPressed
-
-    interface onBackPressedListener {
-        fun onBackPressed()
-    }
-
     private fun setBinding() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

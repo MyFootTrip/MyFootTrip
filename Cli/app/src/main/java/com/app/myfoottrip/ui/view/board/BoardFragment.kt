@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
@@ -55,19 +54,9 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     private val boardViewModel by activityViewModels<BoardViewModel>()
     private val userViewModel by activityViewModels<UserViewModel>()
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
-    private lateinit var callback: OnBackPressedCallback
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-        callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (navigationViewModel.type == 3) navigationViewModel.type = 1
-                else navigationViewModel.type = 0
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -116,7 +105,6 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
     }
 
     private fun init(){

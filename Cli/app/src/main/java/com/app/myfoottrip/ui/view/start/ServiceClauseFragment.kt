@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
@@ -28,22 +27,12 @@ class ServiceClauseFragment : Fragment() {
     private lateinit var binding: FragmentServiceClauseBinding
     private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
     private val joinViewModel by activityViewModels<JoinViewModel>()
-    private lateinit var callback: OnBackPressedCallback
 
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
-
-        callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                Log.d(TAG, "handleOnBackPressed: ")
-                navigationViewModel.startPage = 1
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     } // End of onAttach
 
     override fun onCreateView(
@@ -110,7 +99,6 @@ class ServiceClauseFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
     } // End of onDetach
 
     private fun checkStateByButtonStateObserver() {

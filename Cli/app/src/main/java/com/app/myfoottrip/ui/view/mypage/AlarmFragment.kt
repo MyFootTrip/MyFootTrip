@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -34,7 +33,6 @@ class AlarmFragment : BaseFragment<FragmentAlarmBinding>(
 
     private val userViewModel by activityViewModels<UserViewModel>()
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
-    private lateinit var callback: OnBackPressedCallback
 
     private val alarmViewModel by activityViewModels<AlarmViewModel>()
     private lateinit var alarmAdapter: AlarmAdapter
@@ -44,13 +42,6 @@ class AlarmFragment : BaseFragment<FragmentAlarmBinding>(
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-        callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                navigationViewModel.type = 1
-                findNavController().popBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,7 +61,6 @@ class AlarmFragment : BaseFragment<FragmentAlarmBinding>(
 
     override fun onDetach() {
         super.onDetach()
-        callback.remove()
     } // End of onDetach
 
     private fun init(){

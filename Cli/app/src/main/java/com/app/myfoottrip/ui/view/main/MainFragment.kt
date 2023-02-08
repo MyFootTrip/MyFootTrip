@@ -11,8 +11,6 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentMainBinding
 import com.app.myfoottrip.ui.base.BaseFragment
-import com.app.myfoottrip.util.OnBackPressedListener
-import com.app.myfoottrip.util.showSnackBarMessage
 import com.skydoves.powerspinner.PowerSpinnerView
 
 private const val TAG = "MainFragment_마이풋트립"
