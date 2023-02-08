@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -46,11 +47,19 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
     private lateinit var myTravelAdapter: MyTravelAdapter
     private var boardList = ArrayList<Travel>()
 
+    private lateinit var callback: OnBackPressedCallback
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
-
         mainActivity = context as MainActivity
-    }
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigationViewModel.type = 1
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -89,7 +98,8 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
 
     override fun onDetach() {
         super.onDetach()
-    }
+        callback.remove()
+    } // End of onDetach
 
     private fun init() {
         CoroutineScope(Dispatchers.Default).launch {

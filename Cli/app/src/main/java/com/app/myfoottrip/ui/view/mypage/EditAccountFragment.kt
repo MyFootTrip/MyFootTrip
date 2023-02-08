@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
@@ -46,10 +47,19 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
     private val fcmViewModel by activityViewModels<FcmViewModel>()
     private val tokenViewModel by activityViewModels<TokenViewModel>()
 
+    private lateinit var callback: OnBackPressedCallback
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-    }
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigationViewModel.type = 1
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -147,6 +157,7 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
 
     override fun onDetach() {
         super.onDetach()
+        callback.remove()
     } // End of onDetach
 
     //로그아웃 다이얼로그 생성
