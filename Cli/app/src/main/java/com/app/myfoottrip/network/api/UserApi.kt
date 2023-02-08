@@ -47,4 +47,9 @@ interface UserApi {
     @POST("accounts/changeEmail/")
     suspend fun updateId(@Field("email") email:String): Response<Void>
 
+    //비밀번호 변경
+    @FormUrlEncoded
+    @POST("/accounts/changePassword/")
+    suspend fun updatePassword(@Field("new_password1") newPassword1: String, @Field("new_password2") newPassword2: String): Response<Void>
+
 }// End of UserApi Interface

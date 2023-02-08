@@ -48,6 +48,10 @@ class UserRepository {
     val userIdUpdateResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _userIdUpdateResponseLiveData
 
+    private val _userPassUpdateResponseLiveData = MutableLiveData<NetworkResult<Int>>()
+    val userPassUpdateResponseLiveData: LiveData<NetworkResult<Int>>
+        get() = _userPassUpdateResponseLiveData
+
 
     // 이메일 중복 체크
     suspend fun checkUsedEmailId(emailId: Email) {
@@ -162,6 +166,7 @@ class UserRepository {
         }
     } // End of userLogin
 
+    //아이디 변경
     suspend fun updateId(email: String){
         val response = headerUserApi.updateId(email)
         _userIdUpdateResponseLiveData.postValue(NetworkResult.Loading())
@@ -176,6 +181,24 @@ class UserRepository {
             )
         } else {
             _userLoginReponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
+    }
+
+    //비밀번호 변경
+    suspend fun updatePass(password: String, passwordConfirm: String){
+        val response = headerUserApi.updatePassword(password,passwordConfirm)
+        _userPassUpdateResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful) {
+            _userPassUpdateResponseLiveData.postValue(NetworkResult.Success(response.code()))
+        } else if (response.errorBody() != null) {
+            _userPassUpdateResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _userPassUpdateResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
         }
     }
 

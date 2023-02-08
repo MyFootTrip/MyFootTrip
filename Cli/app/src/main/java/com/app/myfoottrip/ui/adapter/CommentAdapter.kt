@@ -37,10 +37,7 @@ class CommentAdapter(var commentList:List<Comment>,val userId : Int) : RecyclerV
 
                 tvNickname.text = comment.nickname
                 tvContent.text = comment.content
-                tvWriteDate.text = TimeUtils.getFormattedString(comment.writeDate)+"에 작성"
-//                val startDateFormat = SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm에 작성", Locale("ko", "KR"))
-//                val startDateString = startDateFormat.format(comment.writeDate)
-//                tvWriteDate.text = startDateString
+                tvWriteDate.text = formatTimeString(TimeUtils.getFormattedLong(TimeUtils.changeDateToString(comment.writeDate)))
 
 
                 if (comment.userId == userId) {
@@ -85,5 +82,33 @@ class CommentAdapter(var commentList:List<Comment>,val userId : Int) : RecyclerV
     //클릭리스너 등록 매소드
     fun setItemClickListener(itemClickListener: ItemClickListener) {
         this.itemClickListner = itemClickListener
+    }
+
+    fun formatTimeString(regTime: Long): String? {
+        val curTime = System.currentTimeMillis()
+        var diffTime = (curTime - regTime) / 1000
+        var msg: String? = null
+        if (diffTime < SEC) {
+            msg = "방금 전"
+        } else if (SEC.let { diffTime /= it; diffTime } < MIN) {
+            msg = diffTime.toString() + "분 전"
+        } else if (MIN.let { diffTime /= it; diffTime } < HOUR) {
+            msg = diffTime.toString() + "시간 전"
+        } else if (HOUR.let { diffTime /= it; diffTime } < DAY) {
+            msg = diffTime.toString() + "일 전"
+        } else if (DAY.let { diffTime /= it; diffTime } < MONTH) {
+            msg = diffTime.toString() + "달 전"
+        } else {
+            msg = diffTime.toString() + "년 전"
+        }
+        return msg
+    }
+
+    companion object{
+        const val SEC = 60
+        const val MIN = 60
+        const val HOUR = 24
+        const val DAY = 30
+        const val MONTH = 12
     }
 }

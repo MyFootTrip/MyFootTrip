@@ -46,6 +46,9 @@ class UserViewModel : ViewModel() {
     val updateIdResponseLiveData: LiveData<NetworkResult<Int>>
     get() = userRepository.userIdUpdateResponseLiveData
 
+    val updatePassResponseLiveData: LiveData<NetworkResult<Int>>
+        get() = userRepository.userPassUpdateResponseLiveData
+
     // 사용자 로그인
     suspend fun userLogin(emailId: String, password: String) {
         viewModelScope.launch {
@@ -88,5 +91,11 @@ class UserViewModel : ViewModel() {
         }
     }
 
+    //유저 비밀번호 변경
+    fun updatePass(password: String, passwordConfirm: String){
+        viewModelScope.launch {
+            userRepository.updatePass(password, passwordConfirm)
+        }
+    }
 
 } // End of UserViewModel class

@@ -130,7 +130,6 @@ class EditEmailFragment : BaseFragment<FragmentEditEmailBinding>(
         }
     }
 
-    //게시물 생성 다이얼로그 생성
     private fun showDialog() {
         val dialog = AlertDialog(requireActivity() as AppCompatActivity)
 
@@ -261,7 +260,7 @@ class EditEmailFragment : BaseFragment<FragmentEditEmailBinding>(
                 }
 
                 is NetworkResult.Error -> {
-                    binding.root.showSnackBarMessage("닉네임 변경에 실패하였습니다.")
+                    binding.root.showSnackBarMessage("아이디 변경에 실패하였습니다.")
                 }
 
                 is NetworkResult.Loading -> {
