@@ -30,6 +30,7 @@ import com.app.myfoottrip.util.showSnackBarMessage
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
+import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
@@ -530,5 +531,9 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             )
         ).animate(CameraAnimation.Fly, 1000)
         naverMap.moveCamera(cameraUpdate)
+
+        val m = Marker()
+
+
     } // End of onMapReady
 } // End of
