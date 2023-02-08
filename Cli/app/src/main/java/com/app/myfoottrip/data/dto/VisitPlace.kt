@@ -3,9 +3,8 @@ package com.app.myfoottrip.data.dto
 import android.net.Uri
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import okhttp3.MultipartBody
 import org.jetbrains.annotations.NotNull
-import java.util.*
+import java.util.LinkedList
 
 @Entity(tableName = "visit_place")
 data class VisitPlace(
@@ -14,7 +13,9 @@ data class VisitPlace(
     val lat: Double, //위도
     val lng: Double, //경도
     val date: Long? = 0, //기록 시간
-    val imgList: List<Uri> = emptyList()
+    val imgList: MutableList<Uri> = LinkedList(),
+    val content: String? = "",
+    val placeName: String? = ""
 ) {
     @PrimaryKey(autoGenerate = true)
     var ID: Long = 0L //PK
@@ -26,8 +27,10 @@ data class VisitPlace(
         lat: Double,
         lng: Double,
         date: Long,
-        imgList: List<Uri>
-    ) : this(number, address, lat, lng, date, imgList) {
+        imgList: MutableList<Uri>,
+        content: String?,
+        placeName: String?
+    ) : this(number, address, lat, lng, date, imgList, content, placeName) {
         this.ID = id;
     }
 }

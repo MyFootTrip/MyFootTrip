@@ -8,14 +8,12 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -25,6 +23,7 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.dto.Travel
+import com.app.myfoottrip.data.dto.VisitPlace
 import com.app.myfoottrip.data.viewmodel.TravelActivityViewModel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentEditSaveTravelBinding
@@ -62,7 +61,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     lateinit var visitPlaceRepository: VisitPlaceRepository
 
     private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
-    private var userVisitPlaceDataList: LinkedList<Place> = LinkedList()
+    private var userVisitPlaceDataList: MutableList<VisitPlace> = LinkedList()
     private var userTravelData: Travel? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var travelEditSaveItemAdapter: TravelEditSaveItemAdapter
@@ -142,7 +141,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         val markers = mutableListOf<Marker>()
         userVisitPlaceDataList.forEach {
             markers += Marker().apply {
-                position = LatLng(it.latitude!!, it.longitude!!)
+                position = LatLng(it.lat, it.lng)
                 icon = MarkerIcons.BLACK
                 captionText = it.placeName.toString()
             }
@@ -161,8 +160,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             for (i in 0 until size) {
                 tempList.add(
                     LatLng(
-                        userVisitPlaceDataList[i].latitude!!,
-                        userVisitPlaceDataList[i].longitude!!
+                        userVisitPlaceDataList[i].lat,
+                        userVisitPlaceDataList[i].lng
                     )
                 )
             }
@@ -176,17 +175,37 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         Log.d(TAG, "setMapInMark: $size")
     }.onJoin // End of setMapInMark
 
+
+    // 값을 저장하기 위해서 TravelData 형식으로 변환
     private fun changeToTravelDto() {
         var travelId: Int? = null
         if (fragmentType == 2) {
             travelId = travelActivityViewModel.userTravelData.value!!.travelId
         }
 
+        val tempList: MutableList<Place> = ArrayList()
+        val size = userVisitPlaceDataList.size
+        for (i in 0 until size) {
+            val temp = userVisitPlaceDataList[i]
+
+            tempList.add(
+                Place(
+                    null, "", temp.date?.let { Date(it) }, "", // 일단 처음에는 메모 빈 값
+                    ArrayList(), // 일단 빈 이미지를 넣어야됨
+                    temp.lat, // 좌표
+                    temp.lng, // 좌표
+                    temp.address
+                )
+            )
+        }
+
+        // VisitPlace -> Travel 객체
         userTravelData = Travel(
             travelId,
-            travelActivityViewModel.locationList, userVisitPlaceDataList[0].saveDate, // 처음 시작 저장 시간
+            travelActivityViewModel.locationList,
+            userVisitPlaceDataList[0].date?.let { Date(it) }, // 처음 시작 저장 시간
             Date(System.currentTimeMillis()), // 마지막 저장 시간
-            userVisitPlaceDataList
+            tempList
         )
     } // End of changeToTravelDto
 
@@ -216,41 +235,42 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     private fun adapterEvent() {
         travelEditSaveItemAdapter.setItemClickListener(object :
             TravelEditSaveItemAdapter.ItemClickListener {
-            override fun onEditButtonClick(position: Int, placeData: Place) {
+            override fun onEditButtonClick(position: Int, placeData: VisitPlace) {
                 // 리사이클러뷰 포지션에 해당하는 수정 버튼을 눌렀을 때 이벤트
 
-                if (fragmentType == 2 && userVisitPlaceDataList.size == 1) {
-                    val editDialog = EditCustomDialog(userVisitPlaceDataList[position])
-                    editDialog.show(
-                        (activity as AppCompatActivity).supportFragmentManager,
-                        "editDialog"
-                    )
 
-                    editDialog.setItemClickListener(object : EditCustomDialog.ItemClickListener {
-                        override fun onFinishClicked(dialog: DialogFragment) {
-                            // 데이터 전체를 새로 UI를 호출함
-                            CoroutineScope(Dispatchers.Main).launch {
-                                userVisitPlaceDataList.removeAt(position)
-                                editDialog.dismiss()
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    travelDataDelete()
-                                }
-                            }
-                        }
-
-                        override fun onCancelClicked(dialog: DialogFragment) {
-                            editDialog.dismiss()
-                        }
-
-                        override fun onImageAddButtonClicked(dialog: DialogFragment) {
-                            // dialog.dialog.findViewById<ImageView>(R.id.image_imageview)
-
-                            TODO("Not yet implemented")
-                            Log.d(TAG, "onImageAddButtonClicked: 아직 구현 안함")
-                        }
-                    })
-                    return
-                }
+                // 수정 작업일때 ,
+//                if (fragmentType == 2) {
+//                    val editDialog = EditCustomDialog(userVisitPlaceDataList[position])
+//                    editDialog.show(
+//                        (activity as AppCompatActivity).supportFragmentManager,
+//                        "editDialog"
+//                    )
+//
+//                    editDialog.setItemClickListener(object : EditCustomDialog.ItemClickListener {
+//                        override suspend fun onSaveClicked() {
+//
+//
+//                        }
+//
+//                        override suspend fun onDeleteClicked() {
+//                            // 데이터 전체를 새로 UI를 호출함
+//                            CoroutineScope(Dispatchers.Main).launch {
+//                                userVisitPlaceDataList.removeAt(position)
+//                                CoroutineScope(Dispatchers.IO).launch {
+//                                    travelDataDelete()
+//                                }
+//                            }
+//                            editDialog.dismiss()
+//                        }
+//
+//                        override suspend fun onImageAddButtonClicked() {
+//                            // dialog.dialog.findViewById<ImageView>(R.id.image_imageview)
+//                            Log.d(TAG, "onImageAddButtonClicked: 아직 구현 안함")
+//                        }
+//                    })
+//                    return
+//                }
 
                 val editDialog = EditCustomDialog(userVisitPlaceDataList[position])
                 editDialog.show(
@@ -259,23 +279,25 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 )
 
                 editDialog.setItemClickListener(object : EditCustomDialog.ItemClickListener {
-                    override fun onFinishClicked(dialog: DialogFragment) {
-                        // 데이터 전체를 새로 UI를 호출함
-                        CoroutineScope(Dispatchers.Main).launch {
+                    override suspend fun onSaveClicked() {
+
+                    }
+
+                    override  suspend fun onDeleteClicked() {
+                        withContext(Dispatchers.IO) {
                             userVisitPlaceDataList.removeAt(position)
+                        }
+
+                        withContext(Dispatchers.Main) {
                             recyclerView.adapter!!.notifyDataSetChanged()
                             editDialog.dismiss()
                         }
                     }
 
-                    override fun onCancelClicked(dialog: DialogFragment) {
-                        editDialog.dismiss()
-                    }
-
                     // 이미지를 추가하는 버튼을 만들었을 때,
-                    override fun onImageAddButtonClicked(dialog: DialogFragment) {
+                    override suspend fun onImageAddButtonClicked() {
                         selectGallery()
-                        dialog.dialog!!.findViewById<RecyclerView>(R.id.place_edit_recyclerview).adapter!!.notifyDataSetChanged()
+                        editDialog.dialog!!.findViewById<RecyclerView>(R.id.place_edit_recyclerview).adapter!!.notifyDataSetChanged()
                     }
                 })
 
@@ -326,7 +348,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
 
     private fun initRecyclerViewAdapter() {
-        travelEditSaveItemAdapter = TravelEditSaveItemAdapter(mContext, userTravelData?.placeList!!)
+        travelEditSaveItemAdapter = TravelEditSaveItemAdapter(mContext, userVisitPlaceDataList)
     } // End of initRecyclerViewAdapter
 
     private fun totalTimeCalc(): String {
@@ -412,28 +434,28 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         }
     } // End of travelDataDelete
 
-    private suspend fun getSqlLiteAllData(): LinkedList<Place> {
-        val placeList: LinkedList<Place> = LinkedList()
+    private suspend fun getSqlLiteAllData(): MutableList<VisitPlace> {
+        var placeList: MutableList<VisitPlace> = LinkedList()
 
         val job = CoroutineScope(Dispatchers.IO).async {
-            val allVisitPlaceList = visitPlaceRepository.getAllVisitPlace()
+            placeList = visitPlaceRepository.getAllVisitPlace()
 
             // SQLLite데이터 전체 가져와서,
             // visitPlace를 변경해서 Place로 변경
-            val size = allVisitPlaceList.size
-            for (i in 0 until size) {
-                val temp = allVisitPlaceList[i]
-
-                placeList.add(
-                    Place(
-                        null, "", temp.date?.let { Date(it) }, "", // 일단 처음에는 메모 빈 값
-                        ArrayList(), // 일단 빈 이미지를 넣어야됨
-                        temp.lat, // 좌표
-                        temp.lng, // 좌표
-                        temp.address
-                    )
-                )
-            }
+//            val size = allVisitPlaceList.size
+//            for (i in 0 until size) {
+//                val temp = allVisitPlaceList[i]
+//
+//                placeList.add(
+//                    Place(
+//                        null, "", temp.date?.let { Date(it) }, "", // 일단 처음에는 메모 빈 값
+//                        ArrayList(), // 일단 빈 이미지를 넣어야됨
+//                        temp.lat, // 좌표
+//                        temp.lng, // 좌표
+//                        temp.address
+//                    )
+//                )
+//            }
         }
 
         job.await()

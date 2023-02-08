@@ -175,53 +175,59 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         travelAdapter = TravelAdapter(type)
         binding.rvTravel.adapter = travelAdapter
         binding.rvTravel.itemAnimator = null
-        travelAdapter.setItemClickListener(object : TravelAdapter.ItemClickListener {
-            override fun onAllClick(position: Int, travelDto: Travel) {
-                //TODO : 여정 확인 페이지로 이동
-            }
 
-            override fun onChipClick(type: Int, position: Int, travelDto: Travel) {
-                if (type == 0 || type == 2) { //여정 선택
-                    changeSelected(position)
-                } else { //여정 삭제
-                    //TODO : 여정 삭제 dialog
-                }
-            }
-
-            // Travel 데이터 삭제
-            override fun onDeleteChipClick(position: Int, travelDto: Travel) {
-                val editDialog = EditCustomDialog("해당 데이터를 삭제하시겠습니까?")
-                editDialog.show(
-                    (activity as AppCompatActivity).supportFragmentManager, "editDialog"
-                )
-
-                editDialog.setItemClickListener(object : EditCustomDialog.ItemClickListener {
-                    override fun onFinishClicked(dialog: DialogFragment) {
-                        // 데이터 전체를 새로 UI를 호출함
-                        CoroutineScope(Dispatchers.IO).launch {
-
-                            // 선택된 포지션의 값을 가져와서 해당 값을 제거해야됨
-                            // 서버에 삭제 요청을 보내야 함.
-                            travelViewModel.userTravelDataDelete(boardList[position].travelId!!)
-
-                            // 삭제를 마치고 나면 data를 다시 갱신해야함
-                            withContext(Dispatchers.Default) {
-                                getData()
-                            }
-
-                            withContext(Dispatchers.Main) {
-                                editDialog.dismiss()
-                            }
-                        }
-                    } // End of onFinishClicked
-
-                    override fun onCancelClicked(dialog: DialogFragment) {
-                        editDialog.dismiss()
-                    } // End of onCancelClicked
-                })
-
-            }
-        })
+//        travelAdapter.setItemClickListener(object : TravelAdapter.ItemClickListener {
+//            override fun onAllClick(position: Int, travelDto: Travel) {
+//                //TODO : 여정 확인 페이지로 이동
+//            }
+//
+//            override fun onChipClick(type: Int, position: Int, travelDto: Travel) {
+//                if (type == 0 || type == 2) { //여정 선택
+//                    changeSelected(position)
+//                } else { //여정 삭제
+//                    //TODO : 여정 삭제 dialog
+//                }
+//            }
+//
+//            // Travel 데이터 삭제
+//            override fun onDeleteChipClick(position: Int, travelDto: Travel) {
+//                val editDialog = EditCustomDialog()
+//                editDialog.show(
+//                    (activity as AppCompatActivity).supportFragmentManager, "editDialog"
+//                )
+//
+//                editDialog.setItemClickListener(object : EditCustomDialog.ItemClickListener {
+//                    override fun onFinishClicked(dialog: DialogFragment) {
+//                        // 데이터 전체를 새로 UI를 호출함
+//                        CoroutineScope(Dispatchers.IO).launch {
+//
+//                            // 선택된 포지션의 값을 가져와서 해당 값을 제거해야됨
+//                            // 서버에 삭제 요청을 보내야 함.
+//                            travelViewModel.userTravelDataDelete(boardList[position].travelId!!)
+//
+//                            // 삭제를 마치고 나면 data를 다시 갱신해야함
+//                            withContext(Dispatchers.Default) {
+//                                getData()
+//                            }
+//
+//                            withContext(Dispatchers.Main) {
+//                                editDialog.dismiss()
+//                            }
+//                        }
+//                    } // End of onFinishClicked
+//
+//                    override fun onCancelClicked(dialog: DialogFragment) {
+//                        editDialog.dismiss()
+//                    } // End of onCancelClicked
+//
+//                    override fun onImageAddButtonClicked(dialog: DialogFragment) {
+//                        TODO("Not yet implemented")
+//                        Log.d(TAG, "onImageAddButtonClicked: 아직 구현 안함")
+//                    }
+//                })
+//
+//            }
+//        })
     } // End of initAdapter
 
     private fun setListener() {

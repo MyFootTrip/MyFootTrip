@@ -11,6 +11,7 @@ import retrofit2.http.Url
 
 class PlaceImageAdapter(val context: Context, private val imageList: List<Uri>) :
     RecyclerView.Adapter<PlaceImageAdapter.PlaceImageHolder>() {
+    // private lateinit var binding : Binding
 
     inner class PlaceImageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindInfo(data: Uri) {

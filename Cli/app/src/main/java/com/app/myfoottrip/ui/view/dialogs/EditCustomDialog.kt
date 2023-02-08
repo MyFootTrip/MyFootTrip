@@ -10,12 +10,15 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.app.myfoottrip.data.dto.Place
+import com.app.myfoottrip.data.dto.VisitPlace
 import com.app.myfoottrip.databinding.EditCustomDialogBinding
 import com.app.myfoottrip.ui.view.travel.PlaceImageAdapter
 import com.app.myfoottrip.util.DeviceSizeUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class EditCustomDialog(val placeData: Place) :
+class EditCustomDialog(val placeData: VisitPlace) :
     DialogFragment() {
 
     private lateinit var mContext: Context
@@ -39,17 +42,22 @@ class EditCustomDialog(val placeData: Place) :
         _binding = EditCustomDialogBinding.inflate(inflater, container, false)
         size = DeviceSizeUtil.deviceSizeCheck(mContext)
 
-
-        _binding!!.finishButton.setOnClickListener {
-            listener.onFinishClicked(this)
+        _binding!!.deleteButton.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                listener.onDeleteClicked()
+            }
         }
 
-        _binding!!.cancelButton.setOnClickListener {
-            listener.onCancelClicked(this)
+        _binding!!.saveButton.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                listener.onSaveClicked()
+            }
         }
 
         _binding!!.imageAddButton.setOnClickListener {
-            listener.onImageAddButtonClicked(this)
+            CoroutineScope(Dispatchers.IO).launch {
+                listener.onImageAddButtonClicked()
+            }
         }
 
         return binding.root
@@ -67,12 +75,13 @@ class EditCustomDialog(val placeData: Place) :
         dialog?.show()
         // _binding!!.informTv.text = text
 
-        binding.addressEd.setText(placeData.address.toString())
-        binding.contentEd.setText(placeData.memo.toString())
+        binding.addressEd.setText(placeData.address)
+        binding.contentEd.setText(placeData.content.toString())
         binding.locationNameTv.text = placeData.placeName.toString()
 
         // 리사이클러뷰 바인딩
         recyclerView = _binding!!.placeEditRecyclerview
+        placeImageAdapter = PlaceImageAdapter(mContext, placeData.imgList)
         recyclerView.apply {
             adapter = placeImageAdapter
             layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
@@ -85,9 +94,9 @@ class EditCustomDialog(val placeData: Place) :
     }
 
     interface ItemClickListener {
-        fun onFinishClicked(dialog: DialogFragment)
-        fun onCancelClicked(dialog: DialogFragment)
-        fun onImageAddButtonClicked(dialog: DialogFragment)
+        suspend fun onDeleteClicked()
+        suspend fun onSaveClicked()
+        suspend fun onImageAddButtonClicked()
     } // End of OnDialogClickListener
 
     override fun onDestroyView() {

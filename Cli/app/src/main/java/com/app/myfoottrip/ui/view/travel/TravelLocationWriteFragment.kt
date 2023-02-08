@@ -389,7 +389,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         binding.btnAddPoint.isClickable = false
 
         val temp = VisitPlace(
-            0, address, lat, lon, System.currentTimeMillis(), emptyList()
+            0, address, lat, lon, System.currentTimeMillis(), LinkedList()
         )
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -556,5 +556,5 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
         marker.map = naverMap
         marker.isIconPerspectiveEnabled = true
-    }
-} // End of
+    } // End of setInMapMarker
+} // End of TravelLocationWriteFragment class

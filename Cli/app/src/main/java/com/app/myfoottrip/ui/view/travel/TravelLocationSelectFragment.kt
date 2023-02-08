@@ -18,14 +18,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.*
-import androidx.core.content.PermissionChecker.*
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -50,7 +47,6 @@ import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.coroutines.*
 import java.util.*
-import kotlin.collections.ArrayList
 
 private const val TAG = "TravelLocationSelectFragment_싸피"
 
@@ -178,16 +174,12 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         for (i in 0 until size) {
             val place = travelActivityViewModel.userTravelData.value!!.placeList!![i]
 
-            // place DTO의 placeImgList -> ArrayList<String> 를 List<Uri>로 변환해서 줘야됨
+            // place DTO의 placeImgList -> ArrayList<String>을 List<Uri>로 변환해서 줘야됨
             val placeImgListSize = place.placeImgList!!.size
-            val uriImageList : MutableList<Uri> = LinkedList()
-            for(j in 0 until placeImgListSize) {
-                val tempUri = place.placeImgList!![j]
-
-
-                //uriImageList.add()
+            val uriImageList: MutableList<Uri> = LinkedList()
+            for (j in 0 until placeImgListSize) {
+                uriImageList.add(Uri.parse(place.placeImgList!![j]))
             }
-
 
             val temp = VisitPlace(
                 i,
@@ -195,7 +187,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                 place.latitude!!,
                 place.longitude!!,
                 place.saveDate!!.time,
-                place.placeImgList!!
+                uriImageList
             )
             visitPlaceRepository.insertVisitPlace(temp)
         }
