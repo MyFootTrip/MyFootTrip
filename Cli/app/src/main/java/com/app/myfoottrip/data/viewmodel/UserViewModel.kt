@@ -43,6 +43,9 @@ class UserViewModel : ViewModel() {
     val userProfileImageMultipartBody: LiveData<MultipartBody.Part>
         get() = _userProfileImageMultipartBody
 
+    val updateIdResponseLiveData: LiveData<NetworkResult<Int>>
+    get() = userRepository.userIdUpdateResponseLiveData
+
     // 사용자 로그인
     suspend fun userLogin(emailId: String, password: String) {
         viewModelScope.launch {
@@ -77,5 +80,13 @@ class UserViewModel : ViewModel() {
             )
         }
     }
+
+    //유저 아이디 변경
+    fun updateId(emailId: String){
+        viewModelScope.launch {
+            userRepository.updateId(emailId)
+        }
+    }
+
 
 } // End of UserViewModel class

@@ -14,6 +14,8 @@ import com.app.myfoottrip.data.dto.Comment
 import com.app.myfoottrip.databinding.ListItemCommentBinding
 import com.app.myfoottrip.util.TimeUtils
 import com.bumptech.glide.Glide
+import java.text.SimpleDateFormat
+import java.util.*
 
 private const val TAG = "CommentAdapter_마이풋트립"
 class CommentAdapter(var commentList:List<Comment>,val userId : Int) : RecyclerView.Adapter<CommentAdapter.CommentHolder>(){
@@ -36,6 +38,10 @@ class CommentAdapter(var commentList:List<Comment>,val userId : Int) : RecyclerV
                 tvNickname.text = comment.nickname
                 tvContent.text = comment.content
                 tvWriteDate.text = TimeUtils.getFormattedString(comment.writeDate)+"에 작성"
+//                val startDateFormat = SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm에 작성", Locale("ko", "KR"))
+//                val startDateString = startDateFormat.format(comment.writeDate)
+//                tvWriteDate.text = startDateString
+
 
                 if (comment.userId == userId) {
                     ivEditComment.visibility = View.VISIBLE

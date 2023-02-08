@@ -42,4 +42,9 @@ interface UserApi {
         @Body userLoginData: JsonObject
     ): Response<Token>
 
+    //아이디 변경
+    @FormUrlEncoded
+    @POST("accounts/changeEmail/")
+    suspend fun updateId(@Field("email") email:String): Response<Void>
+
 }// End of UserApi Interface

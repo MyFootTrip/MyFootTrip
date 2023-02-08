@@ -24,6 +24,10 @@ class AlarmRepository{
     val alarmDeleteResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _alarmDeleteResponseLiveData
 
+    private val _alarmCountResponseLiveData = MutableLiveData<NetworkResult<Int>>()
+    val alarmCountResponseLiveData: LiveData<NetworkResult<Int>>
+        get() = _alarmCountResponseLiveData
+
     // 전체 게시물 조회
     suspend fun getAlarmList(){
         var response = headerAlarmService.getAlarmList()
@@ -40,12 +44,24 @@ class AlarmRepository{
         }
     }
 
+    // 전체 게시물 조회
+    suspend fun getAlarmCount(){
+        var response = headerAlarmService.getAlarmCount()
+
+        // 처음은 Loading 상태로 지정
+        _alarmCountResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful && response.body() != null) {
+            _alarmCountResponseLiveData.postValue(NetworkResult.Success(response.body()!!))
+        } else if (response.errorBody() != null) {
+            _alarmCountResponseLiveData.postValue(NetworkResult.Error(response.errorBody()!!.string()))
+        } else {
+            _alarmCountResponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
+    }
+
     suspend fun alarmDelete(notificationId: Int) {
         val response = headerAlarmService.deleteAlarm(notificationId)
-
-        Log.d(TAG, "userTravelDataDelete: $response")
-        Log.d(TAG, "userTravelDataDelete: ${response.body()}")
-        Log.d(TAG, "userTravelDataDelete: ${response.message()}")
 
         // 처음은 Loading 상태로 지정
         _alarmDeleteResponseLiveData.postValue(NetworkResult.Loading())

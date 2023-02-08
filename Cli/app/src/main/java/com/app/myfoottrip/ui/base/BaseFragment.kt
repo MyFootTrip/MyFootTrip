@@ -1,6 +1,7 @@
 package com.app.myfoottrip.ui.base
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +15,15 @@ import es.dmoral.toasty.Toasty
 // Fragment의 기본을 작성, 뷰 바인딩 활용
 typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
 
+private const val TAG = "BaseFragment_마이풋트립"
 abstract class BaseFragment<B : ViewBinding>(
     private val bind: (View) -> B,
     @LayoutRes layoutResId: Int
 ) : Fragment(layoutResId) { // End of BaseFragment class
     private var _binding: B? = null
-    val binding get() = _binding ?: throw IllegalStateException("binding fail")
-
+    val binding get() = _binding!!
+//    throw IllegalStateException("binding fail")
+    
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

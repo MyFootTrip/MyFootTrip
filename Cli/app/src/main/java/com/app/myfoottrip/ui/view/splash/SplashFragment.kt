@@ -86,10 +86,13 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>(
                         ivLogoText.visibility = View.VISIBLE
 
                         delay(1000)
+                        //로딩창 구현
+                        startActivity.runOnUiThread {
+                            binding.lottieProgress.visibility = View.VISIBLE
+                            binding.lottieProgress.playAnimation()
+                            sharedPreferencesUtil = SharedPreferencesUtil(startActivity)
+                        }
                         // SharedPreference에 토큰이 있는지 없는지를 확인해야됨.
-                        binding.lottieProgress.visibility = View.VISIBLE
-                        binding.lottieProgress.playAnimation()
-                        sharedPreferencesUtil = SharedPreferencesUtil(startActivity)
                         val refreshToken = sharedPreferencesUtil.getUserRefreshToken()
 
                         // 토큰이 있을 경우 해당 refreshToken을 기준으로 유효성 체크를 실시해서

@@ -10,6 +10,7 @@ import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.viewmodel.AlarmViewModel
 import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMyPageBinding
@@ -33,6 +34,9 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
     var waitTime = 0L
     private lateinit var mainActivity: MainActivity
 
+    private val alarmCount = 0 //알림 카운트
+    private val alarmViewModel by activityViewModels<AlarmViewModel>()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
@@ -42,6 +46,7 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         getAccessTokenByRefreshTokenResponseLiveDataObserver()
+        getAlarmCountObserver()
 
         init()
 
@@ -72,6 +77,7 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
     private fun init() {
         binding.ivILikedImage.setMaxProgress(0.6f) //좋아요 애니메이션 세팅
         getUserMyData()
+        getAlarmConunt()
     }
 
     //유저정보 데이터 초기화
@@ -81,28 +87,14 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
             if (userViewModel.wholeMyData.value?.join?.profile_image.isNullOrEmpty()) {
                 ivProfile.setPadding(30)
                 Glide.with(this@MyPageFragment).load(R.drawable.ic_my).fitCenter().into(ivProfile)
-                cvProfileLayout.setCardBackgroundColor(
-                    ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
-                        )
-                    )
-                )
+                cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.white)))
             } else {
                 Glide.with(this@MyPageFragment)
                     .load(userViewModel.wholeMyData.value?.join?.profile_image)
-                    .skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE).thumbnail(
-                    Glide.with(this@MyPageFragment).load(R.drawable.loading_image).centerCrop()
-                ).centerCrop().into(ivProfile)
-                cvProfileLayout.setCardBackgroundColor(
-                    ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.white
-                        )
-                    )
-                )
+                    .skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .thumbnail(Glide.with(this@MyPageFragment).load(R.drawable.loading_image).centerCrop())
+                    .centerCrop().into(ivProfile)
+                cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
             }
             textView.text = "${userViewModel.wholeMyData.value?.join?.nickname}님" //닉네임
             tvMyTravelCnt.text =
@@ -138,4 +130,27 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
             }
         }
     } // End of getAccessTokenByRefreshTokenResponseLiveDataObserver
+
+    private fun getAlarmConunt(){
+        CoroutineScope(Dispatchers.IO).launch {
+            alarmViewModel.getAlarmCount()
+        }
+    }
+
+    private fun getAlarmCountObserver(){
+        alarmViewModel.alarmCount.observe(viewLifecycleOwner){
+            when(it){
+                is NetworkResult.Success -> {
+                    alarmViewModel.alarmCount.value?.data = it.data!!
+                    binding.badgeAlarm.setNumber(alarmViewModel.alarmCount.value?.data!!)
+                }
+                is NetworkResult.Error ->   {
+
+                }
+                is NetworkResult.Loading -> {
+
+                }
+            }
+        }
+    }
 }

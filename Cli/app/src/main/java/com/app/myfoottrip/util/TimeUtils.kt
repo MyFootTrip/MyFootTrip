@@ -66,7 +66,7 @@ object TimeUtils {
 
     fun getFormattedString(date: Date): String {
         val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분")
-        dateFormat.timeZone = TimeZone.getTimeZone("Seoul/Asia")
+//        dateFormat.timeZone = TimeZone.getTimeZone("Seoul/Asia")
         return dateFormat.format(date)
     }
 

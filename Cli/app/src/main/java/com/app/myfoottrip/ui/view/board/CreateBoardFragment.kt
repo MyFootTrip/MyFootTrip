@@ -189,16 +189,7 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
                     lottieCreateBoard.playAnimation()
                 }
 
-                val board = Board(
-                    1,
-                    1,
-                    "테스트계정",
-                    "string",
-                    Date(System.currentTimeMillis()),
-                    "혼자놀기",
-                    "임시제목입니다",
-                    "임시 내용입니다.",
-                    arrayListOf(),
+                val board = Board(1, 1, "테스트계정", "string", Date(System.currentTimeMillis()), "혼자놀기", "임시제목입니다", "임시 내용입니다.", arrayListOf(),
                     Travel(
                         travelId,
                         arrayListOf(), Date(System.currentTimeMillis()),
@@ -209,6 +200,7 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
                     arrayListOf()
                 )
                 imageList.removeAt(0)
+
                 CoroutineScope(Dispatchers.IO).launch {
                     withContext(Dispatchers.IO) {
                         val urlList: ArrayList<String> = List(imageList.size) { i ->

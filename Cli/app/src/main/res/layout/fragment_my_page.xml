@@ -44,7 +44,20 @@
         android:src="@drawable/ic_alarm"
         app:layout_constraintLeft_toRightOf="@+id/tv_my_page_title"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_my_page_title" />
+        app:layout_constraintTop_toTopOf="@+id/tv_my_page_title" >
+    </ImageView>
+
+    <com.nex3z.notificationbadge.NotificationBadge
+        android:id="@+id/badge_alarm"
+        android:elevation="10dp"
+        app:layout_constraintRight_toRightOf="@id/iv_alarm"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintTop_toTopOf="@id/iv_alarm"
+        android:layout_marginTop="-8dp"
+        android:layout_marginRight="-6dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:nbMaxTextLength="2"/>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_profileLayout"

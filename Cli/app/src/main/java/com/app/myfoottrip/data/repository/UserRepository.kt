@@ -44,6 +44,11 @@ class UserRepository {
     val userUpdateReponseLiveData: LiveData<NetworkResult<Join>>
         get() = _userUpdateReponseLiveData
 
+    private val _userIdUpdateResponseLiveData = MutableLiveData<NetworkResult<Int>>()
+    val userIdUpdateResponseLiveData: LiveData<NetworkResult<Int>>
+        get() = _userIdUpdateResponseLiveData
+
+
     // 이메일 중복 체크
     suspend fun checkUsedEmailId(emailId: Email) {
 
@@ -156,6 +161,23 @@ class UserRepository {
             _userLoginReponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
         }
     } // End of userLogin
+
+    suspend fun updateId(email: String){
+        val response = headerUserApi.updateId(email)
+        _userIdUpdateResponseLiveData.postValue(NetworkResult.Loading())
+
+        if (response.isSuccessful) {
+            _userIdUpdateResponseLiveData.postValue(NetworkResult.Success(response.code()))
+        } else if (response.errorBody() != null) {
+            _userIdUpdateResponseLiveData.postValue(
+                NetworkResult.Error(
+                    response.errorBody()!!.string()
+                )
+            )
+        } else {
+            _userLoginReponseLiveData.postValue(NetworkResult.Error(response.headers().toString()))
+        }
+    }
 
 
 } // End of UserRepository
