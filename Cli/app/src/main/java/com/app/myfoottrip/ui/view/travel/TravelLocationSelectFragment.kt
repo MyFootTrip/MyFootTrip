@@ -103,11 +103,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         fragmentType = requireArguments().getInt("type")
         getUserTravelDataResponseLiveDataObserve()
 
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val temp = visitPlaceRepository.getAllVisitPlace()
-//            Log.d(TAG, "setupOnbackPressed: $temp")
-//        }
-
         // 남아있는 데이터 확인
         var temp: List<VisitPlace> = emptyList()
         CoroutineScope(Dispatchers.IO).launch {
@@ -141,11 +136,8 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
         if (fragmentType == 2) {
             selectedTravelId = requireArguments().getInt("travelId")
-            Log.d(TAG, "onViewCreated: 수정 작업 입니다.")
 
-            Log.d(TAG, "onViewCreated: 여기임?1")
             if (travelViewModel.getUserTravelDataResponseLiveData.value == null) {
-                Log.d(TAG, "onViewCreated: 여기임?2")
                 getUserTravelData()
             }
 
@@ -228,8 +220,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     private fun startLocationRecording() {
         binding.fabStart.setOnClickListener {
             travelActivityViewModel.setLocationList(selectedList as ArrayList<String>)
-            Log.d(TAG, "startLocationRecording: $selectedList")
-
             mContext.showToastMessage("위치 기록을 시작합니다.")
 
             val bundle = bundleOf(
@@ -263,7 +253,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         if (!selectedList.contains(locationList[position])) {
             selectedList.add(locationList[position])
         }
-        Log.d(TAG, "setChipListener: $selectedList")
 
         binding.cgDetail.addView(Chip(requireContext()).apply {
             chipCornerRadius = 10.0f
@@ -498,35 +487,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                 PERMISSION_REQUEST_CODE
             )
         }
-
     } // End of isRunTimePermissionsGranted
-
-    private fun setupOnbackPressed() {
-        Log.d(TAG, "setupOnbackPressed : 밖임 ")
-        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (isEnabled) {
-                    Log.d(TAG, "setupOnbackPressed: 안임 ")
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val mainActivity = requireActivity() as MainActivity
-                        mainActivity.stopLocationBackground()
-
-                        try {
-                            visitPlaceRepository.deleteAllVisitPlace()
-                        } catch (exception: Exception) {
-                            Log.d(TAG, "onResume: DB에 비울 값이 없습니다.")
-                        }
-
-                        val temp = visitPlaceRepository.getAllVisitPlace()
-                        Log.d(TAG, "setupOnbackPressed: $temp")
-                    }
-
-                    isEnabled = false
-                    requireActivity().onBackPressed()
-                }
-            }
-        })
-    } // End of setupOnbackPressed
 
     private companion object {
         const val LOCATION_PERMISSION_REQUEST_CODE = 1000

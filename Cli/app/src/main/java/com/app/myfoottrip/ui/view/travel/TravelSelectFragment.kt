@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -49,6 +49,19 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     private var boardList = ArrayList<Travel>()
 
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
+
+    private lateinit var callback: OnBackPressedCallback
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                navigationViewModel.type = 0
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -347,4 +360,9 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             }
         }
     } // End of settingView
+
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
+    } // End of onDetach
 } // End of TravelSelectFragment class

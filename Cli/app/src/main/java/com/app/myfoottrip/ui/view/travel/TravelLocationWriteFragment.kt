@@ -207,7 +207,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
             binding.tvStartTime.text = TimeUtils.getDateTimeString(System.currentTimeMillis())
             // CoroutineScope(Dispatchers.IO).launch {
-                setButtonListener()
+            setButtonListener()
             // }
 
             withContext(Dispatchers.Main) {
@@ -229,7 +229,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                     mainActivity.stopLocationBackground()
                 }
                 showToast("위치 기록을 중지합니다", ToastType.SUCCESS)
-
                 serviceScope.cancel()
             }
 
@@ -532,4 +531,4 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         ).animate(CameraAnimation.Fly, 1000)
         naverMap.moveCamera(cameraUpdate)
     } // End of onMapReady
-}
+} // End of
