@@ -222,6 +222,11 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             travelActivityViewModel.setLocationList(selectedList as ArrayList<String>)
             mContext.showToastMessage("위치 기록을 시작합니다.")
 
+            val mainActivity = requireActivity() as MainActivity
+            CoroutineScope(Dispatchers.IO).launch {
+                mainActivity.startLocationBackground()
+            }
+
             val bundle = bundleOf(
                 "type" to fragmentType
             )
