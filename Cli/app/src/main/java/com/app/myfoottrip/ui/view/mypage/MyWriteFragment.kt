@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 
 
 class MyWriteFragment : BaseFragment<FragmentMyWriteBinding>(
-    FragmentMyWriteBinding::bind, R.layout.fragment_my_write
+    FragmentMyWriteBinding::inflate
 ) {
     private lateinit var mainActivity: MainActivity
 

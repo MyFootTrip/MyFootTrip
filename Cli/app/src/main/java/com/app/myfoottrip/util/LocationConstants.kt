@@ -49,7 +49,7 @@ object LocationConstants {
 
     fun getNowLocation(context: Context){
         var locationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            priority = LocationRequest.PRIORITY_LOW_POWER
             smallestDisplacement = 10.0f
         }
         val builder = LocationSettingsRequest.Builder()

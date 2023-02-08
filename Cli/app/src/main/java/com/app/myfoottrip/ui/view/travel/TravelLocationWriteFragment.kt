@@ -32,6 +32,7 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
+import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
@@ -42,7 +43,7 @@ import java.util.*
 private const val TAG = "TravelLocationWriteFragment_싸피"
 
 class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBinding>(
-    FragmentTravelLocationWriteBinding::bind, R.layout.fragment_travel_location_write
+    FragmentTravelLocationWriteBinding::inflate
 ), OnMapReadyCallback { // End of TravelLocationWrite class
     // End of TravelLocationWriteFragment class
     // ViewModel
@@ -102,10 +103,11 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                         if (distCount == 4 && flag == false) {
                             // 지도에 마커표시 하기 위해서 DB등록
                             // 4번의 동일한 좌표가 찍히고 나면 RoomDB에 데이터 추가
+                            val job = Job()
 
                             CoroutineScope(Dispatchers.IO).launch {
                                 var address: String? = null
-                                val job = CoroutineScope(Dispatchers.IO).launch {
+                                CoroutineScope(Dispatchers.IO + job).launch {
                                     val getAdd = getAddressByCoordinates(
                                         newCoor.latitude!!, newCoor.longitude!!
                                     )
@@ -116,7 +118,16 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                                     }
                                 }
 
-                                job.join()
+                                val flg = job.start()
+
+                                if(flg == false) {
+                                    // 해당 좌표를 지도에 표시
+                                    withContext(Dispatchers.Main) {
+                                        requireActivity().runOnUiThread {
+                                            setInMapMarker(LatLng(newCoor.latitude!!, newCoor.longitude!!))
+                                        }
+                                    }
+                                }
 
                                 // 없는 주소는 List에서 생성하지 않고 빈 주소로 넣음
                                 if (address == null) {
@@ -532,8 +543,18 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         ).animate(CameraAnimation.Fly, 1000)
         naverMap.moveCamera(cameraUpdate)
 
-        val m = Marker()
-
-
     } // End of onMapReady
+
+    private fun setInMapMarker(Coor : LatLng) {
+        val markers = mutableListOf<Marker>()
+        // 지금까지 저장되어 있는 좌표를 가져와서 저장을 함
+
+        val marker = Marker().apply {
+            position = Coor
+            icon = MarkerIcons.BLACK
+        }
+
+        marker.map = naverMap
+        marker.isIconPerspectiveEnabled = true
+    }
 } // End of

@@ -13,7 +13,7 @@ import com.app.myfoottrip.ui.view.splash.SplashFragment
 
 private const val TAG = "FirstFragment_마이풋트립"
 class FirstFragment : BaseFragment<FragmentFirstBinding>(
-    FragmentFirstBinding::bind, R.layout.fragment_first
+    FragmentFirstBinding::inflate
 ) {
     private lateinit var mContext: Context
     private val navigationViewModel by activityViewModels<NavigationViewModel>()

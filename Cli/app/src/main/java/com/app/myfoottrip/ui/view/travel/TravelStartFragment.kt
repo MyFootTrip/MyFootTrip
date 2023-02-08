@@ -12,7 +12,7 @@ import com.app.myfoottrip.ui.base.BaseFragment
 
 private const val TAG = "TravelStartFragment_싸피"
 class TravelStartFragment :BaseFragment<FragmentTravelStartBinding>(
-    FragmentTravelStartBinding::bind, R.layout.fragment_travel_start
+    FragmentTravelStartBinding::inflate
 ){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

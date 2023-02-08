@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "EditAccountFragment_마이풋트립"
 
 class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
-    FragmentEditAccountBinding::bind, R.layout.fragment_edit_account
+    FragmentEditAccountBinding::inflate
 ) {
 
     private lateinit var mainActivity: MainActivity

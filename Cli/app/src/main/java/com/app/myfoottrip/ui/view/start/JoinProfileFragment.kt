@@ -127,7 +127,6 @@ class JoinProfileFragment : Fragment() {
             val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
             val body = MultipartBody.Part.createFormData("profileImg", file.name, requestFile)
             joinViewModel.setUserImageUriToMultipart(body)
-            Log.d(TAG, "userProfileImageObserver: $")
         }
     } // End of userProfileImageObserver
 

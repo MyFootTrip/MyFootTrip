@@ -33,7 +33,7 @@ import kotlinx.coroutines.*
 private const val TAG = "TravelSelectFragment_싸피"
 
 class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
-    FragmentTravelSelectBinding::bind, R.layout.fragment_travel_select
+    FragmentTravelSelectBinding::inflate
 ) {
     // ViewModel
     private val travelViewModel by viewModels<TravelViewModel>()

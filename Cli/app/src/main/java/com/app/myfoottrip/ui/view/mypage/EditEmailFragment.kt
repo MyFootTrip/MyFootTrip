@@ -13,7 +13,7 @@ import com.app.myfoottrip.ui.view.dialogs.EditSaveDialog
 private const val TAG = "EditEmailFragment_마이풋트립"
 
 class EditEmailFragment : BaseFragment<FragmentEditEmailBinding>(
-    FragmentEditEmailBinding::bind, R.layout.fragment_edit_email
+    FragmentEditEmailBinding::inflate
 ) {
     private val userViewModel by activityViewModels<UserViewModel>()
 

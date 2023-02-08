@@ -32,4 +32,6 @@ interface VisitPlaceDao {
     // 테이블의 데이터 전체 삭제
     @Query("DELETE FROM visit_place")
     fun deleteAllData()
+
+
 } // End of VisitPlaceDao interface

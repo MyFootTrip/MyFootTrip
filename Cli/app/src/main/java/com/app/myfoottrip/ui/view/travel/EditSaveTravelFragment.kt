@@ -1,11 +1,19 @@
 package com.app.myfoottrip.ui.view.travel
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -24,6 +32,7 @@ import com.app.myfoottrip.ui.adapter.TravelEditSaveItemAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.dialogs.EditCustomDialog
 import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
+import com.app.myfoottrip.ui.view.start.JoinProfileFragment
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import com.naver.maps.geometry.LatLng
@@ -40,7 +49,7 @@ import java.util.*
 private const val TAG = "EditSaveTravelFragment_싸피"
 
 class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
-    FragmentEditSaveTravelBinding::bind, R.layout.fragment_edit_save_travel
+    FragmentEditSaveTravelBinding::inflate
 ), OnMapReadyCallback { // End of EditSaveTravelFragment class
     // ViewModel
     private val travelViewModel by viewModels<TravelViewModel>()
@@ -59,9 +68,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     private lateinit var travelEditSaveItemAdapter: TravelEditSaveItemAdapter
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
-
-    private lateinit var view2: View
-    private var savedInstanceState: Bundle? = null
 
     // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
     private var fragmentType = 0
@@ -87,9 +93,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentType = requireArguments().getInt("type")
-
-        view2 = view
-        this.savedInstanceState = savedInstanceState
 
         if (fragmentType == 2) {
             Log.d(TAG, "onViewCreated: 수정 작업니다.")
@@ -217,7 +220,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 // 리사이클러뷰 포지션에 해당하는 수정 버튼을 눌렀을 때 이벤트
 
                 if (fragmentType == 2 && userVisitPlaceDataList.size == 1) {
-                    val editDialog = EditCustomDialog("수정 작업의 경우 데이터가 없을 경우 해당 데이터가 삭제됩니다. 진행하시나요?")
+                    val editDialog = EditCustomDialog(userVisitPlaceDataList[position])
                     editDialog.show(
                         (activity as AppCompatActivity).supportFragmentManager,
                         "editDialog"
@@ -238,11 +241,18 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                         override fun onCancelClicked(dialog: DialogFragment) {
                             editDialog.dismiss()
                         }
+
+                        override fun onImageAddButtonClicked(dialog: DialogFragment) {
+                            // dialog.dialog.findViewById<ImageView>(R.id.image_imageview)
+
+                            TODO("Not yet implemented")
+                            Log.d(TAG, "onImageAddButtonClicked: 아직 구현 안함")
+                        }
                     })
                     return
                 }
 
-                val editDialog = EditCustomDialog("해당 위치를 삭제하시겠습니까?")
+                val editDialog = EditCustomDialog(userVisitPlaceDataList[position])
                 editDialog.show(
                     (activity as AppCompatActivity).supportFragmentManager,
                     "editDialog"
@@ -255,19 +265,64 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                             userVisitPlaceDataList.removeAt(position)
                             recyclerView.adapter!!.notifyDataSetChanged()
                             editDialog.dismiss()
-//                            onMapReady(naverMap)
-//                            setUI()
                         }
                     }
 
                     override fun onCancelClicked(dialog: DialogFragment) {
                         editDialog.dismiss()
                     }
+
+                    // 이미지를 추가하는 버튼을 만들었을 때,
+                    override fun onImageAddButtonClicked(dialog: DialogFragment) {
+                        selectGallery()
+                        dialog.dialog!!.findViewById<RecyclerView>(R.id.place_edit_recyclerview).adapter!!.notifyDataSetChanged()
+                    }
                 })
 
             }
         })
     } // End of adapterEvent
+
+    private fun selectGallery() {
+        val writePermission = ContextCompat.checkSelfPermission(
+            mContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        val readPermission = ContextCompat.checkSelfPermission(
+            mContext, android.Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+
+        if (writePermission == PackageManager.PERMISSION_DENIED || readPermission == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(
+                mContext as Activity, arrayOf(
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                ), JoinProfileFragment.REQ_GALLERY
+            )
+        } else {
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.setDataAndType(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*"
+            )
+            imageResult.launch(intent)
+        }
+    }
+
+    private val imageResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+
+        // 가져온 이미지가 있을 경우 해당 데이터를 불러옴.
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageUri = result.data?.data ?: return@registerForActivityResult
+            // 해당 데이터를 가져옴.
+
+
+        }
+    } // End of registerForActivityResult
+
+    companion object {
+        const val REQ_GALLERY = 1
+    }
 
 
     private fun initRecyclerViewAdapter() {

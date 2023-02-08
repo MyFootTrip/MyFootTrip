@@ -31,7 +31,7 @@ import java.util.*
 
 private const val TAG = "CommentFragment_마이풋트립"
 class CommentFragment : BaseFragment<FragmentCommentBinding>(
-    FragmentCommentBinding::bind, R.layout.fragment_comment
+    FragmentCommentBinding::inflate
 ) {
     private lateinit var mainActivity: MainActivity
 

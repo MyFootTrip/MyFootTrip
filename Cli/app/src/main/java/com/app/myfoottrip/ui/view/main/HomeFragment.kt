@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "HomeFragment_싸피"
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(
-    FragmentHomeBinding::bind, R.layout.fragment_home
+    FragmentHomeBinding::inflate
 ) {
 
     private lateinit var mContext: Context

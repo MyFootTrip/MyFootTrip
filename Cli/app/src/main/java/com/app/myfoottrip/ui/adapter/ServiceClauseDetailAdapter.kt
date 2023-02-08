@@ -30,12 +30,10 @@ class ServiceClauseDetailAdapter(val context: Context, private val list: List<Se
     override fun onBindViewHolder(holder: ServiceClauseTextHolder, position: Int) {
         holder.bindInfo(list[position])
 
-//        binding.serviceClauseSubTitleTv.text = list[position].title.toString()
-//        binding.serviceClauseContentTv.text = list[position].content
-
-        holder.itemView.findViewById<TextView>(R.id.service_clause_sub_title_tv).text = list[position].title.toString()
-        holder.itemView.findViewById<TextView>(R.id.service_clause_content_tv).text = list[position].content.toString()
-
+        holder.itemView.findViewById<TextView>(R.id.service_clause_sub_title_tv).text =
+            list[position].title
+        holder.itemView.findViewById<TextView>(R.id.service_clause_content_tv).text =
+            list[position].content
     }
 
     override fun getItemCount() = list.size

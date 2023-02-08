@@ -30,7 +30,7 @@ import kotlinx.coroutines.*
 private const val TAG = "SplashFragment_마이풋트립"
 
 class SplashFragment : BaseFragment<FragmentSplashBinding>(
-    FragmentSplashBinding::bind, R.layout.fragment_splash
+    FragmentSplashBinding::inflate
 ) {
     private lateinit var startActivity: StartActivity
     private val startViewModel by activityViewModels<StartViewModel>()

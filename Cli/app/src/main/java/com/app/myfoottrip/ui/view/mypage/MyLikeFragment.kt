@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "MyLikeFragment_마이풋트립"
 
 class MyLikeFragment : BaseFragment<FragmentMyLikeBinding>(
-    FragmentMyLikeBinding::bind, R.layout.fragment_my_like
+    FragmentMyLikeBinding::inflate
 ) {
 
     private lateinit var mainActivity: MainActivity

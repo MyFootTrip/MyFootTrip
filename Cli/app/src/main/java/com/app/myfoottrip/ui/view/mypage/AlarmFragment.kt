@@ -28,7 +28,7 @@ import kotlinx.coroutines.withContext
 private const val TAG = "AlarmFragment_마이풋트립"
 
 class AlarmFragment : BaseFragment<FragmentAlarmBinding>(
-    FragmentAlarmBinding::bind, R.layout.fragment_alarm
+    FragmentAlarmBinding::inflate
 ){
     private lateinit var mainActivity: MainActivity
 

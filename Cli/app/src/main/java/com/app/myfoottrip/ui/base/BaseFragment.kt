@@ -15,9 +15,8 @@ import es.dmoral.toasty.Toasty
 typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
 
 abstract class BaseFragment<B : ViewBinding>(
-    private val bind: (View) -> B,
-    @LayoutRes layoutResId: Int
-) : Fragment(layoutResId) { // End of BaseFragment class
+    private val inflate: Inflate<B>
+) : Fragment() { // End of BaseFragment class
     private var _binding: B? = null
     val binding get() = _binding ?: throw IllegalStateException("binding fail")
 
@@ -26,9 +25,9 @@ abstract class BaseFragment<B : ViewBinding>(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = bind(super.onCreateView(inflater, container, savedInstanceState)!!)
+        _binding = inflate.invoke(inflater, container, false)
         return binding.root
-    } // End of onCreateView
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

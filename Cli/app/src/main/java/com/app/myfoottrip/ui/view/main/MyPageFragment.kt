@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "MyPageFragment_마이풋트립"
 
 class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
-    FragmentMyPageBinding::bind, R.layout.fragment_my_page
+    FragmentMyPageBinding::inflate
 ) {
 
     private val tokenViewModel by activityViewModels<TokenViewModel>()
