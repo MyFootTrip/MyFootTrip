@@ -14,10 +14,9 @@ import com.kakao.sdk.template.model.Link
 import retrofit2.http.Url
 import java.util.*
 
-class PlaceImageAdapter(val context: Context) :
+class PlaceImageAdapter(val context: Context, private val imageList: MutableList<Uri>) :
     RecyclerView.Adapter<PlaceImageAdapter.PlaceImageHolder>() {
     private lateinit var binding: ListEditPlaceImageBinding
-    private var tempList: MutableList<Uri> = LinkedList()
 
     inner class PlaceImageHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindInfo(data: Uri) {
@@ -36,23 +35,23 @@ class PlaceImageAdapter(val context: Context) :
 
     override fun onBindViewHolder(holder: PlaceImageHolder, position: Int) {
         holder.itemView.findViewById<ImageView>(R.id.image_imageview)
-            .setImageURI(tempList[position])
+            .setImageURI(imageList[position])
     } // End of onBindViewHolder
 
-    fun addItem(imageUri: Uri) {
-        tempList.add(imageUri)
-        notifyDataSetChanged()
-    } // End of addList
+//    fun addItem(imageUri: Uri) {
+//        imageList.add(imageUri)
+//        notifyDataSetChanged()
+//    } // End of addList
 
-    fun setList(imgeUriList: MutableList<Uri>) {
-        tempList.addAll(imgeUriList)
-        notifyDataSetChanged()
-    } // End of setList
+//    fun setList(imgeUriList: MutableList<Uri>) {
+//        tempList.addAll(imgeUriList)
+//        notifyDataSetChanged()
+//    } // End of setList
 
-    fun removeList(index: Int) {
-        tempList.removeAt(index)
-        notifyDataSetChanged()
-    } // End of removeList
+//    fun removeList(index: Int) {
+//        tempList.removeAt(index)
+//        notifyDataSetChanged()
+//    } // End of removeList
 
-    override fun getItemCount() = tempList.size
+    override fun getItemCount() = imageList.size
 } // End of PlaceImageAdapter class

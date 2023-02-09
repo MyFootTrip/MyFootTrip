@@ -1,14 +1,17 @@
 package com.app.myfoottrip.data.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.myfoottrip.data.dto.Coordinates
 import com.app.myfoottrip.data.dto.Travel
+import com.app.myfoottrip.data.dto.TravelPush
 import com.app.myfoottrip.data.repository.TravelRepository
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 
 private const val TAG = "TravelViewModel_싸피"
 
@@ -32,7 +35,7 @@ class TravelViewModel : ViewModel() {
     val recentCoor: LiveData<Coordinates>
         get() = _recentCoor
 
-    var travelList : ArrayList<Travel> = arrayListOf()
+    var travelList: ArrayList<Travel> = arrayListOf()
 
     fun setRecentCoor(newCoordinates: Coordinates) {
         _recentCoor.postValue(newCoordinates)
@@ -86,9 +89,9 @@ class TravelViewModel : ViewModel() {
     val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = travelRepository.createTravelResponseLiveData
 
-    fun createTravel(travel: Travel) {
+    fun createTravel(imageList: List<List<MultipartBody.Part>>) {
         viewModelScope.launch {
-            travelRepository.createTravel(travel)
+            travelRepository.createTravel(imageList)
         }
     } // End of createTravel
 

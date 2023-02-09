@@ -34,4 +34,9 @@ interface VisitPlaceDao {
     fun deleteAllData()
 
 
+    // 특정 ID값 제거
+
+
+
+
 } // End of VisitPlaceDao interface

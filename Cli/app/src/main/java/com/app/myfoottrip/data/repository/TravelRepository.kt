@@ -1,12 +1,16 @@
 package com.app.myfoottrip.data.repository
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.data.dto.Travel
+import com.app.myfoottrip.data.dto.TravelPush
 import com.app.myfoottrip.network.api.TravelApi
 import com.app.myfoottrip.util.NetworkResult
+import okhttp3.MultipartBody
+import java.io.File
 
 private const val TAG = "TravelRepository_싸피"
 
@@ -85,8 +89,24 @@ class TravelRepository {
     val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _createTravelResponseLiveData
 
-    suspend fun createTravel(travel: Travel) {
-        val response = travelHeaderApi.createTravel(travel)
+    suspend fun createTravel(imageList: List<List<MultipartBody.Part?>>) {
+        // Log.d(TAG, "createTravel: $travel")
+        // Log.d(TAG, "createTravel: ${travel.placeList?.get(0)!!.placeImgList?.get(0) is MultipartBody.Part} " )
+
+        Log.d(TAG, "createTravel: $imageList")
+
+        imageList.forEach {
+            Log.d(TAG, "createTravel: $it")
+        }
+        
+        val response = travelHeaderApi.createTravelTest(imageList)
+        Log.d(TAG, "유저 Travel 생성 : $response")
+//        Log.d(TAG, "유저 Travel 생성 : ${response.body()}")
+//        Log.d(TAG, "유저 Travel 생성 : ${response.message()}")
+//        Log.d(TAG, "유저 Travel 생성 : ${response.headers()}")
+//        Log.d(TAG, "유저 Travel 생성 : ${response.code()}")
+
+
         _createTravelResponseLiveData.postValue(NetworkResult.Loading())
 
         if (response.isSuccessful) {
