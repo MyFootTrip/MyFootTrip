@@ -56,7 +56,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         super.onAttach(context)
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                navigationViewModel.type = 0
                 findNavController().popBackStack()
             }
         }
@@ -109,7 +108,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         initAdapter()
 
         binding.ivBack.setOnClickListener {
-            navigationViewModel.type = 0
             findNavController().popBackStack()
         }
 

@@ -79,7 +79,6 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
                     mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort).dismiss()
                 }
                 findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment, bundle)
-                navigationViewModel.type = 0
             }
         }
     }
@@ -90,11 +89,13 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
             val checked = item.setChecked(true)
             when (checked.itemId) {
                 R.id.homeFragment -> {
+                    navigationViewModel.type = 0
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.nav_bottom_fragment, HomeFragment()).commit()
                     true
                 }
                 R.id.mypageFragment -> {
+                    navigationViewModel.type = 1
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.nav_bottom_fragment, MyPageFragment()).commit()
                     if (mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort) != null){
