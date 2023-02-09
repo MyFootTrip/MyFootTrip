@@ -24,6 +24,7 @@ import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.dto.VisitPlace
+import com.app.myfoottrip.data.viewmodel.EditSaveViewModel
 import com.app.myfoottrip.data.viewmodel.TravelActivityViewModel
 import com.app.myfoottrip.data.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentEditSaveTravelBinding
@@ -56,17 +57,30 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     // ActivityViewModel
     private val travelActivityViewModel by activityViewModels<TravelActivityViewModel>()
 
+    // Naver지도
     lateinit var mapView: MapView
-    private lateinit var mContext: Context
-    lateinit var visitPlaceRepository: VisitPlaceRepository
-
-    private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
-    private var userVisitPlaceDataList: MutableList<VisitPlace> = LinkedList()
-    private var userTravelData: Travel? = null
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var travelEditSaveItemAdapter: TravelEditSaveItemAdapter
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
+
+    // Context
+    private lateinit var mContext: Context
+
+    // RoomDB
+    lateinit var visitPlaceRepository: VisitPlaceRepository
+
+    // BackButton
+    private lateinit var joinBackButtonCustomView: JoinBackButtonCustomView
+
+    // 유저 VisitPlaceList (유저가 방문한 좌표 데이터 리스트들 <- 리사이클러뷰에 들어갈 데이터임)
+    private var userVisitPlaceDataList: MutableList<VisitPlace> = LinkedList()
+
+    // 전체 Travel데이터 (수정 작업일 경우 가져오는 데이터 이기도 하고, 마지막에 저장할때 쓰이는 데이터임)
+    private var userTravelData: Travel? = null
+
+    // 리사이클러뷰
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var travelEditSaveItemAdapter: TravelEditSaveItemAdapter
+
 
     // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
     private var fragmentType = 0
@@ -81,7 +95,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         } catch (E: java.lang.ClassCastException) {
             (context.toString() + "must implement NoticeDialogListener")
         }
-
     } // End of onAttach
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,6 +105,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentType = requireArguments().getInt("type")
+
 
         if (fragmentType == 2) {
             Log.d(TAG, "onViewCreated: 수정 작업니다.")
@@ -238,40 +252,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             override fun onEditButtonClick(position: Int, placeData: VisitPlace) {
                 // 리사이클러뷰 포지션에 해당하는 수정 버튼을 눌렀을 때 이벤트
 
-
-                // 수정 작업일때 ,
-//                if (fragmentType == 2) {
-//                    val editDialog = EditCustomDialog(userVisitPlaceDataList[position])
-//                    editDialog.show(
-//                        (activity as AppCompatActivity).supportFragmentManager,
-//                        "editDialog"
-//                    )
-//
-//                    editDialog.setItemClickListener(object : EditCustomDialog.ItemClickListener {
-//                        override suspend fun onSaveClicked() {
-//
-//
-//                        }
-//
-//                        override suspend fun onDeleteClicked() {
-//                            // 데이터 전체를 새로 UI를 호출함
-//                            CoroutineScope(Dispatchers.Main).launch {
-//                                userVisitPlaceDataList.removeAt(position)
-//                                CoroutineScope(Dispatchers.IO).launch {
-//                                    travelDataDelete()
-//                                }
-//                            }
-//                            editDialog.dismiss()
-//                        }
-//
-//                        override suspend fun onImageAddButtonClicked() {
-//                            // dialog.dialog.findViewById<ImageView>(R.id.image_imageview)
-//                            Log.d(TAG, "onImageAddButtonClicked: 아직 구현 안함")
-//                        }
-//                    })
-//                    return
-//                }
-
+                // 다이얼로그의 이벤트를 기준으로 데이터를 처리함.
                 val editDialog = EditCustomDialog(userVisitPlaceDataList[position])
                 editDialog.show(
                     (activity as AppCompatActivity).supportFragmentManager,
@@ -280,10 +261,11 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
                 editDialog.setItemClickListener(object : EditCustomDialog.ItemClickListener {
                     override suspend fun onSaveClicked() {
-
+                        // Nothing
+                        editDialog.dismiss()
                     }
 
-                    override  suspend fun onDeleteClicked() {
+                    override suspend fun onDeleteClicked() {
                         withContext(Dispatchers.IO) {
                             userVisitPlaceDataList.removeAt(position)
                         }
@@ -293,58 +275,11 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                             editDialog.dismiss()
                         }
                     }
-
-                    // 이미지를 추가하는 버튼을 만들었을 때,
-                    override suspend fun onImageAddButtonClicked() {
-                        selectGallery()
-                        editDialog.dialog!!.findViewById<RecyclerView>(R.id.place_edit_recyclerview).adapter!!.notifyDataSetChanged()
-                    }
                 })
 
             }
         })
     } // End of adapterEvent
-
-    private fun selectGallery() {
-        val writePermission = ContextCompat.checkSelfPermission(
-            mContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-        val readPermission = ContextCompat.checkSelfPermission(
-            mContext, android.Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-
-        if (writePermission == PackageManager.PERMISSION_DENIED || readPermission == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(
-                mContext as Activity, arrayOf(
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                ), JoinProfileFragment.REQ_GALLERY
-            )
-        } else {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.setDataAndType(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*"
-            )
-            imageResult.launch(intent)
-        }
-    }
-
-    private val imageResult = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-
-        // 가져온 이미지가 있을 경우 해당 데이터를 불러옴.
-        if (result.resultCode == Activity.RESULT_OK) {
-            val imageUri = result.data?.data ?: return@registerForActivityResult
-            // 해당 데이터를 가져옴.
-
-
-        }
-    } // End of registerForActivityResult
-
-    companion object {
-        const val REQ_GALLERY = 1
-    }
 
 
     private fun initRecyclerViewAdapter() {
@@ -386,7 +321,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         joinBackButtonCustomView = binding.joinBackButtonCustomview
         joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
             .setOnClickListener {
-
                 findNavController().popBackStack()
             }
     } // End of buttonEvents
@@ -427,12 +361,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             }
         }
     } // End of updateTravel
-
-    private suspend fun travelDataDelete() {
-        CoroutineScope(Dispatchers.IO).launch {
-            travelViewModel.userTravelDataDelete(travelActivityViewModel.userTravelData.value!!.travelId!!)
-        }
-    } // End of travelDataDelete
 
     private suspend fun getSqlLiteAllData(): MutableList<VisitPlace> {
         var placeList: MutableList<VisitPlace> = LinkedList()

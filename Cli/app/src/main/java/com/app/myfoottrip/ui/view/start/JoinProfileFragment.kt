@@ -133,5 +133,4 @@ class JoinProfileFragment : Fragment() {
     companion object {
         const val REQ_GALLERY = 1
     }
-
 } // End of JoinProfileFragment class

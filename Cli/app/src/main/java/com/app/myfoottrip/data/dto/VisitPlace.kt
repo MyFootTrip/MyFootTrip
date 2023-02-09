@@ -13,7 +13,7 @@ data class VisitPlace(
     val lat: Double, //위도
     val lng: Double, //경도
     val date: Long? = 0, //기록 시간
-    val imgList: MutableList<Uri> = LinkedList(),
+    var imgList: MutableList<Uri> = LinkedList(),
     val content: String? = "",
     val placeName: String? = ""
 ) {

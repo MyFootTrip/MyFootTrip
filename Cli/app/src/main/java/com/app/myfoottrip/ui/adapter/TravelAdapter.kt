@@ -126,6 +126,4 @@ class TravelAdapter(
     }
 
     override fun getItemCount(): Int = travelList.size
-
-
 } // End of TravelAdapter class

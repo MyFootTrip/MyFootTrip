@@ -118,9 +118,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                                     }
                                 }
 
-                                val flg = job.start()
-
-                                if(flg == false) {
+                                if(job.start() == false) {
                                     // 해당 좌표를 지도에 표시
                                     withContext(Dispatchers.Main) {
                                         requireActivity().runOnUiThread {

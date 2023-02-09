@@ -43,11 +43,6 @@ class TravelViewModel : ViewModel() {
     val travelData: LiveData<Travel>
         get() = _travelData
 
-
-//    //유저별 여정 조회 값
-//    val travelUserData: LiveData<NetworkResult<ArrayList<Travel>>>
-//        get() = travelRepository.travelListResponseLiveData
-
     fun setCreateTravelResponseLiveData() {
         travelRepository.setCreateTravelResponseLiveData()
     } // End of setCreateTravelResponseLiveData
