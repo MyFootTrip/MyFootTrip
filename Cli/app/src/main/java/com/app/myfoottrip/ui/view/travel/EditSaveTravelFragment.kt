@@ -74,7 +74,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     // 전체 Travel데이터 (수정 작업일 경우 가져오는 데이터 이기도 하고, 마지막에 저장할때 쓰이는 데이터임)
     private var userTravelData: Travel? = null
     private var userTravelPushData: TravelPush? = null
-    private var userImageList: MutableList<MutableList<MultipartBody.Part>>? = null
+    private var userImageList: MutableList<MultipartBody.Part>? = null
 
 
     // 리사이클러뷰
@@ -230,17 +230,12 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
         // PlacePush를 담을 List
         val tempList: MutableList<PlacePush> = ArrayList()
-
         userImageList = LinkedList()
+
         val size = userVisitPlaceDataList.size
         for (i in 0 until size) {
-            userImageList!!.add(LinkedList())
-
             val temp = userVisitPlaceDataList[i]
 
-            Log.d(TAG, "여기까지는 오나?: $temp")
-
-            val imageMultipartTypeList: MutableList<MultipartBody.Part> = LinkedList()
             val tempSize = temp.imgList.size
             for (j in 0 until tempSize) {
                 val uri = temp.imgList[j]
@@ -251,26 +246,16 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                     )
                 )
 
-                Log.d(TAG, "file : $file")
-
+                val fileName = "${i}_${j}placePhoto.jpg"
                 val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
-                val body = MultipartBody.Part.createFormData("placeImgList", file.name, requestFile)
-                imageMultipartTypeList.add(body)
-
-                userImageList!![i].add(body)
-            }
-
-            imageMultipartTypeList.forEach {
-                Log.d(TAG, "changePushDto: ${it.body.contentType()}")
-                Log.d(TAG, "changePushDto: ${it.body.isDuplex()}")
-                Log.d(TAG, "changePushDto: ${it.body.toString()}")
-                Log.d(TAG, "changePushDto: ${it.body.isOneShot()}")
+                val body = MultipartBody.Part.createFormData("placeImgList", fileName, requestFile)
+                userImageList!!.add(body)
             }
 
             tempList.add(
                 PlacePush(
                     null, "", temp.date?.let { Date(it) }, "", // 일단 처음에는 메모 빈 값
-                    imageMultipartTypeList, // 일단 빈 이미지를 넣어야됨
+                    ArrayList(), // 일단 빈 이미지를 넣어야됨
                     temp.lat, // 좌표
                     temp.lng, // 좌표
                     temp.address
@@ -281,13 +266,13 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         //Log.d(TAG, "완성된 PlacePush List : $tempList")
 
         // VisitPlace -> Travel 객체
-//        userTravelPushData = TravelPush(
-//            travelId,
-//            travelActivityViewModel.locationList,
-//            userVisitPlaceDataList[0].date?.let { Date(it) }, // 처음 시작 저장 시간
-//            Date(System.currentTimeMillis()), // 마지막 저장 시간
-//            tempList
-//        )
+        userTravelPushData = TravelPush(
+            travelId,
+            travelActivityViewModel.locationList,
+            userVisitPlaceDataList[0].date?.let { Date(it) }, // 처음 시작 저장 시간
+            Date(System.currentTimeMillis()), // 마지막 저장 시간
+            tempList
+        )
     }  // End of changePushDto
 
 
@@ -428,13 +413,17 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 }
 
                 defferedGetData.await()
-                Log.d(TAG, " 여기 까지는 오나 ? $userVisitPlaceDataList")
 
                 // 통신을 위한 DTO로 수정함
                 changePushDto()
 
+                Log.d(TAG, "createTravel: $userTravelPushData")
 
-                userImageList?.let { travelViewModel.createTravel(it) }
+                userImageList?.let { userTravelPushData?.let { it1 ->
+                    travelViewModel.createTravel(it,
+                        it1
+                    )
+                } }
 
                 // userTravelPushData?.let { travelViewModel.createTravel(it) }
             }

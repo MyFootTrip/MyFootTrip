@@ -1,8 +1,10 @@
 package com.app.myfoottrip.data.dto
 
+import androidx.annotation.Keep
 import okhttp3.MultipartBody
 import java.util.*
 
+@Keep
 data class PlacePush @JvmOverloads constructor(
     var placeId: Int? = 0, //장소 아이디
     var placeName: String? = "", //장소 이름
@@ -12,4 +14,4 @@ data class PlacePush @JvmOverloads constructor(
     var latitude: Double? = 0.0, //위도
     var longitude: Double? = 0.0, //경도
     var address: String? = "", //해당 위치 주소
-)  // End of TravelPush
+) : java.io.Serializable // End of TravelPush

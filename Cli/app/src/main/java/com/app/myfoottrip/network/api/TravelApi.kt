@@ -9,9 +9,12 @@ import retrofit2.http.*
 
 interface TravelApi {
     // 여정 생성
+    @Multipart
+    @JvmSuppressWildcards
     @POST("/community/travel/create/")
     suspend fun createTravel(
-        @Body travel: Travel
+        @Part imageList: List<MultipartBody.Part?>,
+        @PartMap travel : HashMap<String, RequestBody>
     ): Response<Void>
 
     // 생성 테스트
@@ -19,7 +22,7 @@ interface TravelApi {
     @JvmSuppressWildcards
     @POST("/accounts/testing/")
     suspend fun createTravelTest(
-        @Part("imageList") imageList: List<List<MultipartBody.Part?>>,
+        @Part imageList: List<MultipartBody.Part?>,
     ): Response<Void>
 
     //유저별 여정 조회

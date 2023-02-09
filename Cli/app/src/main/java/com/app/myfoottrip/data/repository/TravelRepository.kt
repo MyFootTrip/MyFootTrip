@@ -10,6 +10,7 @@ import com.app.myfoottrip.data.dto.TravelPush
 import com.app.myfoottrip.network.api.TravelApi
 import com.app.myfoottrip.util.NetworkResult
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import java.io.File
 
 private const val TAG = "TravelRepository_싸피"
@@ -89,7 +90,7 @@ class TravelRepository {
     val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _createTravelResponseLiveData
 
-    suspend fun createTravel(imageList: List<List<MultipartBody.Part?>>) {
+    suspend fun createTravel(imageList: List<MultipartBody.Part?>, requestHashMap : HashMap<String, RequestBody>) {
         // Log.d(TAG, "createTravel: $travel")
         // Log.d(TAG, "createTravel: ${travel.placeList?.get(0)!!.placeImgList?.get(0) is MultipartBody.Part} " )
 
@@ -99,7 +100,7 @@ class TravelRepository {
             Log.d(TAG, "createTravel: $it")
         }
         
-        val response = travelHeaderApi.createTravelTest(imageList)
+        val response = travelHeaderApi.createTravel(imageList, requestHashMap)
         Log.d(TAG, "유저 Travel 생성 : $response")
 //        Log.d(TAG, "유저 Travel 생성 : ${response.body()}")
 //        Log.d(TAG, "유저 Travel 생성 : ${response.message()}")
@@ -135,9 +136,6 @@ class TravelRepository {
     suspend fun userTravelDataUpdate(travelId: Int, updateTravelData: Travel) {
         val response = travelHeaderApi.updateTravel(travelId, updateTravelData)
 
-        Log.d(TAG, "userTravelDataUpdate: $response")
-        Log.d(TAG, "userTravelDataUpdate: ${response.body()}")
-        Log.d(TAG, "userTravelDataUpdate: ${response.message()}")
 
         // 처음은 Loading 상태로 지정
         _userTravelDataUpdateResponseLiveData.postValue(NetworkResult.Loading())

@@ -1,6 +1,7 @@
 package com.app.myfoottrip.data.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,8 +11,22 @@ import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.dto.TravelPush
 import com.app.myfoottrip.data.repository.TravelRepository
 import com.app.myfoottrip.util.NetworkResult
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
+import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 private const val TAG = "TravelViewModel_싸피"
 
@@ -89,9 +104,46 @@ class TravelViewModel : ViewModel() {
     val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = travelRepository.createTravelResponseLiveData
 
-    fun createTravel(imageList: List<List<MultipartBody.Part>>) {
+    fun createTravel(imageList: List<MultipartBody.Part>, travelData : TravelPush) {
+        var requestHashMap: HashMap<String, RequestBody> = HashMap()
+
+        val sdf = SimpleDateFormat("YYYY-MM-dd HH:mm:ss", Locale("ko", "KR"))
+        val startDateString = travelData.startDate?.let { sdf.format(it) }
+        val endDateString =  travelData.endDate?.let { sdf.format(it) }
+
+        Log.d(TAG, "startDateString: ${startDateString}")
+        Log.d(TAG, "endDateString: ${endDateString}")
+
+        val locationList = JSONArray(travelData.location)
+        requestHashMap["location"] =
+            locationList.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        requestHashMap["startDate"] = startDateString!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        requestHashMap["endDate"] = endDateString!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+
+//        val placeListJson = JSONArray(travelData.placeList.toString())
+//        Log.d(TAG, "placeListJson: ${travelData.placeList}")
+//        Log.d(TAG, "placeListJson: $placeListJson")
+
+
+        val jsonArray = JSONArray()
+        for(i in 0 until travelData.placeList!!.size) {
+            val temp = travelData.placeList!![i]
+            val json = JsonPrimitive(temp.toString())
+            jsonArray.put(json)
+        }
+
+
+        Log.d(TAG, "jsonArray: $jsonArray")
+        requestHashMap["placeList"] = jsonArray.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+
+
+
+        val gson = GsonBuilder().create()
+       // val theList = gson.fromJson<ArrayList<String>>(locationList, object : TypeToken<ArrayList<String>>(){}.type)
+
+
         viewModelScope.launch {
-            travelRepository.createTravel(imageList)
+            travelRepository.createTravel(imageList, requestHashMap)
         }
     } // End of createTravel
 
