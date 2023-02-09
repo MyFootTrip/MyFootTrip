@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
@@ -42,10 +43,18 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
     private lateinit var commentAdapter: CommentAdapter
     private var isWrite = false
 
+    private lateinit var callback: OnBackPressedCallback
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-    }
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,6 +71,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
 
     override fun onDetach() {
         super.onDetach()
+        callback.remove()
     } // End of onDetach
 
     private fun init(){

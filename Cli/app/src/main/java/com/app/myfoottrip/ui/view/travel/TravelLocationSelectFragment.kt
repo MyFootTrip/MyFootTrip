@@ -72,9 +72,17 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
     private var fragmentType = 0
 
+    private lateinit var callback: OnBackPressedCallback
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     } // End of onAttach
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -155,6 +163,11 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         binding.progressBar.visibility = View.GONE
         binding.allConstrainlayout.visibility = View.VISIBLE
     } // End of onViewCreated
+
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
+    } // End of onDetach
 
     private fun saveRoomDB() = CoroutineScope(Dispatchers.IO).launch {
         val size = travelActivityViewModel.userTravelData.value!!.placeList!!.size

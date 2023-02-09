@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -17,18 +18,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
+import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentHomeBinding
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
 import com.app.myfoottrip.ui.adapter.HomeAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.CommonUtils
 import com.app.myfoottrip.util.NetworkResult
+import com.app.myfoottrip.util.showSnackBarMessage
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private const val TAG = "HomeFragment_싸피"
+private const val TAG = "HomeFragment_마이풋트립"
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(
     FragmentHomeBinding::bind, R.layout.fragment_home
@@ -45,12 +48,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     var detector: GestureDetector? = null
 
     var waitTime = 0L
+    private lateinit var callback: OnBackPressedCallback
     private lateinit var mainActivity: MainActivity
 
+
+    private val navigationViewModel by activityViewModels<NavigationViewModel>()
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-    }
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if(System.currentTimeMillis() - waitTime >=1500 ) {
+                    waitTime = System.currentTimeMillis()
+                    requireView().showSnackBarMessage("뒤로가기 버튼을 한번 더 누르시면 종료됩니다.")
+                } else {
+                    mainActivity.finish() // 액티비티 종료
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -67,9 +84,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             val bundle = bundleOf("type" to 2)
             binding.spinnerSort.dismiss()
             findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment, bundle)
+            navigationViewModel.type = 0
         }
 
     } // End of onViewCreated
+
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
+    } // End of onDetach
 
     private fun init() {
         getData()
@@ -103,6 +126,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 boardViewModel.boardId = boardId
                 binding.spinnerSort.dismiss()
                 findNavController().navigate(R.id.action_mainFragment_to_boardFragment)
+                navigationViewModel.type = 0
             }
         })
 

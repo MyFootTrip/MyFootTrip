@@ -2,6 +2,7 @@ package com.app.myfoottrip.ui.view.mypage
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
@@ -20,7 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
+private const val TAG = "MyWriteFragment_마이풋트립"
 class MyWriteFragment : BaseFragment<FragmentMyWriteBinding>(
     FragmentMyWriteBinding::bind, R.layout.fragment_my_write
 ) {
@@ -78,6 +79,7 @@ class MyWriteFragment : BaseFragment<FragmentMyWriteBinding>(
             override fun onClick(view: View, position: Int, boardId: Int) {
                 boardViewModel.boardId = boardId
                 navigationViewModel.type = 3
+                Log.d(TAG, "onClick: ${boardViewModel.boardId}")
                 findNavController().navigate(R.id.action_myWriteFragment_to_boardFragment)
             }
         })

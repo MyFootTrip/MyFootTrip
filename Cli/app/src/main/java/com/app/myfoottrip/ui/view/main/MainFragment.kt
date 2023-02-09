@@ -79,6 +79,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>(
                     mainActivity.findViewById<PowerSpinnerView>(R.id.spinner_sort).dismiss()
                 }
                 findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment, bundle)
+                navigationViewModel.type = 0
             }
         }
     }

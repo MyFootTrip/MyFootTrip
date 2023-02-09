@@ -122,6 +122,8 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
     } // End of onViewCreated
 
+
+
     private fun buttonSetTextObserve() {
         travelViewModel.userTravelDataNewOrUpdateCheck.observe(viewLifecycleOwner) {
             Log.d(TAG, "buttonSetTextObserve: 이거 왜 동작함?")

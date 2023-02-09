@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
@@ -16,6 +17,7 @@ import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMyPageBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.NetworkResult
+import com.app.myfoottrip.util.showSnackBarMessage
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.CoroutineScope
@@ -32,14 +34,26 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
     private val userViewModel by activityViewModels<UserViewModel>()
 
     var waitTime = 0L
-    private lateinit var mainActivity: MainActivity
-
     private val alarmViewModel by activityViewModels<AlarmViewModel>()
+
+    private lateinit var callback: OnBackPressedCallback
+    private lateinit var mainActivity: MainActivity
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-    }
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if(System.currentTimeMillis() - waitTime >=1500 ) {
+                    waitTime = System.currentTimeMillis()
+                    requireView().showSnackBarMessage("뒤로가기 버튼을 한번 더 누르시면 종료됩니다.")
+                } else {
+                    mainActivity.finish() // 액티비티 종료
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -72,6 +86,11 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
             }
         }
     }
+
+    override fun onDetach() {
+        super.onDetach()
+        callback.remove()
+    } // End of onDetach
 
     private fun init() {
         binding.ivILikedImage.setMaxProgress(0.6f) //좋아요 애니메이션 세팅

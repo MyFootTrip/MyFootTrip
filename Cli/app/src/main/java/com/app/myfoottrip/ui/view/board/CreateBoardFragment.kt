@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
@@ -49,6 +50,8 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
 
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
 
+    private lateinit var callback: OnBackPressedCallback
+
     //-----
     private val imageLauncher = registerForActivityResult( //갤러리에서 선택하면 불러올 launcher
         ActivityResultContracts.StartActivityForResult()
@@ -64,11 +67,16 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
         }
     }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-    }
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -104,7 +112,8 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
 
     override fun onDetach() {
         super.onDetach()
-    }
+        callback.remove()
+    } // End of onDetach
 
     private fun init() {
         val uri =

@@ -5,6 +5,9 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
@@ -54,18 +57,30 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
     private val boardViewModel by activityViewModels<BoardViewModel>()
     private val userViewModel by activityViewModels<UserViewModel>()
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
+
+    private lateinit var callback: OnBackPressedCallback
+
+    lateinit var fadeInAnim : Animation
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = context as MainActivity
-    }
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (navigationViewModel.type == 3) navigationViewModel.type = 1
+                else navigationViewModel.type = 0
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    } // End of onAttach
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initObserver()
 
         init()
-
+        
         binding.apply {
             ivBack.setOnClickListener { //뒤로가기
                 if (navigationViewModel.type == 3) navigationViewModel.type = 1
@@ -105,7 +120,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
     override fun onDetach() {
         super.onDetach()
-    }
+        callback.remove()
+    } // End of onDetach
 
     private fun init(){
         binding.svBoard.visibility = View.INVISIBLE
@@ -155,6 +171,8 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
                 lottieLike.progress = 0f
                 lottieLike.pauseAnimation()
             }
+            fadeInAnim = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+            binding.svBoard.startAnimation(fadeInAnim)
         }
     }
 
@@ -331,10 +349,11 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         boardViewModel.board.observe(viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
-                    boardViewModel.board.value?.data = it.data!!
-                    initData()
-                    boardViewModel.boardId = it.data!!.boardId
-                    initMapScroll()
+                    if(it.data!!.boardId == boardViewModel.boardId){
+                        boardViewModel.board.value?.data = it.data!!
+                        initData()
+                        initMapScroll()
+                    }
                 }
                 is NetworkResult.Error -> {
                 }
