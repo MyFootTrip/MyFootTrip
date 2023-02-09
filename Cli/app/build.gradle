@@ -185,4 +185,8 @@ dependencies {
 
     //badge
     implementation 'com.nex3z:notification-badge:1.0.4'
+
+    // Paging 3
+    def paging_version = "3.0.0"
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 }

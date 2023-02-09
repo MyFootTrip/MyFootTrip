@@ -84,6 +84,11 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
             ivAlarm.setOnClickListener {
                 findNavController().navigate(R.id.action_mainFragment_to_alarmFragment)
             }
+
+            //테스트 페이지
+            testBtn.setOnClickListener {
+                findNavController().navigate(R.id.action_mainFragment_to_testFragment)
+            }
         }
     }
 

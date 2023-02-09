@@ -79,7 +79,6 @@ class MyWriteFragment : BaseFragment<FragmentMyWriteBinding>(
             override fun onClick(view: View, position: Int, boardId: Int) {
                 boardViewModel.boardId = boardId
                 navigationViewModel.type = 3
-                Log.d(TAG, "onClick: ${boardViewModel.boardId}")
                 findNavController().navigate(R.id.action_myWriteFragment_to_boardFragment)
             }
         })
