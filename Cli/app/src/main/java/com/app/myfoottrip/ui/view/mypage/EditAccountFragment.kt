@@ -102,6 +102,11 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
             chipEditPassword.setOnClickListener {
                 findNavController().navigate(R.id.action_editAccountFragment_to_editPasswordFragment)
             }
+
+            //프로필 이미지 변경 페이지로 이동
+            cvProfileLayout.setOnClickListener {
+                findNavController().navigate(R.id.action_editAccountFragment_to_editProfileImageFragment)
+            }
         }
     } // End of onViewCreated
 

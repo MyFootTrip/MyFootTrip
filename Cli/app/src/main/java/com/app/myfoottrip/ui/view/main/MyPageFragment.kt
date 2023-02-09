@@ -34,7 +34,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
     var waitTime = 0L
     private lateinit var mainActivity: MainActivity
 
-    private val alarmCount = 0 //알림 카운트
     private val alarmViewModel by activityViewModels<AlarmViewModel>()
 
     override fun onAttach(context: Context) {

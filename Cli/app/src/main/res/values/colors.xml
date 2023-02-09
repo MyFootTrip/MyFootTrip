@@ -37,4 +37,17 @@
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
+
+    <!--trasnparent-->
+    <color name="transparent_100">#FF000000</color>
+    <color name="transparent_95">#F2000000</color>
+    <color name="transparent_90">#E6000000</color>
+    <color name="transparent_80">#CC000000</color>
+    <color name="transparent_70">#B3000000</color>
+    <color name="transparent_60">#99000000</color>
+    <color name="transparent_50">#80000000</color>
+    <color name="transparent_40">#66000000</color>
+    <color name="transparent_30">#4D000000</color>
+    <color name="transparent_20">#33000000</color>
+    <color name="transparent_10">#1A000000</color>
 </resources>

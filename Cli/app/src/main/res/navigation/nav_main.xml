@@ -175,6 +175,13 @@
                 app:popEnterAnim="@anim/enter_left_anim"
                 app:popExitAnim="@anim/exit_right_anim"
                 app:destination="@id/editPasswordFragment" />
+        <action
+            android:id="@+id/action_editAccountFragment_to_editProfileImageFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
+            app:destination="@id/editProfileImageFragment" />
     </fragment>
 
     <fragment
@@ -239,7 +246,12 @@
         android:id="@+id/alarmFragment"
         android:name="com.app.myfoottrip.ui.view.mypage.AlarmFragment"
         android:label="fragment_alarm"
-        tools:layout="@layout/fragment_alarm" /> <!-- TODO : 체크-->
+        tools:layout="@layout/fragment_alarm" />
+    <fragment
+        android:id="@+id/editProfileImageFragment"
+        android:name="com.app.myfoottrip.ui.view.mypage.EditProfileImageFragment"
+        android:label="fragment_edit_profile_image"
+        tools:layout="@layout/fragment_edit_profile_image" /> <!-- TODO : 체크-->
 
 
 </navigation>

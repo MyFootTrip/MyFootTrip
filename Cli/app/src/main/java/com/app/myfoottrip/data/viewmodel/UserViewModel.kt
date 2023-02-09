@@ -1,5 +1,6 @@
 package com.app.myfoottrip.data.viewmodel
 
+import android.net.Uri
 import android.provider.ContactsContract.CommonDataKinds.Nickname
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -42,6 +43,11 @@ class UserViewModel : ViewModel() {
     private val _userProfileImageMultipartBody = MutableLiveData<MultipartBody.Part>()
     val userProfileImageMultipartBody: LiveData<MultipartBody.Part>
         get() = _userProfileImageMultipartBody
+
+    // 유저 이미지를 관리하는 LiveData
+    private val _userProfileImage = MutableLiveData<Uri>()
+    val userProfileImage: LiveData<Uri>
+        get() = _userProfileImage
 
     val updateIdResponseLiveData: LiveData<NetworkResult<Int>>
     get() = userRepository.userIdUpdateResponseLiveData
@@ -97,5 +103,13 @@ class UserViewModel : ViewModel() {
             userRepository.updatePass(password, passwordConfirm)
         }
     }
+
+    fun setUserImageUri(imageUri: Uri) {
+        _userProfileImage.value = imageUri
+    } // End of setUserImageUri
+
+    fun setUserImageUriToMultipart(imageUri: MultipartBody.Part) {
+        _userProfileImageMultipartBody.value = imageUri
+    } // End of setUserImageUri
 
 } // End of UserViewModel class

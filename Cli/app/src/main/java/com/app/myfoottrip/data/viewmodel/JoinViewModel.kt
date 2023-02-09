@@ -2,6 +2,7 @@ package com.app.myfoottrip.data.viewmodel
 
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,7 +18,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-private const val TAG = "싸피"
+private const val TAG = "JoinViewModel_마이풋트립"
 
 class JoinViewModel : ViewModel() {
     private val userRepository = UserRepository()
