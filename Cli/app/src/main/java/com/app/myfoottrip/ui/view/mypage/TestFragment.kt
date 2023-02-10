@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.TestViewModel
 import com.app.myfoottrip.databinding.FragmentTestBinding
+import com.app.myfoottrip.ui.adapter.HomeAdapter
 import com.app.myfoottrip.ui.adapter.TestPagingDataAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity
@@ -46,8 +47,20 @@ class TestFragment : BaseFragment<FragmentTestBinding>(
         binding.apply {
             ivBack.setOnClickListener {
                 findNavController().popBackStack()
+
             }
             rvTest.adapter = testAdapter
+            rvTest.setHasFixedSize(true)
+
+            testAdapter.setItemClickListener(object : TestPagingDataAdapter.ItemClickListener {
+                override fun onClick(view: View, position: Int, boardId: Int) {
+//                    boardViewModel.boardId = boardId
+//                    binding.spinnerSort.dismiss()
+//                    findNavController().navigate(R.id.action_mainFragment_to_boardFragment)
+//                    navigationViewModel.type = 0
+                    Log.d(TAG, "게시물 클릭: ${boardId}가 클릭됨")
+                }
+            })
         }
 
 

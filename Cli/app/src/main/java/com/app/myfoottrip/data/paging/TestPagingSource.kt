@@ -3,6 +3,7 @@ package com.app.myfoottrip.data.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.app.myfoottrip.data.dto.Board
+import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.network.service.TestService
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
@@ -10,6 +11,8 @@ import java.io.IOException
 
 class TestPagingSource(
     private val testService: TestService,
+//    private val filter: Filter,
+//    private val sortedType: Int
 ) : PagingSource<Int, Board>() {
     override fun getRefreshKey(state: PagingState<Int, Board>): Int? {
         return null
@@ -21,13 +24,13 @@ class TestPagingSource(
         return try {
             delay(1000)
             // 키 값이 없을 경우 기본값을 사용함
-            val position = params.key ?: 1
+            val currentPage = params.key ?: 1
 
             // 데이터를 제공하는 인스턴스의 메소드 사용
-            val response = testService.getBoardList()
-            val post = response.body()?: emptyList()
+            val response = testService.getBoardList(currentPage, periodList = arrayListOf(), ageList = arrayListOf(), themeList = arrayListOf("기타"), regionList = arrayListOf(), sortedType = 1)
+            val data = response.body()?: emptyList()
             val responseData = mutableListOf<Board>()
-            responseData.addAll(post)
+            responseData.addAll(data)
             /* 로드에 성공 시 LoadResult.Page 반환
             data : 전송되는 데이터
             prevKey : 이전 값 (위 스크롤 방향)
@@ -39,7 +42,7 @@ class TestPagingSource(
                 if (responseData.isEmpty()) {
                     null
                 } else {
-                    position + 1
+                    currentPage + 1
                 }
 
             LoadResult.Page(

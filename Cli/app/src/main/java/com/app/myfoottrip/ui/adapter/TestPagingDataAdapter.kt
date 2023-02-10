@@ -20,7 +20,7 @@ import com.bumptech.glide.request.RequestOptions
 private const val TAG = "TestPagingDataAdapter_마이풋트립"
 class TestPagingDataAdapter: PagingDataAdapter<Board,TestPagingDataAdapter.TestViewHolder>(
     IMAGE_COMPARATOR) {
-    class TestViewHolder(private val binding : ListItemHomeBinding) : RecyclerView.ViewHolder(binding.root){
+    inner class TestViewHolder(private val binding : ListItemHomeBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(board : Board){
             Log.d("tst5", "bind: ${board.boardId} 바인드됨")
             binding.apply {
@@ -70,26 +70,27 @@ class TestPagingDataAdapter: PagingDataAdapter<Board,TestPagingDataAdapter.TestV
                 itemClickListner.onClick(it, layoutPosition,board.boardId)
             }
         }
-        //클릭 인터페이스 정의 사용하는 곳에서 만들어준다.
-        interface ItemClickListener {
-            fun onClick(view: View, position: Int, boardId : Int)
-        }
+    }
 
-        //클릭리스너 선언
-        private lateinit var itemClickListner: ItemClickListener
-        //클릭리스너 등록 매소드
-        fun setItemClickListener(itemClickListener: ItemClickListener) {
-            this.itemClickListner = itemClickListener
-        }
+    //클릭 인터페이스 정의 사용하는 곳에서 만들어준다.
+    interface ItemClickListener {
+        fun onClick(view: View, position: Int, boardId : Int)
+    }
 
-        //테마 및 지역 #붙인 스트링으로 만들기
-        private fun convertToString(stringList : ArrayList<String>) : String{
-            val sb = StringBuilder()
-            for (str in stringList){
-                sb.append("#${str} ")
-            }
-            return sb.toString()
+    //클릭리스너 선언
+    private lateinit var itemClickListner: ItemClickListener
+    //클릭리스너 등록 매소드
+    fun setItemClickListener(itemClickListener: ItemClickListener) {
+        this.itemClickListner = itemClickListener
+    }
+
+    //테마 및 지역 #붙인 스트링으로 만들기
+    private fun convertToString(stringList : ArrayList<String>) : String{
+        val sb = StringBuilder()
+        for (str in stringList){
+            sb.append("#${str} ")
         }
+        return sb.toString()
     }
 
     // 어떤 xml 으로 뷰 홀더를 생성할지 지정
