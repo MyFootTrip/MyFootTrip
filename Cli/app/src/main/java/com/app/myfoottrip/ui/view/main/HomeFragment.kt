@@ -390,7 +390,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     }
 
     private fun getBoardList(){
-        Log.d(TAG, "필터데이터: $filter")
         boardViewModel.getBoardList(filter)
     }
 

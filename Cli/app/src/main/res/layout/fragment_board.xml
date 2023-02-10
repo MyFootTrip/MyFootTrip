@@ -239,18 +239,6 @@
                 android:background="@color/gray_700"
                 app:layout_constraintTop_toBottomOf="@id/tv_write" />
 
-            <TextView
-                android:id="@+id/tv_content_header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/inter_semibold"
-                android:padding="10dp"
-                android:text="여행 후기"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/base_line" />
-
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_comment"
                 android:layout_width="match_parent"
@@ -260,7 +248,7 @@
                 android:paddingHorizontal="10dp"
                 app:cardCornerRadius="4dp"
                 app:cardElevation="0dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_content_header"
+                app:layout_constraintTop_toBottomOf="@id/base_line"
                 app:strokeColor="@color/gray_80"
                 app:strokeWidth="1dp">
 
@@ -270,6 +258,7 @@
                     android:layout_height="match_parent"
                     android:fontFamily="@font/inter_regular"
                     android:minHeight="100dp"
+                    android:layout_marginTop="10dp"
                     android:paddingVertical="20dp"
                     android:paddingLeft="10dp"
                     android:textColor="@color/black"

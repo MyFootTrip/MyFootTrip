@@ -28,7 +28,7 @@ class BoardPagingSource(
             // 키 값이 없을 경우 기본값을 사용함
             val currentPage = params.key ?: 1
             // 데이터를 제공하는 인스턴스의 메소드 사용
-            val response = boardService.getBoardList(currentPage, periodList = filter.periodList, ageList = filter.ageList, themeList = filter.ageList, regionList = filter.regionList, sortedType = filter.sortedType)
+            val response = boardService.getBoardList(currentPage, periodList = filter.periodList, ageList = filter.ageList, themeList = filter.themeList, regionList = filter.regionList, sortedType = filter.sortedType)
             val data = response.body()?: emptyList()
             val responseData = mutableListOf<Board>()
             responseData.addAll(data)

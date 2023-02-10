@@ -47,6 +47,7 @@
 
         <activity
             android:name=".ui.view.main.MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
@@ -54,6 +55,7 @@
         </activity>
         <activity
             android:name=".ui.view.start.StartActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
