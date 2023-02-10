@@ -42,10 +42,7 @@ class AlarmRepository{
 
     suspend fun alarmDelete(notificationId: Int) {
         val response = headerAlarmService.deleteAlarm(notificationId)
-
-        Log.d(TAG, "userTravelDataDelete: $response")
-        Log.d(TAG, "userTravelDataDelete: ${response.body()}")
-        Log.d(TAG, "userTravelDataDelete: ${response.message()}")
+        Log.d(TAG, "유저 여행 데이터 삭제 요청: $response")
 
         // 처음은 Loading 상태로 지정
         _alarmDeleteResponseLiveData.postValue(NetworkResult.Loading())

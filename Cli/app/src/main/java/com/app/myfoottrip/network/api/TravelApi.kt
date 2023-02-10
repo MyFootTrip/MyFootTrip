@@ -34,10 +34,13 @@ interface TravelApi {
     suspend fun getTravel(@Path("travelId") travelId: Int): Response<Travel>
 
     // 여정 수정
+    @Multipart
+    @JvmSuppressWildcards
     @PUT("/community/travel/detail/{travelId}/")
     suspend fun updateTravel(
         @Path("travelId") travelId: Int,
-        @Body travel: Travel
+        @Part newImageList: List<MultipartBody.Part?>,
+        @PartMap updateTravelRequestHashMap : HashMap<String, RequestBody>
     ): Response<Travel>
 
     // 여정 삭제

@@ -90,7 +90,10 @@ class TravelRepository {
     val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _createTravelResponseLiveData
 
-    suspend fun createTravel(imageList: List<MultipartBody.Part?>, requestHashMap : HashMap<String, RequestBody>) {
+    suspend fun createTravel(
+        imageList: List<MultipartBody.Part?>,
+        requestHashMap: HashMap<String, RequestBody>
+    ) {
         // Log.d(TAG, "createTravel: $travel")
         // Log.d(TAG, "createTravel: ${travel.placeList?.get(0)!!.placeImgList?.get(0) is MultipartBody.Part} " )
 
@@ -99,14 +102,9 @@ class TravelRepository {
         imageList.forEach {
             Log.d(TAG, "createTravel: $it")
         }
-        
+
         val response = travelHeaderApi.createTravel(imageList, requestHashMap)
         Log.d(TAG, "유저 Travel 생성 : $response")
-//        Log.d(TAG, "유저 Travel 생성 : ${response.body()}")
-//        Log.d(TAG, "유저 Travel 생성 : ${response.message()}")
-//        Log.d(TAG, "유저 Travel 생성 : ${response.headers()}")
-//        Log.d(TAG, "유저 Travel 생성 : ${response.code()}")
-
 
         _createTravelResponseLiveData.postValue(NetworkResult.Loading())
 
@@ -133,9 +131,18 @@ class TravelRepository {
     val userTravelDataUpdateResponseLiveData: LiveData<NetworkResult<Travel>>
         get() = _userTravelDataUpdateResponseLiveData
 
-    suspend fun userTravelDataUpdate(travelId: Int, updateTravelData: Travel) {
-        val response = travelHeaderApi.updateTravel(travelId, updateTravelData)
-
+    suspend fun userTravelDataUpdate(
+        travelId: Int,
+        newImageList: List<MultipartBody.Part?>,
+        updateTravelRequestHashMap: HashMap<String, RequestBody>
+    ) {
+        Log.d(TAG, "userTravelDataUpdate: $updateTravelRequestHashMap")
+        
+        val response =
+            travelHeaderApi.updateTravel(travelId, newImageList, updateTravelRequestHashMap)
+        Log.d(TAG, "userTravelDataUpdate: $response")
+        Log.d(TAG, "userTravelDataUpdate: ${response.body()}")
+        Log.d(TAG, "userTravelDataUpdate: ${response.message()}")
 
         // 처음은 Loading 상태로 지정
         _userTravelDataUpdateResponseLiveData.postValue(NetworkResult.Loading())

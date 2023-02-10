@@ -1,0 +1,48 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+    <TextView
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="헤당 데이터를 삭제 하시겠습니까?"
+            android:id="@+id/inform_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/submit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/main"
+            android:text="삭제"
+            app:layout_constraintTop_toTopOf="@id/cancel_button"
+            app:layout_constraintTop_toBottomOf="@id/inform_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@+id/cancel_button"
+            app:layout_constraintHorizontal_bias="0.5" />
+
+    <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginTop="80dp"
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/main"
+            android:text="취소"
+            app:layout_constraintTop_toBottomOf="@id/inform_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textColor="@color/white"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/submit_button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

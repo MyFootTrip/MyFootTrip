@@ -118,11 +118,15 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                                     }
                                 }
 
-                                if(job.start() == false) {
+                                if (job.start() == false) {
                                     // 해당 좌표를 지도에 표시
                                     withContext(Dispatchers.Main) {
                                         requireActivity().runOnUiThread {
-                                            setInMapMarker(LatLng(newCoor.latitude!!, newCoor.longitude!!))
+                                            setInMapMarker(
+                                                LatLng(
+                                                    newCoor.latitude!!, newCoor.longitude!!
+                                                )
+                                            )
                                         }
                                     }
                                 }
@@ -189,7 +193,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 binding.progressBar.visibility = View.VISIBLE
                 binding.allConstrainlayout.visibility = View.GONE
             }
-
 
             val deffered2: Deferred<Int> = async {
                 temp = visitPlaceRepository.getAllVisitPlace()
@@ -294,8 +297,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                     val bundle = bundleOf("type" to fragmentType)
 
                     // 수정하는 페이지로 이동
-                    Navigation.findNavController(binding.fabStop)
-                        .navigate(
+                    Navigation.findNavController(binding.fabStop).navigate(
                             R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment,
                             bundle
                         )
@@ -386,8 +388,9 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         binding.fabStop.isClickable = false
         binding.btnAddPoint.isClickable = false
 
+        // 새로 생성되는 위치에서는 PlaceId를 null값으로 넣음
         val temp = VisitPlace(
-            0, address, lat, lon, System.currentTimeMillis(), LinkedList()
+            0, address, null, lat, lon, System.currentTimeMillis(), LinkedList()
         )
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -543,7 +546,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
     } // End of onMapReady
 
-    private fun setInMapMarker(Coor : LatLng) {
+    private fun setInMapMarker(Coor: LatLng) {
         val markers = mutableListOf<Marker>()
         // 지금까지 저장되어 있는 좌표를 가져와서 저장을 함
 

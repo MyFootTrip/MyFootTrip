@@ -38,7 +38,7 @@ import java.util.*
 
 private const val TAG = "EditCustomDialog_싸피"
 
-class EditCustomDialog(var placeData: VisitPlace, index: Int) : DialogFragment() {
+class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
 
     // ViewModel
     private val editSaveViewModel by viewModels<EditSaveViewModel>()
@@ -75,23 +75,24 @@ class EditCustomDialog(var placeData: VisitPlace, index: Int) : DialogFragment()
             }
         }
 
+        _binding!!.addressEd.setText(placeData.address)
+        _binding!!.contentEd.setText(placeData.content.toString())
+        _binding!!.locationNameEd.setText(placeData.placeName.toString())
+
         // 저장 버튼을 눌렀을 때,
         _binding!!.saveButton.setOnClickListener {
-            placeData.content = binding.contentEd.text.toString()
-            placeData.address = binding.addressEd.text.toString()
-            // placeData.placeName = binding.locationNameEd.toString()
+            placeData.content = _binding!!.contentEd.text.toString()
+            placeData.address = _binding!!.addressEd.text.toString()
+            placeData.placeName = (_binding!!.locationNameEd.text.toString())
+
+            Log.d(TAG, "onCreateView: ${placeData.content} ")
+            Log.d(TAG, "onCreateView: ${_binding!!.contentEd.text} ")
+
             Log.d(TAG, "다이얼로그 저장 버튼 눌렀을 때 이미지 리스트: ${placeData.imgList}")
 
             CoroutineScope(Dispatchers.IO).launch {
-                val job = CoroutineScope(Dispatchers.IO).async {
-                    visitPlaceRepository.updateVisitPlace(placeData)
-                }
-
-                val flg = job.start()
-
-                if (flg == false) {
-                    dialog!!.dismiss()
-                }
+                visitPlaceRepository.updateVisitPlace(placeData)
+                dialog!!.dismiss()
             }
         }
 
@@ -117,12 +118,10 @@ class EditCustomDialog(var placeData: VisitPlace, index: Int) : DialogFragment()
         dialog?.setCanceledOnTouchOutside(true)
         dialog?.setCancelable(true)
         dialog?.show()
-        // _binding!!.informTv.text = text
 
-        binding.addressEd.setText(placeData.address)
-        binding.contentEd.setText(placeData.content.toString())
-        binding.locationNameEd.setText(placeData.placeName.toString())
-        binding.addressEd.setText(placeData.address)
+        Log.d(TAG, "onViewCreated: $placeData")
+
+
 
         // 리사이클러뷰 바인딩
         recyclerView = _binding!!.placeEditRecyclerview
@@ -131,9 +130,9 @@ class EditCustomDialog(var placeData: VisitPlace, index: Int) : DialogFragment()
         for (i in 0 until size) {
             val temp = placeData.imgList[i]
 
+            // List를 Uri로 바꿔서 넣어주기.
             uriList.add(temp.toUri())
         }
-
 
         placeImageAdapter = PlaceImageAdapter(mContext, uriList)
 

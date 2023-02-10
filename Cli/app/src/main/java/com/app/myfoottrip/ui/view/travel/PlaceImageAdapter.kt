@@ -2,17 +2,18 @@ package com.app.myfoottrip.ui.view.travel
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.airbnb.lottie.L
 import com.app.myfoottrip.R
 import com.app.myfoottrip.databinding.ListEditPlaceImageBinding
-import com.kakao.sdk.template.model.Link
-import retrofit2.http.Url
-import java.util.*
+import com.squareup.picasso.NetworkPolicy
+import com.squareup.picasso.Picasso
+
+private const val TAG = "PlaceImageAdapter_싸피"
 
 class PlaceImageAdapter(val context: Context, private val imageList: MutableList<Uri>) :
     RecyclerView.Adapter<PlaceImageAdapter.PlaceImageHolder>() {
@@ -34,8 +35,13 @@ class PlaceImageAdapter(val context: Context, private val imageList: MutableList
     } // End of onCreateViewHolder
 
     override fun onBindViewHolder(holder: PlaceImageHolder, position: Int) {
-        holder.itemView.findViewById<ImageView>(R.id.image_imageview)
-            .setImageURI(imageList[position])
+        Log.d(TAG, "이미지 잘 오나 ?: ${imageList[position]}")
+
+        val imageView = holder.itemView.findViewById<ImageView>(R.id.image_imageview)
+
+        Picasso.get().load(Uri.parse(imageList[position].toString()))
+            .networkPolicy(NetworkPolicy.OFFLINE)
+            .into(imageView)
     } // End of onBindViewHolder
 
 //    fun addItem(imageUri: Uri) {

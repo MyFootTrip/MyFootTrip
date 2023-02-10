@@ -37,8 +37,7 @@ class JoinViewModel : ViewModel() {
     private val _wholeJoinUserData = Join("", "")
     val wholeJoinUserData: Join
         get() = _wholeJoinUserData
-
-
+    
     // 이메일 중복 체크 변경 테스트 LiveData
     val userResponseLiveData: LiveData<NetworkResult<Boolean>>
         get() = userRepository.userResponseLiveData

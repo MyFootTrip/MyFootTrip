@@ -169,7 +169,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         binding.allConstrainlayout.visibility = View.VISIBLE
     } // End of onViewCreated
 
-    
+
     // Room DB에 저장
     private fun saveRoomDB() = CoroutineScope(Dispatchers.IO).launch {
         val size = travelActivityViewModel.userTravelData.value!!.placeList!!.size
@@ -177,19 +177,17 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             val place = travelActivityViewModel.userTravelData.value!!.placeList!![i]
 
             // place DTO의 placeImgList, ArrayList<String>을 List<Uri>로 변환해서 줘야됨
-            val placeImgListSize = place.placeImgList!!.size
-            val uriImageList: MutableList<String> = LinkedList()
-            for (j in 0 until placeImgListSize) {
-                // uriImageList.add(place.placeImgList[j])
-            }
 
             val temp = VisitPlace(
                 i,
                 place.address!!,
+                place.placeId,
                 place.latitude!!,
                 place.longitude!!,
                 place.saveDate!!.time,
-                place.placeImgList!!
+                place.placeImgList!!,
+                place.memo,
+                place.placeName
             )
             visitPlaceRepository.insertVisitPlace(temp)
         }

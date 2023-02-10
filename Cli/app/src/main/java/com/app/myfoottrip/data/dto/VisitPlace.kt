@@ -14,12 +14,13 @@ import java.util.LinkedList
 data class VisitPlace(
     @NotNull val number: Int,
     var address: String, //수정 가능한 주소
+    val placeId: Int? = null,
     val lat: Double, //위도
     val lng: Double, //경도
     val date: Long? = 0, //기록 시간
     var imgList: MutableList<String> = LinkedList(),
-    var content: String? = "",
-    var placeName: String? = ""
+    var content: String? = "", // 메모
+    var placeName: String? = "", // 장소 이름
 ) {
     @PrimaryKey(autoGenerate = true)
     var ID: Long = 0L //PK
@@ -27,14 +28,25 @@ data class VisitPlace(
     constructor(
         id: Long,
         number: Int,
+        placeId: Int?,
         address: String,
         lat: Double,
         lng: Double,
         date: Long,
         imgList: MutableList<String>,
         content: String?,
-        placeName: String?
-    ) : this(number, address, lat, lng, date, imgList, content, placeName) {
+        placeName: String?,
+    ) : this(
+        number,
+        address,
+        placeId,
+        lat,
+        lng,
+        date,
+        imgList,
+        content,
+        placeName,
+    ) {
         this.ID = id;
     }
 }

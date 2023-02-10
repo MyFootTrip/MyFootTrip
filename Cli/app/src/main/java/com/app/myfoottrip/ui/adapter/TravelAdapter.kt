@@ -9,7 +9,6 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.databinding.ListItemTravelBinding
 import com.bumptech.glide.Glide
-import com.google.android.material.chip.Chip
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -54,20 +53,21 @@ class TravelAdapter(
             binding.apply {
                 if (type == 1) { //여정 선택
                     chipTravelSelect.text = "삭제"
-                    chipTravelDelete.visibility = View.GONE
+                    travelDeleteButton.visibility = View.GONE
                 } else { //여정 삭제
                     chipTravelSelect.text = "선택"
-                    chipTravelDelete.visibility = View.VISIBLE
+                    travelDeleteButton.visibility = View.VISIBLE
                 }
 
                 //게시글 생성 페이지에서는 삭제버튼 없애기
                 if (type == 2){
-                    binding.chipTravelDelete.visibility = View.GONE
+                    binding.travelDeleteButton.visibility = View.GONE
                 }
 
                 chipTravelSelect.isChecked = (selected == position) //선택은 하나만 하도록
 
-                if (travelList.isNotEmpty() && travelList[0].placeList?.get(0)?.placeImgList?.size == 0) {
+
+                if (travelList.isNotEmpty() && travelList[0].placeList!!.isNotEmpty() && travelList[0].placeList?.get(0)?.placeImgList?.size == 0) {
                     Glide.with(itemView)
                         .load(R.drawable.place_default_img)
                         .centerCrop()
@@ -97,7 +97,7 @@ class TravelAdapter(
                     notifyItemRangeChanged(0,travelList.size)
                 }
 
-                chipTravelDelete.setOnClickListener {
+                travelDeleteButton.setOnClickListener {
                     itemClickListner.onDeleteChipClick(position, travelDto)
                 }
             }

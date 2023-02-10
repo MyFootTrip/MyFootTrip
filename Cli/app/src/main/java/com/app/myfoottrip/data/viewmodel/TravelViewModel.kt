@@ -7,14 +7,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.myfoottrip.data.dto.Coordinates
+import com.app.myfoottrip.data.dto.PlacePush
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.dto.TravelPush
 import com.app.myfoottrip.data.repository.TravelRepository
 import com.app.myfoottrip.util.NetworkResult
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
+import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -104,43 +102,27 @@ class TravelViewModel : ViewModel() {
     val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = travelRepository.createTravelResponseLiveData
 
-    fun createTravel(imageList: List<MultipartBody.Part>, travelData : TravelPush) {
+    fun createTravel(imageList: List<MultipartBody.Part>, travelData: TravelPush) {
         var requestHashMap: HashMap<String, RequestBody> = HashMap()
 
         val sdf = SimpleDateFormat("YYYY-MM-dd HH:mm:ss", Locale("ko", "KR"))
         val startDateString = travelData.startDate?.let { sdf.format(it) }
-        val endDateString =  travelData.endDate?.let { sdf.format(it) }
-
-        Log.d(TAG, "startDateString: ${startDateString}")
-        Log.d(TAG, "endDateString: ${endDateString}")
+        val endDateString = travelData.endDate?.let { sdf.format(it) }
 
         val locationList = JSONArray(travelData.location)
         requestHashMap["location"] =
             locationList.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        requestHashMap["startDate"] = startDateString!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-        requestHashMap["endDate"] = endDateString!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        requestHashMap["startDate"] =
+            startDateString!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        requestHashMap["endDate"] =
+            endDateString!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
-//        val placeListJson = JSONArray(travelData.placeList.toString())
-//        Log.d(TAG, "placeListJson: ${travelData.placeList}")
-//        Log.d(TAG, "placeListJson: $placeListJson")
-
-
-        val jsonArray = JSONArray()
-        for(i in 0 until travelData.placeList!!.size) {
-            val temp = travelData.placeList!![i]
-            val json = JsonPrimitive(temp.toString())
-            jsonArray.put(json)
-        }
-
-
-        Log.d(TAG, "jsonArray: $jsonArray")
-        requestHashMap["placeList"] = jsonArray.toRequestBody("multipart/form-data".toMediaTypeOrNull())
-
-
-
-        val gson = GsonBuilder().create()
-       // val theList = gson.fromJson<ArrayList<String>>(locationList, object : TypeToken<ArrayList<String>>(){}.type)
-
+        // PlaceList를 JSON으로 변경
+        val gsonPretty =
+            GsonBuilder().setPrettyPrinting().setDateFormat("yyyy-MM-dd HH:mm:ss").create()
+        val jsonPlaceList: String = gsonPretty.toJson(travelData.placeList!!)
+        requestHashMap["placeList"] =
+            jsonPlaceList.toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
         viewModelScope.launch {
             travelRepository.createTravel(imageList, requestHashMap)
@@ -153,9 +135,45 @@ class TravelViewModel : ViewModel() {
         get() = travelRepository.userTravelDataUpdateResponseLiveData
 
     // 여행 데이터 수정
-    suspend fun userTravelDataUpdate(travelId: Int, updateTravelData: Travel) {
+    suspend fun userTravelDataUpdate(
+        travelId: Int, newImageList: List<MultipartBody.Part>, updateTravelData: TravelPush
+    ) {
+        Log.d(TAG, "뷰모델은 어케 들어감?: $updateTravelData")
+        
+        var requestHashMap: HashMap<String, RequestBody> = HashMap()
+
+        val sdf = SimpleDateFormat("YYYY-MM-dd HH:mm:ss", Locale("ko", "KR"))
+        val startDateString = updateTravelData.startDate?.let { sdf.format(it) }
+        val endDateString = updateTravelData.endDate?.let { sdf.format(it) }
+
+        val locationList = JSONArray(updateTravelData.location)
+        requestHashMap["location"] =
+            locationList.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        requestHashMap["startDate"] =
+            startDateString!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+        requestHashMap["endDate"] =
+            endDateString!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+
+        // PlaceList를 JSON으로 변경
+        val gsonPretty =
+            GsonBuilder().setPrettyPrinting().setDateFormat("yyyy-MM-dd HH:mm:ss").create()
+        val jsonPlaceList: String = gsonPretty.toJson(updateTravelData.placeList!!)
+        requestHashMap["placeList"] =
+            jsonPlaceList.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+
+
+        // 삭제할 데이터들
+        val deletePlaceList = JSONArray(updateTravelData.deletePlaceList)
+        requestHashMap["DeletePlaceList"] =
+            deletePlaceList.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
+
+        val deleteImageList = JSONArray(updateTravelData.deleteImageList)
+        requestHashMap["DeleteImageList"] =
+            deleteImageList.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
+
+
         viewModelScope.launch {
-            travelRepository.userTravelDataUpdate(travelId, updateTravelData)
+            travelRepository.userTravelDataUpdate(travelId, newImageList, requestHashMap)
         }
     } // End of userTravelDataUpdate
 

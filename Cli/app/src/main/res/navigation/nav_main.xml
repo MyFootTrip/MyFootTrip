@@ -95,7 +95,12 @@
             tools:layout="@layout/fragment_travel_select">
         <action
                 android:id="@+id/action_travelSelectFragment_to_travelLocationSelectFragment"
-                app:destination="@id/travelLocationSelectFragment" />
+                app:destination="@id/travelLocationSelectFragment"
+                app:enterAnim="@anim/enter_right_anim"
+                app:exitAnim="@anim/exit_left_anim"
+                app:popEnterAnim="@anim/enter_left_anim"
+                app:popExitAnim="@anim/exit_right_anim"
+                />
         <action
                 android:id="@+id/action_travelSelectFragment_to_createBoardFragment"
                 app:enterAnim="@anim/enter_right_anim"
