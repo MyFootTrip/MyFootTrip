@@ -100,6 +100,13 @@
             app:exitAnim="@anim/exit_left_anim"
             app:popEnterAnim="@anim/enter_left_anim"
             app:popExitAnim="@anim/exit_right_anim" />
+        <action
+            android:id="@+id/action_travelSelectFragment_to_travelHelpFragment"
+            app:destination="@id/travelHelpFragment"
+            app:enterAnim="@anim/enter_right_anim"
+            app:exitAnim="@anim/exit_left_anim"
+            app:popEnterAnim="@anim/enter_left_anim"
+            app:popExitAnim="@anim/exit_right_anim"/>
     </fragment>
     <fragment
         android:id="@+id/travelLocationSelectFragment"
@@ -249,5 +256,9 @@
         android:name="com.app.myfoottrip.ui.view.mypage.EditProfileImageFragment"
         android:label="fragment_edit_profile_image"
         tools:layout="@layout/fragment_edit_profile_image" />
-
+    <fragment
+        android:id="@+id/travelHelpFragment"
+        android:name="com.app.myfoottrip.ui.view.travel.TravelHelpFragment"
+        android:label="fragment_travel_help"
+        tools:layout="@layout/fragment_travel_help" /> <!-- TODO : 체크-->
 </navigation>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.view.travel.TravelHelpFragment">
+
+    <ImageView
+        android:id="@+id/iv_cancel_btn"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/ic_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#231F20" />
+
+    <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+        android:id="@+id/carousel_travel_help"
+        android:layout_width="match_parent"
+        android:layout_height="552dp"
+        app:autoPlay="false"
+        app:autoPlayDelay="3000"
+        app:infiniteCarousel="false"
+        app:layout_constraintBottom_toTopOf="@+id/btn_start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_cancel_btn"
+        app:carouselType="SHOWCASE"
+        app:carouselBackground="#ffffff"
+        app:carouselGravity="START"
+        app:showBottomShadow="false"
+        app:showCaption="false"
+        app:showIndicator="true"
+        app:showNavigationButtons="false"
+        app:showTopShadow="false"
+        app:touchToPause="true" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:fontFamily="@font/inter_bold"
+        android:paddingHorizontal="120dp"
+        android:paddingVertical="12dp"
+        android:layout_marginBottom="33dp"
+        android:text="시작하기"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:cornerRadius="20dp"
+        android:backgroundTint="@color/gray_400"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
