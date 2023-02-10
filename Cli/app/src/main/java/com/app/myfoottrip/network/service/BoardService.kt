@@ -10,8 +10,15 @@ import retrofit2.http.*
 interface BoardService {
 
     // 전체 게시물 조회
-    @GET("community/board/")
-    suspend fun getBoardList(): Response<ArrayList<Board>>
+//    @GET("community/board/")
+//    suspend fun getBoardList(): Response<ArrayList<Board>>
+    @GET("/community/board/")
+    suspend fun getBoardList(@Query("page") page: Int,
+                             @Query("peroidList") periodList: ArrayList<String>,
+                             @Query("ageList") ageList: ArrayList<String>,
+                             @Query("themeList") themeList: ArrayList<String>,
+                             @Query("regionList") regionList: ArrayList<String>,
+                             @Query("sortedType") sortedType: Int): Response<List<Board>>
 
     //게시물 삽입
     @POST("community/board/create/")

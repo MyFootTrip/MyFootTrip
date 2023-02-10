@@ -150,7 +150,7 @@ class CommentFragment : BaseFragment<FragmentCommentBinding>(
         val inputDialog = CommentInputDialog(object : CommentInputDialog.OnClickListener {
             override fun onClick(dialog: CommentInputDialog) {
                 val user = userViewModel.wholeMyData.value
-                val message = "${user?.join?.nickname}님이 ${boardViewModel.board.value?.data?.title}에 댓글이 달렸습니다!\uD83D\uDCAC"
+                val message = "${user?.join?.nickname}님이 ${boardViewModel.board.value?.data?.title}에 댓글이 달렸습니다!"
                 val comment = Comment(-1, boardViewModel.boardId,user!!.join.profile_image,user.uid,user.join.nickname,dialog.commentMsg.text.toString(),Date(System.currentTimeMillis()),message)
                 writeComment(comment)
                 isWrite = true

@@ -56,9 +56,6 @@
             app:exitAnim="@anim/exit_left_anim"
             app:popEnterAnim="@anim/enter_left_anim"
             app:popExitAnim="@anim/exit_right_anim" />
-        <action
-            android:id="@+id/action_mainFragment_to_testFragment"
-            app:destination="@id/testFragment" />
 
     </fragment>
     <fragment
@@ -252,11 +249,5 @@
         android:name="com.app.myfoottrip.ui.view.mypage.EditProfileImageFragment"
         android:label="fragment_edit_profile_image"
         tools:layout="@layout/fragment_edit_profile_image" />
-    <fragment
-        android:id="@+id/testFragment"
-        android:name="com.app.myfoottrip.ui.view.mypage.TestFragment"
-        android:label="fragment_test"
-        tools:layout="@layout/fragment_test" /> <!-- TODO : 체크-->
-
 
 </navigation>

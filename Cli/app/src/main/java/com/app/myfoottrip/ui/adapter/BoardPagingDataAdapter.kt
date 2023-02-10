@@ -17,10 +17,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 
-private const val TAG = "TestPagingDataAdapter_마이풋트립"
-class TestPagingDataAdapter: PagingDataAdapter<Board,TestPagingDataAdapter.TestViewHolder>(
+private const val TAG = "BoardPagingDataAdapter_마이풋트립"
+class BoardPagingDataAdapter: PagingDataAdapter<Board,BoardPagingDataAdapter.BoardViewHolder>(
     IMAGE_COMPARATOR) {
-    inner class TestViewHolder(private val binding : ListItemHomeBinding) : RecyclerView.ViewHolder(binding.root){
+    inner class BoardViewHolder(private val binding : ListItemHomeBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(board : Board){
             Log.d("tst5", "bind: ${board.boardId} 바인드됨")
             binding.apply {
@@ -94,13 +94,13 @@ class TestPagingDataAdapter: PagingDataAdapter<Board,TestPagingDataAdapter.TestV
     }
 
     // 어떤 xml 으로 뷰 홀더를 생성할지 지정
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardViewHolder {
         val binding = ListItemHomeBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-        return TestViewHolder(binding)
+        return BoardViewHolder(binding)
     }
 
     // 뷰 홀더에 데이터 바인딩
-    override fun onBindViewHolder(holder: TestViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BoardViewHolder, position: Int) {
         val currentItem = getItem(position)
 
         if (currentItem != null) {

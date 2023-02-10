@@ -12,16 +12,19 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Filter
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentHomeBinding
+import com.app.myfoottrip.ui.adapter.BoardPagingDataAdapter
+import com.app.myfoottrip.ui.adapter.BoardPagingLoadStateAdapter
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
-import com.app.myfoottrip.ui.adapter.HomeAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.util.CommonUtils
 import com.app.myfoottrip.util.NetworkResult
@@ -37,20 +40,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     FragmentHomeBinding::bind, R.layout.fragment_home
 ) {
 
-    private lateinit var mContext: Context
     private lateinit var categoryAdapter: CategoryAdatper
     private lateinit var detailList: ArrayList<String>
     private var selectedDetailList: ArrayList<String> = ArrayList()
-    private lateinit var homeAdatper: HomeAdapter
+    private val boardAdapter by lazy { BoardPagingDataAdapter() }
     private var sortBy = "최신순" //정렬 기준
     private val boardViewModel by activityViewModels<BoardViewModel>()
-    private var filter: Filter = Filter(arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
     var detector: GestureDetector? = null
 
     var waitTime = 0L
     private lateinit var callback: OnBackPressedCallback
     private lateinit var mainActivity: MainActivity
 
+    private lateinit var filter: Filter
 
     private val navigationViewModel by activityViewModels<NavigationViewModel>()
     override fun onAttach(context: Context) {
@@ -95,33 +97,58 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     } // End of onDetach
 
     private fun init() {
-        getData()
+        filter = Filter(arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf(),0)
         initSpinnerSort()
         initChips()
+        getBoardList()
         detectScroll()
         touchLayout()
         setUpSwipeRefresh()
+        initHomeAdapter()
     }
 
     private fun initObserver() {
         getBoardListObserver()
-        getFilteredBoardListObserver()
     }
 
 
     private fun initHomeAdapter() {
-        //정렬 기준
-        if (boardViewModel.boardList.value?.data!!.isNullOrEmpty()) {
-            binding.tvNoData.visibility = View.VISIBLE
-        } else {
-            binding.tvNoData.visibility = View.INVISIBLE
+        binding.rvHome.apply {
+            adapter = boardAdapter.withLoadStateHeaderAndFooter(
+                header = BoardPagingLoadStateAdapter { boardAdapter.retry() },
+                footer = BoardPagingLoadStateAdapter { boardAdapter.retry() })
+            //원래의 목록위치로 돌아오게함
+            boardAdapter.stateRestorationPolicy =
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            setHasFixedSize(true)
         }
-        if (sortBy == "최신순") boardViewModel.boardList.value?.data!!.sortByDescending { it.writeDate }
-        else boardViewModel.boardList.value?.data!!.sortByDescending { it.likeList.size }
 
-        homeAdatper = HomeAdapter(boardViewModel.boardList.value?.data!!)
+        boardAdapter.addLoadStateListener { combinedLoadStates ->
+            binding.apply {
 
-        homeAdatper.setItemClickListener(object : HomeAdapter.ItemClickListener {
+                lottieHome.isVisible = combinedLoadStates.source.refresh is LoadState.Loading
+
+                //로딩 중이지 않을 때 (활성 로드 작업이 없고 에러가 없음)
+                rvHome.isVisible = combinedLoadStates.source.refresh is LoadState.NotLoading
+
+                // 로딩 에러 발생 시
+//                retryButton.isVisible = combinedLoadStates.source.refresh is LoadState.Error
+//                errorText.isVisible = combinedLoadStates.source.refresh is LoadState.Error
+
+                // 활성 로드 작업이 없고 에러가 없음 & 로드할 수 없음 & 개수 1 미만 (empty)
+                if(combinedLoadStates.source.refresh is LoadState.NotLoading
+                    && combinedLoadStates.append.endOfPaginationReached
+                    && boardAdapter.itemCount < 1){
+                    tvNoData.isVisible = true
+//                    rvHome.isVisible = true
+                }
+                else{
+                    tvNoData.isVisible = false
+                }
+            }
+        }
+
+        boardAdapter.setItemClickListener(object : BoardPagingDataAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, boardId: Int) {
                 boardViewModel.boardId = boardId
                 binding.spinnerSort.dismiss()
@@ -129,14 +156,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 navigationViewModel.type = 0
             }
         })
-
-
-        binding.rvHome.apply {
-            adapter = homeAdatper
-            //원래의 목록위치로 돌아오게함
-            homeAdatper.stateRestorationPolicy =
-                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-        }
     } // End of initHomeAdapter
 
     //필터 리사이클러뷰 생성
@@ -226,10 +245,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             else if (filter.ageList.isNotEmpty() && filter.ageList.contains(category)) filter.ageList.remove(
                                 category
                             )
-                            getFilterdData(filter)
+                            getBoardList()
                         }
                     })
-                    getFilterdData(filter)
+                    getBoardList()
                 }
             }
         })
@@ -282,8 +301,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private fun initSpinnerSort() {
         binding.apply {
             spinnerSort.setOnSpinnerItemSelectedListener<String> { oldIndex, oldItem, newIndex, newItem ->
-                sortBy = newItem //현재 정렬기준 갱신
-                getData()
+                filter.sortedType = newIndex
+                boardViewModel.getBoardList(filter)
             }
         }
     } // End of initSpinnerSort
@@ -365,61 +384,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             selectedDetailList.clear()
 
             //데이터 요청
+            boardAdapter.refresh()
             binding.swipeLayout.isRefreshing = false
         }
     }
 
-    //게시물 전체 받아오기
-    private fun getData() {
-        CoroutineScope(Dispatchers.IO).launch {
-            boardViewModel.getBoardList()
-        }
+    private fun getBoardList(){
+        Log.d(TAG, "필터데이터: $filter")
+        boardViewModel.getBoardList(filter)
     }
 
-    private fun getBoardListObserver() {
-        // viewModel에서 전체 게시글 데이터 LiveData 옵저버 적용
-        boardViewModel.boardList.observe(viewLifecycleOwner) {
-            when (it) {
-                is NetworkResult.Success -> {
-                    boardViewModel.boardList.value?.data = it.data!!
-                    initHomeAdapter()
-                    binding.lottieHome.pauseAnimation()
-                    binding.lottieHome.visibility = View.INVISIBLE
-                    binding.tvPlanCount.text = CommonUtils.makeComma(it.data!!.size)
-                }
-                is NetworkResult.Error -> {
-                    Log.d(TAG, "게시물 조회 Error: ${it.data}")
-                }
-                is NetworkResult.Loading -> {
-                }
-            }
-        }
-    } // 게시물 전체 받아오기
-
-    //필러팅된 게시물 받아오기
-    private fun getFilterdData(filter: Filter) {
-        CoroutineScope(Dispatchers.IO).launch {
-            boardViewModel.getFilteredBoardList(filter)
+    private fun getBoardListObserver(){
+        boardViewModel.boardList.observe(viewLifecycleOwner){
+            boardAdapter.submitData(this.lifecycle,it)
         }
     }
-
-    private fun getFilteredBoardListObserver() {
-        boardViewModel.boardList.observe(viewLifecycleOwner) {
-            when (it) {
-                is NetworkResult.Success -> {
-                    boardViewModel.boardList.value?.data = it.data!!
-                    initHomeAdapter()
-                    binding.lottieHome.pauseAnimation()
-                    binding.lottieHome.visibility = View.INVISIBLE
-                }
-                is NetworkResult.Error -> {
-                    Log.d(TAG, "게시물 조회 Error: ${it.data}")
-                }
-                is NetworkResult.Loading -> {
-                }
-            }
-        }
-    } // 게시물 전체 받아오기
 
     private fun initDynamicLink() {
         val dynamicLinkData = requireActivity().intent.extras
@@ -429,7 +408,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 dataStr += "key: $key / value: ${dynamicLinkData.getString(key)}\n"
             }
 
-//            binding.tvToken.text = dataStr
+            //binding.tvToken.text = dataStr
             Log.d(TAG, "initDynamicLink: $dataStr")
         }
     }

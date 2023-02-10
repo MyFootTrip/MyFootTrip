@@ -4,30 +4,31 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Filter
-import com.app.myfoottrip.network.service.TestService
+import com.app.myfoottrip.network.service.BoardService
 import kotlinx.coroutines.delay
 import retrofit2.HttpException
 import java.io.IOException
 
-class TestPagingSource(
-    private val testService: TestService,
-//    private val filter: Filter,
-//    private val sortedType: Int
+class BoardPagingSource(
+    private val boardService: BoardService,
+    private val filter: Filter,
 ) : PagingSource<Int, Board>() {
     override fun getRefreshKey(state: PagingState<Int, Board>): Int? {
-        return null
+        return state.anchorPosition?.let { achorPosition ->
+            state.closestPageToPosition(achorPosition)?.prevKey?.plus(1)
+                ?: state.closestPageToPosition(achorPosition)?.nextKey?.minus(1)
+        }
     }
 
     // 데이터 로드
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Board> {
         // LoadParams : 로드할 키와 항목 수 , LoadResult : 로드 작업의 결과
         return try {
-            delay(1000)
+            delay(500)
             // 키 값이 없을 경우 기본값을 사용함
             val currentPage = params.key ?: 1
-
             // 데이터를 제공하는 인스턴스의 메소드 사용
-            val response = testService.getBoardList(currentPage, periodList = arrayListOf(), ageList = arrayListOf(), themeList = arrayListOf("기타"), regionList = arrayListOf(), sortedType = 1)
+            val response = boardService.getBoardList(currentPage, periodList = filter.periodList, ageList = filter.ageList, themeList = filter.ageList, regionList = filter.regionList, sortedType = filter.sortedType)
             val data = response.body()?: emptyList()
             val responseData = mutableListOf<Board>()
             responseData.addAll(data)

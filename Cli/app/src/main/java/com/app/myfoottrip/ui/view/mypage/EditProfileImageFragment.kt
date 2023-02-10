@@ -107,8 +107,7 @@ class EditProfileImageFragment : BaseFragment<FragmentEditProfileImageBinding>(
                 Glide.with(this@EditProfileImageFragment).load(R.drawable.ic_my).fitCenter().into(editProfileImageview)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
             } else {
-                Glide.with(this@EditProfileImageFragment).load(userViewModel.wholeMyData.value?.join?.profile_image).skipMemoryCache(true).diskCacheStrategy(
-                    DiskCacheStrategy.NONE).thumbnail(Glide.with(this@EditProfileImageFragment).load(R.drawable.loading_image).centerCrop()).centerCrop().into(editProfileImageview)
+                Glide.with(this@EditProfileImageFragment).load(userViewModel.wholeMyData.value?.join?.profile_image).thumbnail(Glide.with(this@EditProfileImageFragment).load(R.drawable.loading_image).centerCrop()).centerCrop().into(editProfileImageview)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
             }
         }

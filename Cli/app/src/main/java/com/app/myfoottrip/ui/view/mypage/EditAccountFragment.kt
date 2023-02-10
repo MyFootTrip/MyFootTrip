@@ -130,7 +130,7 @@ class EditAccountFragment : BaseFragment<FragmentEditAccountBinding>(
                 Glide.with(this@EditAccountFragment).load(R.drawable.ic_my).fitCenter().into(editProfileImageview)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
             } else {
-                Glide.with(this@EditAccountFragment).load(join.profile_image).skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE).thumbnail(Glide.with(this@EditAccountFragment).load(R.drawable.loading_image).centerCrop()).centerCrop().into(editProfileImageview)
+                Glide.with(this@EditAccountFragment).load(join.profile_image).thumbnail(Glide.with(this@EditAccountFragment).load(R.drawable.loading_image).centerCrop()).centerCrop().into(editProfileImageview)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
             }
             tvMyNickname.text = join.nickname // 닉네임

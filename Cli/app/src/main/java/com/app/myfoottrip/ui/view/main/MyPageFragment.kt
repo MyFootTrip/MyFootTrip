@@ -84,11 +84,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
             ivAlarm.setOnClickListener {
                 findNavController().navigate(R.id.action_mainFragment_to_alarmFragment)
             }
-
-            //테스트 페이지
-            testBtn.setOnClickListener {
-                findNavController().navigate(R.id.action_mainFragment_to_testFragment)
-            }
         }
     }
 
@@ -114,7 +109,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
             } else {
                 Glide.with(this@MyPageFragment)
                     .load(userViewModel.wholeMyData.value?.join?.profile_image)
-                    .skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE)
                     .thumbnail(Glide.with(this@MyPageFragment).load(R.drawable.loading_image).centerCrop())
                     .centerCrop().into(ivProfile)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))

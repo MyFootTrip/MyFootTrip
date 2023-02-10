@@ -111,6 +111,8 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             findNavController().popBackStack()
         }
 
+
+
         buttonSetTextObserve()
 
         // 유저 생성 ResponseLiveData 다시 초기화

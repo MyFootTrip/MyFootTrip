@@ -1,9 +1,8 @@
 package com.app.myfoottrip.data.viewmodel
 
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import androidx.paging.cachedIn
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.data.dto.Board
 import com.app.myfoottrip.data.dto.Filter
@@ -22,10 +21,13 @@ private const val TAG = "싸피"
 class BoardViewModel : ViewModel() {
 
     private val boardRepository = BoardRepository()
+    /* data */
+    private val filterData : MutableLiveData<Filter> = MutableLiveData()
 
-    // 게시물 전체 리스트
-    val boardList: LiveData<NetworkResult<ArrayList<Board>>>
-        get() = boardRepository.boardListResponseLiveData
+    // 라이브 데이터 변경 시 다른 라이브 데이터 발행
+    val boardList = filterData.switchMap { queryString ->
+        boardRepository.getBoardList(queryString).cachedIn(viewModelScope)
+    }
 
     var boardId : Int = -1
 
@@ -50,25 +52,15 @@ class BoardViewModel : ViewModel() {
     val deleteBoard : LiveData<NetworkResult<String>>
         get() = boardRepository.deleteBoardResponseLiveData
 
-
-    // 게시물 전체 조회
-    fun getBoardList() {
-        viewModelScope.launch {
-            boardRepository.getBoardList()
-        }
+    //필터 변경
+    fun getBoardList(value : Filter) {
+        filterData.value = value
     }
 
     // 게시물 생성
     fun createBoard(board: Board) {
         viewModelScope.launch {
             boardRepository.createBoard(board)
-        }
-    }
-
-    // 게시물 생성
-    fun getFilteredBoardList(filter: Filter) {
-        viewModelScope.launch {
-            boardRepository.getFilteredBoardList(filter)
         }
     }
 
