@@ -111,6 +111,10 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             findNavController().popBackStack()
         }
 
+        binding.ivTravelHelp.setOnClickListener {
+            findNavController().navigate(R.id.action_travelSelectFragment_to_travelHelpFragment)
+        }
+
         buttonSetTextObserve()
 
         // 유저 생성 ResponseLiveData 다시 초기화
@@ -157,6 +161,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             binding.tvTravelTitle.setText(R.string.plz_travel_select_button_text)
             binding.btnSave.visibility = View.VISIBLE
             binding.btnSave.setText(R.string.make_new_travel_button_text)
+            binding.ivTravelHelp.visibility = View.VISIBLE
         } else if (type == 1) {
             // 만들어진 여행 관리 부분
             binding.tvTravelTitle.setText(R.string.select_travel_title)
