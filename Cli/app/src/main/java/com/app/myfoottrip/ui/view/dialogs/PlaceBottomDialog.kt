@@ -64,24 +64,15 @@ class PlaceBottomDialog(private val listener: OnClickListener,private val place 
     //이미지 슬라이더
     private fun imageSetting(){
         binding.carouselImage.registerLifecycle(viewLifecycleOwner)
-        if (place.placeImgList.isNullOrEmpty()){
-            val list = mutableListOf<CarouselItem>().let {
-                it.apply {
-                    add(CarouselItem(R.drawable.default_image))
-                }
-            }
-            binding.carouselImage.setData(list)
-        }else{
-            val list = mutableListOf<CarouselItem>().let {
-                it.apply {
-                    for (image in place.placeImgList!!) {
-                        add(CarouselItem(imageUrl = image))
-                    }
-                }
-            }
-            binding.carouselImage.setData(list)
-        }
 
+        val list = mutableListOf<CarouselItem>().let {
+            it.apply {
+                for (image in place.placeImgList!!) {
+                    add(CarouselItem(imageUrl = image))
+                }
+            }
+        }
+        binding.carouselImage.setData(list)
     }
 
     //장소 데이터 받아오기

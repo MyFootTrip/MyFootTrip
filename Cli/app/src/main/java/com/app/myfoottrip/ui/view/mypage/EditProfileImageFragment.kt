@@ -6,7 +6,6 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -74,6 +73,7 @@ class EditProfileImageFragment : BaseFragment<FragmentEditProfileImageBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         initObserver()
+
         getUserMyData()
 
         binding.apply {
@@ -99,7 +99,7 @@ class EditProfileImageFragment : BaseFragment<FragmentEditProfileImageBinding>(
     } // End of onDetach
 
     // 유저정보 데이터 초기화
-    private fun initProfile() {
+    private fun initProfileImage() {
         binding.apply {
             //프로필 이미지
             if (userViewModel.wholeMyData.value?.join?.profile_image.isNullOrEmpty()) {
@@ -110,8 +110,6 @@ class EditProfileImageFragment : BaseFragment<FragmentEditProfileImageBinding>(
                 Glide.with(this@EditProfileImageFragment).load(userViewModel.wholeMyData.value?.join?.profile_image).thumbnail(Glide.with(this@EditProfileImageFragment).load(R.drawable.loading_image).centerCrop()).centerCrop().into(editProfileImageview)
                 cvProfileLayout.setCardBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white)))
             }
-            tvMyNickname.text = userViewModel.wholeMyData.value?.join?.nickname // 닉네임
-            tvMyEmail.text = userViewModel.wholeMyData.value?.join?.email // 아이디
         }
     } // End of initUser
 
@@ -126,11 +124,6 @@ class EditProfileImageFragment : BaseFragment<FragmentEditProfileImageBinding>(
 
         dialog.setOnOKClickedListener {
             binding.apply {
-                binding.editAccountLayout.visibility = View.GONE
-                lottieProfileImage.visibility = View. VISIBLE
-                tvWait.visibility = View.VISIBLE
-                //화면 터치 막기
-                mainActivity.window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 isUpdate = true
                 updateProfileImg()
             }
@@ -169,7 +162,7 @@ class EditProfileImageFragment : BaseFragment<FragmentEditProfileImageBinding>(
             when (it) {
                 is NetworkResult.Success -> {
                     userViewModel.setWholeMyData(it.data!!)
-                    initProfile()
+                    initProfileImage()
                 }
                 is NetworkResult.Error -> {
                     // AccessToken을 통해서 유저 정보를 가져오기 실패했는지 파악해야됨.
@@ -198,11 +191,6 @@ class EditProfileImageFragment : BaseFragment<FragmentEditProfileImageBinding>(
                     // refreshToken & accessToken
                     // savedInstance 저장하기
                     if (isUpdate){
-                        binding.editAccountLayout.visibility = View.VISIBLE
-                        binding.lottieProfileImage.visibility = View.GONE
-                        binding.tvWait.visibility = View.GONE
-                        //화면 터치 풀기
-                        mainActivity.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                         binding.root.showSnackBarMessage("이미지 변경이 완료되었습니다.")
                         userViewModel.wholeMyData.value?.join = it.data!!
                         findNavController().popBackStack()

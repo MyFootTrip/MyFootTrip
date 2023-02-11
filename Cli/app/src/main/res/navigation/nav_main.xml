@@ -64,6 +64,13 @@
         android:label="fragment_board"
         tools:layout="@layout/fragment_board">
         <action
+            android:id="@+id/action_boardFragment_to_commentFragment"
+            app:destination="@id/commentFragment"
+            app:enterAnim="@anim/enter_right_anim_fast"
+            app:exitAnim="@anim/exit_left_anim_fast"
+            app:popEnterAnim="@anim/enter_left_anim_fast"
+            app:popExitAnim="@anim/exit_right_anim_fast" />
+        <action
             android:id="@+id/action_boardFragment_to_mainFragment"
             app:enterAnim="@anim/none_anim"
             app:exitAnim="@anim/exit_vertical_anim"
@@ -122,6 +129,11 @@
             app:popEnterAnim="@anim/enter_anim"
             app:popExitAnim="@anim/exit_anim" /> <!-- TODO : 체크-->
     </fragment>
+    <fragment
+        android:id="@+id/commentFragment"
+        android:name="com.app.myfoottrip.ui.view.board.CommentFragment"
+        android:label="fragment_comment"
+        tools:layout="@layout/fragment_comment" />
     <fragment
         android:id="@+id/createBoardFragment"
         android:name="com.app.myfoottrip.ui.view.board.CreateBoardFragment"

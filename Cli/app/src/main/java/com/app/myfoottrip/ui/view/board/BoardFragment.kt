@@ -17,7 +17,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Board
-import com.app.myfoottrip.data.dto.Comment
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.viewmodel.BoardViewModel
 import com.app.myfoottrip.data.viewmodel.NavigationViewModel
@@ -26,7 +25,6 @@ import com.app.myfoottrip.databinding.FragmentBoardBinding
 import com.app.myfoottrip.ui.adapter.PlaceAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.dialogs.AlertDialog
-import com.app.myfoottrip.ui.view.dialogs.CommentBottomDialog
 import com.app.myfoottrip.ui.view.dialogs.PlaceBottomDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
@@ -89,9 +87,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
                 else navigationViewModel.type = 0
                 findNavController().popBackStack()
             }
-            ivComment.setOnClickListener {
-                initCommentBottom(boardViewModel.board.value?.data!!.commentList)
-            }
+            ivComment.setOnClickListener { findNavController().navigate(R.id.action_boardFragment_to_commentFragment)} //댓글 페이지로 이동
             lottieLike.setOnClickListener {
                 getLike()
             }
@@ -191,6 +187,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
     //게시물 사진 슬라이더
     private fun initViewPager(board: Board) {
+
         binding.apply {
 
             carouselImage.registerLifecycle(viewLifecycleOwner)
@@ -219,6 +216,7 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
 
     //방문 장소 리사이클러뷰 생성
     private fun initPlaceAdapter(board: Board){
+
         placeAdapter = PlaceAdapter(board.travel?.placeList!!)
 
         placeAdapter.setItemClickListener(object : PlaceAdapter.ItemClickListener {
@@ -312,16 +310,6 @@ class BoardFragment : BaseFragment<FragmentBoardBinding>(
         binding.svBoard.visibility = View.VISIBLE
         binding.lottieBoard.pauseAnimation()
         binding.lottieBoard.visibility = View.INVISIBLE
-    }
-
-    // 댓글 바텀시트 다이얼로그 생성
-    private fun initCommentBottom(commentList:ArrayList<Comment>){
-        val commentBottom = CommentBottomDialog(object : CommentBottomDialog.OnClickListener {
-            override fun onClick(dialog: CommentBottomDialog) {
-                dialog.dismiss()
-            }
-        },commentList)
-        commentBottom.show(parentFragmentManager, commentBottom.mTag)
     }
 
     // 장소 바텀시트 다이얼로그 생성
