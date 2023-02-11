@@ -8,7 +8,7 @@
         android:id="@+id/cv_profileLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="10dp"
         app:cardBackgroundColor="@color/main"
         app:cardCornerRadius="40dp"
         app:cardElevation="0dp"
@@ -33,9 +33,20 @@
         android:text=""
         android:textColor="@color/black"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@id/cv_profileLayout"
         app:layout_constraintLeft_toRightOf="@id/cv_profileLayout"
         app:layout_constraintTop_toTopOf="@id/cv_profileLayout" />
+
+    <TextView
+        android:id="@+id/tv_write_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="4dp"
+        android:text=""
+        app:layout_constraintLeft_toRightOf="@id/tv_nickname"
+        app:layout_constraintTop_toTopOf="@id/tv_nickname"
+        android:textSize="12sp"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/black"/>
 
     <ImageView
         android:id="@+id/iv_edit_comment"
@@ -49,42 +60,23 @@
 
     <TextView
         android:id="@+id/tv_content"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="10dp"
+        android:paddingVertical="4dp"
         android:fontFamily="@font/inter_regular"
         android:textColor="@color/black"
         android:textSize="16sp"
+        app:layout_constraintLeft_toLeftOf="@id/tv_nickname"
+        app:layout_constraintRight_toLeftOf="@id/iv_edit_comment"
         app:layout_constraintTop_toBottomOf="@id/cv_profileLayout"
         android:text=""/>
-
-    <TextView
-        android:id="@+id/tv_write_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="10dp"
-        android:text=""
-        app:layout_constraintTop_toBottomOf="@id/tv_content"
-        android:textSize="12sp"
-        android:fontFamily="@font/inter_regular"
-        android:textColor="@color/black"/>
 
     <View
         android:id="@+id/base_line2"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
         android:background="@color/gray_60"
-        app:layout_constraintTop_toBottomOf="@id/tv_write_date"/>
-
-
-
-
-
-
-
-
+        app:layout_constraintTop_toBottomOf="@id/tv_content"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
