@@ -1,30 +1,23 @@
 package com.app.myfoottrip.data.viewmodel
 
-import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.myfoottrip.data.dto.Coordinates
-import com.app.myfoottrip.data.dto.PlacePush
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.data.dto.TravelPush
 import com.app.myfoottrip.data.repository.TravelRepository
 import com.app.myfoottrip.util.NetworkResult
-import com.google.gson.*
-import com.google.gson.reflect.TypeToken
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 private const val TAG = "TravelViewModel_싸피"
 
@@ -138,8 +131,6 @@ class TravelViewModel : ViewModel() {
     suspend fun userTravelDataUpdate(
         travelId: Int, newImageList: List<MultipartBody.Part>, updateTravelData: TravelPush
     ) {
-        Log.d(TAG, "뷰모델은 어케 들어감?: $updateTravelData")
-        
         var requestHashMap: HashMap<String, RequestBody> = HashMap()
 
         val sdf = SimpleDateFormat("YYYY-MM-dd HH:mm:ss", Locale("ko", "KR"))

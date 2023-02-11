@@ -27,6 +27,8 @@ import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
 import com.app.myfoottrip.util.ChangeMultipartUtil
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
+import com.github.ybq.android.spinkit.sprite.Sprite
+import com.github.ybq.android.spinkit.style.FoldingCube
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
@@ -329,9 +331,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             TravelEditSaveItemAdapter.ItemClickListener {
             override fun onEditButtonClick(position: Int, placeData: VisitPlace) {
                 // 리사이클러뷰 포지션에 해당하는 수정 버튼을 눌렀을 때 이벤트
-
                 // 수정 버튼을 누르면 해당 데이터를 LiveData에 저장하고,
-
                 // 해당 LiveData가 observe되면, 다이얼로그가 켜지는 방식
 
                 editSaveViewModel.setUserVisitPlaceData(userVisitPlaceDataList[position])
@@ -389,6 +389,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         // 저장 버튼 눌렀을 때 이벤트
         binding.travelEditSaveButton.setOnClickListener {
 
+            Log.d(TAG, "저장 버튼이 눌림: ")
+
             // 수정 작업일 때,
             if (fragmentType == 2) {
                 CoroutineScope(Dispatchers.IO).launch {
@@ -403,6 +405,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 CoroutineScope(Dispatchers.IO).launch {
                     Log.d(TAG, "저장할 데이터 : ${userTravelData!!}")
                     withContext(Dispatchers.Main) {
+                        val foldingCube: Sprite = FoldingCube()
+                        binding.progressBar.indeterminateDrawable = foldingCube
+
                         binding.progressBar.visibility = View.VISIBLE
                         binding.allConstrainlayout.visibility = View.GONE
                         binding.progressBarText.visibility = View.VISIBLE
@@ -462,8 +467,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         // 수정 작업에서는 마지막 하나를 선택했을 때는 알림창을 띄움
         // (마지막 하나가 삭제되면 Travel자체가 삭제된다는 메시지)
         // 그리고 확인을 누르면 삭제 요청을 보내고 Travel자체가 삭제됨.
+        Log.d(TAG, "updateTravel: 이거 실행됨?")
 
-        if (userVisitPlaceDataList.size > 1) {
+        if (userVisitPlaceDataList.size >= 1) {
             // 변환된 Travel데이터를 서버에 저장 (수정)
             CoroutineScope(Dispatchers.IO).launch {
 
@@ -472,11 +478,17 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                     userVisitPlaceDataList = getSqlLiteAllData()
                     1
                 }
-                
+                Log.d(TAG, "전 : $userVisitPlaceDataList")
+
                 defferedGetData.await()
+
+                Log.d(TAG, "후 : $userVisitPlaceDataList")
+
 
                 withContext(Dispatchers.IO) {
                     changePushDto()
+
+                    Log.d(TAG, "저장 되는 데이터 : $userTravelPushData ")
 
                     userTravelData?.let {
                         travelViewModel.userTravelDataUpdate(

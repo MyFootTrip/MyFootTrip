@@ -1,12 +1,11 @@
 package com.app.myfoottrip.ui.view.dialogs
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Point
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import androidx.fragment.app.DialogFragment
 import com.app.myfoottrip.databinding.EditCustomDialogBinding
 import com.app.myfoottrip.databinding.TravelSelectInformDialogBinding
@@ -33,6 +32,8 @@ class TravelSelectInfromDialog(val informText: String) : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = TravelSelectInformDialogBinding.inflate(inflater, container, false)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
         size = DeviceSizeUtil.deviceSizeCheck(mContext)
         return binding.root
     } // End of onCreateView
@@ -42,8 +43,8 @@ class TravelSelectInfromDialog(val informText: String) : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val params: ViewGroup.LayoutParams? = dialog?.window?.attributes
-        params?.width = (size.x * 0.47).toInt()
-        params?.height = (size.y * 0.47).toInt()
+        params?.width = (size.x * 0.67).toInt()
+        params?.height = (size.y * 0.37).toInt()
         dialog?.window?.attributes = params as WindowManager.LayoutParams
         dialog?.setCanceledOnTouchOutside(true)
         dialog?.setCancelable(true)

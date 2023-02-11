@@ -1,17 +1,14 @@
 package com.app.myfoottrip.data.repository
 
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.data.dto.Travel
-import com.app.myfoottrip.data.dto.TravelPush
 import com.app.myfoottrip.network.api.TravelApi
 import com.app.myfoottrip.util.NetworkResult
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import java.io.File
 
 private const val TAG = "TravelRepository_싸피"
 

@@ -67,14 +67,14 @@ class TravelAdapter(
                 chipTravelSelect.isChecked = (selected == position) //선택은 하나만 하도록
 
 
-                if (travelList.isNotEmpty() && travelList[0].placeList!!.isNotEmpty() && travelList[0].placeList?.get(0)?.placeImgList?.size == 0) {
+                if (travelList.isNotEmpty() && travelList[position].placeList!!.isNotEmpty() && travelList[position].placeList?.get(0)?.placeImgList?.size == 0) {
                     Glide.with(itemView)
                         .load(R.drawable.place_default_img)
                         .centerCrop()
                         .into(ivTravel)
                 } else {
                     Glide.with(itemView)
-                        .load(travelList[0].placeList?.get(0)?.placeImgList?.get(0))
+                        .load(travelList[position].placeList?.get(0)?.placeImgList?.get(0))
                         .centerCrop()
                         .into(ivTravel)
                 }

@@ -111,6 +111,7 @@
             tools:listitem="@layout/list_itme_travel_edit_save" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:layout_marginBottom="12dp"
             android:id="@+id/travel_edit_save_button"
             android:layout_width="280dp"
             android:layout_height="wrap_content"

@@ -4,36 +4,33 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.graphics.Point
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.VisitPlace
 import com.app.myfoottrip.data.viewmodel.EditSaveViewModel
 import com.app.myfoottrip.databinding.EditCustomDialogBinding
-import com.app.myfoottrip.ui.view.start.JoinProfileFragment.Companion.REQ_GALLERY
 import com.app.myfoottrip.ui.view.travel.PlaceImageAdapter
 import com.app.myfoottrip.util.DeviceSizeUtil
-import com.kakao.sdk.template.model.Link
-import com.naver.maps.map.CameraPosition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 private const val TAG = "EditCustomDialog_싸피"
@@ -61,12 +58,14 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         visitPlaceRepository = VisitPlaceRepository.get()
-    }
+    } // End of onCreate
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = EditCustomDialogBinding.inflate(inflater, container, false)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
         size = DeviceSizeUtil.deviceSizeCheck(mContext)
 
         _binding!!.deleteButton.setOnClickListener {
@@ -84,11 +83,6 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
             placeData.content = _binding!!.contentEd.text.toString()
             placeData.address = _binding!!.addressEd.text.toString()
             placeData.placeName = (_binding!!.locationNameEd.text.toString())
-
-            Log.d(TAG, "onCreateView: ${placeData.content} ")
-            Log.d(TAG, "onCreateView: ${_binding!!.contentEd.text} ")
-
-            Log.d(TAG, "다이얼로그 저장 버튼 눌렀을 때 이미지 리스트: ${placeData.imgList}")
 
             CoroutineScope(Dispatchers.IO).launch {
                 visitPlaceRepository.updateVisitPlace(placeData)
@@ -119,10 +113,6 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
         dialog?.setCancelable(true)
         dialog?.show()
 
-        Log.d(TAG, "onViewCreated: $placeData")
-
-
-
         // 리사이클러뷰 바인딩
         recyclerView = _binding!!.placeEditRecyclerview
         val size = placeData.imgList.size
@@ -138,7 +128,7 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
 
         recyclerView.apply {
             adapter = placeImageAdapter
-            layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = LinearLayoutManager(mContext, GridLayoutManager.HORIZONTAL, false)
         }
     } // End of onViewCreated
 
@@ -150,9 +140,7 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
     interface ItemClickListener {
         suspend fun onDeleteClicked()
         suspend fun onSaveClicked()
-        //suspend fun onImageAddButtonClicked()
     } // End of OnDialogClickListener
-
 
     private fun selectGallery() {
         val writePermission = ContextCompat.checkSelfPermission(
@@ -182,19 +170,22 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
     private val imageResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-
         // 가져온 이미지가 있을 경우 해당 데이터를 불러옴.
         if (result.resultCode == Activity.RESULT_OK) {
             val imageUri = result.data?.data ?: return@registerForActivityResult
             editSaveViewModel.setSelectUserImageList(imageUri)
+
         }
     } // End of registerForActivityResult
 
     private fun selectUserImageListObserve() {
         editSaveViewModel.selectUserImageList.observe(viewLifecycleOwner) {
-            Log.d(TAG, "selectUserImageListObserve: $it")
-            placeData.imgList.add(it.toString())
-            placeImageAdapter.notifyDataSetChanged()
+
+            CoroutineScope(Dispatchers.Main).launch {
+                placeData.imgList.add(it.toString())
+                placeImageAdapter.addData(it)
+                Log.d(TAG, "selectUserImageListObserve: 이게 돌긴하냐??")
+            }
         }
     } // End of selectUserImageListObserve
 
