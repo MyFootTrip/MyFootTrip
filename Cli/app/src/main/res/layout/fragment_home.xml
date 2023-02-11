@@ -259,6 +259,22 @@
                 tools:layout_editor_absoluteX="0dp"
                 tools:listitem="@layout/list_item_home" />
 
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_scroll_up"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                app:fabCustomSize="48dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="20dp"
+                android:backgroundTint="@color/main"
+                android:visibility="gone"
+                android:scaleType="fitCenter"
+                app:tint="@color/white"
+                app:borderWidth="0dp"
+                android:src="@drawable/ic_baseline_arrow_upward_24" />
+
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/lottie_home"
                 android:layout_width="80dp"

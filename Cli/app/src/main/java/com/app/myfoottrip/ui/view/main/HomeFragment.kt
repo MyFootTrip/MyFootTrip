@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.AlphaAnimation
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
@@ -81,12 +82,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         init()
 
-        //게시물 작성 페이지로 이동
-        binding.ivWrite.setOnClickListener {
-            val bundle = bundleOf("type" to 2)
-            binding.spinnerSort.dismiss()
-            findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment, bundle)
-            navigationViewModel.type = 0
+        binding.apply {
+
+            //게시물 작성 페이지로 이동
+            ivWrite.setOnClickListener {
+                val bundle = bundleOf("type" to 2)
+                binding.spinnerSort.dismiss()
+                findNavController().navigate(R.id.action_mainFragment_to_travelSelectFragment, bundle)
+                navigationViewModel.type = 0
+            }
+
+            btnScrollUp.setOnClickListener {
+                rvHome.smoothScrollToPosition(0)
+            }
         }
 
     } // End of onViewCreated
@@ -145,8 +153,33 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 else{
                     tvNoData.isVisible = false
                 }
+
+                //스크롤 감지 및 이동
+                val fadeIn = AlphaAnimation(0f, 1f).apply { duration = 500 }
+                val fadeOut = AlphaAnimation(1f, 0f).apply { duration = 500 }
+                var isTop = true
+
+                rvHome.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        if (!rvHome.canScrollVertically(-1)
+                            && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            btnScrollUp.startAnimation(fadeOut)
+                            btnScrollUp.visibility = View.GONE
+                            isTop = true
+                        } else {
+                            if(isTop) {
+                                btnScrollUp.visibility = View.VISIBLE
+                                btnScrollUp.startAnimation(fadeIn)
+                                isTop = false
+                            }
+                        }
+                    }
+                })
             }
         }
+
+
 
         boardAdapter.setItemClickListener(object : BoardPagingDataAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int, boardId: Int) {
