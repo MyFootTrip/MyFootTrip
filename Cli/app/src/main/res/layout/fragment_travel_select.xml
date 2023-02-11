@@ -34,14 +34,15 @@
     <!-- 도움말 btn -->
     <ImageView
         android:id="@+id/iv_travel_help"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_help"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_marginRight="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/rv_travel"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ic_help"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_back"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_travel"

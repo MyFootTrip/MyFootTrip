@@ -2,10 +2,7 @@ package com.app.myfoottrip.ui.view.travel
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
@@ -36,20 +33,25 @@ class TravelHelpFragment : BaseFragment<FragmentTravelHelpBinding> (
 
         binding.apply {
             // 뒤로가기
-            ivCancelBtn.setOnClickListener {findNavController().popBackStack() }
+            ivBack.setOnClickListener { findNavController().popBackStack() }
 
             // 슬라이더
             carouselTravelHelp.registerLifecycle(viewLifecycleOwner)
             var list = mutableListOf<CarouselItem>().let {
                 it.apply {
-                    add(CarouselItem(R.drawable.default_image))
-                    add(CarouselItem(R.drawable.default_image))
+                    add(CarouselItem(R.drawable.travel_help_1))
+                    add(CarouselItem(R.drawable.travel_help_2))
+                    add(CarouselItem(R.drawable.travel_help_3))
+                    add(CarouselItem(R.drawable.travel_help_4))
+                    add(CarouselItem(R.drawable.travel_help_5))
+                    add(CarouselItem(R.drawable.travel_help_6))
+                    add(CarouselItem(R.drawable.travel_help_7))
                 }
             }
             carouselTravelHelp.setData(list)
 
         }
-    }
+    } // End of onViewCreated
 
     override fun onDetach() {
         super.onDetach()
