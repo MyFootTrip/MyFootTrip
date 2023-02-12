@@ -61,6 +61,13 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
 
+    // 마커 배열
+    private var markers: MutableList<Marker> = LinkedList()
+
+    // polyline
+    private val polyline = PolylineOverlay()
+
+
     // Context
     private lateinit var mContext: Context
 
@@ -155,8 +162,23 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     } // End of getData
 
     // 가져온 데이터로 지도에 좌표 마크 표시하기
+
+
+    private fun clearMapInMark() = CoroutineScope(Dispatchers.Main).launch {
+        userVisitPlaceDataList.forEach { mark ->
+            markers += Marker().apply {
+                position = LatLng(mark.lat, mark.lng)
+            }
+        }
+
+        markers.forEach { marker ->
+            marker.map = null
+        }
+        polyline.map = null
+    }.onJoin
+
     private fun setMapInMark() = CoroutineScope(Dispatchers.Main).launch {
-        val markers = mutableListOf<Marker>()
+        markers = mutableListOf()
         userVisitPlaceDataList.forEach {
             markers += Marker().apply {
                 position = LatLng(it.lat, it.lng)
@@ -165,15 +187,15 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             }
         }
 
+
         markers.forEach { marker ->
             marker.map = naverMap
-            //marker.isFlat = true
             marker.isIconPerspectiveEnabled = true
         }
 
         val size = userVisitPlaceDataList.size
         if (size >= 2) {
-            val polyline = PolylineOverlay()
+            // polyline = PolylineOverlay()
             val tempList: MutableList<LatLng> = ArrayList()
             for (i in 0 until size) {
                 tempList.add(
@@ -285,9 +307,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             )
         } // End of for(i)
 
-        Log.d(TAG, "뷰모델 삭제 리스트: ${editSaveViewModel.deleteImageList}")
         deleteImageList.addAll(editSaveViewModel.deleteImageList)
-        Log.d(TAG, "내부 삭제 리스트:${deleteImageList} ")
 
         // VisitPlace -> Travel 객체
         userTravelPushData = TravelPush(
@@ -299,7 +319,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             deletePlaceList,
             deleteImageList
         )
-        Log.d(TAG, "보내기 전 완성된 데이터: $userTravelPushData")
     }  // End of changePushDto
 
 
@@ -346,10 +365,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                     override suspend fun onSaveClicked() {
                         // Nothing
                         editDialog.dismiss()
-                    }
+                    } // End of onSaveClicked
 
-                    override suspend fun onDeleteClicked() {
-                        withContext(Dispatchers.IO) {
+                    override fun onDeleteClicked() {
+                        CoroutineScope(Dispatchers.IO).launch {
                             // 삭제하면서 해당 position의 placeId를 먼저가져와서 deletePlaceList에 해당 placeId를 넣는데
                             // placeId가 null값이면 넣지 않음
                             val plId = userVisitPlaceDataList[position].placeId
@@ -357,22 +376,49 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                                 deletePlaceList.add(plId.toString())
                             }
 
+                            withContext(Dispatchers.Main) {
+                                clearMapInMark()
+                            }
+
                             // RoomDB애서 먼저지움,
                             visitPlaceRepository.deleteVisitPlace(userVisitPlaceDataList[position])
                             userVisitPlaceDataList.removeAt(position)
-                        }
 
-                        withContext(Dispatchers.Main) {
-                            requireActivity().runOnUiThread {
-                                setMapInMark()
+                            val deffer: Deferred<Int> = async {
+                                requireActivity().runOnUiThread {
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        setMapInMark()
+                                    }
+                                }
+                                1
                             }
 
-                            recyclerView.adapter!!.notifyDataSetChanged()
-                            editDialog.dismiss()
-                        }
-                    }
-                })
+                            val flg = deffer.start()
 
+                            // 좌표 리스트가 비어있지 않을 때는 가장 마지막에 있는 좌표로 지도를 옮김
+                            val size = userVisitPlaceDataList.size
+                            if (size > 0) {
+                                withContext(Dispatchers.Main) {
+                                    val cameraPosition = CameraPosition(
+                                        LatLng(
+                                            userVisitPlaceDataList[size - 1].lat,
+                                            userVisitPlaceDataList[size - 1].lng
+                                        ), 16.0, // 줌 레벨
+                                        40.0, 0.0
+                                    )
+                                    naverMap.cameraPosition = cameraPosition
+                                }
+                            }
+
+                            if (!flg) {
+                                withContext(Dispatchers.Main) {
+                                    recyclerView.adapter!!.notifyDataSetChanged()
+                                    editDialog.dismiss()
+                                }
+                            }
+                        }
+                    } // End of onDeleteClicked
+                }) // End of setItemClickListener
             }
         })
     } // End of adapterEvent
@@ -391,8 +437,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     private fun buttonEvents() = CoroutineScope(Dispatchers.IO).launch {
         // 저장 버튼 눌렀을 때 이벤트
         binding.travelEditSaveButton.setOnClickListener {
-
-            Log.d(TAG, "저장 버튼이 눌림: ")
 
             // 수정 작업일 때,
             if (fragmentType == 2) {

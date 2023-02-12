@@ -157,7 +157,7 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
     } // End of setItemClickListener
 
     interface ItemClickListener {
-        suspend fun onDeleteClicked()
+        fun onDeleteClicked()
         suspend fun onSaveClicked()
     } // End of OnDialogClickListener
 

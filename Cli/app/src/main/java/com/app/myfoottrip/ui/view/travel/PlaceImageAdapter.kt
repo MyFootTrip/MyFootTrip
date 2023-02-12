@@ -80,6 +80,7 @@ class PlaceImageAdapter(val context: Context, private val imageList: MutableList
             canvas.drawCircle(r, r, r, paint)
 
             squareBitmap.recycle()
+
             return bitmap
         }
 

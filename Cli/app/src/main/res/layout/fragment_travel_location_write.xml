@@ -93,6 +93,18 @@
             app:tint="@color/main"
             tools:ignore="SpeakableTextPresentCheck" />
 
+        <TextView
+            android:id="@+id/fab_pause_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="기록 일시 정지"
+            android:textColor="@color/white"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="@id/fab_pause"
+            app:layout_constraintStart_toStartOf="@id/fab_pause"
+            app:layout_constraintTop_toBottomOf="@id/fab_pause" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_stop"
             android:layout_width="72dp"
@@ -111,12 +123,25 @@
             app:tint="@color/white"
             tools:ignore="SpeakableTextPresentCheck" />
 
+        <TextView
+            android:id="@+id/fab_stop_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="저장 하기"
+            android:textColor="#3C3C3C"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/fab_stop"
+            app:layout_constraintStart_toStartOf="@id/fab_stop"
+            app:layout_constraintTop_toBottomOf="@id/fab_stop" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_restart"
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:backgroundTint="@color/main"
-            android:src="@drawable/ic_play"
+            android:src="@drawable/ic_restart"
+            android:background="@drawable/ic_restart"
             android:visibility="gone"
             app:borderWidth="0dp"
             app:fabCustomSize="72dp"
@@ -128,6 +153,18 @@
             app:maxImageSize="28dp"
             app:tint="@color/white"
             tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/fab_restart_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="기록 재시작"
+            android:textColor="#3C3C3C"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/fab_restart"
+            app:layout_constraintStart_toStartOf="@id/fab_restart"
+            app:layout_constraintTop_toBottomOf="@id/fab_restart" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

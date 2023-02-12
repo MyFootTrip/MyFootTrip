@@ -66,8 +66,8 @@ class TravelAdapter(
 
                 chipTravelSelect.isChecked = (selected == position) //선택은 하나만 하도록
 
-
-                if (travelList.isNotEmpty() && travelList[position].placeList!!.isNotEmpty() && travelList[position].placeList?.get(0)?.placeImgList?.size == 0) {
+                // 기본이미지 삽입.
+                if (travelList.isNotEmpty() && travelList[position].placeList!!.isNotEmpty() && travelList[position].placeList?.get(0)!!.placeImgList!!.isEmpty()) {
                     Glide.with(itemView)
                         .load(R.drawable.place_default_img)
                         .centerCrop()

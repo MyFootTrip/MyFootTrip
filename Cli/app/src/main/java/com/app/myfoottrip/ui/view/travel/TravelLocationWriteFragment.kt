@@ -298,9 +298,9 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
                     // 수정하는 페이지로 이동
                     Navigation.findNavController(binding.fabStop).navigate(
-                            R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment,
-                            bundle
-                        )
+                        R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment,
+                        bundle
+                    )
                 }
             }
         }
@@ -439,18 +439,24 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 //                tvStartTime.setTextColor(requireContext().getColor(R.color.white))
                 tvStartTimeLabel.setTextColor(requireContext().getColor(R.color.white))
                 fabPause.visibility = View.VISIBLE
+                fabPauseTv.visibility = View.VISIBLE
                 btnAddPoint.visibility = View.VISIBLE
                 fabRestart.visibility = View.GONE
+                fabRestartTv.visibility = View.GONE
                 fabStop.visibility = View.GONE
+                fabStopTv.visibility = View.GONE
 
             } else {
                 clBackground.background = requireContext().getDrawable(R.color.white)
                 tvStartTime.setTextColor(requireContext().getColor(R.color.black))
                 tvStartTimeLabel.setTextColor(requireContext().getColor(R.color.black))
                 fabPause.visibility = View.GONE
+                fabPauseTv.visibility = View.GONE
                 btnAddPoint.visibility = View.GONE
                 fabRestart.visibility = View.VISIBLE
+                fabRestartTv.visibility = View.VISIBLE
                 fabStop.visibility = View.VISIBLE
+                fabStopTv.visibility = View.VISIBLE
             }
         }
     } // End of changeMode
