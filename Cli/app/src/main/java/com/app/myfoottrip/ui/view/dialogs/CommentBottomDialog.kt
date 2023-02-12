@@ -25,7 +25,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
-
 private const val TAG = "CommentBottomDialog_마이풋트립"
 class CommentBottomDialog(private val listener: OnClickListener,private val commentList: ArrayList<Comment>) :
     BottomSheetDialogFragment(),

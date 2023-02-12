@@ -7,6 +7,8 @@ import com.app.myfoottrip.Application
 import com.app.myfoottrip.data.dto.Travel
 import com.app.myfoottrip.network.api.TravelApi
 import com.app.myfoottrip.util.NetworkResult
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 private const val TAG = "TravelRepository_싸피"
 
@@ -85,8 +87,22 @@ class TravelRepository {
     val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _createTravelResponseLiveData
 
-    suspend fun createTravel(travel: Travel) {
-        val response = travelHeaderApi.createTravel(travel)
+    suspend fun createTravel(
+        imageList: List<MultipartBody.Part?>,
+        requestHashMap: HashMap<String, RequestBody>
+    ) {
+        // Log.d(TAG, "createTravel: $travel")
+        // Log.d(TAG, "createTravel: ${travel.placeList?.get(0)!!.placeImgList?.get(0) is MultipartBody.Part} " )
+
+        Log.d(TAG, "createTravel: $imageList")
+
+        imageList.forEach {
+            Log.d(TAG, "createTravel: $it")
+        }
+
+        val response = travelHeaderApi.createTravel(imageList, requestHashMap)
+        Log.d(TAG, "유저 Travel 생성 : $response")
+
         _createTravelResponseLiveData.postValue(NetworkResult.Loading())
 
         if (response.isSuccessful) {
@@ -112,9 +128,13 @@ class TravelRepository {
     val userTravelDataUpdateResponseLiveData: LiveData<NetworkResult<Travel>>
         get() = _userTravelDataUpdateResponseLiveData
 
-    suspend fun userTravelDataUpdate(travelId: Int, updateTravelData: Travel) {
-        val response = travelHeaderApi.updateTravel(travelId, updateTravelData)
-
+    suspend fun userTravelDataUpdate(
+        travelId: Int,
+        newImageList: List<MultipartBody.Part?>,
+        updateTravelRequestHashMap: HashMap<String, RequestBody>
+    ) {
+        val response =
+            travelHeaderApi.updateTravel(travelId, newImageList, updateTravelRequestHashMap)
         Log.d(TAG, "userTravelDataUpdate: $response")
         Log.d(TAG, "userTravelDataUpdate: ${response.body()}")
         Log.d(TAG, "userTravelDataUpdate: ${response.message()}")

@@ -7,7 +7,6 @@ import java.util.*
 object TimeUtils {
     private val SDF1 = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 
-
     //시간차 구하기
     fun getDiffTime(time: Long): String {
         val SDformat = SimpleDateFormat("HH:mm")

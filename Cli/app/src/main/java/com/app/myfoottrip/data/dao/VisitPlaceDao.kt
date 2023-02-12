@@ -24,7 +24,7 @@ interface VisitPlaceDao {
     fun getVisitPlace(id: Long): VisitPlace
 
     @Query("SELECT * FROM visit_place")
-    fun getAll(): List<VisitPlace>
+    fun getAll(): MutableList<VisitPlace>
 
     @Query("SELECT * FROM visit_place order by date DESC limit 1 ")
     fun getMostRecentVisitPlace(): VisitPlace? // 가장 최근 항목 하나를 가져옴
@@ -32,4 +32,11 @@ interface VisitPlaceDao {
     // 테이블의 데이터 전체 삭제
     @Query("DELETE FROM visit_place")
     fun deleteAllData()
+
+
+    // 특정 ID값 제거
+
+
+
+
 } // End of VisitPlaceDao interface

@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 private const val TAG = "MyTravelFragment_마이풋트립"
 
 class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
-    FragmentMyTravelBinding::bind, R.layout.fragment_my_travel
+    FragmentMyTravelBinding::inflate
 ) {
 
     private lateinit var mainActivity: MainActivity

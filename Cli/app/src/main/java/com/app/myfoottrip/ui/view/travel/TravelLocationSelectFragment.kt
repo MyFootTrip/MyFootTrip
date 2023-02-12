@@ -11,6 +11,7 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.PointF
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -46,6 +47,7 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.util.FusedLocationSource
 import kotlinx.coroutines.*
+import java.util.*
 
 private const val TAG = "TravelLocationSelectFragment_싸피"
 
@@ -58,7 +60,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var categoryAdapter: CategoryAdatper
     private var locationList: MutableList<String> = ArrayList() //지역 리스트
-    private var selectedList: MutableList<String> = MutableList(4) { "" } //선택된 리스트
+    private var selectedList: MutableList<String> = ArrayList() //선택된 리스트
 
     private var mapFragment: MapFragment = MapFragment()
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
@@ -106,7 +108,19 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         binding.progressBar.visibility = View.VISIBLE
         binding.allConstrainlayout.visibility = View.GONE
 
-        selectedList = ArrayList()
+        Log.d(TAG, "onViewCreated: $selectedList")
+        if (selectedList.isNotEmpty()) {
+            binding.tvLocationHint.visibility = View.GONE
+            binding.fabStart.apply {
+                backgroundTintList =
+                    AppCompatResources.getColorStateList(requireContext(), R.color.main)
+                isEnabled = true
+                isClickable = true
+            }
+        }
+
+        //selectedList = ArrayList()
+
         // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
         fragmentType = requireArguments().getInt("type")
         getUserTravelDataResponseLiveDataObserve()
@@ -169,18 +183,24 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         callback.remove()
     } // End of onDetach
 
+    // Room DB에 저장
     private fun saveRoomDB() = CoroutineScope(Dispatchers.IO).launch {
         val size = travelActivityViewModel.userTravelData.value!!.placeList!!.size
         for (i in 0 until size) {
             val place = travelActivityViewModel.userTravelData.value!!.placeList!![i]
 
+            // place DTO의 placeImgList, ArrayList<String>을 List<Uri>로 변환해서 줘야됨
+
             val temp = VisitPlace(
                 i,
                 place.address!!,
+                place.placeId,
                 place.latitude!!,
                 place.longitude!!,
                 place.saveDate!!.time,
-                place.placeImgList!!
+                place.placeImgList!!,
+                place.memo,
+                place.placeName
             )
             visitPlaceRepository.insertVisitPlace(temp)
         }
@@ -448,6 +468,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         }
+
 
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext() as MainActivity)
         builder.run {

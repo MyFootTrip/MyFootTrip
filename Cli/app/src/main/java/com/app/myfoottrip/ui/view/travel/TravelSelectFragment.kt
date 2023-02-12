@@ -1,6 +1,6 @@
 package com.app.myfoottrip.ui.view.travel
 
-import android.content.Context
+  import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -25,7 +24,7 @@ import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentTravelSelectBinding
 import com.app.myfoottrip.ui.adapter.TravelAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
-import com.app.myfoottrip.ui.view.dialogs.EditCustomDialog
+import com.app.myfoottrip.ui.view.dialogs.TravelSelectInfromDialog
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import kotlinx.coroutines.*
@@ -33,7 +32,7 @@ import kotlinx.coroutines.*
 private const val TAG = "TravelSelectFragment_싸피"
 
 class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
-    FragmentTravelSelectBinding::bind, R.layout.fragment_travel_select
+    FragmentTravelSelectBinding::inflate
 ) {
     // ViewModel
     private val travelViewModel by viewModels<TravelViewModel>()
@@ -129,8 +128,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
     private fun buttonSetTextObserve() {
         travelViewModel.userTravelDataNewOrUpdateCheck.observe(viewLifecycleOwner) {
-            Log.d(TAG, "buttonSetTextObserve: 이거 왜 동작함?")
-
             if (it == null) {
                 // Nothing
                 bundle = bundleOf(
@@ -181,6 +178,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         travelAdapter = TravelAdapter(type)
         binding.rvTravel.adapter = travelAdapter
         binding.rvTravel.itemAnimator = null
+
         travelAdapter.setItemClickListener(object : TravelAdapter.ItemClickListener {
             override fun onAllClick(position: Int, travelDto: Travel) {
                 //TODO : 여정 확인 페이지로 이동
@@ -196,36 +194,28 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
             // Travel 데이터 삭제
             override fun onDeleteChipClick(position: Int, travelDto: Travel) {
-                val editDialog = EditCustomDialog("해당 데이터를 삭제하시겠습니까?")
-                editDialog.show(
-                    (activity as AppCompatActivity).supportFragmentManager, "editDialog"
+                val travelSelectInfromDialog = TravelSelectInfromDialog("해당 데이터를 삭제하시겠습니까?")
+                travelSelectInfromDialog.show(
+                    (activity as AppCompatActivity).supportFragmentManager,
+                    "travelSelectInfromDialog"
                 )
 
-                editDialog.setItemClickListener(object : EditCustomDialog.ItemClickListener {
-                    override fun onFinishClicked(dialog: DialogFragment) {
-                        // 데이터 전체를 새로 UI를 호출함
+                travelSelectInfromDialog.setItemClickListener(object :
+                    TravelSelectInfromDialog.ItemClickListener {
+                    override fun onSubmitButtonClicked() {
                         CoroutineScope(Dispatchers.IO).launch {
-
-                            // 선택된 포지션의 값을 가져와서 해당 값을 제거해야됨
-                            // 서버에 삭제 요청을 보내야 함.
                             travelViewModel.userTravelDataDelete(boardList[position].travelId!!)
 
-                            // 삭제를 마치고 나면 data를 다시 갱신해야함
-                            withContext(Dispatchers.Default) {
+                            withContext(Dispatchers.IO) {
                                 getData()
                             }
 
                             withContext(Dispatchers.Main) {
-                                editDialog.dismiss()
+                                travelSelectInfromDialog.dismiss()
                             }
                         }
-                    } // End of onFinishClicked
-
-                    override fun onCancelClicked(dialog: DialogFragment) {
-                        editDialog.dismiss()
-                    } // End of onCancelClicked
+                    }
                 })
-
             }
         })
     } // End of initAdapter

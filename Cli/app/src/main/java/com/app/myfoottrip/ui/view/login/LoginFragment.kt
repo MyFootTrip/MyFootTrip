@@ -25,8 +25,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "LoginFragment_싸피"
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>(
-    FragmentLoginBinding::bind, R.layout.fragment_login
-) {
+    FragmentLoginBinding::inflate) {
     private val userViewModel by activityViewModels<UserViewModel>()
     private val fcmViewModel by activityViewModels<FcmViewModel>()
 

@@ -13,7 +13,7 @@ import org.imaginativeworld.whynotimagecarousel.model.CarouselItem
 private const val TAG = "TravelHelpFragment_마이풋트립"
 
 class TravelHelpFragment : BaseFragment<FragmentTravelHelpBinding> (
-    FragmentTravelHelpBinding::bind, R.layout.fragment_travel_help
+    FragmentTravelHelpBinding::inflate
 ) {
 
     private lateinit var callback: OnBackPressedCallback

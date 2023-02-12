@@ -16,7 +16,7 @@ import com.skydoves.powerspinner.PowerSpinnerView
 private const val TAG = "MainFragment_마이풋트립"
 
 class MainFragment : BaseFragment<FragmentMainBinding>(
-    FragmentMainBinding::bind, R.layout.fragment_main
+    FragmentMainBinding::inflate
 ) { // End of MainFragment class
 
     private val navigationViewModel by activityViewModels<NavigationViewModel>()

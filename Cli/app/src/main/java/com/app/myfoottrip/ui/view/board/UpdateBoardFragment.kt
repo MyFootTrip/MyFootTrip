@@ -32,7 +32,7 @@ import kotlinx.coroutines.withContext
 private const val TAG = "UpdateBoardFragment_마이풋트립"
 
 class UpdateBoardFragment : BaseFragment<FragmentUpdateBoardBinding>(
-    FragmentUpdateBoardBinding::bind, R.layout.fragment_update_board
+    FragmentUpdateBoardBinding::inflate
 ) {
     private lateinit var mainActivity: MainActivity
     private val navigationViewModel by activityViewModels<NavigationViewModel>()

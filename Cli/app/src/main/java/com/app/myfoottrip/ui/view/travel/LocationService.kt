@@ -49,6 +49,9 @@ class LocationService : Service() {
     }
 
     private fun start() {
+        Log.d(TAG, "locationService : start")
+        
+        
         val notification =
             NotificationCompat.Builder(this, "location").setContentTitle("마이풋트립")
                 .setContentText("위치 정보를 수집 중").setSmallIcon(R.drawable.ic_notify_round_icon)
@@ -57,36 +60,41 @@ class LocationService : Service() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        val timer = Timer()
-        timer.schedule(object : TimerTask() {
-            override fun run() {
-                // 15분마다 측정
-                locationClient.getLocationUpdates(1000L).catch { exception ->
-                    exception.printStackTrace()
-                }.onEach { location ->
-                    val lat = location.latitude.toString()
-                    val lon = location.longitude.toString()
-                    val updateNotification = notification.setContentText(
-                        "위치를 측정 중.. $lat , $lon"
-                    )
+//        val timer = Timer()
+//        timer.schedule(object : TimerTask() {
+//            override fun run() {
+//
+//                Log.d(TAG, "run: ")
+//            }
+//        }, (1000L * 60L * 1L), (1000L * 60L * 1L))
 
-                    val intent = Intent("test")
-                    intent.putExtra("test", Coordinates(location.latitude, location.longitude))
-                    applicationContext.sendBroadcast(intent)
+        // 15분마다 측정
+        locationClient.getLocationUpdates(150_000L).catch { exception ->
+            exception.printStackTrace()
+        }.onEach { location ->
+            val lat = location.latitude.toString()
+            val lon = location.longitude.toString()
+            val updateNotification = notification.setContentText(
+                "위치를 측정 중.. $lat , $lon"
+            )
 
-                    Log.d(TAG, "lat: $lat, lon $lon")
+            Log.d(TAG, "locationClient: ")
 
-                    CoroutineScope(Dispatchers.IO).launch {
-                        EventBus.post(Coordinates(location.latitude, location.longitude))
-                    }
+            val intent = Intent("test")
+            intent.putExtra("test", Coordinates(location.latitude, location.longitude))
+            applicationContext.sendBroadcast(intent)
 
-                    notificationManager.notify(1, updateNotification.build())
-                }
-                    .launchIn(
-                        serviceScope
-                    )
+            Log.d(TAG, "lat: $lat, lon $lon")
+
+            CoroutineScope(Dispatchers.IO).launch {
+                EventBus.post(Coordinates(location.latitude, location.longitude))
             }
-        }, (1000L * 60L * 15L), (1000L * 60L * 15L))
+            // notificationManager.notify(1, updateNotification.build())
+        }
+            .launchIn(
+                serviceScope
+            )
+
 
         startForeground(1, notification.build())
     } // End of start

@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "StartFragment_싸피"
 
 class StartFragment : BaseFragment<FragmentStartBinding>(
-    FragmentStartBinding::bind, R.layout.fragment_start
+    FragmentStartBinding::inflate
 ) {
     private var email: String = ""
     private var phone: String = ""
@@ -79,10 +79,10 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
             kakaoLogin()
         }
 
-        // 깃허브 로그인 버튼 클릭 이벤트
-        binding.btnGithub.setOnClickListener {
-
-        }
+//        // 깃허브 로그인 버튼 클릭 이벤트
+//        binding.btnGithub.setOnClickListener {
+//
+//        }
 
     } // End of onViewCreatedkakaoLogin
 

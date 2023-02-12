@@ -38,7 +38,7 @@ import java.io.File
 
 private const val TAG = "EditProfileImageFragmen_마이풋트립"
 class EditProfileImageFragment : BaseFragment<FragmentEditProfileImageBinding>(
-    FragmentEditProfileImageBinding::bind, R.layout.fragment_edit_profile_image
+    FragmentEditProfileImageBinding::inflate
 ) {
     private lateinit var mainActivity: MainActivity
     private lateinit var callback: OnBackPressedCallback

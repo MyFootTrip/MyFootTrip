@@ -36,7 +36,7 @@ import java.util.*
 private const val TAG = "CreateBoardFragment_마이풋트립"
 
 class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
-    FragmentCreateBoardBinding::bind, R.layout.fragment_create_board
+    FragmentCreateBoardBinding::inflate
 ) {
     private lateinit var mainActivity: MainActivity
 

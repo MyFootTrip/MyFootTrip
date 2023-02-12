@@ -48,7 +48,7 @@ import kotlin.collections.ArrayList
 
 private const val TAG = "BoardFragment_마이풋트립"
 class BoardFragment : BaseFragment<FragmentBoardBinding>(
-    FragmentBoardBinding::bind, R.layout.fragment_board), OnMapReadyCallback {
+    FragmentBoardBinding::inflate), OnMapReadyCallback {
 
     private lateinit var mainActivity: MainActivity
 

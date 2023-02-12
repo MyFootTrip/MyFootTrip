@@ -17,6 +17,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -72,6 +73,7 @@ class Application : Application() {
         retrofit = Retrofit.Builder()
             .baseUrl(SERVER_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
+            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .client(okHttpClient)
             .build()
 
@@ -109,8 +111,8 @@ class Application : Application() {
         lateinit var retrofit: Retrofit
         lateinit var headerRetrofit: Retrofit
 
-//        const val SERVER_URL = "https://i8d103.p.ssafy.io/"    // TODO : AWS Hosting + URL 변경 //54.248.64.154
-      const val SERVER_URL = "http://i8d103.p.ssafy.io:7779/"
+//      const val SERVER_URL = "https://i8d103.p.ssafy.io/"    // TODO : AWS Hosting + URL 변경 //54.248.64.154
+        const val SERVER_URL = "http://i8d103.p.ssafy.io:7777/"
 
         const val IMG_URL = "http://54.248.64.154"
         lateinit var sharedPreferencesUtil: SharedPreferencesUtil

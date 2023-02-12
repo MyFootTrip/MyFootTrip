@@ -11,10 +11,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.Coordinates
@@ -32,6 +34,7 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
+import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
@@ -42,7 +45,7 @@ import java.util.*
 private const val TAG = "TravelLocationWriteFragment_싸피"
 
 class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBinding>(
-    FragmentTravelLocationWriteBinding::bind, R.layout.fragment_travel_location_write
+    FragmentTravelLocationWriteBinding::inflate
 ), OnMapReadyCallback { // End of TravelLocationWrite class
     // End of TravelLocationWriteFragment class
     // ViewModel
@@ -102,10 +105,11 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                         if (distCount == 4 && flag == false) {
                             // 지도에 마커표시 하기 위해서 DB등록
                             // 4번의 동일한 좌표가 찍히고 나면 RoomDB에 데이터 추가
+                            val job = Job()
 
                             CoroutineScope(Dispatchers.IO).launch {
                                 var address: String? = null
-                                val job = CoroutineScope(Dispatchers.IO).launch {
+                                CoroutineScope(Dispatchers.IO + job).launch {
                                     val getAdd = getAddressByCoordinates(
                                         newCoor.latitude!!, newCoor.longitude!!
                                     )
@@ -116,7 +120,18 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                                     }
                                 }
 
-                                job.join()
+                                if (job.start() == false) {
+                                    // 해당 좌표를 지도에 표시
+                                    withContext(Dispatchers.Main) {
+                                        requireActivity().runOnUiThread {
+                                            setInMapMarker(
+                                                LatLng(
+                                                    newCoor.latitude!!, newCoor.longitude!!
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
 
                                 // 없는 주소는 List에서 생성하지 않고 빈 주소로 넣음
                                 if (address == null) {
@@ -148,9 +163,17 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     private var fragmentType = 0
     private var getUserTravelData: List<VisitPlace> = emptyList()
 
+    private lateinit var callback: OnBackPressedCallback
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                findNavController().popBackStack()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
         Log.d(TAG, "onAttach: TravelLocationWriteFragment 켜짐 ")
     } // End of onAttach
 
@@ -180,7 +203,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 binding.progressBar.visibility = View.VISIBLE
                 binding.allConstrainlayout.visibility = View.GONE
             }
-
 
             val deffered2: Deferred<Int> = async {
                 temp = visitPlaceRepository.getAllVisitPlace()
@@ -285,11 +307,10 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                     val bundle = bundleOf("type" to fragmentType)
 
                     // 수정하는 페이지로 이동
-                    Navigation.findNavController(binding.fabStop)
-                        .navigate(
-                            R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment,
-                            bundle
-                        )
+                    Navigation.findNavController(binding.fabStop).navigate(
+                        R.id.action_travelLocationWriteFragment_to_editSaveTravelFragment,
+                        bundle
+                    )
                 }
             }
         }
@@ -377,8 +398,9 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         binding.fabStop.isClickable = false
         binding.btnAddPoint.isClickable = false
 
+        // 새로 생성되는 위치에서는 PlaceId를 null값으로 넣음
         val temp = VisitPlace(
-            0, address, lat, lon, System.currentTimeMillis(), emptyList()
+            0, address, null, lat, lon, System.currentTimeMillis(), LinkedList()
         )
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -427,18 +449,24 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 //                tvStartTime.setTextColor(requireContext().getColor(R.color.white))
                 tvStartTimeLabel.setTextColor(requireContext().getColor(R.color.white))
                 fabPause.visibility = View.VISIBLE
+                fabPauseTv.visibility = View.VISIBLE
                 btnAddPoint.visibility = View.VISIBLE
                 fabRestart.visibility = View.GONE
+                fabRestartTv.visibility = View.GONE
                 fabStop.visibility = View.GONE
+                fabStopTv.visibility = View.GONE
 
             } else {
                 clBackground.background = requireContext().getDrawable(R.color.white)
                 tvStartTime.setTextColor(requireContext().getColor(R.color.black))
                 tvStartTimeLabel.setTextColor(requireContext().getColor(R.color.black))
                 fabPause.visibility = View.GONE
+                fabPauseTv.visibility = View.GONE
                 btnAddPoint.visibility = View.GONE
                 fabRestart.visibility = View.VISIBLE
+                fabRestartTv.visibility = View.VISIBLE
                 fabStop.visibility = View.VISIBLE
+                fabStopTv.visibility = View.VISIBLE
             }
         }
     } // End of changeMode
@@ -509,6 +537,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         CoroutineScope(Dispatchers.IO).launch {
             mainActivity.stopLocationBackground()
         }
+        callback.remove()
     } // End of onDetach
 
     override fun onLowMemory() {
@@ -532,8 +561,18 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         ).animate(CameraAnimation.Fly, 1000)
         naverMap.moveCamera(cameraUpdate)
 
-        val m = Marker()
-
-
     } // End of onMapReady
-} // End of
+
+    private fun setInMapMarker(Coor: LatLng) {
+        val markers = mutableListOf<Marker>()
+        // 지금까지 저장되어 있는 좌표를 가져와서 저장을 함
+
+        val marker = Marker().apply {
+            position = Coor
+            icon = MarkerIcons.BLACK
+        }
+
+        marker.map = naverMap
+        marker.isIconPerspectiveEnabled = true
+    } // End of setInMapMarker
+} // End of TravelLocationWriteFragment class

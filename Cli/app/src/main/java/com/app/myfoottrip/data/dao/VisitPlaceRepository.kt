@@ -18,7 +18,7 @@ class VisitPlaceRepository private constructor(context: Context) {
     // DB테이블 생성하고, Dao까지 모두 만들어준다. NoteDao를 return한다.
     private val visitPlaceDao = database.visitPlaceDao()
 
-    suspend fun getAllVisitPlace(): List<VisitPlace> {
+    suspend fun getAllVisitPlace(): MutableList<VisitPlace> {
         return visitPlaceDao.getAll()
     } // End of getVisitPlaces
 

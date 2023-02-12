@@ -31,7 +31,7 @@ import java.util.regex.Pattern
 private const val TAG = "EditPasswordFragment_마이풋트립"
 
 class EditPasswordFragment : BaseFragment<FragmentEditPasswordBinding>(
-    FragmentEditPasswordBinding::bind, R.layout.fragment_edit_password
+    FragmentEditPasswordBinding::inflate
 ) {
     private val userViewModel by activityViewModels<UserViewModel>()
     private val joinViewModel by activityViewModels<JoinViewModel>()
