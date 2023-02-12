@@ -133,8 +133,6 @@ class TravelRepository {
         newImageList: List<MultipartBody.Part?>,
         updateTravelRequestHashMap: HashMap<String, RequestBody>
     ) {
-        Log.d(TAG, "userTravelDataUpdate: $updateTravelRequestHashMap")
-        
         val response =
             travelHeaderApi.updateTravel(travelId, newImageList, updateTravelRequestHashMap)
         Log.d(TAG, "userTravelDataUpdate: $response")

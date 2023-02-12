@@ -3,6 +3,7 @@ package com.app.myfoottrip.ui.view.travel
 import android.content.Context
 import android.graphics.*
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,8 +42,16 @@ class PlaceImageAdapter(val context: Context, private val imageList: MutableList
     } // End of onCreateViewHolder
 
     override fun onBindViewHolder(holder: PlaceImageHolder, position: Int) {
+        Log.d(TAG, "imageList[position]: ${imageList[position]}")
+
         val imageView = holder.itemView.findViewById<ImageView>(R.id.image_imageview)
-        Picasso.get().load(imageList[position]).transform(CropSquareTransformation()).into(imageView)
+        Picasso.get().load(imageList[position]).transform(CropSquareTransformation())
+            .into(imageView)
+
+        holder.itemView.findViewById<ImageView>(R.id.image_delete_button).setOnClickListener {
+            itemClickListner.onRemoveImageButtonClicked(position)
+        }
+
     } // End of onBindViewHolder
 
     inner class CircleTransfrom : Transformation {
@@ -80,18 +89,22 @@ class PlaceImageAdapter(val context: Context, private val imageList: MutableList
     } // End of CircleTransfrom
 
     interface ItemClickListener {
-        fun onAddImageButtonClicked(position: Int, imageUri : Uri) // 이미지를 추가해주는 메소드
-        fun onRemoveImageButtonClicked(position : Int) // 이미지 삭제 버튼 눌렀을 때 메소드,
+        fun onRemoveImageButtonClicked(position: Int) // 이미지 삭제 버튼 눌렀을 때 메소드,
     } // End of ItemClickListener interface
 
     fun setItemClickListener(itemClickListener: ItemClickListener) {
         this.itemClickListner = itemClickListener
     } // End of setItemClickListener
 
-    internal fun addData(newImageUri : Uri) {
+    internal fun addData(newImageUri: Uri) {
         imageList.add(newImageUri)
         notifyDataSetChanged()
     } // End of addData
+
+    internal fun removeImgage(position: Int) {
+        imageList.removeAt(position)
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount() = imageList.size
 } // End of PlaceImageAdapter class

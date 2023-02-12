@@ -10,14 +10,13 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,7 +29,6 @@ import com.app.myfoottrip.util.DeviceSizeUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 
 private const val TAG = "EditCustomDialog_싸피"
@@ -38,7 +36,7 @@ private const val TAG = "EditCustomDialog_싸피"
 class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
 
     // ViewModel
-    private val editSaveViewModel by viewModels<EditSaveViewModel>()
+    private val editSaveViewModel by activityViewModels<EditSaveViewModel>()
 
     private lateinit var mContext: Context
     private var _binding: EditCustomDialogBinding? = null
@@ -105,6 +103,8 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         selectUserImageListObserve()
 
+        editSaveViewModel.clearDeleteImageList()
+
         val params: ViewGroup.LayoutParams? = dialog?.window?.attributes
         params?.width = (size.x * 0.87).toInt()
         params?.height = (size.y * 0.77).toInt()
@@ -130,6 +130,25 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
             adapter = placeImageAdapter
             layoutManager = LinearLayoutManager(mContext, GridLayoutManager.HORIZONTAL, false)
         }
+
+        // 이미지 리사이클러뷰 이벤트 처리
+        placeImageAdapter.setItemClickListener(object : PlaceImageAdapter.ItemClickListener {
+            // 이미지 삭제 버튼 눌렀을 때,
+            override fun onRemoveImageButtonClicked(position: Int) {
+
+                // 기존에 있던 서버에서 들어온 이미지 일 경우 삭제되었다는 정보를 넘겨주어야 한다.
+                val name = placeData.imgList[position].substring(0, 4)
+                // 기존에 있던 이미지인지를 판별함
+                if (name == "http") {
+                    val split = placeData.imgList[position].split("media/")
+                    editSaveViewModel.addDeleteImageList(split[1])
+                }
+
+                placeData.imgList.removeAt(position)
+                placeImageAdapter.removeImgage(position)
+            }
+        })
+
     } // End of onViewCreated
 
     private lateinit var listener: ItemClickListener
@@ -173,7 +192,7 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
         // 가져온 이미지가 있을 경우 해당 데이터를 불러옴.
         if (result.resultCode == Activity.RESULT_OK) {
             val imageUri = result.data?.data ?: return@registerForActivityResult
-            editSaveViewModel.setSelectUserImageList(imageUri)
+            editSaveViewModel.setSelectUserImageLiveData(imageUri)
 
         }
     } // End of registerForActivityResult
@@ -181,10 +200,12 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
     private fun selectUserImageListObserve() {
         editSaveViewModel.selectUserImageList.observe(viewLifecycleOwner) {
 
-            CoroutineScope(Dispatchers.Main).launch {
-                placeData.imgList.add(it.toString())
-                placeImageAdapter.addData(it)
-                Log.d(TAG, "selectUserImageListObserve: 이게 돌긴하냐??")
+            if (it != null) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    editSaveViewModel.clearSelectUserImageLiveData()
+                    placeData.imgList.add(it.toString())
+                    placeImageAdapter.addData(it!!)
+                }
             }
         }
     } // End of selectUserImageListObserve

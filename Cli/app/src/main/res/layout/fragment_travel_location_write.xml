@@ -20,114 +20,114 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:visibility="visible"
         android:id="@+id/all_constrainlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
 
-    <TextView
-        android:id="@+id/tv_start_time_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="시작 시간"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_start_time"
-        app:layout_constraintEnd_toStartOf="@+id/tv_start_time"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/tv_start_time_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="시작 시간"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_start_time"
+            app:layout_constraintEnd_toStartOf="@+id/tv_start_time"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_start_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="04:30" />
+        <TextView
+            android:id="@+id/tv_start_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="04:30" />
 
-    <com.naver.maps.map.MapView
-        android:id="@+id/map_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="164dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_start_time" />
+        <com.naver.maps.map.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="164dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_start_time" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_add_point"
-        android:layout_width="160dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:background="@drawable/ripple"
-        android:backgroundTint="@color/join_next_button_background_color"
-        android:padding="12dp"
-        android:text="현재 위치 추가"
-        android:textColor="@color/join_next_button_text_color"
-        android:textSize="16sp"
-        android:translationZ="10dp"
-        app:layout_constraintBottom_toBottomOf="@id/map_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_goneMarginBottom="24dp" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_add_point"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/ripple"
+            android:backgroundTint="@color/join_next_button_background_color"
+            android:padding="12dp"
+            android:text="현재 위치 추가"
+            android:textColor="@color/join_next_button_text_color"
+            android:textSize="16sp"
+            android:translationZ="10dp"
+            app:layout_constraintBottom_toBottomOf="@id/map_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_goneMarginBottom="24dp" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_pause"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:backgroundTint="@color/white"
-        android:src="@drawable/ic_pause"
-        app:borderWidth="0dp"
-        app:fabCustomSize="72dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/map_view"
-        app:maxImageSize="36dp"
-        app:tint="@color/main"
-        tools:ignore="SpeakableTextPresentCheck" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_pause"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/ic_pause"
+            app:borderWidth="0dp"
+            app:fabCustomSize="72dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/map_view"
+            app:maxImageSize="36dp"
+            app:tint="@color/main"
+            tools:ignore="SpeakableTextPresentCheck" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_stop"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:backgroundTint="@color/error_color"
-        android:src="@drawable/ic_stop"
-        android:visibility="gone"
-        app:borderWidth="0dp"
-        app:fabCustomSize="72dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/fab_restart"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/map_view"
-        app:maxImageSize="26dp"
-        app:tint="@color/white"
-        tools:ignore="SpeakableTextPresentCheck" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_stop"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:backgroundTint="@color/error_color"
+            android:src="@drawable/ic_stop"
+            android:visibility="visible"
+            app:borderWidth="0dp"
+            app:fabCustomSize="72dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/fab_restart"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/map_view"
+            app:maxImageSize="26dp"
+            app:tint="@color/white"
+            tools:ignore="SpeakableTextPresentCheck" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_restart"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:backgroundTint="@color/main"
-        android:src="@drawable/ic_play"
-        android:visibility="gone"
-        app:borderWidth="0dp"
-        app:fabCustomSize="72dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/fab_stop"
-        app:layout_constraintTop_toBottomOf="@id/map_view"
-        app:maxImageSize="28dp"
-        app:tint="@color/white"
-        tools:ignore="SpeakableTextPresentCheck" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_restart"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:backgroundTint="@color/main"
+            android:src="@drawable/ic_play"
+            android:visibility="gone"
+            app:borderWidth="0dp"
+            app:fabCustomSize="72dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/fab_stop"
+            app:layout_constraintTop_toBottomOf="@id/map_view"
+            app:maxImageSize="28dp"
+            app:tint="@color/white"
+            tools:ignore="SpeakableTextPresentCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

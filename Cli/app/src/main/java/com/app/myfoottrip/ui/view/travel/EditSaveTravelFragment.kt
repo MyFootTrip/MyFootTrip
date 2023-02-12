@@ -51,7 +51,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 ), OnMapReadyCallback { // End of EditSaveTravelFragment class
     // ViewModel
     private val travelViewModel by viewModels<TravelViewModel>()
-    private val editSaveViewModel by viewModels<EditSaveViewModel>()
+    private val editSaveViewModel by activityViewModels<EditSaveViewModel>()
 
     // ActivityViewModel
     private val travelActivityViewModel by activityViewModels<TravelActivityViewModel>()
@@ -187,9 +187,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             polyline.coords = tempList
             polyline.map = naverMap
         }
-
-        Log.d(TAG, "setMapInMark: $userVisitPlaceDataList")
-        Log.d(TAG, "setMapInMark: $size")
     }.onJoin // End of setMapInMark
 
 
@@ -237,11 +234,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             travelId = travelActivityViewModel.userTravelData.value!!.travelId
         }
 
-
         // PlacePush를 담을 List
         val tempList: MutableList<PlacePush> = ArrayList()
         userImageList = LinkedList()
-
 
         val size = userVisitPlaceDataList.size
         for (i in 0 until size) {
@@ -251,6 +246,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             for (j in 0 until tempSize) {
                 val uri = temp.imgList[j]
 
+                // 이미지 이름이 앞의 4글자가 http로 시작할 경우, 기존에 있던 이미지이므로, 저장하지 않음.
                 if (uri.substring(0 until 4) == "http") {
                     continue
                 }
@@ -288,6 +284,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 )
             )
         } // End of for(i)
+
+        Log.d(TAG, "뷰모델 삭제 리스트: ${editSaveViewModel.deleteImageList}")
+        deleteImageList.addAll(editSaveViewModel.deleteImageList)
+        Log.d(TAG, "내부 삭제 리스트:${deleteImageList} ")
 
         // VisitPlace -> Travel 객체
         userTravelPushData = TravelPush(
@@ -362,8 +362,11 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                             userVisitPlaceDataList.removeAt(position)
                         }
 
-
                         withContext(Dispatchers.Main) {
+                            requireActivity().runOnUiThread {
+                                setMapInMark()
+                            }
+
                             recyclerView.adapter!!.notifyDataSetChanged()
                             editDialog.dismiss()
                         }
@@ -478,17 +481,11 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                     userVisitPlaceDataList = getSqlLiteAllData()
                     1
                 }
-                Log.d(TAG, "전 : $userVisitPlaceDataList")
 
                 defferedGetData.await()
 
-                Log.d(TAG, "후 : $userVisitPlaceDataList")
-
-
                 withContext(Dispatchers.IO) {
                     changePushDto()
-
-                    Log.d(TAG, "저장 되는 데이터 : $userTravelPushData ")
 
                     userTravelData?.let {
                         travelViewModel.userTravelDataUpdate(

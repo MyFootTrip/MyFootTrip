@@ -1,5 +1,6 @@
 package com.app.myfoottrip.data.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -162,6 +163,7 @@ class TravelViewModel : ViewModel() {
         requestHashMap["DeleteImageList"] =
             deleteImageList.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
+        Log.d(TAG, "삭제되는 이미지 리스트들: ${deleteImageList} ")
 
         viewModelScope.launch {
             travelRepository.userTravelDataUpdate(travelId, newImageList, requestHashMap)
