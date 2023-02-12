@@ -81,7 +81,7 @@ class UserViewModel : ViewModel() {
         requestHashMap["nickname"] =
             _wholeUpdateUserData.nickname.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         requestHashMap["age"] =
-            _wholeUpdateUserData.age.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            _wholeUpdateUserData.age!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
         viewModelScope.launch {
             userRepository.updateUser(

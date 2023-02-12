@@ -130,7 +130,7 @@ class EditProfileImageFragment : BaseFragment<FragmentEditProfileImageBinding>(
                 lottieProfileImage.visibility = View. VISIBLE
                 tvWait.visibility = View.VISIBLE
                 //화면 터치 막기
-                mainActivity.window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                 mainActivity.window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 isUpdate = true
                 updateProfileImg()
             }

@@ -91,7 +91,7 @@ class JoinViewModel : ViewModel() {
         requestHashMap["nickname"] =
             _wholeJoinUserData.nickname.toRequestBody("multipart/form-data".toMediaTypeOrNull())
         requestHashMap["age"] =
-            _wholeJoinUserData.age.toRequestBody("multipart/form-data".toMediaTypeOrNull())
+            _wholeJoinUserData.age!!.toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
         viewModelScope.launch {
             userRepository.userJoin(

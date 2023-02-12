@@ -24,7 +24,8 @@ import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentTravelSelectBinding
 import com.app.myfoottrip.ui.adapter.TravelAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
-import com.app.myfoottrip.ui.view.dialogs.TravelSelectInfromDialog
+  import com.app.myfoottrip.ui.view.dialogs.AlertDialog
+  import com.app.myfoottrip.ui.view.dialogs.TravelSelectInfromDialog
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import kotlinx.coroutines.*
@@ -194,28 +195,26 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
             // Travel 데이터 삭제
             override fun onDeleteChipClick(position: Int, travelDto: Travel) {
-                val travelSelectInfromDialog = TravelSelectInfromDialog("해당 데이터를 삭제하시겠습니까?")
-                travelSelectInfromDialog.show(
-                    (activity as AppCompatActivity).supportFragmentManager,
-                    "travelSelectInfromDialog"
-                )
+                val dialog = AlertDialog(requireActivity() as AppCompatActivity)
 
-                travelSelectInfromDialog.setItemClickListener(object :
-                    TravelSelectInfromDialog.ItemClickListener {
-                    override fun onSubmitButtonClicked() {
+                dialog.setOnOKClickedListener {
+                    binding.apply {
                         CoroutineScope(Dispatchers.IO).launch {
                             travelViewModel.userTravelDataDelete(boardList[position].travelId!!)
 
                             withContext(Dispatchers.IO) {
                                 getData()
                             }
-
-                            withContext(Dispatchers.Main) {
-                                travelSelectInfromDialog.dismiss()
-                            }
+//                            withContext(Dispatchers.Main) {
+//                                dialog
+//                            }
                         }
                     }
-                })
+                }
+
+                dialog.setOnCancelClickedListener { }
+
+                dialog.show("여정 삭제", "기록한 여정을 삭제 하시겠습니까?")
             }
         })
     } // End of initAdapter
@@ -361,4 +360,5 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         super.onDetach()
         callback.remove()
     } // End of onDetach
+
 } // End of TravelSelectFragment class
