@@ -22,7 +22,6 @@ class BoardPagingDataAdapter: PagingDataAdapter<Board,BoardPagingDataAdapter.Boa
     IMAGE_COMPARATOR) {
     inner class BoardViewHolder(private val binding : ListItemHomeBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(board : Board){
-            Log.d("tst5", "bind: ${board.boardId} 바인드됨")
             binding.apply {
                 if (board.imageList.isNullOrEmpty()){
                     Glide.with(itemView)
