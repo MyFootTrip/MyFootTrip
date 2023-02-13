@@ -62,6 +62,7 @@ class TravelEditSaveItemAdapter(val context: Context, private val placeList: Lis
 
     interface ItemClickListener {
         fun onEditButtonClick(position: Int, placeData: VisitPlace) // 수정 버튼을 클릭했을 때 이벤트
+        fun onLayoutClicked(position : Int, placeData: VisitPlace) // 전체 클릭
     } // End of ItemClickListener interface
 
     fun setItemClickListener(itemClickListener: ItemClickListener) {

@@ -56,7 +56,7 @@ class PlaceImageAdapter(val context: Context, private val imageList: MutableList
 
     inner class CircleTransfrom : Transformation {
         override fun transform(source: Bitmap?): Bitmap {
-            var size = Math.min(source!!.width, source.height)
+            val size = Math.min(source!!.width, source.height)
 
             val x = (source.width - size) / 2
             val y = (source.height - size) / 2

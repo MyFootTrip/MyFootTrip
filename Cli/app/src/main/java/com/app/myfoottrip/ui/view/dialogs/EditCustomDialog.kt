@@ -24,11 +24,13 @@ import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.VisitPlace
 import com.app.myfoottrip.data.viewmodel.EditSaveViewModel
 import com.app.myfoottrip.databinding.EditCustomDialogBinding
+import com.app.myfoottrip.ui.view.travel.EditSaveTravelFragment
 import com.app.myfoottrip.ui.view.travel.PlaceImageAdapter
 import com.app.myfoottrip.util.DeviceSizeUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 private const val TAG = "EditCustomDialog_싸피"
@@ -84,6 +86,10 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 visitPlaceRepository.updateVisitPlace(placeData)
+                withContext(Dispatchers.Main) {
+                    val ed = EditSaveTravelFragment()
+//                    ed.setAdapterRefresh()
+                }
                 dialog!!.dismiss()
             }
         }
@@ -204,7 +210,7 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
                 CoroutineScope(Dispatchers.Main).launch {
                     editSaveViewModel.clearSelectUserImageLiveData()
                     placeData.imgList.add(it.toString())
-                    placeImageAdapter.addData(it!!)
+                    placeImageAdapter.addData(it)
                 }
             }
         }
@@ -218,5 +224,4 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
     companion object {
         const val REQ_GALLERY = 1
     }
-
 } // End of EditCustomDialog class

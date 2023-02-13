@@ -95,7 +95,6 @@ class LocationService : Service() {
                 serviceScope
             )
 
-
         startForeground(1, notification.build())
     } // End of start
 

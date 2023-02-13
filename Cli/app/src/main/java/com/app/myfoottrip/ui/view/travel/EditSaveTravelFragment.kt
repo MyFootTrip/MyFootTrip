@@ -59,6 +59,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
+    private var cameraPosition = CameraPosition(
+        LatLng(0.0, 0.0), 16.0, // 줌 레벨
+        40.0, 0.0
+    )
 
     // 마커 배열
     private var markers: MutableList<Marker> = LinkedList()
@@ -122,6 +126,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         super.onCreate(savedInstanceState)
         visitPlaceRepository = VisitPlaceRepository.get()
     } // End of onCreate
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -437,12 +442,24 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                     } // End of onDeleteClicked
                 }) // End of setItemClickListener
             }
+
+            override fun onLayoutClicked(position: Int, placeData: VisitPlace) {
+
+                // 지도 화면 이동
+                val temp = userVisitPlaceDataList[position]
+                cameraPosition = CameraPosition(
+                    LatLng(temp.lat, temp.lng), 16.0, 40.0, 0.0
+                )
+                naverMap.cameraPosition = cameraPosition
+
+            }
         })
     } // End of adapterEvent
 
     private fun initRecyclerViewAdapter() {
         travelEditSaveItemAdapter = TravelEditSaveItemAdapter(mContext, userVisitPlaceDataList)
     } // End of initRecyclerViewAdapter
+
 
     private fun totalTimeCalc(): String {
         val diff =
@@ -727,10 +744,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         naverMap.locationSource = locationSource
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
 
-        val cameraPosition = CameraPosition(
-            LatLng(0.0, 0.0), 16.0, // 줌 레벨
-            40.0, 0.0
-        )
         naverMap.cameraPosition = cameraPosition
 
         setMapInMark()
