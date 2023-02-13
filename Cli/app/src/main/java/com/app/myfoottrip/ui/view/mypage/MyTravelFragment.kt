@@ -78,23 +78,6 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        // 혹시 모를 SQLLite DB를 항상 비워야함
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                visitPlaceRepository.deleteAllVisitPlace()
-            } catch (exception: Exception) {
-                Log.d(TAG, "onResume: DB에 비울 값이 없습니다.")
-            }
-        }
-
-        // 유저 생성 ResponseLiveData 다시 초기화
-        travelViewModel.setCreateTravelResponseLiveData()
-
-        myTravelAdapter.notifyDataSetChanged()
-    } // End of onResume
 
     override fun onDetach() {
         super.onDetach()

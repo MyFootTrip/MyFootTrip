@@ -28,8 +28,6 @@ import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
 import com.app.myfoottrip.util.ChangeMultipartUtil
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
-import com.github.ybq.android.spinkit.sprite.Sprite
-import com.github.ybq.android.spinkit.style.FoldingCube
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
@@ -467,8 +465,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 CoroutineScope(Dispatchers.IO).launch {
                     Log.d(TAG, "저장할 데이터 : ${userTravelData!!}")
                     withContext(Dispatchers.Main) {
-                        val foldingCube: Sprite = FoldingCube()
-                        binding.progressBar.indeterminateDrawable = foldingCube
+//                        val foldingCube: Sprite = FoldingCube()
+//                        binding.progressBar.indeterminateDrawable = foldingCube
 
                         binding.progressBar.visibility = View.VISIBLE
                         binding.allConstrainlayout.visibility = View.GONE
@@ -574,6 +572,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     /// TravelData 생성
     private fun createTravelResponseObserve() {
         travelViewModel.createTravelResponseLiveData.observe(this.viewLifecycleOwner) {
+
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data == 201) {
@@ -605,6 +604,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
                 is NetworkResult.Loading -> {
                     Log.d(TAG, "createTravelResponseLiveData Loading")
+                }
+                else -> {
+                    // Nothing
+
                 }
             }
         }

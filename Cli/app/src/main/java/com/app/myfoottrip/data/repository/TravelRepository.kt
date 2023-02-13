@@ -25,8 +25,8 @@ class TravelRepository {
         get() = _travelListResponseLiveData
 
 
-    fun setCreateTravelResponseLiveData() {
-        _createTravelResponseLiveData.postValue(null)
+    fun setCreateTravelResponseLiveData(newData : NetworkResult<Int>?) {
+        _createTravelResponseLiveData.postValue(newData)
     } // End of setCreateTravelResponseLiveData
 
 
@@ -83,8 +83,8 @@ class TravelRepository {
     } // End of getTravel
 
     // ======================== 유저 여행 데이터 생성 ========================
-    private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Int>>()
-    val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
+    private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Int>?>()
+    val createTravelResponseLiveData: LiveData<NetworkResult<Int>?>
         get() = _createTravelResponseLiveData
 
     suspend fun createTravel(

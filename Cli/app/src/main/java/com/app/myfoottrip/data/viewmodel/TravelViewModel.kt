@@ -53,8 +53,8 @@ class TravelViewModel : ViewModel() {
     val travelData: LiveData<Travel>
         get() = _travelData
 
-    fun setCreateTravelResponseLiveData() {
-        travelRepository.setCreateTravelResponseLiveData()
+    fun setCreateTravelResponseLiveData(newData : NetworkResult<Int>?) {
+        travelRepository.setCreateTravelResponseLiveData(newData)
     } // End of setCreateTravelResponseLiveData
 
 
@@ -93,7 +93,7 @@ class TravelViewModel : ViewModel() {
 
     // ======================== 유저 여행 데이터 추가 ========================
     // 유저 여행 데이터 추가 response값 LiveData
-    val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
+    val createTravelResponseLiveData: LiveData<NetworkResult<Int>?>
         get() = travelRepository.createTravelResponseLiveData
 
     fun createTravel(imageList: List<MultipartBody.Part>, travelData: TravelPush) {
