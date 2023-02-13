@@ -89,6 +89,7 @@ class PlaceBottomDialog(private val listener: OnClickListener,private val place 
         binding.tvPlaceName.text = place.placeName //장소명
         initMapScroll() //지도
         binding.tvPlaceAddress.text = place.address
+        binding.tvContent.text = place.memo //메모
     }
 
     //지도 뷰 스크롤 터치 제어
