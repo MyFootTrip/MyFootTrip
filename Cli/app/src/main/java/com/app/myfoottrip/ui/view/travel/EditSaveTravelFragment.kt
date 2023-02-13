@@ -364,8 +364,14 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
         }
 
+        travelEditSaveItemAdapter.refreshAdapter()
+        travelEditSaveItemAdapter.notifyDataSetChanged()
+
+
         adapterEvent()
-    } // End of
+    } // End of setUI
+
+
 
     private fun adapterEvent() {
         travelEditSaveItemAdapter.setItemClickListener(object :
@@ -444,8 +450,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             }
 
             override fun onLayoutClicked(position: Int, placeData: VisitPlace) {
-
                 // 지도 화면 이동
+                Log.d(TAG, "onLayoutClicked: 여기 클릭됨")
                 val temp = userVisitPlaceDataList[position]
                 cameraPosition = CameraPosition(
                     LatLng(temp.lat, temp.lng), 16.0, 40.0, 0.0

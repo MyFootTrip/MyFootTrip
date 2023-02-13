@@ -11,6 +11,7 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dto.Place
 import com.app.myfoottrip.data.dto.VisitPlace
 import com.app.myfoottrip.databinding.ListItmeTravelEditSaveBinding
+import com.google.android.material.card.MaterialCardView
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -56,13 +57,22 @@ class TravelEditSaveItemAdapter(val context: Context, private val placeList: Lis
             .setOnClickListener {
                 itemClickListner.onEditButtonClick(position, placeList[position])
             }
+
+        holder.itemView.findViewById<MaterialCardView>(R.id.travel_content_cardview)
+            .setOnClickListener {
+                itemClickListner.onLayoutClicked(position, placeList[position])
+            }
     } // End of onCreateViewHolder
 
     override fun getItemCount(): Int = placeList.size
 
+    fun refreshAdapter() {
+        notifyDataSetChanged()
+    }
+
     interface ItemClickListener {
         fun onEditButtonClick(position: Int, placeData: VisitPlace) // 수정 버튼을 클릭했을 때 이벤트
-        fun onLayoutClicked(position : Int, placeData: VisitPlace) // 전체 클릭
+        fun onLayoutClicked(position: Int, placeData: VisitPlace) // 전체 클릭
     } // End of ItemClickListener interface
 
     fun setItemClickListener(itemClickListener: ItemClickListener) {

@@ -216,8 +216,19 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
         }
     } // End of selectUserImageListObserve
 
+    interface RefreshListener {
+        fun onRefresh()
+    } // End of RefreshListener
+
+    private lateinit var refreshListener : RefreshListener
+
+    fun setRefreshListener(refreshListener : RefreshListener) {
+        this.refreshListener = refreshListener
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        refreshListener.onRefresh()
         _binding = null
     } // End of onDestroyView
 
