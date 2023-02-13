@@ -142,6 +142,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             getData()
         }
 
+        binding.ivBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         createTravelResponseObserve()
     } // End of onViewCreated
 
@@ -476,12 +480,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 }
             }
         }
-
-        joinBackButtonCustomView = binding.joinBackButtonCustomview
-        joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
-            .setOnClickListener {
-                findNavController().popBackStack()
-            }
     } // End of buttonEvents
 
 
