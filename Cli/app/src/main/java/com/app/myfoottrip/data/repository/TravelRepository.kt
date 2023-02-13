@@ -25,9 +25,7 @@ class TravelRepository {
         get() = _travelListResponseLiveData
 
 
-    fun setCreateTravelResponseLiveData(newData : NetworkResult<Int>?) {
-        _createTravelResponseLiveData.postValue(newData)
-    } // End of setCreateTravelResponseLiveData
+
 
 
     // 각 유저별 여행 기록 정보를 가져옴
@@ -83,23 +81,14 @@ class TravelRepository {
     } // End of getTravel
 
     // ======================== 유저 여행 데이터 생성 ========================
-    private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Int>?>()
-    val createTravelResponseLiveData: LiveData<NetworkResult<Int>?>
+    private val _createTravelResponseLiveData = MutableLiveData<NetworkResult<Int>>()
+    val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _createTravelResponseLiveData
 
     suspend fun createTravel(
         imageList: List<MultipartBody.Part?>,
         requestHashMap: HashMap<String, RequestBody>
     ) {
-        // Log.d(TAG, "createTravel: $travel")
-        // Log.d(TAG, "createTravel: ${travel.placeList?.get(0)!!.placeImgList?.get(0) is MultipartBody.Part} " )
-
-        Log.d(TAG, "createTravel: $imageList")
-
-        imageList.forEach {
-            Log.d(TAG, "createTravel: $it")
-        }
-
         val response = travelHeaderApi.createTravel(imageList, requestHashMap)
         Log.d(TAG, "유저 Travel 생성 : $response")
 
@@ -122,6 +111,11 @@ class TravelRepository {
         }
     } // End of createTravel
 
+    // 생성값 초기화
+    fun setCreateTravelResponseLiveData(newData : NetworkResult<Int>) {
+        _createTravelResponseLiveData.postValue(newData)
+    } // End of setCreateTravelResponseLiveData
+    
 
     // ======================== 유저 여행 데이터 수정 ========================
     private val _userTravelDataUpdateResponseLiveData = MutableLiveData<NetworkResult<Travel>>()
@@ -135,9 +129,6 @@ class TravelRepository {
     ) {
         val response =
             travelHeaderApi.updateTravel(travelId, newImageList, updateTravelRequestHashMap)
-        Log.d(TAG, "userTravelDataUpdate: $response")
-        Log.d(TAG, "userTravelDataUpdate: ${response.body()}")
-        Log.d(TAG, "userTravelDataUpdate: ${response.message()}")
 
         // 처음은 Loading 상태로 지정
         _userTravelDataUpdateResponseLiveData.postValue(NetworkResult.Loading())
@@ -164,12 +155,14 @@ class TravelRepository {
     val userTravelDataDeleteResponseLiveData: LiveData<NetworkResult<Int>>
         get() = _userTravelDataDeleteResponseLiveData
 
+    // 삭제값 초기화
+    fun setDeleteTravelResponseLiveData(newData : NetworkResult<Int>) {
+        _createTravelResponseLiveData.postValue(newData)
+    } // End of setCreateTravelResponseLiveData
+
+
     suspend fun userTravelDataDelete(travelId: Int) {
         val response = travelHeaderApi.deleteTravel(travelId)
-
-        Log.d(TAG, "userTravelDataDelete: $response")
-        Log.d(TAG, "userTravelDataDelete: ${response.body()}")
-        Log.d(TAG, "userTravelDataDelete: ${response.message()}")
 
         // 처음은 Loading 상태로 지정
         _userTravelDataDeleteResponseLiveData.postValue(NetworkResult.Loading())
@@ -190,5 +183,4 @@ class TravelRepository {
             )
         }
     } // End of userTravelDataDelete
-
 } // End of TravelRepository class

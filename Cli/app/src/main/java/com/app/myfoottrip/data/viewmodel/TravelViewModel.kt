@@ -53,9 +53,7 @@ class TravelViewModel : ViewModel() {
     val travelData: LiveData<Travel>
         get() = _travelData
 
-    fun setCreateTravelResponseLiveData(newData : NetworkResult<Int>?) {
-        travelRepository.setCreateTravelResponseLiveData(newData)
-    } // End of setCreateTravelResponseLiveData
+
 
 
     // ======================== 여행정보를 새로만드는지, 기존의 데이터를 불러오는 뷰인지 구분 ========================
@@ -93,8 +91,12 @@ class TravelViewModel : ViewModel() {
 
     // ======================== 유저 여행 데이터 추가 ========================
     // 유저 여행 데이터 추가 response값 LiveData
-    val createTravelResponseLiveData: LiveData<NetworkResult<Int>?>
+    val createTravelResponseLiveData: LiveData<NetworkResult<Int>>
         get() = travelRepository.createTravelResponseLiveData
+
+    fun setCreateTravelResponseLiveData(newData : NetworkResult<Int>) {
+        travelRepository.setCreateTravelResponseLiveData(newData)
+    } // End of setCreateTravelResponseLiveData
 
     fun createTravel(imageList: List<MultipartBody.Part>, travelData: TravelPush) {
         var requestHashMap: HashMap<String, RequestBody> = HashMap()
@@ -163,8 +165,6 @@ class TravelViewModel : ViewModel() {
         requestHashMap["DeleteImageList"] =
             deleteImageList.toString().toRequestBody("multipart/form-data".toMediaTypeOrNull())
 
-        Log.d(TAG, "삭제되는 이미지 리스트들: ${deleteImageList} ")
-
         viewModelScope.launch {
             travelRepository.userTravelDataUpdate(travelId, newImageList, requestHashMap)
         }
@@ -174,6 +174,10 @@ class TravelViewModel : ViewModel() {
     // 여행 데이터 삭제 response값 LiveData
     val userTravelDataDeleteResponseLiveData: LiveData<NetworkResult<Int>>
         get() = travelRepository.userTravelDataDeleteResponseLiveData
+
+    fun setDeleteTravelResponseLiveData(newData : NetworkResult<Int>) {
+        travelRepository.setDeleteTravelResponseLiveData(newData)
+    } // End of setCreateTravelResponseLiveData
 
     // 여행 데이터 삭제
     suspend fun userTravelDataDelete(travelId: Int) {

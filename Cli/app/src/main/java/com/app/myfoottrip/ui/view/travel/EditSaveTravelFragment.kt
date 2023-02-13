@@ -591,6 +591,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                             withContext(Dispatchers.Main) {
                                 showToast("저장이 완료되었습니다.")
                             }
+
+                            // 유저 생성 ResponseLiveData 다시 초기화
+                            travelViewModel.setCreateTravelResponseLiveData(NetworkResult.Success(0))
                         }
                     }
                 }
@@ -604,10 +607,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
                 is NetworkResult.Loading -> {
                     Log.d(TAG, "createTravelResponseLiveData Loading")
-                }
-                else -> {
-                    // Nothing
-
                 }
             }
         }

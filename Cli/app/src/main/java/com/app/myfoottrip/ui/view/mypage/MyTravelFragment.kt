@@ -121,7 +121,6 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
 
     private fun initObserver() {
         userTravelDataObserver()
-        userTraveLDataDeleteObserve()
     }
 
     private fun userTravelDataObserver() {
@@ -148,31 +147,9 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
         }
     } // End of userTravelDataObserver
 
-    private fun userTraveLDataDeleteObserve() {
-        travelViewModel.userTravelDataDeleteResponseLiveData.observe(viewLifecycleOwner) {
-            when (it) {
-                is NetworkResult.Success -> {
-                    if (it.data == 204) {
-                        requireView().showSnackBarMessage("해당 여정이 삭제되었습니다.")
-                        myTravelAdapter.notifyDataSetChanged()
-                    }
-                }
-
-                is NetworkResult.Error -> {
-                    requireView().showSnackBarMessage("유저 여행 데이터 삭제 오류 발생")
-                }
-
-                is NetworkResult.Loading -> {
-                    Log.d(TAG, "createTravelResponseLiveData Loading")
-                }
-            }
-        }
-    } // End of userTraveLDataDeleteObserve
-
     private suspend fun setData() {
         CoroutineScope(Dispatchers.IO).launch {
             userViewModel.wholeMyData.value?.uid?.let { travelViewModel.getUserTravel(it) }
         }
     } // End of setData
-
 }
