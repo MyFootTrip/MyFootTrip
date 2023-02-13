@@ -43,7 +43,7 @@ class EditSaveViewModel : ViewModel() {
         get() = _userVisitPlaceData
 
 
-    fun setUserVisitPlaceData(data: VisitPlace?) {
+    fun setUserVisitPlaceData(data: VisitPlace) {
         _userVisitPlaceData.value = data
     } // End of setUserVisitPlaceData
 
