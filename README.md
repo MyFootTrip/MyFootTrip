@@ -67,7 +67,7 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 
 
 ## 사용 스택
-<img src="git_image/사용스택.png" title="" alt="" width="520">
+<img src="git_image/stack.png" title="" alt="" width="520">
 
 
 
@@ -86,7 +86,7 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 
 ## API 설계
 
-<img src="git_image/api%20캡처.png" title="" alt="" width="520">
+<img src="git_image/apicap.png" title="" alt="" width="520">
 
 
 
