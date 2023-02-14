@@ -4,13 +4,7 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 
 ### 시연화면
 
-
-
-
-
 ### 주요 기능 화면
-
-
 
 <img src="git_image/KakaoTalk_20230208_111029191_01.jpg" title="" alt="" width="220">                         <img title="" src="git_image/KakaoTalk_20230208_111029191_02.jpg" alt="KakaoTalk_20230208_111029191_02.jpg" width="224">
 
@@ -64,32 +58,66 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 
 📝 Design
 
-
-
 ## 사용 스택
+
 <img src="git_image/stack.PNG" title="" alt="git_image/stack.png" width="520">
-
-
-
 
 ## 구조
 
 <img src="git_image/architecture.png" title="" alt="git_image/architecture.png" width="520">
 
-
-
 ## ERD
 
 <img src="git_image/erd.png" title="" alt="git_image/erd.png" width="520">
-
-
 
 ## API 설계
 
 <img src="git_image/apicap.PNG" title="" alt="git_image/apicap.png" width="520">
 
-
-
 _apiurl_ : https://www.notion.so/ce21476e52b340f7ade635a85b5504fd?v=efa0df6f03c349ffb6b669fa1000f4a2
+
+
+
+## 백엔드 소스코드 Dir 구조
+
+```bash
+pjtback
+├── accounts
+│ ├── migrations
+│ ├── adapter.py
+│ ├── admin.py
+│ ├── apps.py
+│ ├── models.py
+│ ├── serializers.py
+│ ├── urls.py
+│ └── views.py
+├── community
+│ ├── migrations
+│ ├── admin.py
+│ ├── apps.py
+│ ├── models.py
+│ ├── serializers.py
+│ ├── urls.py
+│ └── views.py
+├── config
+│ ├── nginx
+│ │ └── nginx.conf
+│ ├── settings
+│ │ ├── requirements.txt
+│ │ └── serviceAccountKey.json
+├── media
+├── pjtback
+│ ├── migrations
+│ ├── asgi.py
+│ ├── settings.py
+│ ├── models.py
+│ ├── urls.py
+│ └── views.py
+├── docker-compose.yml
+├── Dockerfile
+├── manage.py
+├── requirements.txt
+└── serviceAccountKey.json
+```
 
 
