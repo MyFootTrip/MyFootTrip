@@ -12,6 +12,8 @@ import com.app.myfoottrip.ui.view.travel.EventBus
 import com.app.myfoottrip.util.NetworkResult
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 private const val TAG = "TravelActivityViewModel_싸피"
@@ -38,8 +40,8 @@ class TravelActivityViewModel : ViewModel() {
     }
 
     // 선택된 지역 리스트
-    private val _locationList = ArrayList<String>(emptyList())
-    val locationList: ArrayList<String>
+    private val _locationList = LinkedList<String>(emptyList())
+    val locationList: LinkedList<String>
         get() = _locationList
 
     var selectedtravel: Travel? = null
@@ -60,7 +62,7 @@ class TravelActivityViewModel : ViewModel() {
     val userTravelData: LiveData<Travel>
         get() = _userTravelData
 
-    fun setLocationList(list: ArrayList<String>) {
+    fun setLocationList(list: LinkedList<String>) {
         _locationList.clear()
         _locationList.addAll(list)
     } // End of setLocationList

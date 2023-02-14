@@ -86,10 +86,8 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 visitPlaceRepository.updateVisitPlace(placeData)
-                withContext(Dispatchers.Main) {
-                    val ed = EditSaveTravelFragment()
-//                    ed.setAdapterRefresh()
-                }
+                listener.onSaveClicked()
+
                 dialog!!.dismiss()
             }
         }
@@ -216,19 +214,9 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
         }
     } // End of selectUserImageListObserve
 
-    interface RefreshListener {
-        fun onRefresh()
-    } // End of RefreshListener
-
-    private lateinit var refreshListener : RefreshListener
-
-    fun setRefreshListener(refreshListener : RefreshListener) {
-        this.refreshListener = refreshListener
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        refreshListener.onRefresh()
         _binding = null
     } // End of onDestroyView
 

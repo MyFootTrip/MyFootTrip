@@ -59,10 +59,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
-    private var cameraPosition = CameraPosition(
-        LatLng(0.0, 0.0), 16.0, // 줌 레벨
-        40.0, 0.0
-    )
+    private lateinit var cameraPosition : CameraPosition
 
     // 마커 배열
     private var markers: MutableList<Marker> = LinkedList()
@@ -372,7 +369,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     } // End of setUI
 
 
-
     private fun adapterEvent() {
         travelEditSaveItemAdapter.setItemClickListener(object :
             TravelEditSaveItemAdapter.ItemClickListener {
@@ -391,7 +387,12 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
                 editDialog.setItemClickListener(object : EditCustomDialog.ItemClickListener {
                     override suspend fun onSaveClicked() {
-                        // Nothing
+                        CoroutineScope(Dispatchers.Main).launch {
+                            requireActivity().runOnUiThread {
+                                travelEditSaveItemAdapter.notifyDataSetChanged()
+                            }
+                        }
+
                         editDialog.dismiss()
                     } // End of onSaveClicked
 
@@ -750,6 +751,15 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         naverMap.locationSource = locationSource
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
 
+        val size = userVisitPlaceDataList.size
+
+        // 가장 마지막 위치로 표시
+        cameraPosition = CameraPosition(
+            LatLng(userVisitPlaceDataList[size - 1].lat, userVisitPlaceDataList[size - 1].lng),
+            16.0, // 줌 레벨
+            40.0,
+            0.0
+        )
         naverMap.cameraPosition = cameraPosition
 
         setMapInMark()

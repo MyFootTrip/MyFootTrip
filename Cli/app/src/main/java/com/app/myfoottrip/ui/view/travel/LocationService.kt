@@ -78,13 +78,11 @@ class LocationService : Service() {
                 "위치를 측정 중.. $lat , $lon"
             )
 
-            Log.d(TAG, "locationClient: ")
-
             val intent = Intent("test")
             intent.putExtra("test", Coordinates(location.latitude, location.longitude))
             applicationContext.sendBroadcast(intent)
 
-            Log.d(TAG, "lat: $lat, lon $lon")
+
 
             CoroutineScope(Dispatchers.IO).launch {
                 EventBus.post(Coordinates(location.latitude, location.longitude))

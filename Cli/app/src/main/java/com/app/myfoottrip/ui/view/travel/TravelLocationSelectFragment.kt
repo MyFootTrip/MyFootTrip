@@ -59,10 +59,9 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     private val travelActivityViewModel by activityViewModels<TravelActivityViewModel>()
 
     private lateinit var categoryAdapter: CategoryAdatper
-    private var locationList: MutableList<String> = ArrayList() //지역 리스트
-    private var selectedList: MutableList<String> = ArrayList() //선택된 리스트
+    private var locationList: MutableList<String> = LinkedList() //지역 리스트
+    private var selectedList: MutableList<String> = LinkedList() //선택된 리스트
 
-    private var mapFragment: MapFragment = MapFragment()
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
     private lateinit var locationSource: FusedLocationSource
     private lateinit var mContext: Context
@@ -89,7 +88,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate: ")
         visitPlaceRepository = VisitPlaceRepository.get()
         checkAllPermission()
         // setupOnbackPressed()
@@ -108,7 +106,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         binding.progressBar.visibility = View.VISIBLE
         binding.allConstrainlayout.visibility = View.GONE
 
-        Log.d(TAG, "onViewCreated: $selectedList")
         if (selectedList.isNotEmpty()) {
             binding.tvLocationHint.visibility = View.GONE
             binding.fabStart.apply {
@@ -118,8 +115,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                 isClickable = true
             }
         }
-
-        //selectedList = ArrayList()
 
         // 타입이 0이면 여행 정보 새로 생성, 타입이 2이면 기존의 여행 정보를 불러오기.
         fragmentType = requireArguments().getInt("type")
@@ -148,7 +143,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             getDeffered.await()
         }
 
-        Log.d(TAG, "getData 결과임: $temp")
 
         binding.fabStart.apply {
             backgroundTintList =
@@ -168,7 +162,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             // 새로운 Travel을 생성할 때
             // Adapter 초기화
             initAdapter()
-            Log.d(TAG, "onViewCreated: 여기 돌음?")
 
             // EventListener 초기화
             initListener()
@@ -190,7 +183,6 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
             val place = travelActivityViewModel.userTravelData.value!!.placeList!![i]
 
             // place DTO의 placeImgList, ArrayList<String>을 List<Uri>로 변환해서 줘야됨
-
             val temp = VisitPlace(
                 i,
                 place.address!!,
@@ -220,10 +212,11 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
         // categoryAdapter에서 아이템 클릭했을 경우 이벤트처리
         categoryAdapter.setItemClickListener(object : CategoryAdatper.ItemClickListener {
             override fun onClick(view: View, position: Int, category: String) {
-                if (!selectedList.contains(locationList[position])) {
+                if (!selectedList.contains(locationList[position]) && selectedList.size < 3) {
                     setChipListener(position)
                 }
 
+                // 수정작업 같은 경우 이미 저장되어 있는 값이 있을 때
                 if (selectedList.isNotEmpty()) {
                     binding.tvLocationHint.visibility = View.GONE
                     binding.fabStart.apply {
@@ -238,7 +231,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     } // End of categoryAdapterEventListener
 
     private fun initAdapter() {
-        locationList = ArrayList()
+        locationList = LinkedList()
         locationList.addAll(HomeFragment.LOCATION_LIST)
         categoryAdapter = CategoryAdatper(locationList)
 
@@ -252,7 +245,7 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     // 위치 기록 시작
     private fun startLocationRecording() {
         binding.fabStart.setOnClickListener {
-            travelActivityViewModel.setLocationList(selectedList as ArrayList<String>)
+            travelActivityViewModel.setLocationList(selectedList as LinkedList<String>)
             mContext.showToastMessage("위치 기록을 시작합니다.")
 
             val mainActivity = requireActivity() as MainActivity
@@ -288,35 +281,61 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
 
 
     private fun setChipListener(position: Int) {
-        if (!selectedList.contains(locationList[position])) {
+        if (!selectedList.contains(locationList[position]) && selectedList.size < 3) {
             selectedList.add(locationList[position])
-        }
 
-        binding.cgDetail.addView(Chip(requireContext()).apply {
-            chipCornerRadius = 10.0f
-            text = locationList[position]
-            textSize = 12.0f
-            isCloseIconVisible = true
-            closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
-            closeIconTint =
-                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
-            chipBackgroundColor =
-                ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
-            setTextColor(
-                ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        requireContext(), R.color.white
+            binding.cgDetail.addView(Chip(requireContext()).apply {
+                chipCornerRadius = 10.0f
+                text = locationList[position]
+                textSize = 12.0f
+                isCloseIconVisible = true
+                closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
+                closeIconTint =
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                chipBackgroundColor =
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
+                setTextColor(
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            requireContext(), R.color.white
+                        )
                     )
                 )
-            )
 
-            // closeIcon 클릭시 이벤트
-            setOnCloseIconClickListener {
-                binding.cgDetail.removeView(this)
-                // element를 기준으로 삭제
-                selectedList.remove(locationList[position])
-            }
-        })
+                // closeIcon 클릭시 이벤트
+                setOnCloseIconClickListener {
+                    binding.cgDetail.removeView(this)
+                    // element를 기준으로 삭제
+                    selectedList.remove(locationList[position])
+                }
+            })
+        } else if (selectedList.isNotEmpty() && selectedList.size < 3) {
+            binding.cgDetail.addView(Chip(requireContext()).apply {
+                chipCornerRadius = 10.0f
+                text = locationList[position]
+                textSize = 12.0f
+                isCloseIconVisible = true
+                closeIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close)
+                closeIconTint =
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.white))
+                chipBackgroundColor =
+                    ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.main))
+                setTextColor(
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            requireContext(), R.color.white
+                        )
+                    )
+                )
+
+                // closeIcon 클릭시 이벤트
+                setOnCloseIconClickListener {
+                    binding.cgDetail.removeView(this)
+                    // element를 기준으로 삭제
+                    selectedList.remove(locationList[position])
+                }
+            })
+        }
     } // End of setChipListener
 
     // ========================================================= 유저 데이터 가져오기 =========================================================
@@ -327,13 +346,11 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
     } // End of getUserTravelData
 
     private fun getUserTravelDataResponseLiveDataObserve() {
-        Log.d(TAG, "getUserTravelDataResponseLiveDataObserve: 옵저버 밖")
         travelViewModel.getUserTravelDataResponseLiveData.observe(this.viewLifecycleOwner) {
-            Log.d(TAG, "getUserTravelDataResponseLiveDataObserve: 옵저버 안")
             when (it) {
                 is NetworkResult.Success -> {
                     travelActivityViewModel.setUserTravelData(it.data!!)
-                    locationList = ArrayList()
+                    locationList = LinkedList()
 
                     // 수정해야할 데이터를 RoomDB에 저장.
                     CoroutineScope(Dispatchers.IO).launch {
@@ -344,16 +361,15 @@ class TravelLocationSelectFragment : Fragment(), OnMapReadyCallback {
                         deffered.await()
                     }
 
-                    selectedList = ArrayList()
+                    selectedList = LinkedList()
                     selectedList.addAll(travelActivityViewModel.userTravelData.value!!.location)
-                    Log.d(TAG, "수정 작업 observer selectedList: $selectedList")
 
                     // Adapter 초기화
                     initAdapter()
                     // EventListener 초기화
                     initListener()
 
-                    if (selectedList.isNotEmpty()) {
+                    if (selectedList.isNotEmpty() && selectedList.size < 3) {
                         for (i in 0 until selectedList.size) {
                             val idx = locationList.indexOf(selectedList[i])
                             setChipListener(idx)
