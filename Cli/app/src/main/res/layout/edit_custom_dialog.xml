@@ -6,12 +6,10 @@
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
-        android:foregroundGravity="center"
         android:id="@+id/edit_custom_dialog_cardview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardCornerRadius="24dp"
-        app:contentPadding="10dp"
+        android:foregroundGravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,187 +20,268 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/location_name_constlayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="@id/edit_custom_cardview_constrain"
-                app:layout_constraintStart_toStartOf="@id/edit_custom_cardview_constrain"
-                app:layout_constraintTop_toTopOf="@id/edit_custom_cardview_constrain">
-
-                <TextView
-                    android:id="@+id/location_name_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="장소명"
-                    android:textColor="#404040"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="@id/location_name_constlayout"
-                    app:layout_constraintStart_toStartOf="@id/location_name_constlayout"
-                    app:layout_constraintTop_toTopOf="@id/location_name_constlayout" />
-
-                <EditText
-                    android:maxLength="15"
-                    android:id="@+id/location_name_ed"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@id/location_name_constlayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/location_name_tv"
-                    app:layout_constraintTop_toTopOf="@id/location_name_constlayout" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/address_constlayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/location_name_constlayout">
-
-                <TextView
-                    android:id="@+id/address_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="주소"
-                    android:textColor="#404040"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="@id/address_constlayout"
-                    app:layout_constraintStart_toStartOf="@id/address_constlayout"
-                    app:layout_constraintTop_toTopOf="@id/address_constlayout" />
-
-                <EditText
-                    android:id="@+id/address_ed"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@id/address_constlayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/address_tv"
-                    app:layout_constraintTop_toTopOf="@id/address_constlayout" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/content_constlayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/address_constlayout">
-
-                <TextView
-                    android:id="@+id/content_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#404040"
-                    android:textSize="20sp"
-                    android:text="메모"
-                    app:layout_constraintBottom_toBottomOf="@id/content_constlayout"
-                    app:layout_constraintStart_toStartOf="@id/content_constlayout"
-                    app:layout_constraintTop_toTopOf="@id/content_constlayout" />
-
-                <EditText
-                    android:id="@+id/content_ed"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@id/content_constlayout"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/content_tv"
-                    app:layout_constraintTop_toTopOf="@id/content_constlayout" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/image_constlayout"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="20dp"
-                app:layout_constraintBottom_toTopOf="@+id/cancel_button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/content_constlayout">
-
-                <TextView
-                    android:id="@+id/image_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="이미지"
-                    android:textColor="#404040"
-                    android:textSize="20sp"
-                    app:layout_constraintStart_toStartOf="@id/image_constlayout"
-                    app:layout_constraintTop_toTopOf="@id/image_constlayout" />
-
-                <TextView
-                    android:id="@+id/image_add_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:padding="10dp"
-                    android:text="이미지 추가하기"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/image_constlayout" />
-
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:foregroundGravity="center"
-                    android:id="@+id/place_edit_recyclerview"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/image_add_button"
-                    tools:listitem="@layout/list_edit_place_image" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
             <TextView
                 android:id="@+id/delete_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/main"
+                android:fontFamily="@font/inter_semibold"
+                android:padding="10dp"
                 android:text="삭제"
-                android:textColor="@color/black"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/cancel_button"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <TextView
-                android:id="@+id/cancel_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/main"
-                android:text="취소"
-                android:textColor="@color/black"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/save_button"
-                app:layout_constraintStart_toEndOf="@id/delete_button" />
+                android:textColor="@color/heart_color"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/save_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/main"
-                android:text="저장"
-                android:textColor="@color/black"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:fontFamily="@font/inter_semibold"
+                android:padding="10dp"
+                android:text="완료"
+                android:textColor="@color/main"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/cancel_button" />
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/base_line"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@color/gray_80"
+                app:layout_constraintEnd_toEndOf="@id/save_button"
+                app:layout_constraintStart_toStartOf="@id/delete_button"
+                app:layout_constraintTop_toBottomOf="@id/delete_button" />
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/cl_edit_save"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:overScrollMode="never"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/base_line"
+                app:layout_constraintVertical_bias="0">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/location_name_constlayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/location_name_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_medium"
+                            android:padding="10dp"
+                            android:text="장소명"
+                            app:layout_constraintBottom_toBottomOf="@id/location_name_constlayout"
+                            app:layout_constraintStart_toStartOf="@id/location_name_constlayout"
+                            app:layout_constraintTop_toTopOf="@id/location_name_constlayout" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            app:cardCornerRadius="4dp"
+                            app:cardElevation="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toRightOf="@id/location_name_tv"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:strokeColor="@color/gray_80"
+                            app:strokeWidth="1dp">
+
+                            <com.rengwuxian.materialedittext.MaterialEditText
+                                android:id="@+id/location_name_ed"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:maxLength="15"
+                                android:paddingHorizontal="6dp"
+                                android:paddingVertical="2dp"
+                                android:textSize="14sp"
+                                app:met_hideUnderline="true" />
+
+                        </com.google.android.material.card.MaterialCardView>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/address_constlayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/location_name_constlayout">
+
+                        <TextView
+                            android:id="@+id/address_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_medium"
+                            android:padding="10dp"
+                            android:text="주소"
+                            app:layout_constraintBottom_toBottomOf="@id/address_constlayout"
+                            app:layout_constraintStart_toStartOf="@id/address_constlayout"
+                            app:layout_constraintTop_toTopOf="@id/address_constlayout" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="23dp"
+                            android:layout_marginRight="10dp"
+                            app:cardCornerRadius="4dp"
+                            app:cardElevation="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toRightOf="@id/address_tv"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:strokeColor="@color/gray_80"
+                            app:strokeWidth="1dp">
+
+                            <com.app.myfoottrip.ui.view.board.TouchFrameLayout
+                                android:id="@+id/map_fragment"
+                                android:name="com.naver.maps.map.MapFragment"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:background="@color/white" />
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cv_address"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="70dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintEnd_toEndOf="@id/address_constlayout"
+                        app:layout_constraintStart_toStartOf="@id/address_constlayout"
+                        app:layout_constraintTop_toBottomOf="@id/address_constlayout"
+                        app:strokeColor="@color/gray_80"
+                        app:strokeWidth="1dp">
+
+                        <com.rengwuxian.materialedittext.MaterialEditText
+                            android:id="@+id/address_ed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:maxLength="15"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="2dp"
+                            android:textSize="14sp"
+                            app:met_hideUnderline="true" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/content_constlayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cv_address">
+
+                        <TextView
+                            android:id="@+id/content_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_medium"
+                            android:padding="10dp"
+                            android:text="메모"
+                            app:layout_constraintBottom_toBottomOf="@id/content_constlayout"
+                            app:layout_constraintStart_toStartOf="@id/content_constlayout"
+                            app:layout_constraintTop_toTopOf="@id/content_constlayout" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cv_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="0dp"
+                        app:contentPadding="6dp"
+                        app:layout_constraintTop_toBottomOf="@id/content_constlayout"
+                        app:strokeColor="@color/gray_80"
+                        app:strokeWidth="1dp">
+
+                        <com.rengwuxian.materialedittext.MaterialEditText
+                            android:id="@+id/content_ed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:minHeight="100dp"
+                            android:paddingHorizontal="6dp"
+                            android:paddingVertical="2dp"
+                            android:textSize="14sp"
+                            app:met_hideUnderline="true" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/image_constlayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/cv_content">
+
+                        <TextView
+                            android:id="@+id/image_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_semibold"
+                            android:padding="10dp"
+                            android:text="이미지"
+                            android:textSize="16sp"
+                            app:layout_constraintStart_toStartOf="@id/image_constlayout"
+                            app:layout_constraintTop_toTopOf="@id/image_constlayout" />
+
+                        <TextView
+                            android:id="@+id/image_add_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:layout_marginEnd="10dp"
+                            android:gravity="center"
+                            android:text="이미지 추가하기"
+                            android:textColor="@color/main"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/place_edit_recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/image_constlayout"
+                        tools:listitem="@layout/list_edit_place_image" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        app:layout_constraintTop_toBottomOf="@id/place_edit_recyclerview" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.core.widget.NestedScrollView>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
