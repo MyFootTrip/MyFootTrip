@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
+import com.app.myfoottrip.data.viewmodel.FcmViewModel
 import com.app.myfoottrip.data.viewmodel.TokenViewModel
 import com.app.myfoottrip.databinding.FragmentStartBinding
 import com.app.myfoottrip.ui.base.BaseFragment
@@ -40,6 +42,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
     private lateinit var mContext: Context
 
     private val tokenViewModel by viewModels<TokenViewModel>()
+    private val fcmViewModel by activityViewModels<FcmViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -53,6 +56,7 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
 //        postKakaoLoginAccessTokenResponseObserve()
 //        postGoogleLoginAccessTokenResponseObserve()
         postSocialLoginAccessTokenResponseObserve()
+        addFcmTokenObserver()
 
 
         binding.apply {
@@ -238,10 +242,8 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
                         Application.sharedPreferencesUtil.addUserAccessToken(it.data!!.access_token.toString())
                         Application.sharedPreferencesUtil.addUserRefreshToken(it.data!!.refresh_token.toString())
 
-                        val intent = Intent(activity, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-                        startActivity(intent)
-                        activity!!.finish()
+                        addFcmToken()
+
                     }
                 }
                 is NetworkResult.Error -> {
@@ -254,4 +256,28 @@ class StartFragment : BaseFragment<FragmentStartBinding>(
             }
         }
     } // End of postNaverLoginAccessTokenResponseObserve
+
+    //FCM 토큰 저장하기
+    private fun addFcmToken() {
+        CoroutineScope(Dispatchers.IO).launch {
+            fcmViewModel.addFcmToken(Application.sharedPreferencesUtil.getFcmToken())
+        }
+    }
+
+    private fun addFcmTokenObserver() {
+        fcmViewModel.addFcmToken.observe(viewLifecycleOwner) {
+            when (it) {
+                is NetworkResult.Success -> {
+                    val intent = Intent(activity, MainActivity::class.java) //fragment라서 activity intent와는 다른 방식
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                    startActivity(intent)
+                    activity!!.finish()
+                }
+                is NetworkResult.Error -> {
+                }
+                is NetworkResult.Loading -> {
+                }
+            }
+        }
+    }
 } // End of StartFragment class
