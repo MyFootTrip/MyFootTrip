@@ -91,8 +91,10 @@
 
             <ImageButton
                 android:id="@+id/travel_item_more_image_button"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleX="0.6"
+                android:scaleY="0.6"
                 android:background="@drawable/ic_menu"
                 android:backgroundTint="@color/gray_700"
                 app:layout_constraintBottom_toBottomOf="parent"

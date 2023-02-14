@@ -20,13 +20,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.app.myfoottrip.R
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.data.dto.VisitPlace
 import com.app.myfoottrip.data.viewmodel.EditSaveViewModel
 import com.app.myfoottrip.databinding.EditCustomDialogBinding
+import com.app.myfoottrip.ui.view.board.TouchFrameLayout
 import com.app.myfoottrip.ui.view.travel.EditSaveTravelFragment
 import com.app.myfoottrip.ui.view.travel.PlaceImageAdapter
 import com.app.myfoottrip.util.DeviceSizeUtil
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.*
+import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,7 +42,7 @@ import java.util.*
 
 private const val TAG = "EditCustomDialog_싸피"
 
-class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
+class EditCustomDialog(var placeData: VisitPlace) : BottomSheetDialogFragment(), OnMapReadyCallback{ // End of EditCustomDialog class
 
     // ViewModel
     private val editSaveViewModel by activityViewModels<EditSaveViewModel>()
@@ -50,6 +57,8 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
     // RoomDB
     lateinit var visitPlaceRepository: VisitPlaceRepository
 
+    private var mapFragment: MapFragment = MapFragment()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -58,15 +67,16 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         visitPlaceRepository = VisitPlaceRepository.get()
+        setStyle(STYLE_NORMAL, R.style.EditSaveBottomSheetDialog)
     } // End of onCreate
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = EditCustomDialogBinding.inflate(inflater, container, false)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
-        size = DeviceSizeUtil.deviceSizeCheck(mContext)
+//        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+//        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
+//        size = DeviceSizeUtil.deviceSizeCheck(mContext)
 
         _binding!!.deleteButton.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
@@ -94,29 +104,27 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
             }
         }
 
-        _binding!!.cancelButton.setOnClickListener {
-            dialog!!.dismiss()
-        }
+//        _binding!!.cancelButton.setOnClickListener {
+//            dialog!!.dismiss()
+//        }
 
         _binding!!.imageAddButton.setOnClickListener {
             selectGallery()
         }
-
         return binding.root
     } // End of onCreateView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         selectUserImageListObserve()
-
         editSaveViewModel.clearDeleteImageList()
 
-        val params: ViewGroup.LayoutParams? = dialog?.window?.attributes
-        params?.width = (size.x * 0.87).toInt()
-        params?.height = (size.y * 0.77).toInt()
-        dialog?.window?.attributes = params as WindowManager.LayoutParams
-        dialog?.setCanceledOnTouchOutside(true)
-        dialog?.setCancelable(true)
+//        val params: ViewGroup.LayoutParams? = dialog?.window?.attributes
+//        params?.width = (size.x * 0.87).toInt()
+//        params?.height = (size.y * 0.77).toInt()
+//        dialog?.window?.attributes = params as WindowManager.LayoutParams
+//        dialog?.setCanceledOnTouchOutside(true)
+//        dialog?.setCancelable(true)
         dialog?.show()
 
         // 리사이클러뷰 바인딩
@@ -154,7 +162,7 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
                 placeImageAdapter.removeImgage(position)
             }
         })
-
+        initMapScroll()
     } // End of onViewCreated
 
     private lateinit var listener: ItemClickListener
@@ -216,6 +224,25 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
         }
     } // End of selectUserImageListObserve
 
+    //지도 뷰 스크롤 터치 제어
+    private fun initMapScroll(){
+        //TouchFrameLayout 에 mapFragment 올려놓기
+        val fragmentTransaction = childFragmentManager.beginTransaction()
+        if(mapFragment.isAdded){
+            fragmentTransaction.remove( mapFragment )
+            mapFragment = MapFragment()
+        }
+        fragmentTransaction.add(R.id.map_fragment, mapFragment).commit()
+        mapFragment.getMapAsync(this)
+
+        binding.mapFragment.setTouchListener(object : TouchFrameLayout.OnTouchListener {
+            override fun onTouch() {
+                // ScrollView Disallow Touch Event
+                binding.clEditSave.requestDisallowInterceptTouchEvent(true)
+            }
+        })
+    }
+
     interface RefreshListener {
         fun onRefresh()
     } // End of RefreshListener
@@ -235,4 +262,29 @@ class EditCustomDialog(var placeData: VisitPlace) : DialogFragment() {
     companion object {
         const val REQ_GALLERY = 1
     }
-} // End of EditCustomDialog class
+
+    override fun onMapReady(naverMap: NaverMap) {
+        val options = NaverMapOptions()
+            .camera(CameraPosition(LatLng(36.02539, 128.380378),  1.0))  // 카메라 위치 (위도,경도,줌)
+            .mapType(NaverMap.MapType.Basic)    //지도 유형
+            .enabledLayerGroups(NaverMap.LAYER_GROUP_BUILDING)  //빌딩 표시
+
+        MapFragment.newInstance(options)
+
+        val marker = Marker().apply {
+            position = LatLng(placeData.lat, placeData.lng)
+            icon = MarkerIcons.BLACK
+            iconTintColor = ContextCompat.getColor(requireContext(),R.color.main)
+            width = 60
+            height = 80
+            map = naverMap
+        }
+
+        val cameraUpdate = CameraUpdate.scrollTo(LatLng(placeData.lat, placeData.lng)).animate(
+            CameraAnimation.Easing)
+        naverMap.moveCamera(cameraUpdate)
+
+        naverMap.minZoom = 6.0
+        naverMap.maxZoom = 15.0
+    }
+}

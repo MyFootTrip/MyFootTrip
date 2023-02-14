@@ -106,4 +106,26 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
+    <style name="EditSaveBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/EditSaveBottomSheet</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent
+        </item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+
+    <style name="EditSaveBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/CustomShapeAppearanceEditSaveBottomSheetDialog</item>
+        <item name="behavior_peekHeight">800dp</item>
+        <item name="behavior_draggable">false</item>
+    </style>
+
+    <style name="CustomShapeAppearanceEditSaveBottomSheetDialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+
 </resources>
