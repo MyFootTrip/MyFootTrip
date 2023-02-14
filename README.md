@@ -1,4 +1,5 @@
 :airplane: MYFOOTTRIP
+
 MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커뮤니티 어플리케이션_ 입니다. 기획 의도는 여행 후기를 공유할 수 있는 플랫폼의 제공과 로직 및 디자인 모두 디테일 한 부분까지 고려하여 완성도 높은 앱의 개발입니다. 아이디어를 착안하게 된 서비스는 구글의 타임라인과 여행 계획 어플인 트리플입니다. 우리의 어플은 이러한 서비스들이 가지지 못한 위치 자동 기록의 활용성과 빈약한 커뮤니티 기능 및 플랫폼의 활성화를 지향합니다.
 
 ### 시연화면
@@ -11,13 +12,13 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 
 
 
-<img src="file:///C:/Users/SSAFY/Desktop/forgrouo/git_image/KakaoTalk_20230208_111029191_01.jpg" title="" alt="" width="220">                         <img title="" src="file:///C:/Users/SSAFY/Desktop/forgrouo/git_image/KakaoTalk_20230208_111029191_02.jpg" alt="KakaoTalk_20230208_111029191_02.jpg" width="224">
+<img src="git_image/KakaoTalk_20230208_111029191_01.jpg" title="" alt="" width="220">                         <img title="" src="git_image/KakaoTalk_20230208_111029191_02.jpg" alt="KakaoTalk_20230208_111029191_02.jpg" width="224">
 
-<img title="" src="file:///C:/Users/SSAFY/Desktop/forgrouo/git_image/KakaoTalk_20230208_111029191_03.jpg" alt="KakaoTalk_20230208_111029191_03.jpg" width="223">                        <img title="" src="file:///C:/Users/SSAFY/Desktop/forgrouo/git_image/KakaoTalk_20230208_111029191_04.jpg" alt="KakaoTalk_20230208_111029191_04.jpg" width="223">
+<img title="" src="git_image/KakaoTalk_20230208_111029191_03.jpg" alt="KakaoTalk_20230208_111029191_03.jpg" width="223">                        <img title="" src="git_image/KakaoTalk_20230208_111029191_04.jpg" alt="KakaoTalk_20230208_111029191_04.jpg" width="223">
 
-<img title="" src="file:///C:/Users/SSAFY/Desktop/forgrouo/git_image/KakaoTalk_20230208_111029191_07.jpg" alt="KakaoTalk_20230208_111029191_07.jpg" width="220">                         <img title="" src="file:///C:/Users/SSAFY/Desktop/forgrouo/git_image/KakaoTalk_20230208_111029191_06.jpg" alt="KakaoTalk_20230208_111029191_06.jpg" width="218">
+<img title="" src="git_image/KakaoTalk_20230208_111029191_07.jpg" alt="KakaoTalk_20230208_111029191_07.jpg" width="220">                         <img title="" src="git_image/KakaoTalk_20230208_111029191_06.jpg" alt="KakaoTalk_20230208_111029191_06.jpg" width="218">
 
-<img title="" src="file:///C:/Users/SSAFY/Desktop/forgrouo/git_image/KakaoTalk_20230208_111029191_05.jpg" alt="KakaoTalk_20230208_111029191_05.jpg" width="219">
+<img title="" src="git_image/KakaoTalk_20230208_111029191_05.jpg" alt="KakaoTalk_20230208_111029191_05.jpg" width="219">
 
 ### 전체기능
 
@@ -67,7 +68,7 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 
 ## 사용 스택
 
-![사용스택.PNG](C:\Users\SSAFY\Desktop\forgrouo\git_image\사용스택.PNG)
+![사용스택.PNG](git_image\사용스택.PNG)
 
 
 
@@ -79,13 +80,13 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 
 ## ERD
 
-![erd.png](C:\Users\SSAFY\Desktop\forgrouo\git_image\erd.png)
+![erd.png](git_image\erd.png)
 
 
 
 ## API 설계
 
-![api 캡처.PNG](C:\Users\SSAFY\Desktop\forgrouo\git_image\api%20캡처.PNG)
+![api 캡처.PNG](git_image\api%20캡처.PNG)
 
 
 
