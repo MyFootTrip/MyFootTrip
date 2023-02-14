@@ -1,6 +1,6 @@
 package com.app.myfoottrip.ui.view.travel
 
-  import android.content.Context
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
@@ -24,8 +24,8 @@ import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentTravelSelectBinding
 import com.app.myfoottrip.ui.adapter.TravelAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
-  import com.app.myfoottrip.ui.view.dialogs.AlertDialog
-  import com.app.myfoottrip.ui.view.dialogs.TravelSelectInfromDialog
+import com.app.myfoottrip.ui.view.dialogs.AlertDialog
+import com.app.myfoottrip.ui.view.dialogs.TravelSelectInfromDialog
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import kotlinx.coroutines.*
@@ -48,8 +48,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     private var bundle = bundleOf("type" to 3)
     private var boardList = ArrayList<Travel>()
 
-    private val navigationViewModel by activityViewModels<NavigationViewModel>()
-
     private lateinit var callback: OnBackPressedCallback
 
     override fun onAttach(context: Context) {
@@ -64,6 +62,12 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 유저 생성 ResponseLiveData 다시 초기화
+        Log.d(TAG, "onViewCreated: 여기 초기화 되냐?")
+        travelViewModel.setCreateTravelResponseLiveData(NetworkResult.Success(0))
+        travelViewModel.setDeleteTravelResponseLiveData(NetworkResult.Success(0))
+
         //type 받는 코드
         type = requireArguments().getInt("type")
         travelViewModel.setUserTravelDataNewOrUpdateCheck(null)
@@ -91,14 +95,12 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             }
             deffered2.await()
         }
-        Log.d(TAG, "onViewCreated: $temp")
-
-
         userTravelDataObserver()
         userTraveLDataDeleteObserve()
+        buttonSetTextObserve()
+
 
         initCustomView()
-
         setListener()
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -116,15 +118,10 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
             findNavController().navigate(R.id.action_travelSelectFragment_to_travelHelpFragment)
         }
 
-        buttonSetTextObserve()
 
-        // 유저 생성 ResponseLiveData 다시 초기화
-        travelViewModel.setCreateTravelResponseLiveData()
 
         travelAdapter.notifyDataSetChanged()
-
     } // End of onViewCreated
-
 
 
     private fun buttonSetTextObserve() {
@@ -205,9 +202,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
                             withContext(Dispatchers.IO) {
                                 getData()
                             }
-//                            withContext(Dispatchers.Main) {
-//                                dialog
-//                            }
                         }
                     }
                 }
@@ -245,7 +239,7 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     } // End of setListener
 
     private fun userTravelDataObserver() {
-        travelViewModel.travelUserData.observe(viewLifecycleOwner) {
+        travelViewModel.travelUserData.observe(this.viewLifecycleOwner) {
             binding.travelSelectProgressbar.visibility = View.GONE
             binding.travelSelectProgressbar.isVisible = false
 
@@ -272,15 +266,19 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
     } // End of userTravelDataObserver
 
     private fun userTraveLDataDeleteObserve() {
-        travelViewModel.userTravelDataDeleteResponseLiveData.observe(viewLifecycleOwner) {
+        travelViewModel.userTravelDataDeleteResponseLiveData.observe(this.viewLifecycleOwner) {
             when (it) {
                 is NetworkResult.Success -> {
+                    Log.d(TAG, "userTraveLDataDeleteObserve: 이거 왜 돌음")
+                    Log.d(TAG, "userTraveLDataDeleteObserve: ${it.data}")
+
                     if (it.data == 204) {
-                        requireView().showSnackBarMessage("해당 여정이 삭제되었습니다")
+                        // requireView().showSnackBarMessage("해당 여정이 삭제되었습니다")
                         travelAdapter.notifyDataSetChanged()
+                        // 유저 삭제 ResponseLiveData 다시 초기화
+                        travelViewModel.setDeleteTravelResponseLiveData(NetworkResult.Success(0))
                     }
                 }
-
                 is NetworkResult.Error -> {
                     requireView().showSnackBarMessage("유저 여행 데이터 삭제 오류 발생")
                     Log.d(TAG, "createTravelResponseLiveData Error: ${it.data}")

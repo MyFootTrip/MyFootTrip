@@ -69,18 +69,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:rippleColor="@null" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/travel_delete_button"
         style="@style/Widget.MaterialComponents.Chip.Choice"
-        android:layout_width="60dp"
-        android:layout_height="32dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/border_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:paddingVertical="8dp"
+        android:backgroundTint="@color/white"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/main"
         android:minWidth="0dp"
         android:minHeight="0dp"
         android:text="삭제"
+        app:rippleColor="@android:color/transparent"
         android:textColor="@color/main"
-        android:textSize="12sp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -81,10 +81,10 @@ class UpdateBoardFragment : BaseFragment<FragmentUpdateBoardBinding>(
                 findNavController().popBackStack()
             }
             photoAddBtn.setOnClickListener { //갤러리 이미지 불러오기 버튼
-                if (imageList.size <= 5){
+                if (imageList.size <= 3){
                     GalleryUtils.getGallery(requireContext(), imageLauncher)
                 }else{
-                    binding.root.showSnackBarMessage("이미지는 총 5장만 등록 가능합니다!")
+                    binding.root.showSnackBarMessage("이미지는 총 3장만 등록 가능합니다!")
                 }
             }
             btnUpdate.setOnClickListener {
@@ -137,7 +137,6 @@ class UpdateBoardFragment : BaseFragment<FragmentUpdateBoardBinding>(
         photoAdapter.setItemClickListener(object : PhotoAdapter.ItemClickListener {
             override fun onClick(view: View, position: Int) {
                 imageList.removeAt(position)
-                boardViewModel.board.value?.data?.imageList?.removeAt(position)
                 photoAdapter.notifyItemRemoved(position)
             }
         })

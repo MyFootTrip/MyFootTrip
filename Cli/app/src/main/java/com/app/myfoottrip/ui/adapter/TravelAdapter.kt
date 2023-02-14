@@ -79,7 +79,7 @@ class TravelAdapter(
                         .into(ivTravel)
                 }
 
-                tvTravelName.text = travelDto.location!!.joinToString(", ")
+                tvTravelName.text = travelDto.location.joinToString(", ")
 
                 clTravelItem.setOnClickListener {
                     itemClickListner.onAllClick(position, travelDto)

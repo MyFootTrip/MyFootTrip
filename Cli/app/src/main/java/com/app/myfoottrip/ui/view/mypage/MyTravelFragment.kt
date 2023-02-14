@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -18,6 +19,7 @@ import com.app.myfoottrip.data.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentMyTravelBinding
 import com.app.myfoottrip.ui.adapter.MyTravelAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
+import com.app.myfoottrip.ui.view.dialogs.AlertDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
@@ -78,23 +80,6 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        // 혹시 모를 SQLLite DB를 항상 비워야함
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                visitPlaceRepository.deleteAllVisitPlace()
-            } catch (exception: Exception) {
-                Log.d(TAG, "onResume: DB에 비울 값이 없습니다.")
-            }
-        }
-
-        // 유저 생성 ResponseLiveData 다시 초기화
-        travelViewModel.setCreateTravelResponseLiveData()
-
-        myTravelAdapter.notifyDataSetChanged()
-    } // End of onResume
 
     override fun onDetach() {
         super.onDetach()
@@ -124,21 +109,31 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
             override fun onDeleteChipClick(position: Int, travelDto: Travel) {
                 // 선택된 포지션의 값을 가져와서 해당 값을 제거해야됨
                 // 서버에 삭제 요청을 보내야 함.
-                CoroutineScope(Dispatchers.IO).launch {
-                    travelViewModel.userTravelDataDelete(boardList[position].travelId!!)
+                val dialog = AlertDialog(requireActivity() as AppCompatActivity)
 
-                    // 삭제를 마치고 나면 data를 다시 갱신해야함
-                    withContext(Dispatchers.Default) {
-                        setData()
+                dialog.setOnOKClickedListener {
+                    binding.apply {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            travelViewModel.userTravelDataDelete(boardList[position].travelId!!)
+
+                            // 삭제를 마치고 나면 data를 다시 갱신해야함
+                            withContext(Dispatchers.Default) {
+                                setData()
+                            }
+                        }
                     }
                 }
+
+                dialog.setOnCancelClickedListener { }
+
+                dialog.show("여정 삭제", "여정을 삭제하시겠습니까?")
+
             }
         })
     } // End of initAdapter
 
     private fun initObserver() {
         userTravelDataObserver()
-        userTraveLDataDeleteObserve()
     }
 
     private fun userTravelDataObserver() {
@@ -165,31 +160,9 @@ class MyTravelFragment : BaseFragment<FragmentMyTravelBinding>(
         }
     } // End of userTravelDataObserver
 
-    private fun userTraveLDataDeleteObserve() {
-        travelViewModel.userTravelDataDeleteResponseLiveData.observe(viewLifecycleOwner) {
-            when (it) {
-                is NetworkResult.Success -> {
-                    if (it.data == 204) {
-                        requireView().showSnackBarMessage("해당 여정이 삭제되었습니다.")
-                        myTravelAdapter.notifyDataSetChanged()
-                    }
-                }
-
-                is NetworkResult.Error -> {
-                    requireView().showSnackBarMessage("유저 여행 데이터 삭제 오류 발생")
-                }
-
-                is NetworkResult.Loading -> {
-                    Log.d(TAG, "createTravelResponseLiveData Loading")
-                }
-            }
-        }
-    } // End of userTraveLDataDeleteObserve
-
     private suspend fun setData() {
         CoroutineScope(Dispatchers.IO).launch {
             userViewModel.wholeMyData.value?.uid?.let { travelViewModel.getUserTravel(it) }
         }
     } // End of setData
-
 }

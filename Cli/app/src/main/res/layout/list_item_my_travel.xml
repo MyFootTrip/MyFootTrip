@@ -63,24 +63,25 @@
                 app:layout_constraintLeft_toLeftOf="@+id/tv_travel_content"
                 app:layout_constraintTop_toBottomOf="@+id/tv_travel_content" />
 
-            <com.google.android.material.chip.Chip
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/chip_travel_delete"
                 style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_marginRight="20dp"
+                android:paddingVertical="8dp"
+                android:backgroundTint="@color/white"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/main"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
                 android:text="삭제"
-                android:textColor="@color/select_category_text"
-                android:textSize="14sp"
-                app:chipBackgroundColor="@color/select_category_background"
-                app:chipEndPadding="10dp"
-                app:chipStartPadding="10dp"
-                app:chipStrokeColor="@color/select_category_text"
-                app:chipStrokeWidth="1dp"
+                app:rippleColor="@android:color/transparent"
+                android:textColor="@color/main"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:rippleColor="@null" />
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

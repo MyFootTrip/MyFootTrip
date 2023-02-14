@@ -28,8 +28,6 @@ import com.app.myfoottrip.ui.view.start.JoinBackButtonCustomView
 import com.app.myfoottrip.util.ChangeMultipartUtil
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
-import com.github.ybq.android.spinkit.sprite.Sprite
-import com.github.ybq.android.spinkit.style.FoldingCube
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
@@ -61,6 +59,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
+    private var cameraPosition = CameraPosition(
+        LatLng(0.0, 0.0), 16.0, // 줌 레벨
+        40.0, 0.0
+    )
 
     // 마커 배열
     private var markers: MutableList<Marker> = LinkedList()
@@ -125,6 +127,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         visitPlaceRepository = VisitPlaceRepository.get()
     } // End of onCreate
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentType = requireArguments().getInt("type")
@@ -142,6 +145,10 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         // 첫번째 UI에 데이터 뿌려야 하므로 데이터 부터 가져오기
         CoroutineScope(Dispatchers.IO).launch {
             getData()
+        }
+
+        binding.ivBack.setOnClickListener {
+            findNavController().popBackStack()
         }
 
         createTravelResponseObserve()
@@ -357,8 +364,14 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
             layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
         }
 
+        travelEditSaveItemAdapter.refreshAdapter()
+        travelEditSaveItemAdapter.notifyDataSetChanged()
+
+
         adapterEvent()
-    } // End of
+    } // End of setUI
+
+
 
     private fun adapterEvent() {
         travelEditSaveItemAdapter.setItemClickListener(object :
@@ -435,12 +448,24 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                     } // End of onDeleteClicked
                 }) // End of setItemClickListener
             }
+
+            override fun onLayoutClicked(position: Int, placeData: VisitPlace) {
+                // 지도 화면 이동
+                Log.d(TAG, "onLayoutClicked: 여기 클릭됨")
+                val temp = userVisitPlaceDataList[position]
+                cameraPosition = CameraPosition(
+                    LatLng(temp.lat, temp.lng), 16.0, 40.0, 0.0
+                )
+                naverMap.cameraPosition = cameraPosition
+
+            }
         })
     } // End of adapterEvent
 
     private fun initRecyclerViewAdapter() {
         travelEditSaveItemAdapter = TravelEditSaveItemAdapter(mContext, userVisitPlaceDataList)
     } // End of initRecyclerViewAdapter
+
 
     private fun totalTimeCalc(): String {
         val diff =
@@ -467,8 +492,8 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 CoroutineScope(Dispatchers.IO).launch {
                     Log.d(TAG, "저장할 데이터 : ${userTravelData!!}")
                     withContext(Dispatchers.Main) {
-                        val foldingCube: Sprite = FoldingCube()
-                        binding.progressBar.indeterminateDrawable = foldingCube
+//                        val foldingCube: Sprite = FoldingCube()
+//                        binding.progressBar.indeterminateDrawable = foldingCube
 
                         binding.progressBar.visibility = View.VISIBLE
                         binding.allConstrainlayout.visibility = View.GONE
@@ -478,12 +503,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                 }
             }
         }
-
-        joinBackButtonCustomView = binding.joinBackButtonCustomview
-        joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
-            .setOnClickListener {
-                findNavController().popBackStack()
-            }
     } // End of buttonEvents
 
 
@@ -574,6 +593,7 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     /// TravelData 생성
     private fun createTravelResponseObserve() {
         travelViewModel.createTravelResponseLiveData.observe(this.viewLifecycleOwner) {
+
             when (it) {
                 is NetworkResult.Success -> {
                     if (it.data == 201) {
@@ -592,6 +612,9 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
                             withContext(Dispatchers.Main) {
                                 showToast("저장이 완료되었습니다.")
                             }
+
+                            // 유저 생성 ResponseLiveData 다시 초기화
+                            travelViewModel.setCreateTravelResponseLiveData(NetworkResult.Success(0))
                         }
                     }
                 }
@@ -727,10 +750,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
         naverMap.locationSource = locationSource
         naverMap.locationTrackingMode = LocationTrackingMode.Follow
 
-        val cameraPosition = CameraPosition(
-            LatLng(0.0, 0.0), 16.0, // 줌 레벨
-            40.0, 0.0
-        )
         naverMap.cameraPosition = cameraPosition
 
         setMapInMark()
