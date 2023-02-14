@@ -74,7 +74,7 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 
 ## 구조
 
-
+<img src="git_image/architecture.png" title="" alt="git_image/architecture.png" width="520">
 
 
 
