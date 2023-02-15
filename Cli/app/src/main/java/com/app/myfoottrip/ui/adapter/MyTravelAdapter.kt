@@ -35,14 +35,14 @@ class MyTravelAdapter() : RecyclerView.Adapter<MyTravelAdapter.MyTravelHolder>()
 
             binding.apply {
 
-                if (travelDto.placeList?.get(0)?.placeImgList!!.isNotEmpty() && travelDto.placeList?.get(0)?.placeImgList!!.size == 0) {
+                if (travelList.isNotEmpty() && travelList[0].placeList?.get(0)?.placeImgList?.size == 0) {
                     Glide.with(itemView)
                         .load(R.drawable.place_default_img)
                         .centerCrop()
                         .into(ivImage)
                 } else {
                     Glide.with(itemView)
-                        .load(travelDto.placeList?.get(0)?.placeImgList!![0])
+                        .load(travelList[0].placeList?.get(0)?.placeImgList?.get(0))
                         .centerCrop()
                         .into(ivImage)
                 }
