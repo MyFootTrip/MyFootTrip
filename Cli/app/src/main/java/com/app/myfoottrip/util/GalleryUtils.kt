@@ -110,4 +110,32 @@ object GalleryUtils {
             list
         }
     }
+
+    suspend fun insertImageFireStorage(url : String, imgUri : Uri,type : Int,boardId: Int) : String{ //TODO : 실패했을 경우 처리
+        return withContext(Dispatchers.IO){
+            var uriAddress = ""
+            //보드타입인지 프로필타입인지 지정
+            CoroutineScope(Dispatchers.IO).launch {
+                Log.d(TAG, "이미지 저장 성공~~~~~~~~~~image : ${url}")
+                var direction = ""
+                    when(type){
+                        0 ->{
+                            direction = "board"
+                        }
+                        1 ->{
+                            direction = "profile"
+                        }
+                    }
+                if(type == 0) {
+                    val imageRef = fbStore.child("image/$direction/${boardId}/${url}")
+                    uriAddress = imageRef.putFile(imgUri).await().storage.downloadUrl.await().toString()
+                } else {
+                    val imageRef = fbStore.child("image/$direction/${url}")
+                    uriAddress = imageRef.putFile(imgUri).await().storage.downloadUrl.await().toString()
+                }
+            }.join()
+
+            uriAddress
+        }
+    }
 }

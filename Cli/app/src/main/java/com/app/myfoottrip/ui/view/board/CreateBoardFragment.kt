@@ -212,11 +212,13 @@ class CreateBoardFragment : BaseFragment<FragmentCreateBoardBinding>(
 
                 CoroutineScope(Dispatchers.IO).launch {
                     withContext(Dispatchers.IO) {
-                        val urlList: ArrayList<String> = List(imageList.size) { i ->
-                            "IMAGE_${board.boardId}_${i}.png"
-                        } as ArrayList<String>
-                        board.imageList =
-                            GalleryUtils.insertImage(urlList, imageList, 0, board.boardId)
+                        for (i in imageList.indices){
+                            val url = "IMAGE_${board.boardId}_${i}.png"
+                            board.imageList.add(GalleryUtils.insertImageFireStorage(url, imageList[i], 0, board.boardId))
+                        }
+                    }
+
+                    withContext(Dispatchers.IO){
                         board.title = etTitle.text.toString()
                         board.content = etContent.text.toString()
                         board.theme = currentTheme

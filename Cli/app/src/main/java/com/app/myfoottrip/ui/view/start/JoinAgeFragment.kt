@@ -18,6 +18,7 @@ import com.app.myfoottrip.R
 import com.app.myfoottrip.data.viewmodel.FcmViewModel
 import com.app.myfoottrip.data.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinAgeBinding
+import com.app.myfoottrip.network.fcm.MyFireBaseMessagingService
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showToastMessage
@@ -88,7 +89,15 @@ class JoinAgeFragment : Fragment() {
         }
     } // End of onViewCreated
 
+    //SharedPreference에 FCM 토큰 저장
+    private fun getFcmToken(){
+        MyFireBaseMessagingService().getFirebaseToken()
+    }
+
     private fun initData() {
+        //Fcm 토큰이 shared에 없으면 발급 요청
+        if(Application.sharedPreferencesUtil.getFcmToken().isNullOrEmpty()) getFcmToken()
+
         joinBackButtonCustomView = binding.joinBackButtonCustomview
 
         joinBackButtonCustomView.findViewById<AppCompatButton>(R.id.custom_back_button_appcompatbutton)
