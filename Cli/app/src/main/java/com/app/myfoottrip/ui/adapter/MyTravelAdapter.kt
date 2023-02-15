@@ -1,5 +1,6 @@
 package com.app.myfoottrip.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -34,15 +35,14 @@ class MyTravelAdapter() : RecyclerView.Adapter<MyTravelAdapter.MyTravelHolder>()
             binding.tvTravelDate.text = "$startDateString - $endDateString"
 
             binding.apply {
-
-                if (travelList.isNotEmpty() && travelList[0].placeList?.get(0)?.placeImgList?.size == 0) {
+                if (travelDto.placeList!![0].placeImgList.isNullOrEmpty() && travelDto.placeList!![0].placeImgList?.size == 0) {
                     Glide.with(itemView)
                         .load(R.drawable.place_default_img)
                         .centerCrop()
                         .into(ivImage)
                 } else {
                     Glide.with(itemView)
-                        .load(travelList[0].placeList?.get(0)?.placeImgList?.get(0))
+                        .load(travelDto.placeList!![0].placeImgList!![0])
                         .centerCrop()
                         .into(ivImage)
                 }

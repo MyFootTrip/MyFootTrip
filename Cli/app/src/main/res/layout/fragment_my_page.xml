@@ -317,7 +317,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:fontFamily="@font/inter_semibold"
-                    android:text="내가 좋아하는 여정"
+                    android:text="내가 좋아하는 게시물"
                     android:textColor="@color/black"
                     android:textSize="17sp"
                     app:layout_constraintStart_toEndOf="@id/iv_i_liked_image"

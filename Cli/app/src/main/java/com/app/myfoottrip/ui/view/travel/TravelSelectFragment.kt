@@ -64,7 +64,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         // 유저 생성 ResponseLiveData 다시 초기화
-        Log.d(TAG, "onViewCreated: 여기 초기화 되냐?")
         travelViewModel.setCreateTravelResponseLiveData(NetworkResult.Success(0))
         travelViewModel.setDeleteTravelResponseLiveData(NetworkResult.Success(0))
 

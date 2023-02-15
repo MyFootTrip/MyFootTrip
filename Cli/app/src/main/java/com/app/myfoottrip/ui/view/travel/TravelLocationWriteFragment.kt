@@ -30,9 +30,11 @@ import com.app.myfoottrip.util.LocationProvider
 import com.app.myfoottrip.util.TimeUtils
 import com.app.myfoottrip.util.showSnackBarMessage
 import com.google.android.gms.location.LocationServices
+import com.naver.maps.geometry.Coord
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.overlay.PolylineOverlay
 import com.naver.maps.map.util.FusedLocationSource
 import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.*
@@ -54,17 +56,34 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     // ActivityViewModel
     private val travelActivityViewModel by activityViewModels<TravelActivityViewModel>()
 
+    // Context
+    private lateinit var mContext: Context
+
+    // Naver 지도
     private lateinit var locationProvider: LocationProvider
-    private var mapFragment: MapFragment = MapFragment()
+    lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap //map에 들어가는 navermap
     private lateinit var locationSource: FusedLocationSource
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
 
-    private lateinit var visitPlaceRepository: VisitPlaceRepository
-    private lateinit var mContext: Context
-    private var locationClient: LocationClient? = null
 
+    // 현재 나의 좌표 배열
+    private var myCoordinatesList: MutableList<Coordinates> = LinkedList()
+
+    // 마커 배열
+    private var markers: MutableList<Marker> = LinkedList()
+
+    // polyline
+    private val polyline = PolylineOverlay()
+
+
+    // RoomDB
+    private lateinit var visitPlaceRepository: VisitPlaceRepository
+
+    private var locationClient: LocationClient? = null
     private var preCoor: Coordinates? = null
+
+    // Service
     private lateinit var logReceiver: LogReceiver
 
     inner class LogReceiver() : BroadcastReceiver() {
@@ -76,6 +95,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             if ("test" == action) {
                 val newCoor = intent.getSerializableExtra("test") as Coordinates
                 Log.d(TAG, "onReceive: $newCoor")
+                Log.d(TAG, "onReceive: $distCount")
 
                 if (preCoor != null) {
                     val dist = DistanceManager.getDistance(
@@ -88,13 +108,14 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                     preCoor!!.latitude = newCoor.latitude
                     preCoor!!.longitude = newCoor.longitude
 
-                    if (dist > 500) {
+                    // 거리는 30M를 기준으로 설정
+                    if (dist > 30) {
                         // 가장 최근에 찍힌 좌표와 현재 나의 위치를 기준으로 500M를 벗어나면 다시 flag와 distCount를 초기화
                         flag = false
                         distCount = 0
                     }
 
-                    if (dist <= 500) {
+                    if (dist <= 30) {
                         Log.d(TAG, "같은 위치")
                         Log.d(TAG, "dist calc: 오차 범위를 벗어나지 못함")
 
@@ -102,7 +123,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                             distCount++
                         }
 
-                        if (distCount == 4 && flag == false) {
+                        if (distCount == 3 && flag == false) {
                             // 지도에 마커표시 하기 위해서 DB등록
                             // 4번의 동일한 좌표가 찍히고 나면 RoomDB에 데이터 추가
                             val job = Job()
@@ -120,10 +141,12 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                                     }
                                 }
 
+
                                 if (job.start() == false) {
                                     // 해당 좌표를 지도에 표시
                                     withContext(Dispatchers.Main) {
                                         requireActivity().runOnUiThread {
+                                            clearMapInMark()
                                             setInMapMarker(
                                                 LatLng(
                                                     newCoor.latitude!!, newCoor.longitude!!
@@ -141,7 +164,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                                 saveTravel(newCoor.latitude!!, newCoor.longitude!!, address!!)
                             }
 
-                            Log.d(TAG, "onReceive: 더 이상 count가 증가하지 않음 ${distCount}")
+                            Log.d(TAG, "onReceive: 더 이상 count가 증가하지 않음 $distCount")
                             // 한번 마커가 표시되면, 더 이상 마커가 찍히지 않도록 flag값을 true로 고정해놓음
                             // 만약 오차범위를 벗어나면 그때 다시 flag를 false처리함.
                             flag = true
@@ -215,9 +238,20 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 Log.d(TAG, "가져온 데이터 : ${travelActivityViewModel.userTravelData.value}")
 
                 // 가져온 데이터가 제대로 확인되면, RoomDB에 저장된 값 가져오기
-//                CoroutineScope(Dispatchers.IO).launch {
-                getUserTravelData = visitPlaceRepository.getAllVisitPlace()
-//                }
+                CoroutineScope(Dispatchers.IO).launch {
+                    getUserTravelData = visitPlaceRepository.getAllVisitPlace()
+
+                    myCoordinatesList = LinkedList()
+                    val size = getUserTravelData.size
+                    for (i in 0 until size) {
+                        myCoordinatesList.add(
+                            Coordinates(
+                                getUserTravelData[i].lat,
+                                getUserTravelData[i].lng
+                            )
+                        )
+                    }
+                }
             }
 
             withContext(Dispatchers.Main) {
@@ -226,7 +260,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             }
 
             // 처음 시작 하자마자 좌표를 바로 들고옴
-            locationClientSet()
+            // locationClientSet()
 
             binding.tvStartTime.text = TimeUtils.getDateTimeString(System.currentTimeMillis())
             // CoroutineScope(Dispatchers.IO).launch {
@@ -237,8 +271,14 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 binding.progressBar.visibility = View.GONE
                 binding.allConstrainlayout.visibility = View.VISIBLE
             }
+
+            setInMapMarker()
+
+            val mainActivity = requireActivity() as MainActivity
+            CoroutineScope(Dispatchers.IO).launch {
+                mainActivity.startLocationBackground()
+            }
         }
-        Log.d(TAG, "onViewCreated: $temp")
     } // End of onViewCreated
 
     private suspend fun setButtonListener() {
@@ -252,7 +292,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                     mainActivity.stopLocationBackground()
                 }
                 showToast("위치 기록을 중지합니다", ToastType.SUCCESS)
-                serviceScope.cancel()
+                // serviceScope.cancel()
             }
 
 
@@ -264,12 +304,11 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 }
                 showToast("위치 기록을 시작합니다.", ToastType.SUCCESS)
                 changeMode(true)
-                locationClientSet()
+                // locationClientSet()
             }
         }
 
-        // 위치기록
-        // 정지 및 저장
+        // 위치기록 정지 및 저장
         stopLocationRecordingAndSave()
 
         // 현재 위치 저장
@@ -303,7 +342,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                     mainActivity.stopLocationBackground()
 
                     showToast("성공적으로 저장했습니다.", ToastType.SUCCESS)
-
                     val bundle = bundleOf("type" to fragmentType)
 
                     // 수정하는 페이지로 이동
@@ -350,8 +388,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                     }
                 }
 
-                Log.d(TAG, "recentPlace: $recentPlace")
-
                 if (nowLat == 0.0 || nowLng == 0.0) {
                     // 제대로된 좌표가 들어오지 않을 경우, 저장하지 않음
                     requireView().showSnackBarMessage("정확한 좌표를 찾고있습니다! 다시 저장해주세요!")
@@ -384,7 +420,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         )
 
         // 15분 기준으로 측정
-        locationClient!!.getLocationUpdates(2000L).catch { exception ->
+        locationClient!!.getLocationUpdates(1500L).catch { exception ->
             exception.printStackTrace()
         }.onEach { location ->
             travelViewModel.setRecentCoor(Coordinates(location.latitude, location.longitude))
@@ -416,29 +452,50 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 temp = visitPlaceRepository.getAllVisitPlace()
                 1
             }
-            deffered2.await()
+            deffered2.join()
 
             binding.fabStop.isClickable = true
             binding.btnAddPoint.isClickable = true
-        }
 
-        withContext(Dispatchers.Main) {
-            showToast("현재 위치 저장 성공")
-        }
+            Log.d(TAG, "saveTravel: 0")
+            val clearMapInMarkDeffer : Deferred<Int> = async {
+                clearMapInMark()
+                1
+            }
 
-        Log.d(TAG, "saveTravel: 저장 성공끝")
+            Log.d(TAG, "saveTravel: 1")
+            clearMapInMarkDeffer.join()
+            Log.d(TAG, "saveTravel: 2")
+
+            val deffer3 : Deferred<Int> = async {
+                setInMapMarker()
+                1
+            }
+
+            Log.d(TAG, "saveTravel: 3")
+            deffer3.join()
+            Log.d(TAG, "saveTravel: 4")
+
+            withContext(Dispatchers.Main) {
+                showToast("현재 위치 저장 성공")
+            }
+
+        }
     } // End of saveTravel
 
 
     private fun initMap() {
         // TouchFrameLayout 에 mapFragment 올려놓기
-        val fragmentTransaction = childFragmentManager.beginTransaction()
-        if (mapFragment.isAdded) {
-            fragmentTransaction.remove(mapFragment)
-            mapFragment = MapFragment()
-        }
-        fragmentTransaction.add(R.id.map_view, mapFragment).commit()
-        mapFragment.getMapAsync(this)
+//        val fragmentTransaction = childFragmentManager.beginTransaction()
+//        if (mapFragment.isAdded) {
+//            fragmentTransaction.remove(mapFragment)
+//            mapFragment = MapFragment()
+//        }
+//        fragmentTransaction.add(R.id.map_view, mapFragment).commit()
+
+        mapView = binding.mapView
+        mapView.getMapAsync(this)
+        locationSource = FusedLocationSource(this, 1000)
     } // End of initMap
 
     //기록 중인지 일시정지 중인지 화면 전환하는 코드
@@ -561,18 +618,119 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
         ).animate(CameraAnimation.Fly, 1000)
         naverMap.moveCamera(cameraUpdate)
 
+
+//        markers = mutableListOf()
+//        myCoordinatesList.forEach {
+//            markers += Marker().apply {  }
+//
+//            setInMapMarker(LatLng(it.latitude!!, it.longitude!!))
+//        }
+
     } // End of onMapReady
 
-    private fun setInMapMarker(Coor: LatLng) {
-        val markers = mutableListOf<Marker>()
-        // 지금까지 저장되어 있는 좌표를 가져와서 저장을 함
+    private fun clearMapInMark() = CoroutineScope(Dispatchers.Main).launch {
+//        getUserTravelData.forEach { mark ->
+//            markers += Marker().apply {
+//                position = LatLng(mark.lat, mark.lng)
+//            }
+//        }
 
-        val marker = Marker().apply {
-            position = Coor
+        markers.forEach { marker ->
+            marker.map = null
+        }
+        polyline.map = null
+    }.onJoin
+
+    private fun setInMapMarker(Coor: LatLng) = CoroutineScope(Dispatchers.Main).launch {
+        markers = mutableListOf()
+
+        getUserTravelData.forEach {
+            markers += Marker().apply {
+                position = LatLng(it.lat, it.lng)
+                icon = MarkerIcons.BLACK
+                captionText = it.placeName.toString()
+            }
+        }
+
+        Log.d(TAG, "setInMapMarker: $getUserTravelData")
+        Log.d(TAG, "setInMapMarker: $markers")
+
+        markers += Marker().apply {
+            position = LatLng(Coor.latitude, Coor.longitude)
             icon = MarkerIcons.BLACK
         }
 
-        marker.map = naverMap
-        marker.isIconPerspectiveEnabled = true
-    } // End of setInMapMarker
+        markers.forEach { marker ->
+            marker.map = naverMap
+            marker.isIconPerspectiveEnabled = true
+        }
+
+        val size = getUserTravelData.size
+        if (size >= 2) {
+            val tempList: MutableList<LatLng> = ArrayList()
+            for (i in 0 until size) {
+                tempList.add(
+                    LatLng(
+                        getUserTravelData[i].lat, getUserTravelData[i].lng
+                    )
+                )
+            }
+
+            polyline.setPattern(10, 5)
+            polyline.coords = tempList
+            polyline.map = naverMap
+        }
+    }.onJoin // End of setMapInMark
+
+
+
+    private fun setInMapMarker() = CoroutineScope(Dispatchers.Main).launch {
+        markers = mutableListOf()
+
+        var temp: List<VisitPlace> = emptyList()
+        val deffered2: Deferred<Int> = async {
+            withContext(Dispatchers.IO) {
+                temp = visitPlaceRepository.getAllVisitPlace()
+            }
+            1
+        }
+
+        deffered2.join()
+
+        temp.forEach {
+            markers += Marker().apply {
+                position = LatLng(it.lat, it.lng)
+                icon = MarkerIcons.BLACK
+                captionText = it.placeName.toString()
+            }
+        }
+
+
+        markers.forEach { marker ->
+            marker.map = naverMap
+            marker.isIconPerspectiveEnabled = true
+        }
+
+        Log.d(TAG, "마커 찍는 곳 여기 들어옴?")
+        Log.d(TAG, "마커 찍는 곳 여기 들어옴? ${markers}")
+
+        val size = getUserTravelData.size
+        if (size >= 2) {
+            // polyline = PolylineOverlay()
+            val tempList: MutableList<LatLng> = ArrayList()
+            for (i in 0 until size) {
+                tempList.add(
+                    LatLng(
+                        getUserTravelData[i].lat, getUserTravelData[i].lng
+                    )
+                )
+            }
+
+            polyline.setPattern(10, 5)
+            polyline.coords = tempList
+            polyline.map = naverMap
+
+            Log.d(TAG, "마커 찍는 곳 여기 들어옴?")
+        }
+    }.onJoin // End of setMapInMark
 } // End of TravelLocationWriteFragment class

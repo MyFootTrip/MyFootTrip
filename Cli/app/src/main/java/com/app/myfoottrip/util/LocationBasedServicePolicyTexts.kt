@@ -1,3 +1,4 @@
+
 package com.app.myfoottrip.util
 
 import com.app.myfoottrip.data.dto.ServiceClauseText

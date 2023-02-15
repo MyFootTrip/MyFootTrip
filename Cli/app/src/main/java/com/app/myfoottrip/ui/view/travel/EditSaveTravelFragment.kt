@@ -59,14 +59,13 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
     lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
     private lateinit var locationSource: FusedLocationSource
-    private lateinit var cameraPosition : CameraPosition
+    private lateinit var cameraPosition: CameraPosition
 
     // 마커 배열
     private var markers: MutableList<Marker> = LinkedList()
 
     // polyline
     private val polyline = PolylineOverlay()
-
 
     // Context
     private lateinit var mContext: Context
@@ -184,11 +183,11 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
 
     private fun clearMapInMark() = CoroutineScope(Dispatchers.Main).launch {
-        userVisitPlaceDataList.forEach { mark ->
-            markers += Marker().apply {
-                position = LatLng(mark.lat, mark.lng)
-            }
-        }
+//        userVisitPlaceDataList.forEach { mark ->
+//            markers += Marker().apply {
+//                position = LatLng(mark.lat, mark.lng)
+//            }
+//        }
 
         markers.forEach { marker ->
             marker.map = null
@@ -452,7 +451,6 @@ class EditSaveTravelFragment : BaseFragment<FragmentEditSaveTravelBinding>(
 
             override fun onLayoutClicked(position: Int, placeData: VisitPlace) {
                 // 지도 화면 이동
-                Log.d(TAG, "onLayoutClicked: 여기 클릭됨")
                 val temp = userVisitPlaceDataList[position]
                 cameraPosition = CameraPosition(
                     LatLng(temp.lat, temp.lng), 16.0, 40.0, 0.0

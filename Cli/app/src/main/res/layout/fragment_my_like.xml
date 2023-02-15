@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="내가 좋아하는 여정"
+        android:text="내가 좋아하는 게시물"
         android:textSize="20sp"
         android:fontFamily="@font/inter_bold"
         android:textColor="@color/black"
