@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import androidx.viewbinding.BuildConfig
 import com.app.myfoottrip.data.dao.VisitPlaceRepository
 import com.app.myfoottrip.util.SharedPreferencesUtil
 import com.google.gson.Gson
@@ -104,14 +105,14 @@ class Application : Application() {
     } // End of AppInterceptor inner class
 
     private fun initKakao() {
-        KakaoSdk.init(this, BuildConfig.KAKAO_APP_KEY)
+        KakaoSdk.init(this, getString(R.string.KAKAO_APP_KEY))
     } // End of initKakao
 
     companion object {
         lateinit var retrofit: Retrofit
         lateinit var headerRetrofit: Retrofit
 
-//      const val SERVER_URL = "https://i8d103.p.ssafy.io/"    // TODO : AWS Hosting + URL 변경 //54.248.64.154
+        //      const val SERVER_URL = "https://i8d103.p.ssafy.io/"    // TODO : AWS Hosting + URL 변경 //54.248.64.154
         const val SERVER_URL = "http://i8d103.p.ssafy.io:7777/"
 
         const val IMG_URL = "http://54.248.64.154"
