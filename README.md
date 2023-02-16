@@ -178,5 +178,9 @@ pjtback
 ```
 
 ## :family: MyFootTrip Team
-### Android(Front-End)
+![image](image/13.팀원_역할1.png) <br/>
+<br/>
+
+![image](image/14.팀원_역할2.png) <br/>
+<br/>
 
