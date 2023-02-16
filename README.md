@@ -14,6 +14,12 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 
 <img title="" src="git_image/KakaoTalk_20230208_111029191_05.jpg" alt="KakaoTalk_20230208_111029191_05.jpg" width="219">
 
+## :clipboard: Description
+
+### 주요 기능
+![image](image/3.주요_기능1.png) <br/>
+
+
 ### 전체기능
 
 - 로그인 회원가입 
