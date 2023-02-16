@@ -2,20 +2,19 @@ package com.app.myfoottrip.ui.view.dialogs
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.User
+import com.app.myfoottrip.model.User
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rengwuxian.materialedittext.MaterialEditText
 
 private const val TAG = "CommentInputDialog_마이풋트립"
-class CommentInputDialog(private val listener: OnClickListener,private val user: User, private val message: String) :
+class CommentInputDialog(private val listener: OnClickListener, private val user: User, private val message: String) :
     BottomSheetDialogFragment(),
     View.OnClickListener {
 

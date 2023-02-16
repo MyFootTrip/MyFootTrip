@@ -1,13 +1,12 @@
 package com.app.myfoottrip.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Place
+import com.app.myfoottrip.model.Place
 import com.app.myfoottrip.util.TimeUtils
 
 private const val TAG = "PlaceAdapter_마이풋트립"

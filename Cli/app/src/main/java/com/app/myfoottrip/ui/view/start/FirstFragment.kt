@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.viewmodel.NavigationViewModel
+import com.app.myfoottrip.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentFirstBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.splash.SplashFragment

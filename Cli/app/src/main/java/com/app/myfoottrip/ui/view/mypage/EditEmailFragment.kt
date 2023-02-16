@@ -5,33 +5,25 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Board
-import com.app.myfoottrip.data.dto.Email
-import com.app.myfoottrip.data.dto.Travel
-import com.app.myfoottrip.data.viewmodel.JoinViewModel
-import com.app.myfoottrip.data.viewmodel.UserViewModel
+import com.app.myfoottrip.model.Email
+import com.app.myfoottrip.viewmodel.JoinViewModel
+import com.app.myfoottrip.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentEditEmailBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.dialogs.AlertDialog
-import com.app.myfoottrip.ui.view.dialogs.EditSaveDialog
 import com.app.myfoottrip.ui.view.main.MainActivity
-import com.app.myfoottrip.util.GalleryUtils
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.*
 import java.util.regex.Pattern
 
 private const val TAG = "EditEmailFragment_마이풋트립"

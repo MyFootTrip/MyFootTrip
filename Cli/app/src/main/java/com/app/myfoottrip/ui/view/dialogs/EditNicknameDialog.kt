@@ -8,7 +8,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.viewmodel.UserViewModel
+import com.app.myfoottrip.viewmodel.UserViewModel
 import com.rengwuxian.materialedittext.MaterialEditText
 
 private const val TAG = "EditNicknameDialog_마이풋트립"

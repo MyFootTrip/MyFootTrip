@@ -8,11 +8,10 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Alarm
-import com.app.myfoottrip.data.viewmodel.AlarmViewModel
-import com.app.myfoottrip.data.viewmodel.NavigationViewModel
-import com.app.myfoottrip.data.viewmodel.UserViewModel
+import com.app.myfoottrip.model.Alarm
+import com.app.myfoottrip.viewmodel.AlarmViewModel
+import com.app.myfoottrip.viewmodel.NavigationViewModel
+import com.app.myfoottrip.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentAlarmBinding
 import com.app.myfoottrip.ui.adapter.AlarmAdapter
 import com.app.myfoottrip.ui.base.BaseFragment

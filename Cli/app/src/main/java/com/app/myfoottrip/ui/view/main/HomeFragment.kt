@@ -19,21 +19,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Filter
-import com.app.myfoottrip.data.viewmodel.BoardViewModel
-import com.app.myfoottrip.data.viewmodel.NavigationViewModel
+import com.app.myfoottrip.model.Filter
+import com.app.myfoottrip.viewmodel.BoardViewModel
+import com.app.myfoottrip.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentHomeBinding
 import com.app.myfoottrip.ui.adapter.BoardPagingDataAdapter
 import com.app.myfoottrip.ui.adapter.BoardPagingLoadStateAdapter
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
 import com.app.myfoottrip.ui.base.BaseFragment
-import com.app.myfoottrip.util.CommonUtils
-import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import com.google.android.material.chip.Chip
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 private const val TAG = "HomeFragment_마이풋트립"
 

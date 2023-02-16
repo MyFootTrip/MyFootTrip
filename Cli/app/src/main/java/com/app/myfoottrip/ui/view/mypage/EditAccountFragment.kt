@@ -14,11 +14,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Join
-import com.app.myfoottrip.data.viewmodel.FcmViewModel
-import com.app.myfoottrip.data.viewmodel.NavigationViewModel
-import com.app.myfoottrip.data.viewmodel.TokenViewModel
-import com.app.myfoottrip.data.viewmodel.UserViewModel
+import com.app.myfoottrip.model.Join
+import com.app.myfoottrip.viewmodel.FcmViewModel
+import com.app.myfoottrip.viewmodel.NavigationViewModel
+import com.app.myfoottrip.viewmodel.TokenViewModel
+import com.app.myfoottrip.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentEditAccountBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.dialogs.AlertDialog
@@ -28,7 +28,6 @@ import com.app.myfoottrip.ui.view.start.StartActivity
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showSnackBarMessage
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

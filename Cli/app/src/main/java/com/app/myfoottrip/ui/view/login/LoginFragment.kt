@@ -1,6 +1,5 @@
 package com.app.myfoottrip.ui.view.login
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,11 +8,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
-import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Email
-import com.app.myfoottrip.data.viewmodel.FcmViewModel
-import com.app.myfoottrip.data.viewmodel.NavigationViewModel
-import com.app.myfoottrip.data.viewmodel.UserViewModel
+import com.app.myfoottrip.viewmodel.FcmViewModel
+import com.app.myfoottrip.viewmodel.NavigationViewModel
+import com.app.myfoottrip.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.FragmentLoginBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity

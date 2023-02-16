@@ -14,8 +14,8 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.viewmodel.JoinViewModel
-import com.app.myfoottrip.data.viewmodel.NavigationViewModel
+import com.app.myfoottrip.viewmodel.JoinViewModel
+import com.app.myfoottrip.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentServiceClauseBinding
 import com.app.myfoottrip.ui.view.dialogs.ServiceClauseCustomDialog
 

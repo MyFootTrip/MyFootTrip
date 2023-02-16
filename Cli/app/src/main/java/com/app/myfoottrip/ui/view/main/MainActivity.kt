@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.app.myfoottrip.data.viewmodel.TokenViewModel
-import com.app.myfoottrip.data.viewmodel.UserViewModel
+import com.app.myfoottrip.viewmodel.TokenViewModel
+import com.app.myfoottrip.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.ActivityMainBinding
 import com.app.myfoottrip.ui.view.dialogs.EditCustomDialog
 import com.app.myfoottrip.ui.view.travel.LocationService

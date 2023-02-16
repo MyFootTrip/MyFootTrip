@@ -15,10 +15,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.viewmodel.FcmViewModel
-import com.app.myfoottrip.data.viewmodel.JoinViewModel
+import com.app.myfoottrip.viewmodel.FcmViewModel
+import com.app.myfoottrip.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinAgeBinding
-import com.app.myfoottrip.network.fcm.MyFireBaseMessagingService
+import com.app.myfoottrip.service.MyFireBaseMessagingService
 import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.NetworkResult
 import com.app.myfoottrip.util.showToastMessage

@@ -5,8 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Board
-import com.app.myfoottrip.databinding.ListItemHomeBinding
+import com.app.myfoottrip.model.Board
 import com.app.myfoottrip.databinding.ListItemMypageLikeBinding
 import com.bumptech.glide.Glide
 

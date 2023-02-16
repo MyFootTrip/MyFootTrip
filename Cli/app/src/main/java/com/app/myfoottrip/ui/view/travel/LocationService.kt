@@ -5,18 +5,16 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dao.VisitPlaceRepository
-import com.app.myfoottrip.data.dto.Coordinates
+import com.app.myfoottrip.model.Coordinates
+import com.app.myfoottrip.repository.VisitPlaceRepository
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.util.*
-import kotlin.concurrent.timer
 
 private const val TAG = "CoordinatesService_싸피"
 

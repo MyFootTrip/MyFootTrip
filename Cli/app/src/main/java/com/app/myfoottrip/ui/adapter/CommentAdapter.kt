@@ -1,24 +1,20 @@
 package com.app.myfoottrip.ui.adapter
 
 import android.content.res.ColorStateList
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
-import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Comment
+import com.app.myfoottrip.model.Comment
 import com.app.myfoottrip.databinding.ListItemCommentBinding
 import com.app.myfoottrip.util.TimeUtils
 import com.bumptech.glide.Glide
-import java.text.SimpleDateFormat
-import java.util.*
 
 private const val TAG = "CommentAdapter_마이풋트립"
-class CommentAdapter(var commentList:List<Comment>,val userId : Int) : RecyclerView.Adapter<CommentAdapter.CommentHolder>(){
+class CommentAdapter(var commentList:List<Comment>, val userId : Int) : RecyclerView.Adapter<CommentAdapter.CommentHolder>(){
 
     inner class CommentHolder(private val binding: ListItemCommentBinding) : RecyclerView.ViewHolder(binding.root){
 

@@ -8,7 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.viewmodel.NavigationViewModel
+import com.app.myfoottrip.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentMainBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.skydoves.powerspinner.PowerSpinnerView

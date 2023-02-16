@@ -4,9 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.graphics.Point
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,20 +13,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dao.VisitPlaceRepository
-import com.app.myfoottrip.data.dto.VisitPlace
-import com.app.myfoottrip.data.viewmodel.EditSaveViewModel
+import com.app.myfoottrip.model.VisitPlace
+import com.app.myfoottrip.viewmodel.EditSaveViewModel
 import com.app.myfoottrip.databinding.EditCustomDialogBinding
+import com.app.myfoottrip.repository.VisitPlaceRepository
 import com.app.myfoottrip.ui.view.board.TouchFrameLayout
-import com.app.myfoottrip.ui.view.travel.EditSaveTravelFragment
 import com.app.myfoottrip.ui.view.travel.PlaceImageAdapter
-import com.app.myfoottrip.util.DeviceSizeUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
@@ -37,7 +32,6 @@ import com.naver.maps.map.util.MarkerIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 
 private const val TAG = "EditCustomDialog_싸피"

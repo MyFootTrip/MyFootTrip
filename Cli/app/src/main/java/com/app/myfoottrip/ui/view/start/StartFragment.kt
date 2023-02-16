@@ -12,8 +12,8 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.viewmodel.FcmViewModel
-import com.app.myfoottrip.data.viewmodel.TokenViewModel
+import com.app.myfoottrip.viewmodel.FcmViewModel
+import com.app.myfoottrip.viewmodel.TokenViewModel
 import com.app.myfoottrip.databinding.FragmentStartBinding
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.main.MainActivity

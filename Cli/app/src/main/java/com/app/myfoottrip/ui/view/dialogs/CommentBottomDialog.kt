@@ -9,11 +9,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Board
-import com.app.myfoottrip.data.dto.Comment
-import com.app.myfoottrip.data.viewmodel.BoardViewModel
-import com.app.myfoottrip.data.viewmodel.CommentViewModel
-import com.app.myfoottrip.data.viewmodel.UserViewModel
+import com.app.myfoottrip.model.Board
+import com.app.myfoottrip.model.Comment
+import com.app.myfoottrip.viewmodel.BoardViewModel
+import com.app.myfoottrip.viewmodel.CommentViewModel
+import com.app.myfoottrip.viewmodel.UserViewModel
 import com.app.myfoottrip.databinding.DialogCommentBottomBinding
 import com.app.myfoottrip.ui.adapter.CommentAdapter
 import com.app.myfoottrip.util.NetworkResult

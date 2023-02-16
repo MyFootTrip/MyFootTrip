@@ -11,7 +11,6 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.PointF
 import android.location.LocationManager
-import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -30,11 +29,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dao.VisitPlaceRepository
-import com.app.myfoottrip.data.dto.VisitPlace
-import com.app.myfoottrip.data.viewmodel.TravelActivityViewModel
-import com.app.myfoottrip.data.viewmodel.TravelViewModel
+import com.app.myfoottrip.model.VisitPlace
+import com.app.myfoottrip.viewmodel.TravelActivityViewModel
+import com.app.myfoottrip.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentTravelLocationSelectBinding
+import com.app.myfoottrip.repository.VisitPlaceRepository
 import com.app.myfoottrip.ui.adapter.CategoryAdatper
 import com.app.myfoottrip.ui.view.main.HomeFragment
 import com.app.myfoottrip.ui.view.main.MainActivity

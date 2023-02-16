@@ -20,7 +20,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.viewmodel.JoinViewModel
+import com.app.myfoottrip.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinProfileBinding
 import com.app.myfoottrip.util.ChangeMultipartUtil
 import okhttp3.MediaType.Companion.toMediaTypeOrNull

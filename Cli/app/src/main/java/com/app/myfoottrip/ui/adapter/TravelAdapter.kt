@@ -1,12 +1,11 @@
 package com.app.myfoottrip.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Travel
+import com.app.myfoottrip.model.Travel
 import com.app.myfoottrip.databinding.ListItemTravelBinding
 import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat

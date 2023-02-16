@@ -8,8 +8,8 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Place
-import com.app.myfoottrip.data.dto.VisitPlace
+import com.app.myfoottrip.model.Place
+import com.app.myfoottrip.model.VisitPlace
 import com.app.myfoottrip.databinding.ListItmeTravelEditSaveBinding
 import com.google.android.material.card.MaterialCardView
 import java.text.SimpleDateFormat

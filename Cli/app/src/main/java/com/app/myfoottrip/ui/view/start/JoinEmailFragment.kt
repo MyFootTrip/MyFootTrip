@@ -19,9 +19,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Email
-import com.app.myfoottrip.data.viewmodel.JoinViewModel
-import com.app.myfoottrip.data.viewmodel.NavigationViewModel
+import com.app.myfoottrip.model.Email
+import com.app.myfoottrip.viewmodel.JoinViewModel
 import com.app.myfoottrip.databinding.FragmentJoinEmailBinding
 import com.app.myfoottrip.util.NetworkResult
 import com.google.android.material.textfield.TextInputEditText

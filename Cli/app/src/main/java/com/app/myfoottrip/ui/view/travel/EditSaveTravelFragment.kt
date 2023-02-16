@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -15,12 +14,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dao.VisitPlaceRepository
-import com.app.myfoottrip.data.dto.*
-import com.app.myfoottrip.data.viewmodel.EditSaveViewModel
-import com.app.myfoottrip.data.viewmodel.TravelActivityViewModel
-import com.app.myfoottrip.data.viewmodel.TravelViewModel
+import com.app.myfoottrip.viewmodel.EditSaveViewModel
+import com.app.myfoottrip.viewmodel.TravelActivityViewModel
+import com.app.myfoottrip.viewmodel.TravelViewModel
 import com.app.myfoottrip.databinding.FragmentEditSaveTravelBinding
+import com.app.myfoottrip.model.*
+import com.app.myfoottrip.repository.VisitPlaceRepository
 import com.app.myfoottrip.ui.adapter.TravelEditSaveItemAdapter
 import com.app.myfoottrip.ui.base.BaseFragment
 import com.app.myfoottrip.ui.view.dialogs.EditCustomDialog

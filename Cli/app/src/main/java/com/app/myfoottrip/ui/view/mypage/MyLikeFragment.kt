@@ -8,9 +8,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Board
-import com.app.myfoottrip.data.viewmodel.BoardViewModel
-import com.app.myfoottrip.data.viewmodel.NavigationViewModel
+import com.app.myfoottrip.model.Board
+import com.app.myfoottrip.viewmodel.BoardViewModel
+import com.app.myfoottrip.viewmodel.NavigationViewModel
 import com.app.myfoottrip.databinding.FragmentMyLikeBinding
 import com.app.myfoottrip.ui.adapter.LikeBoardAdapter
 import com.app.myfoottrip.ui.base.BaseFragment

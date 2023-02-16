@@ -1,6 +1,6 @@
 package com.app.myfoottrip.util
 
-import com.app.myfoottrip.data.dto.ServiceClauseText
+import com.app.myfoottrip.model.ServiceClauseText
 
 val allPrivacyPolicyList: List<ServiceClauseText> = listOf(
     ServiceClauseText(

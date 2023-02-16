@@ -7,7 +7,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.viewbinding.BuildConfig
-import com.app.myfoottrip.data.dao.VisitPlaceRepository
+import com.app.myfoottrip.repository.VisitPlaceRepository
 import com.app.myfoottrip.util.SharedPreferencesUtil
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

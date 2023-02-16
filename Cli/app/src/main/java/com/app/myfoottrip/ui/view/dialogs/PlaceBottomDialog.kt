@@ -2,22 +2,16 @@ package com.app.myfoottrip.ui.view.dialogs
 
 import android.os.Bundle
 import android.view.*
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Place
+import com.app.myfoottrip.model.Place
 import com.app.myfoottrip.databinding.DialogPlaceBottomBinding
 import com.app.myfoottrip.ui.view.board.TouchFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.*
 import com.naver.maps.map.overlay.Marker
-import com.naver.maps.map.overlay.OverlayImage
-import com.naver.maps.map.overlay.PolylineOverlay
 import com.naver.maps.map.util.MarkerIcons
-import com.rengwuxian.materialedittext.MaterialEditText
-import org.imaginativeworld.whynotimagecarousel.ImageCarousel
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem
 
 class PlaceBottomDialog(private val listener: OnClickListener,private val place : Place) :

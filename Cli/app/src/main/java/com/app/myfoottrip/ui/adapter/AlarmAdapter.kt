@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
 import com.app.myfoottrip.R
-import com.app.myfoottrip.data.dto.Alarm
+import com.app.myfoottrip.model.Alarm
 import com.app.myfoottrip.databinding.ListItemAlarmBinding
 import com.app.myfoottrip.util.TimeUtils
 import com.bumptech.glide.Glide
