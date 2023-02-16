@@ -1,23 +1,19 @@
-:airplane: MYFOOTTRIP
+## :airplane: MYFOOTTRIP(마이풋트립)
 
 MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커뮤니티 어플리케이션_ 입니다. 기획 의도는 여행 후기를 공유할 수 있는 플랫폼의 제공과 로직 및 디자인 모두 디테일 한 부분까지 고려하여 완성도 높은 앱의 개발입니다. 아이디어를 착안하게 된 서비스는 구글의 타임라인과 여행 계획 어플인 트리플입니다. 우리의 어플은 이러한 서비스들이 가지지 못한 위치 자동 기록의 활용성과 빈약한 커뮤니티 기능 및 플랫폼의 활성화를 지향합니다.
 
-### 시연화면
+#### 여정 기록 화면
 
-### 주요 기능 화면
-
-<img src="git_image/KakaoTalk_20230208_111029191_01.jpg" title="" alt="" width="220">                         <img title="" src="git_image/KakaoTalk_20230208_111029191_02.jpg" alt="KakaoTalk_20230208_111029191_02.jpg" width="224">
-
-<img title="" src="git_image/KakaoTalk_20230208_111029191_03.jpg" alt="KakaoTalk_20230208_111029191_03.jpg" width="223">                        <img title="" src="git_image/KakaoTalk_20230208_111029191_04.jpg" alt="KakaoTalk_20230208_111029191_04.jpg" width="223">
-
-<img title="" src="git_image/KakaoTalk_20230208_111029191_07.jpg" alt="KakaoTalk_20230208_111029191_07.jpg" width="220">                         <img title="" src="git_image/KakaoTalk_20230208_111029191_06.jpg" alt="KakaoTalk_20230208_111029191_06.jpg" width="218">
-
-<img title="" src="git_image/KakaoTalk_20230208_111029191_05.jpg" alt="KakaoTalk_20230208_111029191_05.jpg" width="219">
 
 ## :clipboard: Description
 
 ### 주요 기능
 ![image](image/3.주요_기능1.png) <br/>
+<br/>
+![image](image/4.주요_기능2.png) <br/>
+<br/>
+![image](image/5.주요_기능3.png) <br/>
+<br/>
 
 
 ### 전체기능
@@ -32,7 +28,7 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
   
   - 필터링 기능 - 테마, 지역, 기간, 연령대, 최신순, 좋아요순을 고려하여 서버단에서 원하는 정보를 내려줌
   - 인피니트 스크롤 - 페이징 라이브러리를 활용 25개씩 끊어서 게시물 정보를 요청하고 그 이후 스크롤 할 경우 로딩 컴포넌트와 함께 추가적으로 api로 요청하는 구조
-  - 탑 버튼 - 가장 최상단으로 올려줌
+  - 탑 버튼 - 스크롤 화면에서 가장 최상단으로 올려줌
   - 바텀내비게이션 - 주요기능으로 바로 가는 기능
   - 우측상단의 + 버튼 - 현재까지 작성된 여정 데이터를 기반으로 게시물을 작성할 수 있음
   - 뒤로가기 - 뒤로가기 두 번 연속 누를 경우 앱 종료를 할 수 있도록 설정
@@ -62,25 +58,54 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
   - 저장 - 최종적으로 좌표 데이터에 메모나 이미지 등을 추가할 수 있고 필요없는 좌표 데이터는 빼는 등 유저 마음대로 커스텀 할 수 있음
   - 백그라운드 실행- 여정 기록 버튼을 누르면 위치 정보 기록을 백그라운드에서 실행하게 만들고 주기를 길게 설정하여 사용자에게 편의성을 그리고 하드웨어의 부담을 줄였음.
 
-📝 Design
+## :art: Design
 
-## 사용 스택
+### 기술 스택
+![image](image/6.기술_스택.png) <br/>
+<br/>
 
-<img src="git_image/stack.PNG" title="" alt="git_image/stack.png" width="520">
+### 시스템 구조
+![image](image/7.시스템_구조.png) <br/>
+<br/>
 
-## 구조
-
-<img src="git_image/architecture.png" title="" alt="git_image/architecture.png" width="520">
-
-## ERD
-
-<img src="git_image/erd.png" title="" alt="git_image/erd.png" width="520">
+### ERD 다이어그램
+![image](image/8.ERD_다이어그램.png) <br/>
+<br/>
 
 ## API 설계
+![gif](image/9.API_명세서.gif) <br/>
+<br/>
 
-<img src="git_image/apicap.PNG" title="" alt="git_image/apicap.png" width="520">
+#### API_URL : https://www.notion.so/ce21476e52b340f7ade635a85b5504fd?v=efa0df6f03c349ffb6b669fa1000f4a2
 
-_apiurl_ : https://www.notion.so/ce21476e52b340f7ade635a85b5504fd?v=efa0df6f03c349ffb6b669fa1000f4a2
+## :iphone: Anroid(FrontEnd)
+### 사용한 라이브러리
+| Name             | Description                                  |
+| ---------------- | -------------------------------------------- |
+| Navigation       | 프래그먼트 전환 라이브러리                   |
+| Glide            | 이미지 로딩 라이브러리                       |
+| Picasso          | 이미지 뷰 라이브러리                         |
+| ViewModel        | 안드로이드 수명주기에 맞게 데이터를 저장, 관리 라이브러리 |
+| Coroutine        | 비동기 처리 라이브러리                       |
+| Coroutine Flow   | 비동기 데이터 스트림                         |
+| TedPermission    | 안드로이드 권한 라이브러리                   |
+| Retrofit         | HTTP 통신 라이브러리                        |
+| SwipeRefreshLayout| 새로고침 뷰 라이브러리                |
+| Dagger Hilt      | 의존성 주입 라이브러리                       |
+|  WhyNotImageCarousel | 이미지 슬라이더 라이브러리                       |
+| Naver            | 네이버 소셜 로그인                           |
+| KaKao            | 카카오 소셜 로그인                           |
+| Lottie           | 안드로이드 애니메이션 라이브러리             |
+| NaverMap         | 네이버 지도라이브러리                        |
+| FCM              | 파이어베이스 푸시 알림                       |
+| FireStorage      | 파이어스토리지                              |
+| Paging 3         | 안드로이드 페이징 라이브러리                 |
+| Room             | 안드로이드 DB 라이브러리                     |
+| Google gms play service location| 구글 현재 위치 라이브러리    |
+<br/>
+
+### Directory 구조
+
 
 ## 백엔드 소스코드 Dir 구조
 
@@ -123,19 +148,5 @@ pjtback
 ├── requirements.txt
 └── serviceAccountKey.json
 ```
-
-## 백엔드 사용 라이브러리
-
-| 사용라이브러리         | 사용이유               |
-| --------------- |:------------------ |
-| rest frame work | REST API           |
-| simplejwt       | jwt생성 및 인증         |
-| all_auth        | 장고 로그인 및 회원가입 인증   |
-| dj_rest_auth    | 장고 로그인 및 회원가입 인증   |
-| drf_spectacular | swagger            |
-| django-imagekit | 이미지 삽입 및 리사이징      |
-| django-firebase | fcm 토큰 인증 및 메세지 전송 |
-| Pillow          | media 파일 생성 및 삽입   |
-| mysqlclient     | 장고, mysql 연결       |
 
 
