@@ -79,6 +79,10 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 #### API_URL : https://www.notion.so/ce21476e52b340f7ade635a85b5504fd?v=efa0df6f03c349ffb6b669fa1000f4a2
 
 ## :iphone: Anroid(FrontEnd)
+### 아키텍처 구조
+![gif](image/10.아키텍처_구조.png) <br/>
+<br/>
+
 ### 사용한 라이브러리
 | Name             | Description                                  |
 | ---------------- | -------------------------------------------- |
@@ -106,6 +110,21 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 
 ### Directory 구조
 
+```markdown
+📁Android
+├──📁api
+├──📁datasource
+├──📁db
+├──📁model
+├──📁repository
+├──📁service
+├──📁ui
+│ ├──📁adapter
+│ ├──📁base
+│ ├──📁view
+├──📁util
+├──📁viewmodel
+```
 
 ## 백엔드 소스코드 Dir 구조
 
