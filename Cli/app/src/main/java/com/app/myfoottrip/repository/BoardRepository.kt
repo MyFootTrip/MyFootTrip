@@ -8,7 +8,7 @@ import androidx.paging.liveData
 import com.app.myfoottrip.Application
 import com.app.myfoottrip.model.Board
 import com.app.myfoottrip.model.Filter
-import com.app.myfoottrip.viewmodel.paging.BoardPagingSource
+import com.app.myfoottrip.datasource.BoardPagingSource
 import com.app.myfoottrip.api.BoardApi
 import com.app.myfoottrip.util.NetworkResult
 

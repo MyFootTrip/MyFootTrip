@@ -1,4 +1,4 @@
-package com.app.myfoottrip.viewmodel.paging
+package com.app.myfoottrip.datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
