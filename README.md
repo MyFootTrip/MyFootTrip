@@ -135,11 +135,14 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 ├──📄Application.kt
 ```
 
-## 백엔드 소스코드 Dir 구조
+
+## :computer: Server(BackEnd)
+
+### 백엔드 Directory 구조
 
 ```bash
-pjtback
-├── accounts
+📁pjtback
+├──📁accounts
 │ ├── migrations
 │ ├── adapter.py
 │ ├── admin.py
@@ -148,7 +151,7 @@ pjtback
 │ ├── serializers.py
 │ ├── urls.py
 │ └── views.py
-├── community
+├──📁community
 │ ├── migrations
 │ ├── admin.py
 │ ├── apps.py
@@ -156,14 +159,14 @@ pjtback
 │ ├── serializers.py
 │ ├── urls.py
 │ └── views.py
-├── config
-│ ├── nginx
+├──📁config
+│ ├──📁nginx
 │ │ └── nginx.conf
-│ ├── settings
+│ ├──📁settings
 │ │ ├── requirements.txt
 │ │ └── serviceAccountKey.json
-├── media
-├── pjtback
+├──📁media
+├──📁pjtback
 │ ├── migrations
 │ ├── asgi.py
 │ ├── settings.py
@@ -176,6 +179,14 @@ pjtback
 ├── requirements.txt
 └── serviceAccountKey.json
 ```
+
+### 백엔드 라이브러리
+
+![image](image/12.백엔드_라이브러리.png) <br/>
+
+### JWT와 인증 플로우
+
+![image](image/11.JWT_인증 구조.png) <br/>
 
 ## :family: MyFootTrip Team
 ![image](image/13.팀원_역할1.png) <br/>
