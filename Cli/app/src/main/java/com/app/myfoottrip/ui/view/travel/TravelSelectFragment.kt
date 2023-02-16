@@ -142,12 +142,6 @@ class TravelSelectFragment : BaseFragment<FragmentTravelSelectBinding>(
         }
     } // End of buttonSetTextObserve
 
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "onResume: ")
-    } // End of onResume
-
-
     private fun initCustomView() {
         if (type == 0) {
             //여행 선택 페이지

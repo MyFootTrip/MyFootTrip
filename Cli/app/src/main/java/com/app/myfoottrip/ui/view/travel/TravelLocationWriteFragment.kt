@@ -29,6 +29,7 @@ import com.app.myfoottrip.ui.view.main.MainActivity
 import com.app.myfoottrip.util.LocationProvider
 import com.app.myfoottrip.util.TimeUtils
 import com.app.myfoottrip.util.showSnackBarMessage
+import com.app.myfoottrip.util.showToastMessage
 import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.*
@@ -125,41 +126,40 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                         if (distCount == 3 && flag == false) {
                             // 지도에 마커표시 하기 위해서 DB등록
                             // 4번의 동일한 좌표가 찍히고 나면 RoomDB에 데이터 추가
-                            val job = Job()
 
                             CoroutineScope(Dispatchers.IO).launch {
                                 var address: String? = null
-                                CoroutineScope(Dispatchers.IO + job).launch {
+
+                                val addressDeffer = CoroutineScope(Dispatchers.IO).async {
                                     val getAdd = getAddressByCoordinates(
                                         newCoor.latitude!!, newCoor.longitude!!
                                     )
                                     if (getAdd != null) {
-                                        address = getAddressByCoordinates(
-                                            newCoor.latitude!!, newCoor.longitude!!
-                                        )!!.getAddressLine(0)
+                                        address = getAdd.getAddressLine(0).toString()
                                     }
                                 }
 
+                                addressDeffer.join()
+                                Log.d(TAG, "주소가 어떻게 나올까?: $address")
 
-                                if (job.start() == false) {
-                                    // 해당 좌표를 지도에 표시
-                                    withContext(Dispatchers.Main) {
-                                        requireActivity().runOnUiThread {
-                                            clearMapInMark()
-                                            setInMapMarker(
-                                                LatLng(
-                                                    newCoor.latitude!!, newCoor.longitude!!
-                                                )
+                                // 해당 좌표를 지도에 표시
+                                withContext(Dispatchers.Main) {
+                                    requireActivity().runOnUiThread {
+                                        clearMapInMark()
+                                        setInMapMarker(
+                                            LatLng(
+                                                newCoor.latitude!!, newCoor.longitude!!
                                             )
-                                        }
+                                        )
                                     }
                                 }
+
+                                Log.d(TAG, "주소가 어떻게 나올까?: $address")
 
                                 // 없는 주소는 List에서 생성하지 않고 빈 주소로 넣음
                                 if (address == null) {
                                     address = "정확한 주소를 찾지 못했습니다 수정 작업에서 등록해주세요!"
                                 }
-
                                 saveTravel(newCoor.latitude!!, newCoor.longitude!!, address!!)
                             }
 
@@ -290,10 +290,10 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 CoroutineScope(Dispatchers.IO).launch {
                     mainActivity.stopLocationBackground()
                 }
-                showToast("위치 기록을 중지합니다", ToastType.SUCCESS)
+                // showToast(, ToastType.SUCCESS)
+                requireContext().showToastMessage("위치 기록을 중지합니다")
                 // serviceScope.cancel()
             }
-
 
             // 좌표 백그라운드 다시 시작
             fabRestart.setOnClickListener {
@@ -361,9 +361,8 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
 
                 val nowLat = locationProvider.getLocationLatitude()
                 val nowLng = locationProvider.getLocationLongitude()
-
                 var address: String? = null
-                val job = CoroutineScope(Dispatchers.Default).launch {
+                val job = CoroutineScope(Dispatchers.Default).async {
                     val getAdd = getAddressByCoordinates(nowLat, nowLng)
                     if (getAdd != null) {
                         address = getAdd.getAddressLine(0)
@@ -383,9 +382,14 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                         recentPlace = visitPlaceRepository.getMostRecentVisitPlace()
                     } catch (exception: Exception) {
                         Log.e(TAG, "nowLocationSave: ${exception.printStackTrace()}")
-                        Log.e(TAG, "nowLocationSave: 같은 좌표가 없거나, 테이블이 비어있습니다.")
+                        Log.e(TAG, "nowLocationSave: 현재 테이블이 비어있습니다.")
                     }
                 }
+
+                // 가장 최근에 찍힌 좌표에서 지정된 (오차범위) 거리를 벗어나지 못했을 경우, 더 이상 찍히지 않음
+
+
+                Log.d(TAG, "recentPlace: $recentPlace")
 
                 if (nowLat == 0.0 || nowLng == 0.0) {
                     // 제대로된 좌표가 들어오지 않을 경우, 저장하지 않음
@@ -429,9 +433,12 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     }
 
     private suspend fun saveTravel(lat: Double, lon: Double, address: String) {
-        // 좌표가 저장되는 동안에는 버튼이 눌리지 않도록 설정
-        binding.fabStop.isClickable = false
-        binding.btnAddPoint.isClickable = false
+        withContext(Dispatchers.Main) {
+            // 좌표가 저장되는 동안에는 버튼이 눌리지 않도록 설정
+            binding.fabStop.isClickable = false
+            binding.btnAddPoint.isClickable = false
+        }
+
 
         // 새로 생성되는 위치에서는 PlaceId를 null값으로 넣음
         val temp = VisitPlace(
@@ -444,7 +451,7 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 1
             }
 
-            deffered.await()
+            deffered.join()
 
             var temp: List<VisitPlace> = emptyList()
             val deffered2: Deferred<Int> = async {
@@ -453,32 +460,30 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             }
             deffered2.join()
 
-            binding.fabStop.isClickable = true
-            binding.btnAddPoint.isClickable = true
+//            binding.fabStop.isClickable = true
+//            binding.btnAddPoint.isClickable = true
 
-            Log.d(TAG, "saveTravel: 0")
-            val clearMapInMarkDeffer : Deferred<Int> = async {
+            val clearMapInMarkDeffer: Deferred<Int> = async {
                 clearMapInMark()
                 1
             }
 
-            Log.d(TAG, "saveTravel: 1")
             clearMapInMarkDeffer.join()
-            Log.d(TAG, "saveTravel: 2")
 
-            val deffer3 : Deferred<Int> = async {
+            val deffer3: Deferred<Int> = async {
                 setInMapMarker()
                 1
             }
 
-            Log.d(TAG, "saveTravel: 3")
             deffer3.join()
-            Log.d(TAG, "saveTravel: 4")
 
             withContext(Dispatchers.Main) {
                 showToast("현재 위치 저장 성공")
-            }
 
+                // 좌표가 저장되는 동안에는 버튼이 눌리지 않도록 설정
+                binding.fabStop.isClickable = true
+                binding.btnAddPoint.isClickable = true
+            }
         }
     } // End of saveTravel
 
@@ -616,15 +621,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             )
         ).animate(CameraAnimation.Fly, 1000)
         naverMap.moveCamera(cameraUpdate)
-
-
-//        markers = mutableListOf()
-//        myCoordinatesList.forEach {
-//            markers += Marker().apply {  }
-//
-//            setInMapMarker(LatLng(it.latitude!!, it.longitude!!))
-//        }
-
     } // End of onMapReady
 
     private fun clearMapInMark() = CoroutineScope(Dispatchers.Main).launch {
@@ -650,9 +646,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
                 captionText = it.placeName.toString()
             }
         }
-
-        Log.d(TAG, "setInMapMarker: $getUserTravelData")
-        Log.d(TAG, "setInMapMarker: $markers")
 
         markers += Marker().apply {
             position = LatLng(Coor.latitude, Coor.longitude)
@@ -682,7 +675,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
     }.onJoin // End of setMapInMark
 
 
-
     private fun setInMapMarker() = CoroutineScope(Dispatchers.Main).launch {
         markers = mutableListOf()
 
@@ -710,9 +702,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             marker.isIconPerspectiveEnabled = true
         }
 
-        Log.d(TAG, "마커 찍는 곳 여기 들어옴?")
-        Log.d(TAG, "마커 찍는 곳 여기 들어옴? ${markers}")
-
         val size = getUserTravelData.size
         if (size >= 2) {
             // polyline = PolylineOverlay()
@@ -728,8 +717,6 @@ class TravelLocationWriteFragment : BaseFragment<FragmentTravelLocationWriteBind
             polyline.setPattern(10, 5)
             polyline.coords = tempList
             polyline.map = naverMap
-
-            Log.d(TAG, "마커 찍는 곳 여기 들어옴?")
         }
     }.onJoin // End of setMapInMark
 } // End of TravelLocationWriteFragment class

@@ -65,7 +65,7 @@ class LocationService : Service() {
 //        }, (1000L * 60L * 1L), (1000L * 60L * 1L))
 
         // 15분마다 측정
-        locationClient.getLocationUpdates(30000L).catch { exception ->
+        locationClient.getLocationUpdates(3000L).catch { exception ->
             exception.printStackTrace()
         }.onEach { location ->
             val lat = location.latitude.toString()
