@@ -132,6 +132,7 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 │ │ ├──📁travel
 ├──📁util
 ├──📁viewmodel
+├──📄Application.kt
 ```
 
 ## 백엔드 소스코드 Dir 구조
@@ -176,4 +177,6 @@ pjtback
 └── serviceAccountKey.json
 ```
 
+## :family: MyFootTrip Team
+### Android(Front-End)
 
