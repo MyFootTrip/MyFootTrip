@@ -76,8 +76,6 @@ MYFOOTTRIP 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 
 _apiurl_ : https://www.notion.so/ce21476e52b340f7ade635a85b5504fd?v=efa0df6f03c349ffb6b669fa1000f4a2
 
-
-
 ## 백엔드 소스코드 Dir 구조
 
 ```bash
@@ -119,5 +117,19 @@ pjtback
 ├── requirements.txt
 └── serviceAccountKey.json
 ```
+
+## 백엔드 사용 라이브러리
+
+| 사용라이브러리         | 사용이유               |
+| --------------- |:------------------ |
+| rest frame work | REST API           |
+| simplejwt       | jwt생성 및 인증         |
+| all_auth        | 장고 로그인 및 회원가입 인증   |
+| dj_rest_auth    | 장고 로그인 및 회원가입 인증   |
+| drf_spectacular | swagger            |
+| django-imagekit | 이미지 삽입 및 리사이징      |
+| django-firebase | fcm 토큰 인증 및 메세지 전송 |
+| Pillow          | media 파일 생성 및 삽입   |
+| mysqlclient     | 장고, mysql 연결       |
 
 
