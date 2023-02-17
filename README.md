@@ -200,3 +200,8 @@ MyFootTrip 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 ![image](image/14.팀원_역할2.png) <br/>
 <br/>
 
+## 📒 License
+
+<p>
+This software is licensed under the MIT <a href="https://www.ssafy.com/ksp/jsp/swp/swpMain.jsp" _blank="new">©SSAFY</a>.
+</p>
