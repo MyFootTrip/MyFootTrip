@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="main">#434A90</color>
+    <color name="splash">#424E94</color>
+    <color name="white_smoke">#F5F5F5</color>
+    <color name="yellow">#FDE500</color>
+    <color name="green">#06BF56</color>
+
+    <color name="gray_80">#CCCCCC</color>
+    <color name="gray_60">#CCCCCC</color>
+    <color name="gray_bright">#EDEDED</color>
+    <color name="gray_400">#ADB5BD</color>
+    <color name="gray_500">#79747E</color>
+
+
+    <color name="error_color">#FF414D</color>
+    <color name="join_background_color">#D5D5D5</color>
+    <color name="join_next_button_background_color">#434A90</color>
+    <color name="join_next_button_text_color">#FFFFFF</color>
+    <color name="join_confirm_button_basic_color">#E8E9EB</color>
+    <color name="join_confirm_button_basic_text_color">#A2A6A9</color>
+    <color name="join_confirm_button_success_text_color">#000000</color>
+
+
+    <color name="red">#FF0000</color>
+    <color name="heart_color">#FF5959</color>
+    <color name="gray_700">#4A5056</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+    <color name="light_blue_A200">#FF40C4FF</color>
+    <color name="light_blue_A400">#FF00B0FF</color>
+    <color name="black_overlay">#66000000</color>
+
+    <!--trasnparent-->
+    <color name="transparent_100">#FF000000</color>
+    <color name="transparent_95">#F2000000</color>
+    <color name="transparent_90">#E6000000</color>
+    <color name="transparent_80">#CC000000</color>
+    <color name="transparent_70">#B3000000</color>
+    <color name="transparent_60">#99000000</color>
+    <color name="transparent_50">#80000000</color>
+    <color name="transparent_40">#66000000</color>
+    <color name="transparent_30">#4D000000</color>
+    <color name="transparent_20">#33000000</color>
+    <color name="transparent_10">#1A000000</color>
+</resources>

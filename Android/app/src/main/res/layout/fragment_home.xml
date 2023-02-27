@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:swipeRefreshLayoutProgressSpinnerBackgroundColor="@color/main">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true">
+
+            <ImageView
+                android:id="@+id/tv_app_name"
+                android:layout_width="100dp"
+                android:layout_height="?actionBarSize"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:src="@drawable/ic_logo_start"
+                android:text="@string/app_name_korean"
+                android:textColor="@color/black"
+                android:textSize="26sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_write"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/ic_add"
+                app:layout_constraintBottom_toBottomOf="@id/tv_app_name"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_app_name" />
+
+            <HorizontalScrollView
+                android:id="@+id/scrollview_chip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:scrollbars="none"
+                app:layout_constraintTop_toBottomOf="@id/tv_app_name">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/cg_category"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:chipSpacingHorizontal="10dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_app_name"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_theme"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="여행 테마"
+                            android:textColor="@color/select_category_text"
+                            android:textSize="14sp"
+                            app:chipBackgroundColor="@color/select_category_background"
+                            app:chipCornerRadius="20dp"
+                            app:chipEndPadding="10dp"
+                            app:chipStartPadding="10dp"
+                            app:chipStrokeColor="@color/select_category_text"
+                            app:chipStrokeWidth="1dp"
+                            app:rippleColor="@null" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_location"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="여행 지역"
+                            android:textColor="@color/select_category_text"
+                            android:textSize="14sp"
+
+                            app:chipBackgroundColor="@color/select_category_background"
+                            app:chipEndPadding="10dp"
+                            app:chipStartPadding="10dp"
+                            app:chipStrokeColor="@color/select_category_text"
+                            app:chipStrokeWidth="1dp"
+                            app:rippleColor="@null" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_period"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="여행 기간"
+                            android:textColor="@color/select_category_text"
+                            android:textSize="14sp"
+                            app:chipBackgroundColor="@color/select_category_background"
+                            app:chipEndPadding="10dp"
+                            app:chipStartPadding="10dp"
+                            app:chipStrokeColor="@color/select_category_text"
+                            app:chipStrokeWidth="1dp"
+                            app:rippleColor="@null" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_age"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="연령대"
+                            android:textColor="@color/select_category_text"
+                            android:textSize="14sp"
+                            app:chipBackgroundColor="@color/select_category_background"
+                            app:chipEndPadding="10dp"
+                            app:chipStartPadding="10dp"
+                            app:chipStrokeColor="@color/select_category_text"
+                            app:chipStrokeWidth="1dp"
+                            app:rippleColor="@null" />
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/gray_bright"
+                android:overScrollMode="never"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/scrollview_chip"
+                app:spanCount="2"
+                tools:listitem="@layout/list_item_category" />
+
+            <HorizontalScrollView
+                android:id="@+id/scrollview_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:scrollbars="none"
+                app:layout_constraintTop_toBottomOf="@id/rv_category">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/cg_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="10dp"
+                        app:chipSpacingHorizontal="10dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_app_name"
+                        app:singleSelection="true">
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/tv_plan_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="@font/inter_semibold"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:text="게시물"
+                android:textColor="@color/black"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/scrollview_detail" />
+
+            <TextView
+                android:id="@+id/tv_plan_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_regular"
+                android:paddingVertical="10dp"
+                android:text=""
+                android:textColor="@color/black"
+                app:layout_constraintLeft_toRightOf="@id/tv_plan_header"
+                app:layout_constraintTop_toBottomOf="@id/scrollview_detail" />
+
+            <com.skydoves.powerspinner.PowerSpinnerView
+                android:id="@+id/spinner_sort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:focusableInTouchMode="false"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center"
+                android:hint="최신순"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_plan_header"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_plan_header"
+                app:spinner_arrow_gravity="end"
+                app:spinner_arrow_padding="8dp"
+                app:spinner_arrow_tint="@color/black"
+                app:spinner_divider_show="true"
+                app:spinner_divider_size="0.4dp"
+                app:spinner_item_array="@array/filter_sort"
+                app:spinner_item_height="46dp"
+                app:spinner_popup_animation="dropdown"
+                app:spinner_popup_background="@color/white"
+                app:spinner_popup_elevation="8dp">
+
+            </com.skydoves.powerspinner.PowerSpinnerView>
+
+            <TextView
+                android:id="@+id/tv_no_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_semibold"
+                android:text="등록된 게시물이 없어요 ㅠㅠ"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/rv_home"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/rv_home" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_home"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                android:overScrollMode="never"
+                android:paddingBottom="20dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_plan_header"
+                app:layout_constraintVertical_bias="0.0"
+                tools:layout_editor_absoluteX="0dp"
+                tools:listitem="@layout/list_item_home" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_scroll_up"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                app:fabCustomSize="48dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="20dp"
+                android:backgroundTint="@color/main"
+                android:visibility="gone"
+                android:scaleType="fitCenter"
+                app:tint="@color/white"
+                app:borderWidth="0dp"
+                android:src="@drawable/ic_baseline_arrow_upward_24" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_home"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleX="2"
+                android:scaleY="2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/rv_home"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/loading_board" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

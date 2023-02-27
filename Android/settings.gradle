@@ -1,0 +1,24 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" } //crop-image
+        maven {url 'https://naver.jfrog.io/artifactory/maven/'} //네이버 지도
+
+        // 카카오 로그인
+        maven {url 'https://devrepo.kakao.com/nexus/content/groups/public/'}
+    }
+}
+
+
+
+rootProject.name = "MyFootTrip"
+include ':app'

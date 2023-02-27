@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="120dp"
+        android:paddingHorizontal="30dp"
+        android:src="@drawable/ic_logo_start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/app_info"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/iv_logo" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.github.nikartm.button.FitButton
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:padding="20dp"
+            app:fb_backgroundColor="@color/main"
+            app:fb_borderColor="@color/white"
+            app:fb_cornerRadius="10dp"
+            app:fb_text="이메일로 로그인"
+            app:fb_textColor="@color/white"
+            app:fb_textSize="16sp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:elevation="10dp"
+            android:src="@drawable/ic_email"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="2dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/gray_80"
+        app:layout_constraintBottom_toBottomOf="@id/tv_sns"
+        app:layout_constraintRight_toLeftOf="@id/tv_sns"
+        app:layout_constraintTop_toTopOf="@id/tv_sns" />
+
+    <TextView
+        android:id="@+id/tv_sns"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="SNS 로그인"
+        app:layout_constraintLeft_toLeftOf="@id/cl_login"
+        app:layout_constraintRight_toRightOf="@id/cl_login"
+        app:layout_constraintTop_toBottomOf="@id/cl_login" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="2dp"
+        android:layout_marginLeft="20dp"
+        android:background="@color/gray_80"
+        app:layout_constraintBottom_toBottomOf="@id/tv_sns"
+        app:layout_constraintLeft_toRightOf="@id/tv_sns"
+        app:layout_constraintTop_toTopOf="@id/tv_sns" />
+
+    <com.github.nikartm.button.FitButton
+        android:id="@+id/btn_kakao"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        app:fb_backgroundColor="@color/yellow"
+        app:fb_icon="@drawable/ic_kakao"
+        app:fb_iconHeight="36dp"
+        app:fb_iconWidth="36dp"
+        app:fb_shape="circle"
+        app:layout_constraintLeft_toRightOf="@id/btn_naver"
+        app:layout_constraintRight_toRightOf="@id/cl_login"
+        app:layout_constraintTop_toBottomOf="@id/tv_sns" />
+
+    <com.github.nikartm.button.FitButton
+        android:id="@+id/btn_naver"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        app:fb_backgroundColor="@color/green"
+        app:fb_icon="@drawable/ic_naver"
+        app:fb_iconColor="@color/white"
+        app:fb_iconWidth="24dp"
+        app:fb_shape="circle"
+        app:layout_constraintLeft_toLeftOf="@id/cl_login"
+        app:layout_constraintRight_toLeftOf="@id/btn_kakao"
+        app:layout_constraintTop_toBottomOf="@id/tv_sns" />
+
+    <!--원래는 marginTop 40-->
+    <TextView
+        android:id="@+id/tv_register_comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:text="@string/start_comment"
+        app:layout_constraintTop_toBottomOf="@id/btn_kakao"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintLeft_toLeftOf="@id/cl_login"
+        app:layout_constraintRight_toRightOf="@id/cl_login" />
+
+    <TextView
+        android:id="@+id/tv_join"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="5dp"
+        android:paddingVertical="10dp"
+        android:text="회원가입"
+        android:textColor="@color/main"
+        app:layout_constraintLeft_toRightOf="@id/tv_register_comment"
+        app:layout_constraintTop_toTopOf="@id/tv_register_comment" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

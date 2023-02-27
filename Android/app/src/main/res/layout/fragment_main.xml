@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.view.main.MainFragment">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_bottom_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="56dp"
+        tools:layout="@layout/fragment_home" />
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:fabCradleMargin="5dp"
+        app:fabCradleRoundedCornerRadius="10dp">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="16dp"
+            android:background="@android:color/transparent"
+            app:itemIconSize="28dp"
+            app:itemIconTint="@drawable/selector_bottom_nav"
+            app:labelVisibilityMode="unlabeled"
+            app:menu="@menu/bottom_nav_menu" />
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addButton"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:backgroundTint="@color/main"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_footstep"
+        app:borderWidth="0dp"
+        app:fabCustomSize="72dp"
+        app:layout_anchor="@id/bottomAppBar"
+        app:maxImageSize="48dp"
+        app:tint="@color/white"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

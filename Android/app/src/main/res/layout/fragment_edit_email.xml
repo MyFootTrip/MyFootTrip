@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.view.mypage.EditEmailFragment">
+
+    <ImageView
+        android:id="@+id/iv_cancel_btn"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/ic_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#231F20" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="36dp"
+        android:layout_marginTop="101dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_edit_email_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_semibold"
+            android:text="새 아이디를 설정해주세요."
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 이메일 input 및 인증 btn -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_edit_email_title">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/et_edit_email"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:cursorVisible="true"
+                android:fontFamily="@font/inter_medium"
+                android:hint="이메일을 입력해 주세요."
+                android:inputType="textEmailAddress"
+                android:paddingStart="5dp"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_email_confirm"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:met_bottomTextSize="12sp"
+                app:met_clearButton="true"
+                app:met_errorColor="@color/heart_color"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelAlwaysShown="true"
+                app:met_floatingLabelText="이메일 주소"
+                app:met_floatingLabelTextColor="@color/main"
+                app:met_floatingLabelTextSize="12sp"
+                app:met_primaryColor="@color/main" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_email_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="37dp"
+                android:layout_marginRight="1dp"
+                android:background="@drawable/ripple"
+                android:backgroundTint="@color/join_confirm_button_basic_color"
+                android:text="인증받기"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 인증번호 입력 -->
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/et_six_number"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="45dp"
+            android:cursorVisible="true"
+            android:fontFamily="@font/inter_medium"
+            android:hint="인증번호 6자리"
+            android:inputType="number"
+            android:maxLength="6"
+            android:paddingStart="5dp"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+            app:met_bottomTextSize="12sp"
+            app:met_clearButton="true"
+            app:met_errorColor="@color/heart_color"
+            app:met_floatingLabel="highlight"
+            app:met_floatingLabelAlwaysShown="true"
+            app:met_floatingLabelText="인증번호"
+            app:met_floatingLabelTextColor="@color/main"
+            app:met_floatingLabelTextSize="12sp"
+            app:met_maxCharacters="6"
+            app:met_primaryColor="@color/main" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:enabled="false"
+            android:fontFamily="@font/inter_bold"
+            android:padding="12dp"
+            android:paddingVertical="6dp"
+            android:text="변경하기"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:cornerRadius="20dp"
+            android:backgroundTint="@color/gray_400"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_six_number" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
