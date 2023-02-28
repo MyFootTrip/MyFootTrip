@@ -102,7 +102,6 @@ MyFootTrip 프로젝트는 Android 앱으로 제공되는 _여행 기록 및 커
 | TedPermission    | 안드로이드 권한 라이브러리                   |
 | Retrofit         | HTTP 통신 라이브러리                        |
 | SwipeRefreshLayout| 새로고침 뷰 라이브러리                |
-| Dagger Hilt      | 의존성 주입 라이브러리                       |
 |  WhyNotImageCarousel | 이미지 슬라이더 라이브러리                       |
 | Naver            | 네이버 소셜 로그인                           |
 | KaKao            | 카카오 소셜 로그인                           |
